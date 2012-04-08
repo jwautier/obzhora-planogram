@@ -1,0 +1,350 @@
+package planograma.data;
+
+import com.google.gson.JsonObject;
+import planograma.constant.data.RackConst;
+import planograma.utils.JsonUtils;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: Admin
+ * Date: 18.03.12
+ * Time: 9:39
+ * стеллаж
+ */
+public class Rack implements IJsonObject {
+	/**
+	 * Код Этажа
+	 */
+	private Integer code_sector;
+	/**
+	 * Код стеллажа
+	 */
+	private Integer code_rack;
+	/**
+	 * Состояние стеллажа
+	 */
+	private StateRack state_rack;
+	/**
+	 * Название
+	 */
+	private String name_rack;
+	/**
+	 * Штрих код стеллажа
+	 */
+	private String rack_barcode;
+	/**
+	 * Длина, см
+	 */
+	private Integer length;
+	/**
+	 * Ширина, см
+	 */
+	private Integer width;
+	/**
+	 * Высота, см
+	 */
+	private Integer height;
+	/**
+	 * Положение на этаже по длине
+	 */
+	private Integer x_coord;
+	/**
+	 * Положение на этаже по ширине
+	 */
+	private Integer y_coord;
+	/**
+	 * Угол поворота
+	 */
+	private Integer angle;
+	/**
+	 * Сторона загрузки
+	 */
+	private LoadSide load_side;
+	/**
+	 * Код шаблонна стеллажа
+	 */
+	private Integer code_rack_template;
+	/**
+	 * Автор
+	 */
+	private Integer user_insert;
+	/**
+	 * Дата создания
+	 */
+	private Date date_insert;
+	/**
+	 * Редактор
+	 */
+	private Integer user_update;
+	/**
+	 * Дата изменения
+	 */
+	private Date date_update;
+	/**
+	 * пользователь изъявший для редактирования
+	 */
+	private Integer user_draft;
+	/**
+	 * дата изъятия для редактирования
+	 */
+	private Date date_draft;
+
+	public Rack(Integer code_rack, StateRack state_rack, String name_rack, String rack_barcode, Integer length, Integer width, Integer height, Integer code_sector, Integer x_coord, Integer y_coord, Integer angle, LoadSide load_side, Integer code_rack_template, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer user_draft, Date date_draft) {
+		this.code_sector = code_sector;
+		this.code_rack = code_rack;
+		this.state_rack=state_rack;
+		this.name_rack = name_rack;
+		this.rack_barcode = rack_barcode;
+		this.length = length;
+		this.width = width;
+		this.height = height;
+		this.x_coord = x_coord;
+		this.y_coord = y_coord;
+		this.angle = angle;
+		this.load_side=load_side;
+		this.code_rack_template = code_rack_template;
+		this.user_insert = user_insert;
+		this.date_insert = date_insert;
+		this.user_update = user_update;
+		this.date_update = date_update;
+		this.user_draft = user_draft;
+		this.date_draft = date_draft;
+	}
+
+	public Integer getCode_sector() {
+		return code_sector;
+	}
+
+	public void setCode_sector(Integer code_sector) {
+		this.code_sector = code_sector;
+	}
+
+	public Integer getCode_rack() {
+		return code_rack;
+	}
+
+	public void setCode_rack(Integer code_rack) {
+		this.code_rack = code_rack;
+	}
+
+	public StateRack getState_rack() {
+		return state_rack;
+	}
+
+	public void setState_rack(StateRack state_rack) {
+		this.state_rack = state_rack;
+	}
+
+	public void setState_rack(String state_rack) {
+		this.state_rack = (state_rack != null) ? StateRack.valueOf(state_rack) : null;
+	}
+
+	public String getName_rack() {
+		return name_rack;
+	}
+
+	public void setName_rack(String name_rack) {
+		this.name_rack = name_rack;
+	}
+
+	public String getRack_barcode() {
+		return rack_barcode;
+	}
+
+	public void setRack_barcode(String rack_barcode) {
+		this.rack_barcode = rack_barcode;
+	}
+
+	public Integer getLength() {
+		return length;
+	}
+
+	public void setLength(Integer length) {
+		this.length = length;
+	}
+
+	public Integer getWidth() {
+		return width;
+	}
+
+	public void setWidth(Integer width) {
+		this.width = width;
+	}
+
+	public Integer getHeight() {
+		return height;
+	}
+
+	public void setHeight(Integer height) {
+		this.height = height;
+	}
+
+	public Integer getX_coord() {
+		return x_coord;
+	}
+
+	public void setX_coord(Integer x_coord) {
+		this.x_coord = x_coord;
+	}
+
+	public Integer getY_coord() {
+		return y_coord;
+	}
+
+	public void setY_coord(Integer y_coord) {
+		this.y_coord = y_coord;
+	}
+
+	public Integer getAngle() {
+		return angle;
+	}
+
+	public void setAngle(Integer angle) {
+		this.angle = angle;
+	}
+
+	public LoadSide getLoad_side() {
+		return load_side;
+	}
+
+	public String getLoad_sideAtStr() {
+		return (load_side!=null)?load_side.name():null;
+	}
+
+	public void setLoad_side(LoadSide load_side) {
+		this.load_side = load_side;
+	}
+
+	public void setLoad_side(String load_side) {
+		this.load_side = (load_side != null) ? LoadSide.valueOf(load_side) : null;
+	}
+
+	public Integer getCode_rack_template() {
+		return code_rack_template;
+	}
+
+	public void setCode_rack_template(Integer code_rack_template) {
+		this.code_rack_template = code_rack_template;
+	}
+
+	public Integer getUser_insert() {
+		return user_insert;
+	}
+
+	public void setUser_insert(Integer user_insert) {
+		this.user_insert = user_insert;
+	}
+
+	public Date getDate_insert() {
+		return date_insert;
+	}
+
+	public void setDate_insert(Date date_insert) {
+		this.date_insert = date_insert;
+	}
+
+	public Integer getUser_update() {
+		return user_update;
+	}
+
+	public void setUser_update(Integer user_update) {
+		this.user_update = user_update;
+	}
+
+	public Date getDate_update() {
+		return date_update;
+	}
+
+	public void setDate_update(Date date_update) {
+		this.date_update = date_update;
+	}
+
+	public Integer getUser_draft() {
+		return user_draft;
+	}
+
+	public void setUser_draft(Integer user_draft) {
+		this.user_draft = user_draft;
+	}
+
+	public Date getDate_draft() {
+		return date_draft;
+	}
+
+	public void setDate_draft(Date date_draft) {
+		this.date_draft = date_draft;
+	}
+
+	public Rack(final ResultSet resultSet) throws SQLException {
+		code_sector = resultSet.getInt(RackConst.CODE_SECTOR);
+		code_rack = resultSet.getInt(RackConst.CODE_RACK);
+		setState_rack(resultSet.getString(RackConst.STATE_RACK));
+		name_rack = resultSet.getString(RackConst.NAME_RACK);
+		rack_barcode = resultSet.getString(RackConst.RACK_BARCODE);
+		length = resultSet.getInt(RackConst.LENGTH);
+		width = resultSet.getInt(RackConst.WIDTH);
+		height = resultSet.getInt(RackConst.HEIGHT);
+		x_coord = resultSet.getInt(RackConst.X_COORD);
+		y_coord = resultSet.getInt(RackConst.Y_COORD);
+		angle = resultSet.getInt(RackConst.ANGLE);
+		setLoad_side(resultSet.getString(RackConst.LOAD_SIDE));
+		code_rack_template = resultSet.getInt(RackConst.CODE_RACK_TEMPLATE);
+		user_insert = resultSet.getInt(RackConst.USER_INSERT);
+		date_insert = resultSet.getDate(RackConst.DATE_INSERT);
+		user_update = resultSet.getInt(RackConst.USER_UPDATE);
+		date_update = resultSet.getDate(RackConst.DATE_UPDATE);
+		user_draft = resultSet.getInt(RackConst.USER_DRAFT);
+		date_draft = resultSet.getDate(RackConst.DATE_DRAFT);
+	}
+
+	public Rack(final JsonObject rackJson) {
+		code_sector = JsonUtils.getInteger(rackJson, RackConst.CODE_SECTOR);
+		code_rack = JsonUtils.getInteger(rackJson, RackConst.CODE_RACK);
+		setState_rack(JsonUtils.getString(rackJson, RackConst.STATE_RACK));
+		name_rack = JsonUtils.getString(rackJson, RackConst.NAME_RACK);
+		rack_barcode = JsonUtils.getString(rackJson, RackConst.RACK_BARCODE);
+		length = JsonUtils.getInteger(rackJson, RackConst.LENGTH);
+		width = JsonUtils.getInteger(rackJson, RackConst.WIDTH);
+		height = JsonUtils.getInteger(rackJson, RackConst.HEIGHT);
+		x_coord = JsonUtils.getInteger(rackJson, RackConst.X_COORD);
+		y_coord = JsonUtils.getInteger(rackJson, RackConst.Y_COORD);
+		angle = JsonUtils.getInteger(rackJson, RackConst.ANGLE);
+		setLoad_side(JsonUtils.getString(rackJson, RackConst.LOAD_SIDE));
+		code_rack_template = JsonUtils.getInteger(rackJson, RackConst.CODE_RACK_TEMPLATE);
+		user_insert = JsonUtils.getInteger(rackJson, RackConst.USER_INSERT);
+		date_insert = JsonUtils.getDate(rackJson, RackConst.DATE_INSERT);
+		user_update = JsonUtils.getInteger(rackJson, RackConst.USER_UPDATE);
+		date_update = JsonUtils.getDate(rackJson, RackConst.DATE_UPDATE);
+		user_draft = JsonUtils.getInteger(rackJson, RackConst.USER_DRAFT);
+		date_draft = JsonUtils.getDate(rackJson, RackConst.DATE_DRAFT);
+	}
+
+	@Override
+	public JsonObject toJsonObject() {
+		final JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty(RackConst.CODE_SECTOR, code_sector);
+		jsonObject.addProperty(RackConst.CODE_RACK, code_rack);
+		jsonObject.addProperty(RackConst.STATE_RACK, (state_rack != null) ? state_rack.name() : null);
+		jsonObject.addProperty(RackConst.NAME_RACK, name_rack);
+		jsonObject.addProperty(RackConst.RACK_BARCODE, rack_barcode);
+		jsonObject.addProperty(RackConst.LENGTH, length);
+		jsonObject.addProperty(RackConst.WIDTH, width);
+		jsonObject.addProperty(RackConst.HEIGHT, height);
+		jsonObject.addProperty(RackConst.X_COORD, x_coord);
+		jsonObject.addProperty(RackConst.Y_COORD, y_coord);
+		jsonObject.addProperty(RackConst.ANGLE, angle);
+		jsonObject.addProperty(RackConst.LOAD_SIDE, (load_side != null) ? load_side.name() : null);
+		jsonObject.addProperty(RackConst.CODE_RACK_TEMPLATE, code_rack_template);
+		jsonObject.addProperty(RackConst.USER_INSERT, user_insert);
+		JsonUtils.set(jsonObject, RackConst.DATE_INSERT, date_insert);
+		jsonObject.addProperty(RackConst.USER_UPDATE, user_update);
+		JsonUtils.set(jsonObject, RackConst.DATE_UPDATE, date_update);
+		jsonObject.addProperty(RackConst.USER_DRAFT, user_draft);
+		JsonUtils.set(jsonObject, RackConst.DATE_DRAFT, date_draft);
+		return jsonObject;
+	}
+}
