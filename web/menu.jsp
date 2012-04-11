@@ -35,9 +35,6 @@
 					<td><a href="#" onclick="logout()"><%=JspUtils.toMenuTitle("Выход")%></a></td>
 				</tr>
 				<tr>
-					<td><a href="showcaseEdit.jsp"><%=JspUtils.toMenuTitle("Редактирование стеллажа(-)")%></a></td>
-				</tr>
-				<tr>
 					<td><a href="showcaseProducts.jsp"><%=JspUtils.toMenuTitle("Товары стеллажа(-)")%></a></td>
 				</tr>
 				<tr>

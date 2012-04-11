@@ -377,8 +377,8 @@ function drawEditCanvas() {
 	window.edit_context.lineWidth = 1;
 	window.edit_context.strokeStyle = "BLACK";
 	window.edit_context.strokeRect(
-			-window.kx / window.km, 
-			-window.ky / window.km, 
+			-window.kx / window.km,
+			-window.ky / window.km,
 			window.sector.length / window.km,
 			window.sector.width / window.km);
 	for (var i = 0; i < window.showcaseList.length; i++) {
@@ -387,7 +387,7 @@ function drawEditCanvas() {
 }
 
 function drawPreviewCanvas() {
-	window.preview_context.clearRect(0, 0, window.edit_canvas.width, window.edit_canvas.height);
+	window.preview_context.clearRect(0, 0, window.preview_canvas.width, window.preview_canvas.height);
 	window.preview_context.lineWidth = 1;
 	window.preview_context.strokeStyle = "BLACK";
 	window.preview_context.strokeRect(0, 0, window.sector.length / window.preview_m, window.sector.width / window.preview_m);

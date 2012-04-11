@@ -19,7 +19,7 @@ public class TestQuery {
 
 		UserContext userContext = null;
 		try {
-			userContext = new UserContext("a_poljakov", "FecUnRec");
+			userContext = new UserContext("", "");
 			System.out.println("-------------------------StateAllModel-------------------------");
 			testStateAllModel(userContext);
 			System.out.println("-------------------------ShopModel-------------------------");

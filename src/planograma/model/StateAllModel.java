@@ -3,7 +3,6 @@ package planograma.model;
 import planograma.constant.data.StateAllConst;
 import planograma.data.StateAll;
 import planograma.data.UserContext;
-import planograma.data.wrapper.StateAllWrapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
