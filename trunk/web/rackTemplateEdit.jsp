@@ -260,7 +260,6 @@
 		window.km = edit_m;
 		window.kx = 0;
 		window.ky = 0;
-		//TODO
 
 		window.shelfAdd = false;
 		window.editMove = 0;
@@ -353,6 +352,18 @@
 		shelf.x4 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
 		shelf.y4 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
 	}
+	function roundShelf(shelh)
+	{
+		shelf.x_coord=Math.round(shelf.x_coord);
+		shelf.y_coord=Math.round(shelf.y_coord);
+		shelf.shelf_width=Math.round(shelf.shelf_width);
+		shelf.shelf_height=Math.round(shelf.shelf_height);
+		shelf.shelf_length=Math.round(shelf.shelf_length);
+		selectShelf(shelh);
+		calcCoordinates(shelf);
+		drawEditCanvas();
+		drawPreviewCanvas();
+	}
 </script>
 <%--прорисовка элементов--%>
 <script type="text/javascript">
@@ -362,32 +373,32 @@
 		window.edit_context.strokeStyle = "BLACK";
 		window.edit_context.strokeRect(
 				-window.kx / window.km,
-				-window.ky / window.km,
+				window.edit_canvas.height + window.ky / window.km,
 				window.rackTemplate.width / window.km,
-				window.rackTemplate.height / window.km);
+				- window.rackTemplate.height / window.km);
 		for (var i = 0; i < window.rackShelfTemplateList.length; i++) {
-			drawShelf( window.rackShelfTemplateList[i], window.edit_context, window.kx, window.ky, window.km);
+			drawShelf( window.rackShelfTemplateList[i], window.edit_canvas, window.edit_context, window.kx, window.ky, window.km);
 		}
 	}
 	function drawPreviewCanvas()
 	{
-		window.preview_context.clearRect(0, 0, window.edit_canvas.width, window.edit_canvas.height);
+		window.preview_context.clearRect(0, 0, window.preview_canvas.width, window.preview_canvas.height);
 		window.preview_context.lineWidth = 1;
 		window.preview_context.strokeStyle = "BLACK";
-		window.preview_context.strokeRect(0, 0,
+		window.preview_context.strokeRect(0, window.preview_canvas.height,
 				window.rackTemplate.width / window.preview_m,
-				window.rackTemplate.height / window.preview_m);
+				-window.rackTemplate.height / window.preview_m);
 		for (var i = 0; i < window.rackShelfTemplateList.length; i++) {
-			drawShelf(window.rackShelfTemplateList[i], window.preview_context, 0, 0, window.preview_m);
+			drawShelf(window.rackShelfTemplateList[i], window.preview_canvas, window.preview_context, 0, 0, window.preview_m);
 		}
 		window.preview_context.lineWidth = 1;
 		window.preview_context.strokeStyle = "BLUE";
 		window.preview_context.strokeRect(window.kx / window.preview_m,
-				window.preview_canvas.height-window.ky / window.preview_m,
+				window.preview_canvas.height - window.ky / window.preview_m,
 				window.edit_canvas.width * window.km / window.preview_m,
-				window.edit_canvas.height * window.km / window.preview_m);
+				- window.edit_canvas.height * window.km / window.preview_m);
 	}
-	function drawShelf(shelfTemplate, context, kx, ky, m) {
+	function drawShelf(shelfTemplate, canvas, context, kx, ky, m) {
 		context.lineWidth = 1;
 		if (window.shelf==shelfTemplate)
 		{
@@ -400,16 +411,16 @@
 		context.beginPath();
 		var x1 = (shelfTemplate.x1 - kx) / m;
 //		var y1 = (shelfTemplate.y1 - ky) / m;
-		var y1 = (window.rackTemplate.height - shelfTemplate.y1 + ky) / m;
+		var y1 = canvas.height - (shelfTemplate.y1 - ky) / m;
 		var x2 = (shelfTemplate.x2 - kx) / m;
 //		var y2 = ( shelfTemplate.y2 - ky) / m;
-		var y2 = (window.rackTemplate.height - shelfTemplate.y2 + ky) / m;
+		var y2 = canvas.height - (shelfTemplate.y2 - ky) / m;
 		var x3 = (shelfTemplate.x3 - kx) / m;
 //		var y3 = ( shelfTemplate.y3 - ky) / m;
-		var y3 = (window.rackTemplate.height - shelfTemplate.y3 + ky) / m;
+		var y3 = canvas.height - (shelfTemplate.y3 - ky) / m;
 		var x4 = (shelfTemplate.x4 - kx) / m;
 //		var y4 = ( shelfTemplate.y4 - ky) / m;
-		var y4 = (window.rackTemplate.height - shelfTemplate.y4 + ky) / m;
+		var y4 = canvas.height - (shelfTemplate.y4 - ky) / m;
 		context.moveTo(x1, y1);
 		context.lineTo(x2, y2);
 		context.lineTo(x3, y3);
@@ -500,7 +511,7 @@
 		var evnt = ie_event(e);
 		var sx = window.kx + evnt.offsetX * window.km;
 //		var sy = window.ky + evnt.offsetY * window.km;
-		var sy = window.rackTemplate.height - window.ky - evnt.offsetY * window.km;
+		var sy = window.ky + (window.edit_canvas.height - evnt.offsetY) * window.km;
 
 		if (window.shelfAdd==true)
 		{
@@ -570,18 +581,26 @@
 	}
 
 		window.edit_canvas.onmouseup = function(e) {
+			if (window.shelf!=null)
+			{
+				roundShelf(window.shelf);
+			}
 		window.editMove = 0;
 	}
 
 		window.edit_canvas.onmouseout = function(e) {
+			if (window.shelf!=null)
+			{
+				roundShelf(window.shelf);
+			}
 		window.editMove = 0;
 	}
 
 		window.edit_canvas.onmousemove = function (e) {
 		if (window.editMove != 0 && window.shelf != null) {
 			var evnt = ie_event(e);
-			var dx = Math.round((evnt.clientX - x) * window.km);
-			var dy = -Math.round((evnt.clientY - y) * window.km);
+			var dx = (evnt.clientX - x) * window.km;
+			var dy = -(evnt.clientY - y) * window.km;
 			if (dx != 0 || dy != 0) {
 				// перемещение
 				if (window.editMove == 1) {
@@ -678,7 +697,7 @@
 			y = evnt.clientY;
 			window.kx = evnt.offsetX * window.preview_m - window.edit_canvas.width * window.km / 2;
 //			window.ky = evnt.offsetY * window.preview_m - window.edit_canvas.height * window.km / 2;
-			window.ky = window.rackTemplate.height - evnt.offsetY * window.preview_m + window.edit_canvas.height * window.km / 2;
+			window.ky = window.rackTemplate.height - evnt.offsetY * window.preview_m - window.edit_canvas.height * window.km / 2;
 			checkKxKy();
 			drawPreviewCanvas();
 		};
@@ -702,7 +721,7 @@
 				var evnt = ie_event(e);
 				window.kx = window.kx + (evnt.clientX - x) * window.preview_m;
 //				window.ky = window.ky + (evnt.clientY - y) * window.preview_m;
-				window.ky = window.ky - (evnt.clientY + y) * window.preview_m;
+				window.ky = window.ky - (evnt.clientY - y) * window.preview_m;
 				checkKxKy();
 				x = evnt.clientX;
 				y = evnt.clientY;
@@ -730,12 +749,12 @@
 	}
 
 	function checkKxKy() {
-		if (window.kx > window.rackTemplate.width - window.edit_canvas.width * window.km/2)
-			window.kx = window.rackTemplate.width - window.edit_canvas.width * window.km/2;
+		if (window.kx > window.rackTemplate.width - window.edit_canvas.width * window.km)
+			window.kx = window.rackTemplate.width - window.edit_canvas.width * window.km;
 		if (window.kx < 0)
 			window.kx = 0;
-		if (window.ky > window.rackTemplate.height - window.edit_canvas.height * window.km/2)
-			window.ky = window.rackTemplate.height - window.edit_canvas.height * window.km/2;
+		if (window.ky > window.rackTemplate.height - window.edit_canvas.height * window.km)
+			window.ky = window.rackTemplate.height - window.edit_canvas.height * window.km;
 		if (window.ky < 0)
 			window.ky = 0;
 	}
