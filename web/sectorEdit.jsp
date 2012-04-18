@@ -5,6 +5,7 @@
 <%@ page import="planograma.servlet.sector.SectorEdit" %>
 <%@ page import="planograma.constant.data.SectorConst" %>
 <%@ page import="planograma.data.LoadSide" %>
+<%@ page import="planograma.servlet.racktemplate.RackTemplateList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%-- TODO При выделении подсвечивать --%>
 <%-- TODO Отслеживать изменния размера окна --%>
@@ -60,13 +61,13 @@
 								<td><a href="#" onclick="return aOnClick(this, fRackAdd)"><%=JspUtils.toMenuTitle("Добавить объект")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this)" class="disabled notReady"><%=JspUtils.toMenuTitle("Добавить стандартный стеллаж")%></a></td>
+								<td><a href="#" onclick="return aOnClick(this, fRackTemplateAdd)"><%=JspUtils.toMenuTitle("Добавить стандартный стеллаж")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" onclick="return aOnClick(this)" class="disabled notReady"><%=JspUtils.toMenuTitle("Просмотреть стеллаж")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this)" class="disabled notReady"><%=JspUtils.toMenuTitle("Редактировать стеллаж")%></a></td>
+								<td><a href="#" id="butEdit" onclick="return aOnClick(this, fRackEdit)" class="disabled"><%=JspUtils.toMenuTitle("Редактировать стеллаж")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" onclick="return aOnClick(this)" class="disabled notReady"><%=JspUtils.toMenuTitle("Расстановка товара")%></a></td>
@@ -243,6 +244,51 @@
 	</tr>
 </table>
 
+<table id="rackTemplate">
+	<tr>
+		<td class="path">
+			<table>
+				<tr>
+					<td><i>Выбор стандартного стеллажа</i></td>
+					<td width="100%"></td>
+					<td><a href="#" onclick="rackTemplateCancel()">&#x2715;</a></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table class="frame">
+			<colgroup>
+				<col width="25%"/>
+				<col width="75%"/>
+			</colgroup>
+				<tr>
+					<td>
+						<select id="rackTemplateList" size="20" style="width: 100%; height: 100%; min-width: 150px;" onchange="selectRackTemplate(value)">
+						</select>
+					</td>
+					<td style="min-width: 150px; background-color: #dcdcdc;">
+						preview
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="path">
+			<table>
+				<tr>
+					<td width="100%"></td>
+					<td><a href="#" onclick="rackTemplateCancel()">Отмена</a></td>
+					<td>&nbsp;</td>
+					<td><a href="#" onclick="rackTemplateOk()">Ок</a></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
 <script type="text/javascript">
 
 var edit_canvas;
@@ -305,6 +351,7 @@ function loadComplite2()
  ky = 0;
 // draw sector
  window.rackAdd = false;
+	window.rackTemplateAdd = null;
  editMove = 0;
  previewMove = false;
  x = 0;
@@ -312,8 +359,8 @@ function loadComplite2()
  showcase = null;
  copyObject=null;
 
-for (var i = 0; i < showcaseList.length; i++) {
-	calcCoordinates(showcaseList[i]);
+for (var i = 0; i < window.showcaseList.length; i++) {
+	calcCoordinates(window.showcaseList[i]);
 }
 
 drawEditCanvas();
@@ -403,7 +450,14 @@ function drawPreviewCanvas() {
 }
 
 function drawShowcase(showcase, context, kx, ky, m) {
-//	context.lineWidth = 2;
+	var x1 = Math.round((showcase.x1 - kx) / m);
+	var y1 = Math.round((showcase.y1 - ky) / m);
+	var x2 = Math.round((showcase.x2 - kx) / m);
+	var y2 = Math.round((showcase.y2 - ky) / m);
+	var x3 = Math.round((showcase.x3 - kx) / m);
+	var y3 = Math.round((showcase.y3 - ky) / m);
+	var x4 = Math.round((showcase.x4 - kx) / m);
+	var y4 = Math.round((showcase.y4 - ky) / m);
 	if (window.showcase==showcase)
 	{
 		context.strokeStyle = "BLUE";
@@ -416,22 +470,14 @@ function drawShowcase(showcase, context, kx, ky, m) {
 	if (showcase.load_side == 'U' || showcase.load_side == 'E')
 	{
 //		context.strokeStyle = "GREEN";
-		context.lineWidth = 1;
+		context.lineWidth = 3;
 	}
 	else
 	{
 //		context.strokeStyle = "BLACK";
-		context.lineWidth = 2;
+		context.lineWidth = 1;
 	}
 	context.beginPath();
-	var x1 = showcase.x1 / m - kx / m;
-	var y1 = showcase.y1 / m - ky / m
-	var x2 = showcase.x2 / m - kx / m;
-	var y2 = showcase.y2 / m - ky / m
-	var x3 = showcase.x3 / m - kx / m;
-	var y3 = showcase.y3 / m - ky / m
-	var x4 = showcase.x4 / m - kx / m;
-	var y4 = showcase.y4 / m - ky / m
 	context.moveTo(x1, y1);
 	context.lineTo(x2, y2);
 	context.stroke();
@@ -439,12 +485,12 @@ function drawShowcase(showcase, context, kx, ky, m) {
 	if (showcase.load_side == 'U' || showcase.load_side == 'N')
 	{
 //		context.strokeStyle = "GREEN";
-		context.lineWidth = 1;
+		context.lineWidth = 3;
 	}
 	else
 	{
 //		context.strokeStyle = "BLACK";
-		context.lineWidth = 2;
+		context.lineWidth = 1;
 	}
 	context.beginPath();
 	context.moveTo(x2, y2);
@@ -454,12 +500,12 @@ function drawShowcase(showcase, context, kx, ky, m) {
 	if (showcase.load_side == 'U' || showcase.load_side == 'W')
 	{
 //		context.strokeStyle = "GREEN";
-		context.lineWidth = 1;
+		context.lineWidth = 3;
 	}
 	else
 	{
 //		context.strokeStyle = "BLACK";
-		context.lineWidth = 2;
+		context.lineWidth = 1;
 	}
 	context.beginPath();
 	context.moveTo(x3, y3);
@@ -470,12 +516,12 @@ function drawShowcase(showcase, context, kx, ky, m) {
 	if (showcase.load_side == 'U' || showcase.load_side == 'S')
 	{
 //		context.strokeStyle = "GREEN";
-		context.lineWidth = 1;
+		context.lineWidth = 3;
 	}
 	else
 	{
 //		context.strokeStyle = "BLACK";
-		context.lineWidth = 2;
+		context.lineWidth = 1;
 	}
 	context.beginPath();
 	context.moveTo(x4, y4);
@@ -494,6 +540,11 @@ function selectShowcase(showcase) {
 		document.getElementById('showcaseLength').value = showcase.length;
 		document.getElementById('showcaseHeight').value = showcase.height;
 		document.getElementById('rackLoadSide').value = showcase.load_side;
+		if (showcase.code_rack != null && showcase.code_rack != '') {
+			$('#butEdit').removeClass('disabled');
+		} else {
+			$('#butEdit').addClass('disabled');
+		}
 		$('#butCopy').removeClass('disabled');
 		$('#butCut').removeClass('disabled');
 	} else {
@@ -506,6 +557,7 @@ function selectShowcase(showcase) {
 		document.getElementById('showcaseLength').value = '';
 		document.getElementById('showcaseHeight').value = '';
 		document.getElementById('rackLoadSide').value = '';
+		$('#butEdit').addClass('disabled');
 		$('#butCopy').addClass('disabled');
 		$('#butCut').addClass('disabled');
 	}
@@ -517,6 +569,16 @@ function selectShowcase(showcase) {
 	{
 		postJson('<%=SectorSave.URL%>', {sector:window.sector, rackList:window.showcaseList}, function (data) {
 			setCookie('<%=SectorConst.CODE_SECTOR%>', data.code_sector);
+			postJson('<%=SectorEdit.URL%>', {code_sector: data.code_sector}, function (data) {
+				window.sector=data.sector;
+				setSectorProperty(sector);
+				window.showcaseList = data.rackList;
+				for (var i = 0; i < window.showcaseList.length; i++) {
+					calcCoordinates(window.showcaseList[i]);
+				}
+				drawEditCanvas();
+				drawPreviewCanvas();
+			});
 		});
 	}
 
@@ -529,9 +591,44 @@ function selectShowcase(showcase) {
 	{
 		window.rackAdd=true;
 	}
-	// TODO addTemplate
+
+	function fRackTemplateAdd()
+	{
+		postJson('<%=RackTemplateList.URL%>', null, function (data) {
+			var rackTemplateList = $('#rackTemplateList');
+			rackTemplateList.empty();
+			for (var i in data.rackTemplateList) {
+				var item = data.rackTemplateList[i];
+				var option = $('<option></option>')
+				option.val(item.code_rack_template);
+				option.text(item.name_rack_template);
+				option.attr('json', $.toJSON(item));
+				rackTemplateList.append(option)
+			}
+			var code_rack_template = getCookie('code_rack_template');
+			if (code_rack_template != null && code_rack_template.length > 0) {
+				var option = rackTemplateList.find('option[value=' + code_rack_template + ']');
+				if (option.length == 1) {
+					option.attr('selected', 'selected');
+				}
+			}
+			var rackTemplate=$('#rackTemplate');
+			rackTemplate.animate({opacity:'show'},500);
+		});
+	}
 	// TODO rackView
-	// TODO rackEdit
+	function fRackEdit()
+	{
+		if (window.showcase!=null)
+		{
+		var code_rack = window.showcase.code_rack;
+		if (code_rack!=null && code_rack!='')
+		{
+			setCookie('code_rack', code_rack);
+			document.location='rackEdit.jsp';
+		}
+		}
+	}
 
 	function fRackCopy()
 	{
@@ -602,6 +699,36 @@ function selectShowcase(showcase) {
 				x = evnt.clientX;
 				y = evnt.clientY;
 				window.editMove=19;
+			}
+			else if (window.rackTemplateAdd!=null)
+			{
+				window.showcase=clone(window.rackTemplateAdd);
+				window.showcase.code_sector=window.sector.code_sector;
+				window.showcase.name_rack=window.rackTemplateAdd.name_rack_template;
+				if (window.rackTemplateAdd.load_side=='<%=LoadSide.U%>')
+				{
+					window.showcase.length=window.rackTemplateAdd.width;
+					window.showcase.width=window.rackTemplateAdd.height;
+					window.showcase.height=window.rackTemplateAdd.length;
+				}
+				else
+				{
+					window.showcase.length=window.rackTemplateAdd.width;
+					window.showcase.width=window.rackTemplateAdd.length;
+					window.showcase.height=window.rackTemplateAdd.height;
+				}
+				window.showcase.rack_barcode='';
+				window.showcase.x_coord=sx;
+				window.showcase.y_coord=sy;
+				window.showcaseList.push(window.showcase);
+				selectShowcase(window.showcase);
+				calcCoordinates(window.showcase);
+				drawEditCanvas();
+				drawPreviewCanvas();
+				x = evnt.clientX;
+				y = evnt.clientY;
+				window.editMove=1;
+				window.rackTemplateAdd=null;
 			}
 			else
 			{
@@ -1065,10 +1192,40 @@ function selectShowcase(showcase) {
 	}
 
 	function changeShowcaseOpen(rackLoadSide) {
-		if (showcase != null) {
-			showcase.load_side = rackLoadSide.value;
+		if (window.showcase != null) {
+			//TODO
+//			if (window.showcase.code_rack_template==null
+//					|| window.showcase.code_rack_template==''
+//					|| window.showcase.load_side!='<%=LoadSide.U%>')
+//			{
+				// для шаблонного стеллажа нельзя меньть сторону загрузки "сверху" на другую
+//				if (window.showcase!='<%=LoadSide.U%>' && rackLoadSide.value!='<%=LoadSide.U%>')
+//				{
+//				}
+			window.showcase.load_side = rackLoadSide.value;
 			drawEditCanvas();
 			drawPreviewCanvas();
+//			}
+		}
+	}
+</script>
+<%-- обработка событий окно выбора стандартного стеллажа --%>
+<script type="text/javascript">
+	function rackTemplateCancel() {
+		var rackTemplate = $('#rackTemplate');
+		rackTemplate.animate({opacity:'hide'}, 500);
+	}
+	function rackTemplateOk() {
+		var rackTemplate = $('#rackTemplate');
+		rackTemplate.animate({opacity:'hide'}, 500);
+		var rackTemplateList = $('#rackTemplateList');
+		var code_rack_template = rackTemplateList.val();
+		if (code_rack_template != null && code_rack_template.length > 0) {
+			setCookie('code_rack_template', code_rack_template);
+			var option = rackTemplateList.find('option[value=' + code_rack_template + ']');
+			if (option.length == 1) {
+				window.rackTemplateAdd = $.evalJSON(option.attr('json'));
+			}
 		}
 	}
 </script>

@@ -16,7 +16,7 @@ public class JsonUtils {
 
 	public static Integer getInteger(final JsonObject jsonObject, final String key) {
 		final JsonElement jsonElement = jsonObject.get(key);
-		if (jsonElement.isJsonNull())
+		if (jsonElement==null || jsonElement.isJsonNull())
 			return null;
 		String s = jsonElement.getAsString();
 		int index = s.indexOf('.');
@@ -33,14 +33,14 @@ public class JsonUtils {
 
 	public static String getString(final JsonObject jsonObject, final String key) {
 		final JsonElement jsonElement = jsonObject.get(key);
-		if (jsonElement.isJsonNull())
+		if (jsonElement==null || jsonElement.isJsonNull())
 			return null;
 		return jsonElement.getAsString();
 	}
 
 	public static Date getDate(final JsonObject jsonObject, final String key) {
 		final JsonElement jsonElement = jsonObject.get(key);
-		if (jsonElement.isJsonNull())
+		if (jsonElement==null || jsonElement.isJsonNull())
 			return null;
 		return new Date(jsonElement.getAsLong());
 	}

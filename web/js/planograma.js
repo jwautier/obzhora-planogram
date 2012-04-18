@@ -189,12 +189,3 @@ function numberFieldKeyDown(event, obj) {
 	}
 }
 
-
-//postJson('Test',
-//	data,
-//	function (data, textStatus) {
-//		console.log(data);
-//		console.log(textStatus);
-//	}
-//);
-

@@ -136,7 +136,10 @@
 		var rackTemplateList = $('#rackTemplateList');
 		for (var i in data.rackTemplateList) {
 			var item = data.rackTemplateList[i];
-			rackTemplateList.append('<option value="' + item.code_rack_template + '">' + item.name_rack_template + '</option>')
+			var option = $('<option></option>')
+			option.val(item.code_rack_template);
+			option.text(item.name_rack_template);
+			rackTemplateList.append(option)
 		}
 		var code_rack_template = getCookie('code_rack_template');
 		if (code_rack_template != null && code_rack_template.length > 0) {

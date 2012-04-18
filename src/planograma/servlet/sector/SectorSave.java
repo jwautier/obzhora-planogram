@@ -5,12 +5,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import planograma.constant.UrlConst;
 import planograma.constant.data.SectorConst;
-import planograma.data.Rack;
-import planograma.data.Sector;
-import planograma.data.UserContext;
+import planograma.data.*;
 import planograma.exception.UnauthorizedException;
-import planograma.model.RackModel;
-import planograma.model.SectorModel;
+import planograma.model.*;
 import planograma.servlet.AbstractAction;
 
 import javax.servlet.ServletConfig;
@@ -35,12 +32,18 @@ public class SectorSave extends AbstractAction {
 
 	private SectorModel sectorModel;
 	private RackModel rackModel;
+	private RackShelfModel rackShelfModel;
+//	private RackTemplateModel rackTemplateModel;
+	private RackShelfTemplateModel rackShelfTemplateModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		sectorModel = SectorModel.getInstance();
 		rackModel = RackModel.getInstance();
+		rackShelfModel=RackShelfModel.getInstance();
+//		rackTemplateModel = RackTemplateModel.getInstance();
+		rackShelfTemplateModel = RackShelfTemplateModel.getInstance();
 	}
 
 	@Override
@@ -88,6 +91,18 @@ public class SectorSave extends AbstractAction {
 			// запись была добавлена
 			newRack.setCode_sector(sector.getCode_sector());
 			rackModel.insert(userContext, newRack);
+			if (newRack.getCode_rack_template()!=null)
+			{
+				// копируем полки с шаблонного стеллажа
+				for (final RackShelfTemplate shelfTemplate:rackShelfTemplateModel.list(userContext, newRack.getCode_rack_template()))
+				{
+					final RackShelf shelf=new RackShelf(newRack.getCode_rack(), null,
+							shelfTemplate.getX_coord(), shelfTemplate.getY_coord(),
+							shelfTemplate.getShelf_height(), shelfTemplate.getShelf_width(), shelfTemplate.getShelf_length(),
+							shelfTemplate.getAngle(), shelfTemplate.getType_shelf(), null, null, null, null);
+					rackShelfModel.insert(userContext, shelf);
+				}
+			}
 		}
 		commit(userContext);
 		final JsonObject jsonObject=new JsonObject();
