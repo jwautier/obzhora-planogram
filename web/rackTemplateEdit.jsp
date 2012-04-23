@@ -352,14 +352,14 @@
 		shelf.x4 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
 		shelf.y4 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
 	}
-	function roundShelf(shelh)
+	function roundShelf(shelf)
 	{
 		shelf.x_coord=Math.round(shelf.x_coord);
 		shelf.y_coord=Math.round(shelf.y_coord);
 		shelf.shelf_width=Math.round(shelf.shelf_width);
 		shelf.shelf_height=Math.round(shelf.shelf_height);
 		shelf.shelf_length=Math.round(shelf.shelf_length);
-		selectShelf(shelh);
+		selectShelf(shelf);
 		calcCoordinates(shelf);
 		drawEditCanvas();
 		drawPreviewCanvas();
@@ -527,7 +527,7 @@
 			drawPreviewCanvas();
 			x = evnt.clientX;
 			y = evnt.clientY;
-			window.editMove=19;
+			window.editMove=7;
 		}
 		else
 		{

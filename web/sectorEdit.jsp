@@ -562,6 +562,19 @@ function selectShowcase(showcase) {
 		$('#butCut').addClass('disabled');
 	}
 }
+function roundRack(rack)
+{
+	rack.x_coord=Math.round(rack.x_coord);
+	rack.y_coord=Math.round(rack.y_coord);
+	rack.width=Math.round(rack.width);
+	rack.height=Math.round(rack.height);
+	rack.length=Math.round(rack.length);
+	selectShowcase(rack);
+	calcCoordinates(rack);
+	drawEditCanvas();
+	drawPreviewCanvas();
+}
+
 </script>
 <%-- обработка событий меню --%>
 <script type="text/javascript">
@@ -775,10 +788,12 @@ function selectShowcase(showcase) {
 
 		window.edit_canvas.onmouseup = function(e) {
 			window.editMove = 0;
+			roundRack(window.showcase)
 		}
 
 		window.edit_canvas.onmouseout = function(e) {
 			window.editMove = 0;
+			roundRack(window.showcase)
 		}
 
 		window.edit_canvas.onmousemove = function (e) {
