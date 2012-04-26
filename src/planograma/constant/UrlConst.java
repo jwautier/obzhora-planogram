@@ -26,4 +26,6 @@ public interface UrlConst {
 	public static final String URL_RACK_EDIT = "servlet/rack/edit";
 	public static final String URL_RACK_SAVE = "servlet/rack/save";
 
+	public static final String URL_IMAGE_LOAD = "image/";
+
 }

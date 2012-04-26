@@ -37,7 +37,25 @@
           <root url="file://$MODULE_DIR$/libCompile" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/libSources/commons-beanutils-1.8.0-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/commons-collections-3.2.1-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/commons-lang-2.4-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/commons-lang-2.5-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/commons-logging-1.1.1-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/ecj-3.7-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/ezmorph-1.0.6-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/gson-2.1-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/json-lib-2.4-jdk15-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/tomcat-api-7.0.25-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/tomcat-el-api-7.0.25-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/tomcat-jasper-7.0.25-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/tomcat-jasper-el-7.0.25-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/tomcat-jsp-api-7.0.25-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/tomcat-juli-7.0.25-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/tomcat-servlet-api-7.0.25-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/tomcat-util-7.0.25-sources.jar!/" />
+        </SOURCES>
         <jarDirectory url="file://$MODULE_DIR$/libCompile" recursive="false" />
       </library>
     </orderEntry>
