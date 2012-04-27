@@ -20,7 +20,7 @@ import java.sql.SQLException;
 public class ImageModel {
 	private final File tempDir;
 	public static final String Q_SELECT = "select" +
-			" " + ImageConst.IMAGE + " " +
+			" " + ImageConst.IMAGE_THUMBNAIL + " " +
 			"from " + ImageConst.TABLE_NAME + " " +
 			"where " + ImageConst.CODE_IMAGE + " = ?";
 
@@ -38,11 +38,7 @@ public class ImageModel {
 				FileUtils.copy(in, new FileOutputStream(file));
 			}
 		}
-		try {
-			in = new FileInputStream(file);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		in = new FileInputStream(file);
 //		System.out.println(System.currentTimeMillis()-time);
 		return in;
 	}
@@ -69,9 +65,5 @@ public class ImageModel {
 	@Override
 	protected void finalize() throws Throwable {
 		FileUtils.delete(tempDir);
-	}
-
-	public static void main(String args[]) {
-		final ImageModel instance = getInstance();
 	}
 }

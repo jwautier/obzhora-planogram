@@ -11,5 +11,6 @@ public interface ImageConst {
 	public static final String TABLE_NAME = "mz.image";
 
 	public static final String CODE_IMAGE = "code_image";
-	public static final String IMAGE = "image";
+//	public static final String IMAGE = "image";
+	public static final String IMAGE_THUMBNAIL = "image_thumbnail";
 }

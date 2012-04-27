@@ -26,7 +26,7 @@ import java.sql.SQLException;
  * To change this template use File | Settings | File Templates.
  */
 @WebServlet("/" + UrlConst.URL_IMAGE_LOAD + "*")
-public class LoadImageServlet extends HttpServlet {
+public class ImageLoad extends HttpServlet {
 
 	public static final String URL = UrlConst.URL_IMAGE_LOAD;
 
