@@ -1,5 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-		"http://www.w3.org/TR/html4/loose.dtd">
+<%@ page import="planograma.servlet.wares.WaresGroupTree" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
 	<title>Выбор товара</title>
@@ -13,10 +13,13 @@
 		/*.treeview * { font-size: 100.1%; }*/
 		.treeview ul
 		{
-			overflow: hidden; width: 100%; margin: 0; padding: 0 0 1.5em 0;
+			/*overflow: hidden; */
+			width: 100%; margin: 0; padding: 0 0 1.5em 0;
 			list-style-type: none;
 		}
-		.treeview ul ul { overflow: visible; width: auto; margin: 0; padding: 0 0 0 0.75em; }
+		.treeview ul ul {
+			/*overflow: visible; */
+			width: auto; margin: 0; padding: 0 0 0 0.75em; }
 			/* класс для ul после которых нет li в родительских ветках */
 		.treeview ul.l {
 			border-left: 1px solid;
@@ -26,7 +29,9 @@
 		.treeview li.cl ul { display: none; }
 		.treeview li { margin: 0; padding: 0; }
 		.treeview li li { margin: 0 0 0 0.5em; border-left: 1px dotted;  padding: 0; }
-		.treeview li div { position: relative; height: 1.5em; min-height: 16px; //height: 1.3em; }
+		.treeview li div { position: relative;
+			/*height: 1.5em; */
+			min-height: 16px; //height: 1.3em; }
 		.treeview li li div { border-bottom: 1px dotted; }
 		.treeview li p
 		{
@@ -100,8 +105,8 @@
 		<td>
 			<table class="frame">
 				<colgroup>
-					<col width="25%"/>
-					<col width="75%"/>
+					<col width="35%"/>
+					<col width="65%"/>
 				</colgroup>
 				<tr>
 					<td>
@@ -135,30 +140,16 @@
 	</tr>
 </table>
 <script type="text/javascript">
-	var tree = [
-		{code:"1", name:"1", children:[
-			{code:"11", name:"11", children:[{code:"111", name:"111", children:[
-				{code:"1111", name:"1111", children:[]},
-				{code:"1112", name:"1112", children:[
-					{code:"11121", name:"11121", children:[]}
-				]}
-			]}]},
-			{code:"12", name:"12", children:[
-				{code:"121", name:"121", children:[]}
-			]}
-		]},
-		{code:"2", name:"2", children:[
-			{code:"21", name:"21", children:[]},
-			{code:"22", name:"22", children:[
-				{code:"221", name:"221", children:[]}
-			]}
-		]}
-	];
+
+	postJson('<%=WaresGroupTree.URL%>', null, function(data){
+		$('#tree').append(treeToHtml(data.waresGroupTree));
+	})
 
 	var list_wares= [
 		{
 			code_wares:1,
-			url_image:'img/moloko-romol-25-p-e-094l-vbd-paket.jpg',
+//			url_image:'img/moloko-romol-25-p-e-094l-vbd-paket.jpg',
+			url_image:'image/42',
 			atricl:1,
 			name_wares:'wares1',
 			bar_code:1,
@@ -168,7 +159,8 @@
 		},
 		{
 			code_wares:2,
-			url_image:'img/moloko-seljanske-32-t-f-09l-lustdorf.jpg',
+//			url_image:'img/moloko-seljanske-32-t-f-09l-lustdorf.jpg',
+			url_image:'image/43',
 			atricl:2,
 			name_wares:'wares2',
 			bar_code:2,
@@ -178,7 +170,8 @@
 		},
 		{
 			code_wares:3,
-			url_image:'img/moloko-zareche-32-p-e-05l-kupjansk.jpg',
+//			url_image:'img/moloko-zareche-32-p-e-05l-kupjansk.jpg',
+			url_image:'image/44',
 			atricl:3,
 			name_wares:'wares3',
 			bar_code:3,
@@ -276,7 +269,7 @@
 			if (node.children.length > 0) {
 				nodeHtml += '<a href="#" class="sc" onclick="return UnHide(this)">&#9660;</a>';
 			}
-			nodeHtml += '<a href="#">' + node.name + '</a></p></div>'
+			nodeHtml += '<a href="#" onclick="selectWaresGroup('+node.code_group_wares+')">' + node.name + '</a></p></div>'
 			if (node.children.length > 0) {
 				nodeHtml += '<ul';
 				if(i==tree.length-1)
@@ -314,8 +307,17 @@
 		return rowHtml
 	}
 
-	$('#tree').append(treeToHtml(tree));
-	$('#list_wares').append(listWaresToHtml(list_wares));
+	function selectWaresGroup(code_group_wares)
+	{
+		//todo
+		/*postJson('<%//TODO WaresList.URL%>', null, function(data){
+			$('#list_wares').append(listWaresToHtml(data.waresList));
+		})*/
+		alert(code_group_wares);
+	}
+
+
+//	$('#list_wares').append(listWaresToHtml(list_wares));
 
 
 </script>
