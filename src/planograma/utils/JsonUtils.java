@@ -38,6 +38,15 @@ public class JsonUtils {
 		return jsonElement.getAsString();
 	}
 
+	//TODO proverit
+	public static boolean getBoolean(final JsonObject jsonObject, final String key)
+	{
+		final JsonElement jsonElement = jsonObject.get(key);
+		if (jsonElement==null || jsonElement.isJsonNull())
+			return false;
+		return jsonElement.getAsBoolean();
+	}
+
 	public static Date getDate(final JsonObject jsonObject, final String key) {
 		final JsonElement jsonElement = jsonObject.get(key);
 		if (jsonElement==null || jsonElement.isJsonNull())

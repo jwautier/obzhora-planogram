@@ -6,6 +6,7 @@
 <%@ page import="planograma.constant.data.SectorConst" %>
 <%@ page import="planograma.data.LoadSide" %>
 <%@ page import="planograma.servlet.racktemplate.RackTemplateList" %>
+<%@ page import="planograma.data.TypeRack" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%-- TODO При выделении подсвечивать --%>
 <%-- TODO Отслеживать изменния размера окна --%>
@@ -162,8 +163,14 @@
 											<td colspan="2">свойства объекта:</td>
 										</tr>
 										<tr>
-											<td align="right">стеллаж!!!</td>
-											<td><input type="checkbox" id="showcaseIs"/></td>
+											<td align="right">тип</td>
+											<td>
+												<select id="rackType" onchange="changeRackType(this)">
+													<option value="<%=TypeRack.R%>"><%=TypeRack.R.getDesc()%></option>
+													<option value="<%=TypeRack.WP%>"><%=TypeRack.WP.getDesc()%></option>
+													<option value="<%=TypeRack.DZ%>"><%=TypeRack.DZ.getDesc()%></option>
+												</select>
+											</td>
 										</tr>
 										<tr>
 											<td align="right">название</td>
@@ -174,6 +181,12 @@
 											<td align="right">штрихкод</td>
 											<td><input type="text" id="rackBarcode"
 													   onchange="changeRackBarcode(this)"/></td>
+										</tr>
+										<tr>
+											<td colspan="2">
+												<input type="checkbox" id="rackLockMove" onchange="changeRackLockMove(this)" value="true"/>
+												<label for="rackLockMove">блокировать перемещение</label>
+											</td>
 										</tr>
 										<tr>
 											<td align="right">x</td>
@@ -188,19 +201,13 @@
 										<tr>
 											<td align="right">поворот</td>
 											<td>
-												<select id="showcaseAngle" onchange="changeShowcaseAngle(this)">
-													<option>0</option>
-													<option>10</option>
-													<option>20</option>
-													<option>30</option>
-													<option>40</option>
-													<option>45</option>
-													<option>50</option>
-													<option>60</option>
-													<option>70</option>
-													<option>80</option>
-													<option>90</option>
-												</select>
+												<input type="text" id="showcaseAngle" onchange="changeShowcaseAngle(this)" onkeydown="numberFieldKeyDown(event, this)"/>
+											</td>
+										</tr>
+										<tr>
+											<td colspan="2">
+												<input type="checkbox" id="rackLockSize" onchange="changeRackLockSize(this)"/>
+												<label for="rackLockSize">блокировать размер</label>
 											</td>
 										</tr>
 										<tr>
@@ -223,10 +230,7 @@
 											<td>
 												<select id="rackLoadSide" onchange="changeShowcaseOpen(this)">
 													<option value="<%=LoadSide.U%>">Сверху</option>
-													<option value="<%=LoadSide.N%>">С севера</option>
-													<option value="<%=LoadSide.E%>">С востока</option>
-													<option value="<%=LoadSide.S%>">С юга</option>
-													<option value="<%=LoadSide.W%>">С запада</option>
+													<option value="<%=LoadSide.F%>">Спереди</option>
 												</select>
 											</td>
 										</tr>
@@ -325,7 +329,7 @@ function loadComplite()
 	{
 		window.sector=<%=new Sector(null, null, null, "Наименование", 1200, 600, 300, null, null,null, null,null,null).toJsonObject()%>;
 		window.sector.code_shop=code_shop;
-		window.showcaseList = [<%=new Rack(null, null, "Наименование", "",100, 100, 100, null, 100, 100, 0, LoadSide.S, null, null, null, null, null, null, null).toJsonObject()%>];
+		window.showcaseList = [<%=new Rack(null, null, "Наименование", "",100, 100, 100, null, 100, 100, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null).toJsonObject()%>];
 		loadComplite2();
 	}
 }
@@ -531,11 +535,14 @@ function drawShowcase(showcase, context, kx, ky, m) {
 
 function selectShowcase(showcase) {
 	if (showcase != null) {
+		document.getElementById('rackType').value = showcase.type_rack;
 		document.getElementById('rackName').value = showcase.name_rack;
 		document.getElementById('rackBarcode').value = showcase.rack_barcode;
+		document.getElementById('rackLockMove').value = showcase.lock_move;
 		document.getElementById('showcaseX').value = showcase.x_coord;
 		document.getElementById('showcaseY').value = showcase.y_coord;
 		document.getElementById('showcaseAngle').value = showcase.angle;
+		document.getElementById('rackLockSize').value = showcase.lock_size;
 		document.getElementById('showcaseWidth').value = showcase.width;
 		document.getElementById('showcaseLength').value = showcase.length;
 		document.getElementById('showcaseHeight').value = showcase.height;
@@ -548,11 +555,14 @@ function selectShowcase(showcase) {
 		$('#butCopy').removeClass('disabled');
 		$('#butCut').removeClass('disabled');
 	} else {
+		document.getElementById('rackType').value = '';
 		document.getElementById('rackName').value = '';
 		document.getElementById('rackBarcode').value = '';
+		document.getElementById('rackLockMove').value = false;
 		document.getElementById('showcaseX').value = '';
 		document.getElementById('showcaseY').value = '';
-		document.getElementById('showcaseAngle').value = 0;
+		document.getElementById('showcaseAngle').value = '';
+		document.getElementById('rackLockSize').value = false;
 		document.getElementById('showcaseWidth').value = '';
 		document.getElementById('showcaseLength').value = '';
 		document.getElementById('showcaseHeight').value = '';
@@ -700,7 +710,7 @@ function roundRack(rack)
 			if (window.rackAdd==true)
 			{
 				window.rackAdd=false;
-				window.showcase=<%=new Rack(null, null, "", "", 1, 1, 1,null, 0, 0, 0, LoadSide.N, null, null, null, null, null, null, null).toJsonObject()%>;
+				window.showcase=<%=new Rack(null, null, "", "", 1, 1, 1,null, 0, 0, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null).toJsonObject()%>;
 				window.showcase.code_sector=window.sector.code_sector;
 				window.showcase.x_coord=sx;
 				window.showcase.y_coord=sy;
@@ -1064,6 +1074,16 @@ function roundRack(rack)
 </script>
 <%-- обработка событий панели стеллажа--%>
 <script type="text/javascript">
+	function changeRackType(rackType){
+		if (showcase != null) {
+			if (showcase.type_rack != rackType.value) {
+				showcase.type_rack = rackType.value;
+				drawEditCanvas();
+				drawPreviewCanvas();
+			}
+		}
+	}
+
 	function changeShowcaseName(rackName) {
 		if (showcase != null) {
 			showcase.name_rack = rackName.value;
@@ -1073,6 +1093,26 @@ function roundRack(rack)
 	function changeRackBarcode(rackBarcode) {
 		if (showcase != null) {
 			showcase.rack_barcode = rackBarcode.value;
+		}
+	}
+
+	function changeRackLockMove(rackLockMove)
+	{
+		if (showcase != null) {
+		if (rackLockMove.checked)
+		{
+			$('#showcaseX').attr('readonly', 'readonly');
+			$('#showcaseY').attr('readonly', 'readonly');
+			$('#showcaseAngle').attr('readonly', 'readonly');
+			showcase.lock_move=true;
+		}
+		else
+		{
+			$('#showcaseX').removeAttr('readonly');
+			$('#showcaseY').removeAttr('readonly');
+			$('#showcaseAngle').removeAttr('readonly');
+			showcase.lock_move=false;
+		}
 		}
 	}
 
@@ -1124,17 +1164,8 @@ function roundRack(rack)
 		// TODO не выходит за области сектора
 		if (showcase != null) {
 			var angle = Number(showcaseAngle.value);
-			if (angle >= 0 && angle <= 90) {
-				if (angle == 90) {
-					showcaseAngle.value = 0;
-					showcase.angle = 0;
-					var temp = showcase.length;
-					showcase.length = showcase.width;
-					showcase.width = temp;
-				}
-				else {
-					showcase.angle = angle;
-				}
+			if (angle >= 0 && angle <= 360) {
+				showcase.angle = angle;
 				calcCoordinates(showcase);
 				drawEditCanvas();
 				drawPreviewCanvas();
@@ -1143,6 +1174,11 @@ function roundRack(rack)
 				showcaseAngle.value = showcase.angle;
 			}
 		}
+	}
+
+	function changeRackLockSize(rackLockSize)
+	{
+		//TODO
 	}
 
 	function changeShowcaseWidth(showcaseWidth) {

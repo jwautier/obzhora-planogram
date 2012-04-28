@@ -41,10 +41,6 @@ public class RackTemplate implements IJsonObject {
 	 */
 	private Integer height;
 	/**
-	 * Угол поворота
-	 */
-	private Integer angle;
-	/**
 	 * Сторона загрузи
 	 */
 	private LoadSide load_side;
@@ -73,14 +69,13 @@ public class RackTemplate implements IJsonObject {
 	 */
 	private Date date_draft;
 
-	public RackTemplate(Integer code_rack_template, StateRack state_rack_template, String name_rack_template, Integer length, Integer width, Integer height, Integer angle, LoadSide load_side, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer user_draft, Date date_draft) {
+	public RackTemplate(Integer code_rack_template, StateRack state_rack_template, String name_rack_template, Integer length, Integer width, Integer height, LoadSide load_side, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer user_draft, Date date_draft) {
 		this.code_rack_template = code_rack_template;
 		this.state_rack_template=state_rack_template;
 		this.name_rack_template = name_rack_template;
 		this.length = length;
 		this.width = width;
 		this.height = height;
-		this.angle = angle;
 		this.load_side=load_side;
 		this.user_insert = user_insert;
 		this.date_insert = date_insert;
@@ -140,14 +135,6 @@ public class RackTemplate implements IJsonObject {
 
 	public void setHeight(Integer height) {
 		this.height = height;
-	}
-
-	public Integer getAngle() {
-		return angle;
-	}
-
-	public void setAngle(Integer angle) {
-		this.angle = angle;
 	}
 
 	public LoadSide getLoad_side() {
@@ -221,7 +208,6 @@ public class RackTemplate implements IJsonObject {
 		length = resultSet.getInt(RackTemplateConst.LENGTH);
 		width = resultSet.getInt(RackTemplateConst.WIDTH);
 		height = resultSet.getInt(RackTemplateConst.HEIGHT);
-		angle = resultSet.getInt(RackTemplateConst.ANGLE);
 		setLoad_side(resultSet.getString(RackTemplateConst.LOAD_SIDE));
 		code_rack_template = resultSet.getInt(RackTemplateConst.CODE_RACK_TEMPLATE);
 		user_insert = resultSet.getInt(RackTemplateConst.USER_INSERT);
@@ -239,7 +225,6 @@ public class RackTemplate implements IJsonObject {
 		length = JsonUtils.getInteger(rackJson, RackTemplateConst.LENGTH);
 		width = JsonUtils.getInteger(rackJson, RackTemplateConst.WIDTH);
 		height = JsonUtils.getInteger(rackJson, RackTemplateConst.HEIGHT);
-		angle = JsonUtils.getInteger(rackJson, RackTemplateConst.ANGLE);
 		setLoad_side(JsonUtils.getString(rackJson, RackTemplateConst.LOAD_SIDE));
 		user_insert = JsonUtils.getInteger(rackJson, RackTemplateConst.USER_INSERT);
 		date_insert = JsonUtils.getDate(rackJson, RackTemplateConst.DATE_INSERT);
@@ -258,7 +243,6 @@ public class RackTemplate implements IJsonObject {
 		jsonObject.addProperty(RackTemplateConst.LENGTH, length);
 		jsonObject.addProperty(RackTemplateConst.WIDTH, width);
 		jsonObject.addProperty(RackTemplateConst.HEIGHT, height);
-		jsonObject.addProperty(RackTemplateConst.ANGLE, angle);
 		jsonObject.addProperty(RackTemplateConst.LOAD_SIDE, (load_side != null) ? load_side.name() : null);
 		jsonObject.addProperty(RackTemplateConst.USER_INSERT, user_insert);
 		JsonUtils.set(jsonObject, RackTemplateConst.DATE_INSERT, date_insert);

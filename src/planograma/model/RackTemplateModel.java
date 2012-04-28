@@ -24,7 +24,6 @@ public class RackTemplateModel {
 			" " + RackTemplateConst.LENGTH + "," +
 			" " + RackTemplateConst.WIDTH + "," +
 			" " + RackTemplateConst.HEIGHT + "," +
-			" " + RackTemplateConst.ANGLE + "," +
 			" " + RackTemplateConst.LOAD_SIDE + "," +
 			" " + RackTemplateConst.USER_INSERT + "," +
 			" " + RackTemplateConst.DATE_INSERT + "," +
@@ -56,7 +55,6 @@ public class RackTemplateModel {
 			" " + RackTemplateConst.LENGTH + "," +
 			" " + RackTemplateConst.WIDTH + "," +
 			" " + RackTemplateConst.HEIGHT + "," +
-			" " + RackTemplateConst.ANGLE + "," +
 			" " + RackTemplateConst.LOAD_SIDE + "," +
 			" " + RackTemplateConst.USER_INSERT + "," +
 			" " + RackTemplateConst.DATE_INSERT + "," +
@@ -88,7 +86,6 @@ public class RackTemplateModel {
 			":" + RackTemplateConst.LENGTH + ", " +
 			":" + RackTemplateConst.WIDTH + ", " +
 			":" + RackTemplateConst.HEIGHT + ", " +
-			":" + RackTemplateConst.ANGLE + ", " +
 			":" + RackTemplateConst.LOAD_SIDE + ")}";
 
 	public int insert(final UserContext userContext, final RackTemplate rackTemplate) throws SQLException {
@@ -101,7 +98,6 @@ public class RackTemplateModel {
 		callableStatement.setInt(RackTemplateConst.LENGTH, rackTemplate.getLength());
 		callableStatement.setInt(RackTemplateConst.WIDTH, rackTemplate.getWidth());
 		callableStatement.setInt(RackTemplateConst.HEIGHT, rackTemplate.getHeight());
-		callableStatement.setInt(RackTemplateConst.ANGLE, rackTemplate.getAngle());
 		callableStatement.setString(RackTemplateConst.LOAD_SIDE, rackTemplate.getLoad_sideAtStr());
 		callableStatement.execute();
 		final int id = callableStatement.getInt("new_code_rack_template");
@@ -119,7 +115,6 @@ public class RackTemplateModel {
 		callableStatement.setInt(RackTemplateConst.LENGTH, rackTemplate.getLength());
 		callableStatement.setInt(RackTemplateConst.WIDTH, rackTemplate.getWidth());
 		callableStatement.setInt(RackTemplateConst.HEIGHT, rackTemplate.getHeight());
-		callableStatement.setInt(RackTemplateConst.ANGLE, rackTemplate.getAngle());
 		callableStatement.setString(RackTemplateConst.LOAD_SIDE, rackTemplate.getLoad_sideAtStr());
 		callableStatement.execute();
 	}

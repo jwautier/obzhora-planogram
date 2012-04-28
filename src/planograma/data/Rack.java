@@ -69,6 +69,18 @@ public class Rack implements IJsonObject {
 	 */
 	private Integer code_rack_template;
 	/**
+	 * Запрет изменения размера стеллажа
+	 */
+	private boolean lock_size;
+	/**
+	 * Запрет перемещения стеллажа
+	 */
+	private boolean lock_move;
+	/**
+	 * Тип стеллажа (Стеллаж, касса...)
+	 */
+	private TypeRack type_race;
+	/**
 	 * Автор
 	 */
 	private Integer user_insert;
@@ -93,10 +105,10 @@ public class Rack implements IJsonObject {
 	 */
 	private Date date_draft;
 
-	public Rack(Integer code_rack, StateRack state_rack, String name_rack, String rack_barcode, Integer length, Integer width, Integer height, Integer code_sector, Integer x_coord, Integer y_coord, Integer angle, LoadSide load_side, Integer code_rack_template, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer user_draft, Date date_draft) {
+	public Rack(Integer code_rack, StateRack state_rack, String name_rack, String rack_barcode, Integer length, Integer width, Integer height, Integer code_sector, Integer x_coord, Integer y_coord, Integer angle, LoadSide load_side, Integer code_rack_template, boolean lock_size, boolean lock_move, TypeRack type_race, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer user_draft, Date date_draft) {
 		this.code_sector = code_sector;
 		this.code_rack = code_rack;
-		this.state_rack=state_rack;
+		this.state_rack = state_rack;
 		this.name_rack = name_rack;
 		this.rack_barcode = rack_barcode;
 		this.length = length;
@@ -105,8 +117,11 @@ public class Rack implements IJsonObject {
 		this.x_coord = x_coord;
 		this.y_coord = y_coord;
 		this.angle = angle;
-		this.load_side=load_side;
+		this.load_side = load_side;
 		this.code_rack_template = code_rack_template;
+		this.load_side = load_side;
+		this.lock_move = lock_move;
+		this.type_race = type_race;
 		this.user_insert = user_insert;
 		this.date_insert = date_insert;
 		this.user_update = user_update;
@@ -133,6 +148,10 @@ public class Rack implements IJsonObject {
 
 	public StateRack getState_rack() {
 		return state_rack;
+	}
+
+	public String getState_rackAtStr() {
+		return (state_rack!=null)?state_rack.name():null;
 	}
 
 	public void setState_rack(StateRack state_rack) {
@@ -212,7 +231,7 @@ public class Rack implements IJsonObject {
 	}
 
 	public String getLoad_sideAtStr() {
-		return (load_side!=null)?load_side.name():null;
+		return (load_side != null) ? load_side.name() : null;
 	}
 
 	public void setLoad_side(LoadSide load_side) {
@@ -229,6 +248,46 @@ public class Rack implements IJsonObject {
 
 	public void setCode_rack_template(Integer code_rack_template) {
 		this.code_rack_template = code_rack_template;
+	}
+
+	public boolean isLock_size() {
+		return lock_size;
+	}
+
+	public void setLock_size(boolean lock_size) {
+		this.lock_size = lock_size;
+	}
+
+	public void setLock_size(String lock_size) {
+		this.lock_size = "Y".equals(lock_size);
+	}
+
+	public boolean isLock_move() {
+		return lock_move;
+	}
+
+	public void setLock_move(boolean lock_move) {
+		this.lock_move = lock_move;
+	}
+
+	public void setLock_move(String lock_move) {
+		this.lock_move = "Y".equals(lock_move);
+	}
+
+	public TypeRack getType_race() {
+		return type_race;
+	}
+
+	public String getType_raceAtStr() {
+		return (type_race != null) ? type_race.name() : null;
+	}
+
+	public void setType_race(TypeRack type_race) {
+		this.type_race = type_race;
+	}
+
+	public void setType_race(String type_race) {
+		this.type_race = (type_race != null) ? TypeRack.valueOf(type_race) : null;
 	}
 
 	public Integer getUser_insert() {
@@ -293,6 +352,9 @@ public class Rack implements IJsonObject {
 		angle = resultSet.getInt(RackConst.ANGLE);
 		setLoad_side(resultSet.getString(RackConst.LOAD_SIDE));
 		code_rack_template = resultSet.getInt(RackConst.CODE_RACK_TEMPLATE);
+		setLock_size(resultSet.getString(RackConst.LOCK_SIZE));
+		setLock_move(resultSet.getString(RackConst.LOCK_MOVE));
+		setType_race(resultSet.getString(RackConst.TYPE_RACK));
 		user_insert = resultSet.getInt(RackConst.USER_INSERT);
 		date_insert = resultSet.getDate(RackConst.DATE_INSERT);
 		user_update = resultSet.getInt(RackConst.USER_UPDATE);
@@ -315,6 +377,9 @@ public class Rack implements IJsonObject {
 		angle = JsonUtils.getInteger(rackJson, RackConst.ANGLE);
 		setLoad_side(JsonUtils.getString(rackJson, RackConst.LOAD_SIDE));
 		code_rack_template = JsonUtils.getInteger(rackJson, RackConst.CODE_RACK_TEMPLATE);
+		lock_size=JsonUtils.getBoolean(rackJson, RackConst.LOCK_SIZE);
+		lock_move=JsonUtils.getBoolean(rackJson, RackConst.LOCK_MOVE);
+		setType_race(JsonUtils.getString(rackJson, RackConst.TYPE_RACK));
 		user_insert = JsonUtils.getInteger(rackJson, RackConst.USER_INSERT);
 		date_insert = JsonUtils.getDate(rackJson, RackConst.DATE_INSERT);
 		user_update = JsonUtils.getInteger(rackJson, RackConst.USER_UPDATE);
@@ -328,7 +393,7 @@ public class Rack implements IJsonObject {
 		final JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty(RackConst.CODE_SECTOR, code_sector);
 		jsonObject.addProperty(RackConst.CODE_RACK, code_rack);
-		jsonObject.addProperty(RackConst.STATE_RACK, (state_rack != null) ? state_rack.name() : null);
+		jsonObject.addProperty(RackConst.STATE_RACK, getState_rackAtStr());
 		jsonObject.addProperty(RackConst.NAME_RACK, name_rack);
 		jsonObject.addProperty(RackConst.RACK_BARCODE, rack_barcode);
 		jsonObject.addProperty(RackConst.LENGTH, length);
@@ -337,8 +402,11 @@ public class Rack implements IJsonObject {
 		jsonObject.addProperty(RackConst.X_COORD, x_coord);
 		jsonObject.addProperty(RackConst.Y_COORD, y_coord);
 		jsonObject.addProperty(RackConst.ANGLE, angle);
-		jsonObject.addProperty(RackConst.LOAD_SIDE, (load_side != null) ? load_side.name() : null);
+		jsonObject.addProperty(RackConst.LOAD_SIDE, getLoad_sideAtStr());
 		jsonObject.addProperty(RackConst.CODE_RACK_TEMPLATE, code_rack_template);
+		jsonObject.addProperty(RackConst.LOCK_SIZE, lock_size);
+		jsonObject.addProperty(RackConst.LOCK_MOVE, lock_move);
+		jsonObject.addProperty(RackConst.TYPE_RACK, getType_raceAtStr());
 		jsonObject.addProperty(RackConst.USER_INSERT, user_insert);
 		JsonUtils.set(jsonObject, RackConst.DATE_INSERT, date_insert);
 		jsonObject.addProperty(RackConst.USER_UPDATE, user_update);
