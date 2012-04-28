@@ -106,7 +106,11 @@ public class RackModel {
 			":" + RackConst.HEIGHT + ", " +
 			":" + RackConst.LOAD_SIDE + ", " +
 			":" + RackConst.ANGLE + "," +
-			":" + RackConst.CODE_RACK_TEMPLATE + ")}";
+			":" + RackConst.CODE_RACK_TEMPLATE +"," +
+			":" + RackConst.LOCK_SIZE +"," +
+			":" + RackConst.LOCK_MOVE +"," +
+			":" + RackConst.TYPE_RACK +
+			")}";
 
 	public int insert(final UserContext userContext, final Rack rack) throws SQLException {
 		final Connection connection = userContext.getConnection();
@@ -125,6 +129,9 @@ public class RackModel {
 		callableStatement.setString(RackConst.LOAD_SIDE, rack.getLoad_sideAtStr());
 		callableStatement.setInt(RackConst.ANGLE, rack.getAngle());
 		callableStatement.setObject(RackConst.CODE_RACK_TEMPLATE, rack.getCode_rack_template());
+		callableStatement.setString(RackConst.LOCK_SIZE, (rack.isLock_size())?"Y":"N");
+		callableStatement.setString(RackConst.LOCK_MOVE, (rack.isLock_move())?"Y":"N");
+		callableStatement.setString(RackConst.TYPE_RACK, rack.getType_raceAtStr());
 		callableStatement.execute();
 		final int id = callableStatement.getInt("new_code_rack");
 		rack.setCode_rack(id);
@@ -148,6 +155,9 @@ public class RackModel {
 		callableStatement.setString(RackConst.LOAD_SIDE, rack.getLoad_sideAtStr());
 		callableStatement.setInt(RackConst.ANGLE, rack.getAngle());
 		callableStatement.setObject(RackConst.CODE_RACK_TEMPLATE, rack.getCode_rack_template());
+		callableStatement.setString(RackConst.LOCK_SIZE, (rack.isLock_size())?"Y":"N");
+		callableStatement.setString(RackConst.LOCK_MOVE, (rack.isLock_move())?"Y":"N");
+		callableStatement.setString(RackConst.TYPE_RACK, rack.getType_raceAtStr());
 		callableStatement.execute();
 	}
 

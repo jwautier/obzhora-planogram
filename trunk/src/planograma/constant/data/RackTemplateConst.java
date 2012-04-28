@@ -17,7 +17,6 @@ public interface RackTemplateConst {
 	public static final String HEIGHT = "height";
 	public static final String LOAD_SIDE = "load_side";
 	public static final String STATE_RACK_TEMPLATE = "state_rack_template";
-	public static final String ANGLE = "angle";
 	public static final String USER_INSERT = "user_insert";
 	public static final String DATE_INSERT = "date_insert";
 	public static final String USER_UPDATE = "user_update";

@@ -20,16 +20,21 @@ public interface RackConst {
 	public static final String WIDTH = "width";
 	public static final String HEIGHT = "height";
 	public static final String LOAD_SIDE = "load_side";
-	public static final String STATE_RACK = "state_rack";
-	public static final String ANGLE = "angle";
-	public static final String CODE_RACK_TEMPLATE = "code_rack_template";
 	public static final String USER_INSERT = "user_insert";
 	public static final String DATE_INSERT = "date_insert";
 	public static final String USER_UPDATE = "user_update";
 	public static final String DATE_UPDATE = "date_update";
+	public static final String STATE_RACK = "state_rack";
+	public static final String ANGLE = "angle";
+	public static final String CODE_RACK_TEMPLATE = "code_rack_template";
 	public static final String DATE_DRAFT = "date_draft";
 	public static final String USER_DRAFT = "user_draft";
+	public static final String LOCK_SIZE = "lock_size";
+	public static final String LOCK_MOVE = "lock_move";
+	public static final String TYPE_RACK = "type_race";
+
 
 	public static final int STATE_ALL_PART_STATE_STATE_RACK = -63;
 	public static final int STATE_ALL_PART_STATE_LOAD_SIDE = -64;
+	public static final int STATE_ALL_PART_STATE_TYPE_RACK = -68;
 }

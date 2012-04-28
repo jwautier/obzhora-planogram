@@ -107,7 +107,7 @@ public class TestQuery {
 		Sector sector = new Sector(8, null, null, "sector 1", 2000, 2000, 300, null, null, null, null, null, null);
 		sectorModel.insert(userContext, sector);
 		final RackModel rackModel = RackModel.getInstance();
-		Rack rack = new Rack(null, null, "rack 1", "bar code 1", 50, 200, 150, sector.getCode_sector(), 50, 50, 0, LoadSide.N, null, null, null, null, null, null, null);
+		Rack rack = new Rack(null, null, "rack 1", "bar code 1", 50, 200, 150, sector.getCode_sector(), 50, 50, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null);
 		System.out.println(rack.toJsonObject());
 		rackModel.insert(userContext, rack);
 		System.out.println("insert");
@@ -137,7 +137,7 @@ public class TestQuery {
 		Sector sector = new Sector(8, null, null, "sector 1", 2000, 2000, 300, null, null, null, null, null, null);
 		sectorModel.insert(userContext, sector);
 		final RackModel rackModel = RackModel.getInstance();
-		final Rack rack = new Rack(null, null, "rack 1", "1", 50, 200, 150, sector.getCode_sector(), 1000, 1000, 0, LoadSide.N, null, null, null, null, null, null, null);
+		final Rack rack = new Rack(null, null, "rack 1", "1", 50, 200, 150, sector.getCode_sector(), 1000, 1000, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null);
 		rackModel.insert(userContext, rack);
 		final RackShelfModel rackShelfModel = RackShelfModel.getInstance();
 		RackShelf rackShelf = new RackShelf(rack.getCode_rack(), null, 10, 10, 50, 50, 50, 0, TypeShelf.DZ, null, null, null, null);
@@ -167,7 +167,7 @@ public class TestQuery {
 
 	public static void testRackTemplateModel(final UserContext userContext) throws SQLException {
 		final RackTemplateModel rackTemplateModel = RackTemplateModel.getInstance();
-		RackTemplate rackTemplate = new RackTemplate(null, null, "rack template 1", 50, 200, 150, 0, LoadSide.N, null, null, null, null, null, null);
+		RackTemplate rackTemplate = new RackTemplate(null, null, "rack template 1", 50, 200, 150, LoadSide.F, null, null, null, null, null, null);
 		System.out.println(rackTemplate.toJsonObject());
 		rackTemplateModel.insert(userContext, rackTemplate);
 		System.out.println("insert");
@@ -194,7 +194,7 @@ public class TestQuery {
 
 	public static void testRackShelfTemplateModel(final UserContext userContext) throws SQLException {
 		final RackTemplateModel rackTemplateModel = RackTemplateModel.getInstance();
-		final RackTemplate rackTemplate = new RackTemplate(null, null, "rack template 1", 50, 200, 150, 0, LoadSide.N, null, null, null, null, null, null);
+		final RackTemplate rackTemplate = new RackTemplate(null, null, "rack template 1", 50, 200, 150, LoadSide.F, null, null, null, null, null, null);
 		rackTemplateModel.insert(userContext, rackTemplate);
 		final RackShelfTemplateModel rackShelfTemplateModel = RackShelfTemplateModel.getInstance();
 		RackShelfTemplate rackShelfTemplate = new RackShelfTemplate(rackTemplate.getCode_rack_template(), null, 10, 10, 50, 50, 50, 0, TypeShelf.DZ, null, null, null, null);
