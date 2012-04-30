@@ -31,7 +31,7 @@ public interface RackConst {
 	public static final String USER_DRAFT = "user_draft";
 	public static final String LOCK_SIZE = "lock_size";
 	public static final String LOCK_MOVE = "lock_move";
-	public static final String TYPE_RACK = "type_race";
+	public static final String TYPE_RACK = "type_rack";
 
 
 	public static final int STATE_ALL_PART_STATE_STATE_RACK = -63;

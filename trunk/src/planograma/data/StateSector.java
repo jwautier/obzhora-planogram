@@ -20,4 +20,14 @@ public enum StateSector {
 	 * Неактивно
 	 */
 	NA;
+
+	private String desc;
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
 }

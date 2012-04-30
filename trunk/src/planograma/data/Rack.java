@@ -404,8 +404,8 @@ public class Rack implements IJsonObject {
 		jsonObject.addProperty(RackConst.ANGLE, angle);
 		jsonObject.addProperty(RackConst.LOAD_SIDE, getLoad_sideAtStr());
 		jsonObject.addProperty(RackConst.CODE_RACK_TEMPLATE, code_rack_template);
-		jsonObject.addProperty(RackConst.LOCK_SIZE, lock_size);
-		jsonObject.addProperty(RackConst.LOCK_MOVE, lock_move);
+		jsonObject.addProperty(RackConst.LOCK_SIZE, (lock_size)?"Y":"N");
+		jsonObject.addProperty(RackConst.LOCK_MOVE, (lock_move)?"Y":"N");
 		jsonObject.addProperty(RackConst.TYPE_RACK, getType_raceAtStr());
 		jsonObject.addProperty(RackConst.USER_INSERT, user_insert);
 		JsonUtils.set(jsonObject, RackConst.DATE_INSERT, date_insert);

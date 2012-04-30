@@ -11,25 +11,25 @@ public enum TypeRack {
 	/**
 	 * Стеллаж
 	 */
-	R("Стеллаж"),
+	R,
 	/**
 	 * Касса
 	 */
-	WP("Касса"),
+	WP,
 	/**
 	 * Мертвая зона
 	 */
-	DZ("Мертвая зона");
+	DZ;
 
 	private String desc;
 	private String color;
 
-	private TypeRack(String desc) {
-		this.desc = desc;
-	}
-
 	public String getDesc() {
 		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
 	}
 
 	public String getColor() {

@@ -28,6 +28,9 @@ public class StateAll implements IJsonObject {
 	 */
 	private String state;
 	private char sing_activity;
+	/**
+	 * дополнительный параметр
+	 */
 	private String description;
 	private Integer part_state_parents;
 	private String is_version_29;
@@ -100,7 +103,7 @@ public class StateAll implements IJsonObject {
 
 	public StateAll(final ResultSet resultSet) throws SQLException {
 		part_state = resultSet.getInt(StateAllConst.PART_STATE);
-		abr_state = resultSet.getString(StateAllConst.ABR_STATE);
+		abr_state = resultSet.getString(StateAllConst.ABR_STATE).trim();
 		state = resultSet.getString(StateAllConst.STATE);
 		sing_activity = resultSet.getString(StateAllConst.SIGN_ACTIVITY).charAt(0);
 		description = resultSet.getString(StateAllConst.DESCRIPTION);
