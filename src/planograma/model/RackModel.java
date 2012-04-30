@@ -31,6 +31,9 @@ public class RackModel {
 			" " + RackConst.ANGLE + "," +
 			" " + RackConst.LOAD_SIDE + "," +
 			" " + RackConst.CODE_RACK_TEMPLATE + "," +
+			" " + RackConst.LOCK_SIZE + "," +
+			" " + RackConst.LOCK_MOVE + "," +
+			" " + RackConst.TYPE_RACK + "," +
 			" " + RackConst.USER_INSERT + "," +
 			" " + RackConst.DATE_INSERT + "," +
 			" " + RackConst.USER_UPDATE + "," +
@@ -70,6 +73,9 @@ public class RackModel {
 			" " + RackConst.ANGLE + "," +
 			" " + RackConst.LOAD_SIDE + "," +
 			" " + RackConst.CODE_RACK_TEMPLATE + "," +
+			" " + RackConst.LOCK_SIZE + "," +
+			" " + RackConst.LOCK_MOVE + "," +
+			" " + RackConst.TYPE_RACK + "," +
 			" " + RackConst.USER_INSERT + "," +
 			" " + RackConst.DATE_INSERT + "," +
 			" " + RackConst.USER_UPDATE + "," +

@@ -6,7 +6,10 @@ import planograma.constant.SessionConst;
 import planograma.constant.UrlConst;
 import planograma.data.UserContext;
 import planograma.exception.InvalidLoginOrPassword;
+import planograma.model.StateAllModel;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpSession;
 
@@ -22,6 +25,14 @@ public class Login extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_LOGIN;
 
+	private StateAllModel stateAllModel;
+
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		stateAllModel = StateAllModel.getInstance();
+	}
+
 	@Override
 	protected JsonObject execute(final HttpSession session, final JsonElement requestData) throws Exception {
 		final String login = requestData.getAsJsonObject().get("login").getAsString();
@@ -31,6 +42,7 @@ public class Login extends AbstractAction {
 		session.removeAttribute(SessionConst.SESSION_USER);
 		final UserContext userContext = new UserContext(login, password);
 		session.setAttribute(SessionConst.SESSION_USER, userContext);
+		stateAllModel.initEnum(userContext);
 		return null;
 	}
 }

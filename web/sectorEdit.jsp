@@ -8,12 +8,12 @@
 <%@ page import="planograma.servlet.racktemplate.RackTemplateList" %>
 <%@ page import="planograma.data.TypeRack" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%-- TODO При выделении подсвечивать --%>
 <%-- TODO Отслеживать изменния размера окна --%>
 <%-- TODO отмена действий --%>
 <%-- TODO флаг запрета изменения размера --%>
 <%-- TODO флаг запрета изменения местоположения --%>
 <%-- TODO перед отправкой на сервер ругаться на незаполненые поля --%>
+<%-- TODO del --%>
 <%-- TODO ctrl+c ctrl+v
 	$(document).keypress("c",function(e) {
 		if(e.ctrlKey)
@@ -166,9 +166,16 @@
 											<td align="right">тип</td>
 											<td>
 												<select id="rackType" onchange="changeRackType(this)">
-													<option value="<%=TypeRack.R%>"><%=TypeRack.R.getDesc()%></option>
-													<option value="<%=TypeRack.WP%>"><%=TypeRack.WP.getDesc()%></option>
-													<option value="<%=TypeRack.DZ%>"><%=TypeRack.DZ.getDesc()%></option>
+													<%
+														for (final TypeRack typeRack:TypeRack.values())
+														{
+															out.write("<option value=\"");
+															out.write(typeRack.name());
+															out.write("\">");
+															out.write(typeRack.getDesc());
+															out.write("</option>");
+														}
+													%>
 												</select>
 											</td>
 										</tr>
@@ -184,7 +191,7 @@
 										</tr>
 										<tr>
 											<td colspan="2">
-												<input type="checkbox" id="rackLockMove" onchange="changeRackLockMove(this)" value="true"/>
+												<input type="checkbox" id="rackLockMove" onchange="changeRackLockMove(this)" value="Y"/>
 												<label for="rackLockMove">блокировать перемещение</label>
 											</td>
 										</tr>
@@ -206,7 +213,7 @@
 										</tr>
 										<tr>
 											<td colspan="2">
-												<input type="checkbox" id="rackLockSize" onchange="changeRackLockSize(this)"/>
+												<input type="checkbox" id="rackLockSize" onchange="changeRackLockSize(this)" value="Y"/>
 												<label for="rackLockSize">блокировать размер</label>
 											</td>
 										</tr>
@@ -229,8 +236,16 @@
 											<td align="right">загрузка</td>
 											<td>
 												<select id="rackLoadSide" onchange="changeShowcaseOpen(this)">
-													<option value="<%=LoadSide.U%>">Сверху</option>
-													<option value="<%=LoadSide.F%>">Спереди</option>
+													<%
+														for (final LoadSide loadSide:LoadSide.values())
+														{
+															out.write("<option value=\"");
+															out.write(loadSide.name());
+															out.write("\">");
+															out.write(loadSide.getDesc());
+															out.write("</option>");
+														}
+													%>
 												</select>
 											</td>
 										</tr>
@@ -454,14 +469,25 @@ function drawPreviewCanvas() {
 }
 
 function drawShowcase(showcase, context, kx, ky, m) {
-	var x1 = Math.round((showcase.x1 - kx) / m);
-	var y1 = Math.round((showcase.y1 - ky) / m);
-	var x2 = Math.round((showcase.x2 - kx) / m);
-	var y2 = Math.round((showcase.y2 - ky) / m);
-	var x3 = Math.round((showcase.x3 - kx) / m);
-	var y3 = Math.round((showcase.y3 - ky) / m);
-	var x4 = Math.round((showcase.x4 - kx) / m);
-	var y4 = Math.round((showcase.y4 - ky) / m);
+//	var x1 = 0.5+Math.round((showcase.x1 - kx) / m);
+//	var y1 = 0.5+Math.round((showcase.y1 - ky) / m);
+//	var x2 = 0.5+Math.round((showcase.x2 - kx) / m);
+//	var y2 = 0.5+Math.round((showcase.y2 - ky) / m);
+//	var x3 = 0.5+Math.round((showcase.x3 - kx) / m);
+//	var y3 = 0.5+Math.round((showcase.y3 - ky) / m);
+//	var x4 = 0.5+Math.round((showcase.x4 - kx) / m);
+//	var y4 = 0.5+Math.round((showcase.y4 - ky) / m);
+
+	var x1 = (showcase.x1 - kx) / m;
+	var y1 = (showcase.y1 - ky) / m;
+	var x2 = (showcase.x2 - kx) / m;
+	var y2 = (showcase.y2 - ky) / m;
+	var x3 = (showcase.x3 - kx) / m;
+	var y3 = (showcase.y3 - ky) / m;
+	var x4 = (showcase.x4 - kx) / m;
+	var y4 = (showcase.y4 - ky) / m;
+
+
 	if (window.showcase==showcase)
 	{
 		context.strokeStyle = "BLUE";
@@ -470,67 +496,45 @@ function drawShowcase(showcase, context, kx, ky, m) {
 	{
 		context.strokeStyle = "BLACK";
 	}
-	// сверху или с востока
-	if (showcase.load_side == 'U' || showcase.load_side == 'E')
+	switch (showcase.type_rack)
 	{
-//		context.strokeStyle = "GREEN";
-		context.lineWidth = 3;
+		<%
+		for (final TypeRack typeRack:TypeRack.values())
+		{
+			out.print("case '");
+			out.print(typeRack.name());
+			out.print("': context.fillStyle = '");
+			out.print(typeRack.getColor());
+			out.println("'; break;");
+		}
+		%>
+	}
+	context.beginPath();
+	if (showcase.load_side == '<%=LoadSide.U%>')
+	{
+		context.lineWidth = 4;
 	}
 	else
 	{
-//		context.strokeStyle = "BLACK";
 		context.lineWidth = 1;
 	}
-	context.beginPath();
 	context.moveTo(x1, y1);
 	context.lineTo(x2, y2);
-	context.stroke();
-	// сверху или с севера
-	if (showcase.load_side == 'U' || showcase.load_side == 'N')
-	{
-//		context.strokeStyle = "GREEN";
-		context.lineWidth = 3;
-	}
-	else
-	{
-//		context.strokeStyle = "BLACK";
-		context.lineWidth = 1;
-	}
-	context.beginPath();
-	context.moveTo(x2, y2);
 	context.lineTo(x3, y3);
-	context.stroke();
-	// сверху или с запада
-	if (showcase.load_side == 'U' || showcase.load_side == 'W')
-	{
-//		context.strokeStyle = "GREEN";
-		context.lineWidth = 3;
-	}
-	else
-	{
-//		context.strokeStyle = "BLACK";
-		context.lineWidth = 1;
-	}
-	context.beginPath();
-	context.moveTo(x3, y3);
 	context.lineTo(x4, y4);
-	context.stroke();
-
-	// сверху или с юга
-	if (showcase.load_side == 'U' || showcase.load_side == 'S')
-	{
-//		context.strokeStyle = "GREEN";
-		context.lineWidth = 3;
-	}
-	else
-	{
-//		context.strokeStyle = "BLACK";
-		context.lineWidth = 1;
-	}
-	context.beginPath();
-	context.moveTo(x4, y4);
 	context.lineTo(x1, y1);
 	context.stroke();
+	context.fill();
+
+	if (showcase.load_side == '<%=LoadSide.F%>')
+	{
+		context.beginPath();
+		context.lineWidth = 4;
+		context.moveTo(x1, y1);
+		context.lineTo(x4, y4);
+		context.stroke();
+	}
+//	context.clip();
 }
 
 function selectShowcase(showcase) {
@@ -538,11 +542,37 @@ function selectShowcase(showcase) {
 		document.getElementById('rackType').value = showcase.type_rack;
 		document.getElementById('rackName').value = showcase.name_rack;
 		document.getElementById('rackBarcode').value = showcase.rack_barcode;
-		document.getElementById('rackLockMove').value = showcase.lock_move;
+		if (showcase.lock_move == 'Y') {
+			$('#rackLockMove').attr('checked', 'checked');
+			$('#showcaseX').attr('disabled', 'disabled');
+			$('#showcaseY').attr('disabled', 'disabled');
+			$('#showcaseAngle').attr('disabled', 'disabled');
+		}
+		else
+		{
+			$('#rackLockMove').removeAttr('checked');
+			$('#showcaseX').removeAttr('disabled');
+			$('#showcaseY').removeAttr('disabled');
+			$('#showcaseAngle').removeAttr('disabled');
+		}
 		document.getElementById('showcaseX').value = showcase.x_coord;
 		document.getElementById('showcaseY').value = showcase.y_coord;
 		document.getElementById('showcaseAngle').value = showcase.angle;
-		document.getElementById('rackLockSize').value = showcase.lock_size;
+		if (showcase.lock_size == 'Y') {
+			$('#rackLockSize').attr('checked', 'checked');
+			$('#showcaseWidth').attr('disabled', 'disabled');
+			$('#showcaseLength').attr('disabled', 'disabled');
+			$('#showcaseHeight').attr('disabled', 'disabled');
+			$('#rackLoadSide').attr('disabled', 'disabled');
+		}
+		else
+		{
+			$('#rackLockSize').removeAttr('checked');
+			$('#showcaseWidth').removeAttr('disabled');
+			$('#showcaseLength').removeAttr('disabled');
+			$('#showcaseHeight').removeAttr('disabled');
+			$('#rackLoadSide').removeAttr('disabled');
+		}
 		document.getElementById('showcaseWidth').value = showcase.width;
 		document.getElementById('showcaseLength').value = showcase.length;
 		document.getElementById('showcaseHeight').value = showcase.height;
@@ -558,11 +588,11 @@ function selectShowcase(showcase) {
 		document.getElementById('rackType').value = '';
 		document.getElementById('rackName').value = '';
 		document.getElementById('rackBarcode').value = '';
-		document.getElementById('rackLockMove').value = false;
+		$('#rackLockMove').removeAttr('checked');
 		document.getElementById('showcaseX').value = '';
 		document.getElementById('showcaseY').value = '';
 		document.getElementById('showcaseAngle').value = '';
-		document.getElementById('rackLockSize').value = false;
+		$('#rackLockSize').removeAttr('checked');
 		document.getElementById('showcaseWidth').value = '';
 		document.getElementById('showcaseLength').value = '';
 		document.getElementById('showcaseHeight').value = '';
@@ -574,15 +604,18 @@ function selectShowcase(showcase) {
 }
 function roundRack(rack)
 {
-	rack.x_coord=Math.round(rack.x_coord);
-	rack.y_coord=Math.round(rack.y_coord);
-	rack.width=Math.round(rack.width);
-	rack.height=Math.round(rack.height);
-	rack.length=Math.round(rack.length);
-	selectShowcase(rack);
-	calcCoordinates(rack);
-	drawEditCanvas();
-	drawPreviewCanvas();
+	if (rack!=null)
+	{
+		rack.x_coord=Math.round(rack.x_coord);
+		rack.y_coord=Math.round(rack.y_coord);
+		rack.width=Math.round(rack.width);
+		rack.height=Math.round(rack.height);
+		rack.length=Math.round(rack.length);
+		selectShowcase(rack);
+		calcCoordinates(rack);
+		drawEditCanvas();
+		drawPreviewCanvas();
+	}
 }
 
 </script>
@@ -687,8 +720,10 @@ function roundRack(rack)
 				}
 			window.showcase.code_rack = '';
 			window.showcase.name_rack = window.showcase.name_rack + ' copy';
+			//TODO
 			window.showcase.x_coord = window.showcase.x_coord + 10 * km;
 			window.showcase.y_coord = window.showcase.y_coord + 10 * km;
+			window.showcase.lock_move = 'N';
 			window.showcaseList.push(window.showcase);
 			window.copyObject=window.showcase;
 			selectShowcase(window.showcase);
@@ -728,6 +763,7 @@ function roundRack(rack)
 				window.showcase=clone(window.rackTemplateAdd);
 				window.showcase.code_sector=window.sector.code_sector;
 				window.showcase.name_rack=window.rackTemplateAdd.name_rack_template;
+//				TODO
 				if (window.rackTemplateAdd.load_side=='<%=LoadSide.U%>')
 				{
 					window.showcase.length=window.rackTemplateAdd.width;
@@ -740,9 +776,13 @@ function roundRack(rack)
 					window.showcase.width=window.rackTemplateAdd.length;
 					window.showcase.height=window.rackTemplateAdd.height;
 				}
+				window.showcase.type_rack='<%=TypeRack.R%>';
 				window.showcase.rack_barcode='';
+				window.showcase.lock_move='N';
 				window.showcase.x_coord=sx;
 				window.showcase.y_coord=sy;
+				window.showcase.angle=0;
+				window.showcase.lock_size='Y';
 				window.showcaseList.push(window.showcase);
 				selectShowcase(window.showcase);
 				calcCoordinates(window.showcase);
@@ -769,7 +809,7 @@ function roundRack(rack)
 						window.showcase = window.showcaseList[i];
 					}
 				}
-				selectShowcase(showcase);
+				selectShowcase(window.showcase);
 				drawEditCanvas();
 				drawPreviewCanvas();
 				if (window.showcase != null) {
@@ -813,7 +853,7 @@ function roundRack(rack)
 				var dy = (evnt.clientY - y) * window.km;
 				if (dx != 0 || dy != 0) {
 					// перемещение
-					if (window.editMove == 1) {
+					if (window.editMove == 1 && window.showcase.lock_move!='Y') {
 						var oldx = window.showcase.x_coord;
 						var oldy = window.showcase.y_coord;
 						// перемещение
@@ -831,7 +871,8 @@ function roundRack(rack)
 							document.getElementById('showcaseX').value = showcase.x_coord;
 							document.getElementById('showcaseY').value = showcase.y_coord;
 						}
-					} else {
+					} else if (window.showcase.lock_size!='Y'){
+						// изменение размера
 						var oldX = showcase.x_coord;
 						var oldY = showcase.y_coord;
 						var oldLength = showcase.length;
@@ -1096,23 +1137,20 @@ function roundRack(rack)
 		}
 	}
 
-	function changeRackLockMove(rackLockMove)
-	{
+	function changeRackLockMove(rackLockMove) {
 		if (showcase != null) {
-		if (rackLockMove.checked)
-		{
-			$('#showcaseX').attr('readonly', 'readonly');
-			$('#showcaseY').attr('readonly', 'readonly');
-			$('#showcaseAngle').attr('readonly', 'readonly');
-			showcase.lock_move=true;
-		}
-		else
-		{
-			$('#showcaseX').removeAttr('readonly');
-			$('#showcaseY').removeAttr('readonly');
-			$('#showcaseAngle').removeAttr('readonly');
-			showcase.lock_move=false;
-		}
+			if (rackLockMove.checked) {
+				$('#showcaseX').attr('disabled', 'disabled');
+				$('#showcaseY').attr('disabled', 'disabled');
+				$('#showcaseAngle').attr('disabled', 'disabled');
+				showcase.lock_move = 'Y';
+			}
+			else {
+				$('#showcaseX').removeAttr('disabled');
+				$('#showcaseY').removeAttr('disabled');
+				$('#showcaseAngle').removeAttr('disabled');
+				showcase.lock_move = 'N';
+			}
 		}
 	}
 
@@ -1178,7 +1216,22 @@ function roundRack(rack)
 
 	function changeRackLockSize(rackLockSize)
 	{
-		//TODO
+		if (showcase != null) {
+			if (rackLockSize.checked) {
+				$('#showcaseWidth').attr('disabled', 'disabled');
+				$('#showcaseLength').attr('disabled', 'disabled');
+				$('#showcaseHeight').attr('disabled', 'disabled');
+				$('#rackLoadSide').attr('disabled', 'disabled');
+				showcase.lock_size = 'Y';
+			}
+			else {
+				$('#showcaseWidth').removeAttr('disabled');
+				$('#showcaseLength').removeAttr('disabled');
+				$('#showcaseHeight').removeAttr('disabled');
+				$('#rackLoadSide').removeAttr('disabled');
+				showcase.lock_size = 'N';
+			}
+		}
 	}
 
 	function changeShowcaseWidth(showcaseWidth) {
@@ -1262,6 +1315,12 @@ function roundRack(rack)
 </script>
 <%-- обработка событий окно выбора стандартного стеллажа --%>
 <script type="text/javascript">
+
+	function selectRackTemplate(rackTemplateId)
+	{
+//		TODO
+	}
+
 	function rackTemplateCancel() {
 		var rackTemplate = $('#rackTemplate');
 		rackTemplate.animate({opacity:'hide'}, 500);

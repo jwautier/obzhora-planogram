@@ -12,4 +12,14 @@ public enum TypeShelf {
 	 * Мертвая зона
 	 */
 	DZ;
+
+	private String desc;
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
 }

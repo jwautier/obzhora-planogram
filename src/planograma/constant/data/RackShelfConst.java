@@ -24,5 +24,5 @@ public interface RackShelfConst {
 	public static final String USER_UPDATE = "user_update";
 	public static final String DATE_UPDATE = "date_update";
 
-	public static final int STATE_ALL_PART_STATE_STATE_TYPE_SHELF = -67;
+	public static final int STATE_ALL_PART_STATE_TYPE_SHELF = -67;
 }
