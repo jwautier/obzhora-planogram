@@ -33,11 +33,11 @@ public class RackShelfModel {
 			"from " + RackShelfConst.TABLE_NAME + " " +
 			"where " + RackShelfConst.CODE_RACK + "=? ";
 
-	public List<RackShelf> list(final UserContext userContext, final int code_rack_template) throws SQLException {
+	public List<RackShelf> list(final UserContext userContext, final int code_rack) throws SQLException {
 		//		long time=System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
-		ps.setInt(1, code_rack_template);
+		ps.setInt(1, code_rack);
 		final ResultSet resultSet = ps.executeQuery();
 		final List<RackShelf> list = new ArrayList<RackShelf>();
 		while (resultSet.next()) {

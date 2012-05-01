@@ -15,11 +15,23 @@ public enum TypeShelf {
 
 	private String desc;
 
+	private String color;
+
 	public String getDesc() {
 		return desc;
 	}
 
 	public void setDesc(String desc) {
 		this.desc = desc;
+	}
+
+	public String getColor()
+	{
+		return color;
+	}
+
+	public void setColor(String color)
+	{
+		this.color = color;
 	}
 }
