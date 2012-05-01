@@ -75,6 +75,7 @@ public class StateAllModel {
 				case RackShelfConst.STATE_ALL_PART_STATE_TYPE_SHELF:
 					final TypeShelf typeShelf= TypeShelf.valueOf(item.getAbr_state());
 					typeShelf.setDesc(item.getState());
+					typeShelf.setColor(item.getDescription());
 					break;
 			}
 		}

@@ -188,7 +188,7 @@
 	function sectorRemove()
 	{
 		var code_sector=$('#sectorList').val();
-		if (code_sector!=null)
+		if (code_sector!=null && code_sector.length>0)
 		{
 			postJson(
 					'<%=SectorRemove.URL%>',

@@ -15,7 +15,7 @@
 	<script type="text/javascript" src="js/planograma.js"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
-<body onload="loadComplite();" style="overflow-x:hidden;">
+<body onload="loadComplete();" style="overflow-x:hidden;">
 <table class="frame">
 	<tr>
 		<td class="path">
@@ -120,29 +120,19 @@
 													   onchange="changeRackLength(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
 										</tr>
 										<tr>
-											<td align="right">поворот</td>
-											<td>
-												<select id="rackAngle" onchange="changeRackAngle(this)">
-													<option>0</option>
-													<option>10</option>
-													<option>20</option>
-													<option>30</option>
-													<option>40</option>
-													<option>45</option>
-													<option>50</option>
-													<option>60</option>
-													<option>70</option>
-													<option>80</option>
-													<option>90</option>
-												</select>
-											</td>
-										</tr>
-										<tr>
 											<td align="right">загрузка</td>
 											<td>
 												<select id="rackLoadSide" onchange="changeRackLoadSide(this)">
-													<option value="U">Сверху</option>
-													<option value="N">С переди</option>
+													<%
+														for (final LoadSide loadSide:LoadSide.values())
+														{
+															out.write("<option value=\"");
+															out.write(loadSide.name());
+															out.write("\">");
+															out.write(loadSide.getDesc());
+															out.write("</option>");
+														}
+													%>
 												</select>
 											</td>
 										</tr>
@@ -205,7 +195,16 @@
 											<td align="right">тип</td>
 											<td>
 												<select id="shelfType" onchange="changeShelfType(this)">
-													<option value="<%=TypeShelf.DZ%>">Мертвая зона</option>
+													<%
+														for (final TypeShelf typeShelf:TypeShelf.values())
+														{
+															out.write("<option value=\"");
+															out.write(typeShelf.name());
+															out.write("\">");
+															out.write(typeShelf.getDesc());
+															out.write("</option>");
+														}
+													%>
 												</select>
 											</td>
 										</tr>
@@ -225,15 +224,29 @@
 </table>
 
 <script type="text/javascript">
-	function loadComplite() {
+	function loadComplete() {
 		var code_rack = getCookie('code_rack');
 		postJson('<%=RackEdit.URL%>', {code_rack:code_rack}, function (data) {
 			window.rack = data.rack;
+			switch (window.rack.load_side)
+			{
+				case '<%=LoadSide.U%>':
+					var temp=window.rack.width;
+					window.rack.width=window.rack.length;
+					window.rack.length=window.rack.height;
+					window.rack.height=temp;
+					break;
+				case '<%=LoadSide.F%>':
+					var temp=window.rack.width;
+					window.rack.width=window.rack.length;
+					window.rack.length=temp;
+					break;
+			}
 			window.rackShelfList = data.rackShelfList;
-			loadComplite2();
+			loadComplete2();
 		});
 	}
-	function loadComplite2()
+	function loadComplete2()
 	{
 		window.edit_canvas = document.getElementById("edit_canvas");
 		window.edit_context = edit_canvas.getContext("2d");
@@ -278,7 +291,6 @@
 		document.getElementById('rackWidth').value =window.rack.width;
 		document.getElementById('rackHeight').value =window.rack.height;
 		document.getElementById('rackLength').value =window.rack.length;
-		document.getElementById('rackAngle').value =window.rack.angle;
 		document.getElementById('rackLoadSide').value =window.rack.load_side;
 	}
 
@@ -296,11 +308,11 @@
 		} else {
 			document.getElementById('shelfX').value = '';
 			document.getElementById('shelfY').value = '';
-			document.getElementById('shelfAngle').value = 0;
+			document.getElementById('shelfAngle').value = '';
 			document.getElementById('shelfWidth').value = '';
 			document.getElementById('shelfHeight').value = '';
 			document.getElementById('shelfLength').value = '';
-			document.getElementById('shelfType').value = '<%=TypeShelf.DZ%>';
+			document.getElementById('shelfType').value = '';
 			$('#butCopy').addClass('disabled');
 			$('#butCut').addClass('disabled');
 		}
@@ -400,6 +412,19 @@
 		{
 			context.strokeStyle = "BLACK";
 		}
+		switch (shelf.type_shelf)
+		{
+				<%
+			 for (final TypeShelf typeShelf:TypeShelf.values())
+			 {
+				 out.print("case '");
+				 out.print(typeShelf.name());
+				 out.print("': context.fillStyle = '");
+				 out.print(typeShelf.getColor());
+				 out.println("'; break;");
+			 }
+			 %>
+		}
 		context.beginPath();
 		var x1 = (shelf.x1 - kx) / m;
 		var y1 = canvas.height - (shelf.y1 - ky) / m;
@@ -415,14 +440,30 @@
 		context.lineTo(x4, y4);
 		context.lineTo(x1, y1);
 		context.stroke();
+		context.fill();
 	}
 </script>
 <%-- обработка событий меню --%>
 <script type="text/javascript">
 	function fRackSave()
 	{
+		switch (window.rack.load_side)
+		{
+			case '<%=LoadSide.U%>':
+				var temp=window.rack.width;
+				window.rack.width=window.rack.height;
+				window.rack.height=window.rack.length;
+				window.rack.length=temp;
+				break;
+			case '<%=LoadSide.F%>':
+				var temp=window.rack.width;
+				window.rack.width=window.rack.length;
+				window.rack.length=temp;
+				break;
+		}
 		postJson('<%=RackSave.URL%>', {rack:window.rack, rackShelfList:window.rackShelfList}, function (data) {
 			setCookie('<%=RackConst.CODE_RACK%>', data.code_rack);
+			loadComplete();
 		});
 	}
 	function fRackReload()
@@ -502,6 +543,7 @@
 
 		if (window.shelfAdd==true)
 		{
+			if (sx>0 && sy>0 && sx<window.rack.width && sy<window.rack.height){
 			window.shelfAdd=false;
 			window.shelf=<%=new RackShelf(null, null, 0, 0, 1,1, 1, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>;
 			window.shelf.code_rack=window.rack.code_rack;
@@ -515,6 +557,7 @@
 			x = evnt.clientX;
 			y = evnt.clientY;
 			window.editMove=7;
+			}
 		}
 		else
 		{
@@ -707,7 +750,6 @@
 			if (window.previewMove) {
 				var evnt = ie_event(e);
 				window.kx = window.kx + (evnt.clientX - x) * window.preview_m;
-//				window.ky = window.ky + (evnt.clientY - y) * window.preview_m;
 				window.ky = window.ky - (evnt.clientY - y) * window.preview_m;
 				checkKxKy();
 				x = evnt.clientX;
@@ -849,9 +891,7 @@
 				rackLength.value = window.rack.length;
 		}
 	}
-	function changeRackAngle(rackAngle) {
-		window.rack.angle = rackAngle.value;
-	}
+
 	function changeRackLoadSide(rackLoadSide) {
 		window.rack.load_side = rackLoadSide.value;
 	}

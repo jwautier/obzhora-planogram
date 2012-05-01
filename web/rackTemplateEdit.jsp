@@ -15,7 +15,7 @@
 	<script type="text/javascript" src="js/planograma.js"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
-<body onload="loadComplite();" style="overflow-x:hidden;">
+<body onload="loadComplete();" style="overflow-x:hidden;">
 <table class="frame">
 	<tr>
 		<td class="path">
@@ -118,29 +118,19 @@
 													   onchange="changeRackTemplateLength(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
 										</tr>
 										<tr>
-											<td align="right">поворот</td>
-											<td>
-												<select id="rackTemplateAngle" onchange="changeRackTemplateAngle(this)">
-													<option>0</option>
-													<option>10</option>
-													<option>20</option>
-													<option>30</option>
-													<option>40</option>
-													<option>45</option>
-													<option>50</option>
-													<option>60</option>
-													<option>70</option>
-													<option>80</option>
-													<option>90</option>
-												</select>
-											</td>
-										</tr>
-										<tr>
 											<td align="right">загрузка</td>
 											<td>
 												<select id="rackTemplateLoadSide" onchange="changeRackTemplateLoadSide(this)">
-													<option value="U">Сверху</option>
-													<option value="N">С переди</option>
+													<%
+														for (final LoadSide loadSide:LoadSide.values())
+														{
+															out.write("<option value=\"");
+															out.write(loadSide.name());
+															out.write("\">");
+															out.write(loadSide.getDesc());
+															out.write("</option>");
+														}
+													%>
 												</select>
 											</td>
 										</tr>
@@ -203,7 +193,16 @@
 											<td align="right">тип</td>
 											<td>
 												<select id="shelfType" onchange="changeShelfType(this)">
-													<option value="<%=TypeShelf.DZ%>">Мертвая зона</option>
+													<%
+														for (final TypeShelf typeShelf:TypeShelf.values())
+														{
+															out.write("<option value=\"");
+															out.write(typeShelf.name());
+															out.write("\">");
+															out.write(typeShelf.getDesc());
+															out.write("</option>");
+														}
+													%>
 												</select>
 											</td>
 										</tr>
@@ -223,25 +222,39 @@
 </table>
 
 <script type="text/javascript">
-	function loadComplite()
+	function loadComplete()
 	{
 		var code_rack_template=getCookie('code_rack_template');
 		if (code_rack_template!=null && code_rack_template.length>0)
 		{
 			postJson('<%=RackTemplateEdit.URL%>', {code_rack_template:code_rack_template}, function (data) {
 				window.rackTemplate=data.rackTemplate;
+				switch (window.rackTemplate.load_side)
+				{
+					case '<%=LoadSide.U%>':
+						var temp=window.rackTemplate.width;
+						window.rackTemplate.width=window.rackTemplate.length;
+						window.rackTemplate.length=window.rackTemplate.height;
+						window.rackTemplate.height=temp;
+						break;
+					case '<%=LoadSide.F%>':
+						var temp=window.rackTemplate.width;
+						window.rackTemplate.width=window.rackTemplate.length;
+						window.rackTemplate.length=temp;
+						break;
+				}
 				window.rackShelfTemplateList = data.rackShelfTemplateList;
-				loadComplite2();
+				loadComplete2();
 			});
 		}
 		else
 		{
-			window.rackTemplate=<%=new RackTemplate(null, null, null, 100, 100, 100, 0, LoadSide.N, null,null, null,null,null,null).toJsonObject()%>;
+			window.rackTemplate=<%=new RackTemplate(null, null, null, 100, 100, 100, LoadSide.F, null,null, null,null,null,null).toJsonObject()%>;
 			window.rackShelfTemplateList = [<%=new RackShelfTemplate(null, null, 50, 3, 5,100, 100, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>];
-			loadComplite2();
+			loadComplete2();
 		}
 	}
-	function loadComplite2()
+	function loadComplete2()
 	{
 		window.edit_canvas = document.getElementById("edit_canvas");
 		window.edit_context = edit_canvas.getContext("2d");
@@ -286,7 +299,6 @@
 		document.getElementById('rackTemplateWidth').value =window.rackTemplate.width;
 		document.getElementById('rackTemplateHeight').value =window.rackTemplate.height;
 		document.getElementById('rackTemplateLength').value =window.rackTemplate.length;
-		document.getElementById('rackTemplateAngle').value =window.rackTemplate.angle;
 		document.getElementById('rackTemplateLoadSide').value =window.rackTemplate.load_side;
 	}
 
@@ -304,11 +316,11 @@
 		} else {
 			document.getElementById('shelfX').value = '';
 			document.getElementById('shelfY').value = '';
-			document.getElementById('shelfAngle').value = 0;
+			document.getElementById('shelfAngle').value = '';
 			document.getElementById('shelfWidth').value = '';
 			document.getElementById('shelfHeight').value = '';
 			document.getElementById('shelfLength').value = '';
-			document.getElementById('shelfType').value = '<%=TypeShelf.DZ%>';
+			document.getElementById('shelfType').value = '';
 			$('#butCopy').addClass('disabled');
 			$('#butCut').addClass('disabled');
 		}
@@ -408,18 +420,27 @@
 		{
 			context.strokeStyle = "BLACK";
 		}
+		switch (shelfTemplate.type_shelf)
+		{
+			<%
+			for (final TypeShelf typeShelf:TypeShelf.values())
+			{
+				out.print("case '");
+				out.print(typeShelf.name());
+				out.print("': context.fillStyle = '");
+				out.print(typeShelf.getColor());
+				out.println("'; break;");
+			}
+			%>
+		}
 		context.beginPath();
 		var x1 = (shelfTemplate.x1 - kx) / m;
-//		var y1 = (shelfTemplate.y1 - ky) / m;
 		var y1 = canvas.height - (shelfTemplate.y1 - ky) / m;
 		var x2 = (shelfTemplate.x2 - kx) / m;
-//		var y2 = ( shelfTemplate.y2 - ky) / m;
 		var y2 = canvas.height - (shelfTemplate.y2 - ky) / m;
 		var x3 = (shelfTemplate.x3 - kx) / m;
-//		var y3 = ( shelfTemplate.y3 - ky) / m;
 		var y3 = canvas.height - (shelfTemplate.y3 - ky) / m;
 		var x4 = (shelfTemplate.x4 - kx) / m;
-//		var y4 = ( shelfTemplate.y4 - ky) / m;
 		var y4 = canvas.height - (shelfTemplate.y4 - ky) / m;
 		context.moveTo(x1, y1);
 		context.lineTo(x2, y2);
@@ -427,15 +448,38 @@
 		context.lineTo(x4, y4);
 		context.lineTo(x1, y1);
 		context.stroke();
+		context.fill();
 	}
 </script>
 <%-- обработка событий меню --%>
 <script type="text/javascript">
-	function fRackTemplateSave()
-	{
-		postJson('<%=RackTemplateSave.URL%>', {rackTemplate:window.rackTemplate, rackShelfTemplateList:window.rackShelfTemplateList}, function (data) {
-			setCookie('<%=RackTemplateConst.CODE_RACK_TEMPLATE%>', data.code_rack_template);
-		});
+	function fRackTemplateSave() {
+		var noneError = true;
+		if (window.rackTemplate.name_rack_template == null || window.rackTemplate.name_rack_template.length == 0) {
+			noneError = false;
+			$('#rackTemplateName').focus();
+			alert('отсутствует наименование');
+		}
+		if (noneError) {
+			switch (window.rackTemplate.load_side) {
+				case '<%=LoadSide.U%>':
+					var temp = window.rackTemplate.width;
+					window.rackTemplate.width = window.rackTemplate.height;
+					window.rackTemplate.height = window.rackTemplate.length;
+					window.rackTemplate.length = temp;
+					break;
+				case '<%=LoadSide.F%>':
+					var temp = window.rackTemplate.width;
+					window.rackTemplate.width = window.rackTemplate.length;
+					window.rackTemplate.length = temp;
+					break;
+			}
+
+			postJson('<%=RackTemplateSave.URL%>', {rackTemplate:window.rackTemplate, rackShelfTemplateList:window.rackShelfTemplateList}, function (data) {
+				setCookie('<%=RackTemplateConst.CODE_RACK_TEMPLATE%>', data.code_rack_template);
+				loadComplete();
+			});
+		}
 	}
 	function fRackTemplateReload()
 	{
@@ -510,11 +554,12 @@
 	window.edit_canvas.onmousedown = function (e) {
 		var evnt = ie_event(e);
 		var sx = window.kx + evnt.offsetX * window.km;
-//		var sy = window.ky + evnt.offsetY * window.km;
 		var sy = window.ky + (window.edit_canvas.height - evnt.offsetY) * window.km;
 
 		if (window.shelfAdd==true)
 		{
+			if (sx>0 && sy>0 && sx<window.rackTemplate.width && sy<window.rackTemplate.height)
+			{
 			window.shelfAdd=false;
 			window.shelf=<%=new RackShelfTemplate(null, null, 0, 0, 1,1, 1, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>;
 			window.shelf.code_rack_template=window.rackTemplate.code_rack_template;
@@ -528,6 +573,7 @@
 			x = evnt.clientX;
 			y = evnt.clientY;
 			window.editMove=7;
+			}
 		}
 		else
 		{
@@ -720,7 +766,6 @@
 			if (window.previewMove) {
 				var evnt = ie_event(e);
 				window.kx = window.kx + (evnt.clientX - x) * window.preview_m;
-//				window.ky = window.ky + (evnt.clientY - y) * window.preview_m;
 				window.ky = window.ky - (evnt.clientY - y) * window.preview_m;
 				checkKxKy();
 				x = evnt.clientX;
@@ -861,9 +906,6 @@
 			else
 				rackTemplateLength.value = window.rackTemplate.length;
 		}
-	}
-	function changeRackTemplateAngle(rackTemplateAngle) {
-		window.rackTemplate.angle = rackTemplateAngle.value;
 	}
 	function changeRackTemplateLoadSide(rackTemplateLoadSide) {
 		window.rackTemplate.load_side = rackTemplateLoadSide.value;

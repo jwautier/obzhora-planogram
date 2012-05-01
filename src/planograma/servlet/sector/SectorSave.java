@@ -33,7 +33,6 @@ public class SectorSave extends AbstractAction {
 	private SectorModel sectorModel;
 	private RackModel rackModel;
 	private RackShelfModel rackShelfModel;
-//	private RackTemplateModel rackTemplateModel;
 	private RackShelfTemplateModel rackShelfTemplateModel;
 
 	@Override
@@ -42,7 +41,6 @@ public class SectorSave extends AbstractAction {
 		sectorModel = SectorModel.getInstance();
 		rackModel = RackModel.getInstance();
 		rackShelfModel=RackShelfModel.getInstance();
-//		rackTemplateModel = RackTemplateModel.getInstance();
 		rackShelfTemplateModel = RackShelfTemplateModel.getInstance();
 	}
 
@@ -83,6 +81,12 @@ public class SectorSave extends AbstractAction {
 				}
 				if (findRack == null) {
 					// запись была удалена
+					// удаление полок
+					for (final RackShelf rackShelf:rackShelfModel.list(userContext, oldRack.getCode_rack()))
+					{
+						rackShelfModel.delete(userContext, rackShelf.getCode_shelf());
+					}
+					// удаление стеллажа
 					rackModel.delete(userContext, oldRack.getCode_rack());
 				}
 			}

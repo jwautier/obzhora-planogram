@@ -10,8 +10,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%-- TODO Отслеживать изменния размера окна --%>
 <%-- TODO отмена действий --%>
-<%-- TODO флаг запрета изменения размера --%>
-<%-- TODO флаг запрета изменения местоположения --%>
 <%-- TODO перед отправкой на сервер ругаться на незаполненые поля --%>
 <%-- TODO del --%>
 <%-- TODO ctrl+c ctrl+v
@@ -328,7 +326,7 @@ var y;
 var showcase;
 var copyObject;
 
-function loadComplite()
+function loadComplete()
 {
 	var code_shop=getCookie('code_shop');
 	var code_sector=getCookie('code_sector');
@@ -337,7 +335,7 @@ function loadComplite()
 		postJson('<%=SectorEdit.URL%>', {code_sector:code_sector}, function (data) {
 			window.sector=data.sector;
 			window.showcaseList = data.rackList;
-			loadComplite2();
+			loadComplete2();
 		});
 	}
 	else
@@ -345,11 +343,11 @@ function loadComplite()
 		window.sector=<%=new Sector(null, null, null, "Наименование", 1200, 600, 300, null, null,null, null,null,null).toJsonObject()%>;
 		window.sector.code_shop=code_shop;
 		window.showcaseList = [<%=new Rack(null, null, "Наименование", "",100, 100, 100, null, 100, 100, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null).toJsonObject()%>];
-		loadComplite2();
+		loadComplete2();
 	}
 }
 
-function loadComplite2()
+function loadComplete2()
 {
 	edit_canvas = document.getElementById("edit_canvas");
 	edit_context = edit_canvas.getContext("2d");
@@ -623,6 +621,29 @@ function roundRack(rack)
 <script type="text/javascript">
 	function fSectorSave()
 	{
+		var noneError=true;
+		for (var i = 0; noneError && i < window.showcaseList.length; i++) {
+			if (window.showcaseList[i].name_rack == null || window.showcaseList[i].name_rack.length == 0) {
+				noneError = false;
+				window.showcase = window.showcaseList[i];
+				selectShowcase(window.showcase);
+				drawEditCanvas();
+				drawPreviewCanvas();
+				$('#rackName').focus();
+				alert('отсутствует наименование');
+			}
+			else if (window.showcaseList[i].rack_barcode == null || window.showcaseList[i].rack_barcode.length == 0) {
+				noneError = false;
+				window.showcase = window.showcaseList[i];
+				selectShowcase(window.showcase);
+				drawEditCanvas();
+				drawPreviewCanvas();
+				$('#rackBarcode').focus();
+				alert('отсутствует штрихкод');
+			}
+		}
+		if (noneError)
+		{
 		postJson('<%=SectorSave.URL%>', {sector:window.sector, rackList:window.showcaseList}, function (data) {
 			setCookie('<%=SectorConst.CODE_SECTOR%>', data.code_sector);
 			postJson('<%=SectorEdit.URL%>', {code_sector: data.code_sector}, function (data) {
@@ -635,7 +656,7 @@ function roundRack(rack)
 				drawEditCanvas();
 				drawPreviewCanvas();
 			});
-		});
+		});      }
 	}
 
 	function fSectorReload()
@@ -744,6 +765,8 @@ function roundRack(rack)
 
 			if (window.rackAdd==true)
 			{
+				if (sx>0 && sy>0 && sx<window.sector.length && sy<window.sector.width)
+				{
 				window.rackAdd=false;
 				window.showcase=<%=new Rack(null, null, "", "", 1, 1, 1,null, 0, 0, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null).toJsonObject()%>;
 				window.showcase.code_sector=window.sector.code_sector;
@@ -757,25 +780,15 @@ function roundRack(rack)
 				x = evnt.clientX;
 				y = evnt.clientY;
 				window.editMove=19;
+				}
 			}
 			else if (window.rackTemplateAdd!=null)
 			{
+				if (sx>0 && sy>0 && sx<window.sector.length && sy<window.sector.width)
+				{
 				window.showcase=clone(window.rackTemplateAdd);
 				window.showcase.code_sector=window.sector.code_sector;
 				window.showcase.name_rack=window.rackTemplateAdd.name_rack_template;
-//				TODO
-				if (window.rackTemplateAdd.load_side=='<%=LoadSide.U%>')
-				{
-					window.showcase.length=window.rackTemplateAdd.width;
-					window.showcase.width=window.rackTemplateAdd.height;
-					window.showcase.height=window.rackTemplateAdd.length;
-				}
-				else
-				{
-					window.showcase.length=window.rackTemplateAdd.width;
-					window.showcase.width=window.rackTemplateAdd.length;
-					window.showcase.height=window.rackTemplateAdd.height;
-				}
 				window.showcase.type_rack='<%=TypeRack.R%>';
 				window.showcase.rack_barcode='';
 				window.showcase.lock_move='N';
@@ -792,6 +805,7 @@ function roundRack(rack)
 				y = evnt.clientY;
 				window.editMove=1;
 				window.rackTemplateAdd=null;
+				}
 			}
 			else
 			{
@@ -1334,6 +1348,7 @@ function roundRack(rack)
 			setCookie('code_rack_template', code_rack_template);
 			var option = rackTemplateList.find('option[value=' + code_rack_template + ']');
 			if (option.length == 1) {
+				window.rackAdd=false;
 				window.rackTemplateAdd = $.evalJSON(option.attr('json'));
 			}
 		}

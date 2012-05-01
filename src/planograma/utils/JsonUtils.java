@@ -44,7 +44,7 @@ public class JsonUtils {
 		final JsonElement jsonElement = jsonObject.get(key);
 		if (jsonElement==null || jsonElement.isJsonNull())
 			return false;
-		return jsonElement.getAsBoolean();
+		return ("Y".equals(jsonElement.getAsString()))?true:jsonElement.getAsBoolean();
 	}
 
 	public static Date getDate(final JsonObject jsonObject, final String key) {

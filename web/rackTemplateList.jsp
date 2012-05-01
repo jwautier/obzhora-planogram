@@ -1,5 +1,6 @@
 <%@ page import="planograma.utils.JspUtils" %>
 <%@ page import="planograma.servlet.racktemplate.RackTemplateList" %>
+<%@ page import="planograma.servlet.racktemplate.RackTemplateRemove" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -9,7 +10,7 @@
 	<script type="text/javascript" src="js/planograma.js"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
-<body>
+<body onload="loadComplete();">
 <table class="frame">
 	<tr>
 		<td class="path">
@@ -106,7 +107,16 @@
 	}
 	function fRackTemplateRemove()
 	{
-		//TODO
+		var code_rack_template = $('#rackTemplateList').val();
+		if (code_rack_template!=null && code_rack_template.length>0)
+		{
+			postJson(
+					'<%=RackTemplateRemove.URL%>',
+					{code_rack_template:code_rack_template},
+					function () {
+						loadComplete();
+					})
+		}
 	}
 </script>
 <script type="text/javascript">
@@ -132,8 +142,11 @@
 	}
 </script>
 <script type="text/javascript">
+	function loadComplete()
+	{
 	postJson('<%=RackTemplateList.URL%>', null, function (data) {
 		var rackTemplateList = $('#rackTemplateList');
+		rackTemplateList.empty();
 		for (var i in data.rackTemplateList) {
 			var item = data.rackTemplateList[i];
 			var option = $('<option></option>')
@@ -146,6 +159,7 @@
 			selectRackTemplate(code_rack_template);
 		}
 	});
+	}
 </script>
 </body>
 </html>

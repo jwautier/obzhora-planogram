@@ -37,7 +37,7 @@ public class SectorRemove extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
-		final int code_sector = Integer.valueOf(requestData.getAsJsonObject().get(SectorConst.CODE_SECTOR).getAsString(), 16);
+		final int code_sector = Integer.valueOf(requestData.getAsJsonObject().get(SectorConst.CODE_SECTOR).getAsString());
 		final UserContext userContext = getUserContext(session);
 		sectorModel.delete(userContext, code_sector);
 		commit(userContext);

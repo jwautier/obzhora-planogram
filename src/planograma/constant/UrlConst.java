@@ -22,6 +22,7 @@ public interface UrlConst {
 	public static final String URL_RACK_TEMPLATE_LIST = "servlet/rack_template/list";
 	public static final String URL_RACK_TEMPLATE_EDIT = "servlet/rack_template/edit";
 	public static final String URL_RACK_TEMPLATE_SAVE = "servlet/rack_template/save";
+	public static final String URL_RACK_TEMPLATE_REMOVE = "servlet/rack_template/remove";
 
 	public static final String URL_RACK_EDIT = "servlet/rack/edit";
 	public static final String URL_RACK_SAVE = "servlet/rack/save";
