@@ -1,6 +1,7 @@
 package planograma.model;
 
 import planograma.constant.data.AdditionUnitConst;
+import planograma.constant.data.UnitDimensionConst;
 import planograma.constant.data.WaresConst;
 import planograma.constant.data.WaresImageConst;
 import planograma.data.UserContext;
@@ -22,31 +23,90 @@ import java.util.List;
  */
 public class WaresModel {
 
-	private static final String Q_LIST = "select" +
-			" w." + WaresConst.CODE_WARES + "," +
-			" u." + AdditionUnitConst.CODE_UNIT + "," +
-			" w." + WaresConst.ARTICL + "," +
-			" w." + WaresConst.NAME_WARES + "," +
-			" u." + AdditionUnitConst.LENGTH + "," +
-			" u." + AdditionUnitConst.WIDTH + "," +
-			" u." + AdditionUnitConst.HEIGHT + "," +
-			" u." + AdditionUnitConst.BAR_CODE + "," +
-			" wi."+WaresImageConst.CODE_IMAGE+" " +
-			"from" +
-			" " + AdditionUnitConst.TABLE_NAME + " u" +
-			" join " + WaresConst.TABLE_NAME + " w on w."+ WaresConst.CODE_WARES +" = u." + AdditionUnitConst.CODE_WARES +
-			" left join " + WaresImageConst.TABLE_NAME + " wi on wi."+WaresImageConst.CODE_WARES+" = w."+ WaresConst.CODE_WARES+" " +
-			"where" +
-			" u."+ AdditionUnitConst.LENGTH +">0" +
-			" and u."+ AdditionUnitConst.WIDTH + ">0" +
-			" and u." + AdditionUnitConst.HEIGHT +">0 " +
-			"order by w."+ WaresConst.NAME_WARES;
+	private static final String Q_SELECT_FROM_WHERE =
+			"select" +
+					" w." + WaresConst.CODE_GROUP + "," +
+					" w." + WaresConst.CODE_WARES + "," +
+					" u." + AdditionUnitConst.CODE_UNIT + "," +
+					" wi." + WaresImageConst.CODE_IMAGE + "," +
+					" w." + WaresConst.NAME_WARES + "," +
+					" ud." + UnitDimensionConst.ABR_UNIT + "," +
+					" u." + AdditionUnitConst.LENGTH + "," +
+					" u." + AdditionUnitConst.WIDTH + "," +
+					" u." + AdditionUnitConst.HEIGHT + "," +
+					" u." + AdditionUnitConst.BAR_CODE + " " +
+					"from" +
+					" " + AdditionUnitConst.TABLE_NAME + " u" +
+					" join " + WaresConst.TABLE_NAME + " w on w." + WaresConst.CODE_WARES + " = u." + AdditionUnitConst.CODE_WARES +
+					" join " + UnitDimensionConst.TABLE_NAME + " ud on ud." + UnitDimensionConst.CODE_UNIT + "  = u." + AdditionUnitConst.CODE_UNIT +
+					" left join " + WaresImageConst.TABLE_NAME + " wi on wi." + WaresImageConst.CODE_WARES + " = w." + WaresConst.CODE_WARES + " " +
+					"where" +
+					" u." + AdditionUnitConst.LENGTH + ">0" +
+					" and u." + AdditionUnitConst.WIDTH + ">0" +
+					" and u." + AdditionUnitConst.HEIGHT + ">0";
 
-	public List<WaresWrapper> list(final UserContext userContext, Integer code_group) throws SQLException {
+	private static final String Q_ORDER_BY = "order by w." + WaresConst.NAME_WARES;
+
+	private static final String Q_LIST = Q_SELECT_FROM_WHERE +
+			" and w." + WaresConst.CODE_GROUP + " = ? " +
+			Q_ORDER_BY;
+
+	public List<WaresWrapper> list(final UserContext userContext, final Integer code_group) throws SQLException {
 //		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
-		//TODO
+		ps.setInt(1, code_group);
+		final ResultSet resultSet = ps.executeQuery();
+		final List<WaresWrapper> list = new ArrayList<WaresWrapper>();
+		while (resultSet.next()) {
+			final WaresWrapper item = new WaresWrapper(resultSet);
+			list.add(item);
+		}
+//		System.out.println(System.currentTimeMillis()-time);
+		return list;
+	}
+
+	private static final String Q_SEARCH_CODE_GROUP_CODE_WARES = Q_SELECT_FROM_WHERE +
+			" w." + WaresConst.CODE_GROUP + " = ? " +
+			" w." + WaresConst.CODE_WARES + " = ? " +
+			" and u." + AdditionUnitConst.LENGTH + ">0" +
+			" and u." + AdditionUnitConst.WIDTH + ">0" +
+			" and u." + AdditionUnitConst.HEIGHT + ">0 " +
+			"order by w." + WaresConst.NAME_WARES;
+
+	public List<WaresWrapper> search(final UserContext userContext, final String text, final String field,
+									 final Integer code_group) throws SQLException {
+//		long time = System.currentTimeMillis();
+		final Connection connection = userContext.getConnection();
+
+		String query = Q_SELECT_FROM_WHERE;
+
+		if (WaresConst.CODE_WARES.equals(field)) {
+			query += " and w." + WaresConst.CODE_WARES + " = ? ";
+		} else if (WaresConst.NAME_WARES.equals(field)) {
+			query += " and w." + WaresConst.NAME_WARES + " like ? ";
+		} else if (AdditionUnitConst.BAR_CODE.equals(field)) {
+			query += " and u." + AdditionUnitConst.BAR_CODE + " like ? ";
+		}
+		if (code_group != null && code_group != 0) {
+			query += " and w." + WaresConst.CODE_GROUP + " = ? ";
+		}
+		query+=Q_ORDER_BY;
+
+		final PreparedStatement ps = connection.prepareStatement(query);
+
+		if (WaresConst.CODE_WARES.equals(field)) {
+			ps.setInt(1, Integer.valueOf(text));
+		} else if (WaresConst.NAME_WARES.equals(field)) {
+			ps.setString(1, text);
+		} else if (AdditionUnitConst.BAR_CODE.equals(field)) {
+			ps.setString(1, text);
+		}
+
+		if (code_group != null && code_group != 0) {
+			ps.setInt(2, code_group);
+		}
+
 		final ResultSet resultSet = ps.executeQuery();
 		final List<WaresWrapper> list = new ArrayList<WaresWrapper>();
 		while (resultSet.next()) {
