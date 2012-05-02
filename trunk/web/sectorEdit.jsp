@@ -26,7 +26,7 @@
 	<script type="text/javascript" src="js/planograma.js"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
-<body onload="loadComplite();" style="overflow-x:hidden;">
+<body onload="loadComplete();" style="overflow-x:hidden;">
 <table class="frame">
 	<tr>
 		<td class="path">

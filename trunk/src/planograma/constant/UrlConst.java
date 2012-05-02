@@ -28,6 +28,8 @@ public interface UrlConst {
 	public static final String URL_RACK_SAVE = "servlet/rack/save";
 	
 	public static final String URL_WARES_GROUP_TREE = "servlet/wares/group_tree";
+	public static final String URL_WARES_LIST = "servlet/wares/list";
+	public static final String URL_WARES_LIST_SEARCH = "servlet/wares/list/search";
 
 	public static final String URL_IMAGE_LOAD = "image/";
 	public static final String URL_IMAGE_CLEAN_CACHE = "servlet/image/clean_cache";
