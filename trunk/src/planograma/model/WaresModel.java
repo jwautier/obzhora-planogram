@@ -66,14 +66,6 @@ public class WaresModel {
 		return list;
 	}
 
-	private static final String Q_SEARCH_CODE_GROUP_CODE_WARES = Q_SELECT_FROM_WHERE +
-			" w." + WaresConst.CODE_GROUP + " = ? " +
-			" w." + WaresConst.CODE_WARES + " = ? " +
-			" and u." + AdditionUnitConst.LENGTH + ">0" +
-			" and u." + AdditionUnitConst.WIDTH + ">0" +
-			" and u." + AdditionUnitConst.HEIGHT + ">0 " +
-			"order by w." + WaresConst.NAME_WARES;
-
 	public List<WaresWrapper> search(final UserContext userContext, final String text, final String field,
 									 final Integer code_group) throws SQLException {
 //		long time = System.currentTimeMillis();

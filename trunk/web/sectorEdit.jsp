@@ -520,7 +520,7 @@ function drawShowcase(showcase, context, kx, ky, m) {
 	context.lineTo(x2, y2);
 	context.lineTo(x3, y3);
 	context.lineTo(x4, y4);
-	context.lineTo(x1, y1);
+	context.closePath();
 	context.stroke();
 	context.fill();
 
@@ -622,6 +622,15 @@ function roundRack(rack)
 	function fSectorSave()
 	{
 		var noneError=true;
+		if (window.sector.name_sector==null || window.sector.name_sector.length==0)
+		{
+			noneError=false;
+			selectShowcase(null);
+			drawEditCanvas();
+			drawPreviewCanvas();
+			$('#sectorName').focus();
+			alert('отсутствует наименование');
+		}
 		for (var i = 0; noneError && i < window.showcaseList.length; i++) {
 			if (window.showcaseList[i].name_rack == null || window.showcaseList[i].name_rack.length == 0) {
 				noneError = false;

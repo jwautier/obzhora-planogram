@@ -162,19 +162,7 @@
 										<tr>
 											<td align="right">поворот</td>
 											<td>
-												<select id="shelfAngle" onchange="changeShelfAngle(this)">
-													<option>0</option>
-													<option>10</option>
-													<option>20</option>
-													<option>30</option>
-													<option>40</option>
-													<option>45</option>
-													<option>50</option>
-													<option>60</option>
-													<option>70</option>
-													<option>80</option>
-													<option>90</option>
-												</select>
+												<input type="text" id="shelfAngle" onchange="changeShelfAngle(this)" onkeydown="numberFieldKeyDown(event, this)"/>
 											</td>
 										</tr>
 										<tr>
@@ -446,7 +434,7 @@
 		context.lineTo(x2, y2);
 		context.lineTo(x3, y3);
 		context.lineTo(x4, y4);
-		context.lineTo(x1, y1);
+		context.closePath();
 		context.stroke();
 		context.fill();
 	}
@@ -562,6 +550,7 @@
 			{
 			window.shelfAdd=false;
 			window.shelf=<%=new RackShelfTemplate(null, null, 0, 0, 1,1, 1, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>;
+			window.shelf.shelf_length=window.rackTemplate.length;
 			window.shelf.code_rack_template=window.rackTemplate.code_rack_template;
 			window.shelf.x_coord=sx;
 			window.shelf.y_coord=sy;
@@ -974,14 +963,8 @@
 	function changeShelfAngle(shelfAngle) {
 		if (window.shelf != null) {
 			var angle = Number(shelfAngle.value);
-			if (angle >= 0 && angle <= 90) {
+			if (angle >= 0 && angle <= 360) {
 				var oldAngle = window.shelf.angle;
-				if (angle == 90) {
-					angle = 0;
-					var temp = window.shelf.shelf_width;
-					window.shelf.shelf_width = window.shelf.shelf_height;
-					window.shelf.shelf_height = temp;
-				}
 				window.shelf.angle = angle;
 				calcCoordinates(window.shelf);
 				if (shelfBeyondRack(window.shelf)) {
