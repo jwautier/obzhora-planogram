@@ -189,3 +189,35 @@ function numberFieldKeyDown(event, obj) {
 	}
 }
 
+/**
+ * определить координаты каждого угла объекта
+ * @param shelf полка стеллажа
+ */
+function rackShelfCalcCoordinates(shelf)
+{
+	// поворот объекта
+	shelf.cos = Math.cos(-shelf.angle*Math.PI/180);
+	shelf.sin = Math.sin(-shelf.angle*Math.PI/180);
+	// правый верхний угол
+	var x = shelf.shelf_width / 2;
+	var y = shelf.shelf_height / 2;
+	// относительно сцены
+	shelf.x1 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
+	shelf.y1 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
+	// правый нижний угол
+	y = -y;
+	// относительно сцены
+	shelf.x2 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
+	shelf.y2 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
+	// левый нижний угол
+	x = -x;
+	// относительно сцены
+	shelf.x3 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
+	shelf.y3 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
+	// левый верхний угол
+	y = -y;
+	// относительно сцены
+	shelf.x4 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
+	shelf.y4 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
+}
+
