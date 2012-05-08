@@ -65,7 +65,7 @@
 						</table>
 					</td>
 					<td id="edit_td" width="100%">
-						<canvas id='edit_canvas' width="150" height="150">canvas not supported</canvas>
+						<canvas id='edit_canvas' width="640" height="480">canvas not supported</canvas>
 					</td>
 					<td>
 						<table class="frame">
@@ -73,7 +73,7 @@
 								<td>
 									<table class="frame">
 										<tr>
-											<td id="preview_td" colspan="2" align="center" valign="middle">
+											<td id="preview_td" colspan="2">
 												<canvas id="preview_canvas" width="150" height="150">canvas not supported</canvas>
 											</td>
 										</tr>
@@ -86,6 +86,11 @@
 											</td>
 										</tr>
 									</table>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<hr/>
 								</td>
 							</tr>
 							<tr>
@@ -263,7 +268,7 @@
 		window.copyObject=null;
 
 		for (var i = 0; i < window.rackShelfList.length; i++) {
-			calcCoordinates(window.rackShelfList[i]);
+			rackShelfCalcCoordinates(window.rackShelfList[i]);
 		}
 		drawEditCanvas();
 		drawPreviewCanvas();
@@ -313,37 +318,6 @@
 		return e;
 	}
 
-	/**
-	 * определить координаты каждого угла объекта
-	 * @param shelf
-	 */
-	function calcCoordinates(shelf)
-	{
-		// поворот объекта
-		shelf.cos = Math.cos(-shelf.angle*Math.PI/180);
-		shelf.sin = Math.sin(-shelf.angle*Math.PI/180);
-		// правый верхний угол
-		var x = shelf.shelf_width / 2;
-		var y = shelf.shelf_height / 2;
-		// относительно сцены
-		shelf.x1 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
-		shelf.y1 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
-		// правый нижний угол
-		y = -y;
-		// относительно сцены
-		shelf.x2 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
-		shelf.y2 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
-		// левый нижний угол
-		x = -x;
-		// относительно сцены
-		shelf.x3 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
-		shelf.y3 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
-		// левый верхний угол
-		y = -y;
-		// относительно сцены
-		shelf.x4 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
-		shelf.y4 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
-	}
 	function roundShelf(shelf)
 	{
 		shelf.x_coord=Math.round(shelf.x_coord);
@@ -352,7 +326,7 @@
 		shelf.shelf_height=Math.round(shelf.shelf_height);
 		shelf.shelf_length=Math.round(shelf.shelf_length);
 		selectShelf(shelf);
-		calcCoordinates(shelf);
+		rackShelfCalcCoordinates(shelf);
 		drawEditCanvas();
 		drawPreviewCanvas();
 	}
@@ -496,16 +470,16 @@
 			window.shelf.x_coord = window.copyObject.x_coord + window.copyObject.shelf_width;
 			window.shelf.y_coord;
 
-			calcCoordinates(window.shelf);
+			rackShelfCalcCoordinates(window.shelf);
 			if (shelfBeyondRack(window.shelf))
 			{
 				window.shelf.x_coord = window.copyObject.x_coord;
 				window.shelf.y_coord = window.copyObject.y_coord + window.copyObject.shelf_height;
-				calcCoordinates(window.shelf);
+				rackShelfCalcCoordinates(window.shelf);
 				if (shelfBeyondRack(window.shelf)){
 					window.shelf.x_coord = window.copyObject.x_coord;
 					window.shelf.y_coord = window.copyObject.y_coord;
-					calcCoordinates(window.shelf);
+					rackShelfCalcCoordinates(window.shelf);
 				}
 			}
 
@@ -540,7 +514,7 @@
 			window.shelf.y_coord=sy;
 			rackShelfList.push(window.shelf);
 			selectShelf(window.shelf);
-			calcCoordinates(window.shelf);
+			rackShelfCalcCoordinates(window.shelf);
 			drawEditCanvas();
 			drawPreviewCanvas();
 			x = evnt.clientX;
@@ -627,17 +601,17 @@
 					var oldy = window.shelf.y_coord;
 					// перемещение
 					window.shelf.x_coord = window.shelf.x_coord + dx;
-					calcCoordinates(window.shelf);
+					rackShelfCalcCoordinates(window.shelf);
 					if (shelfBeyondRack(window.shelf))
 					{
 						window.shelf.x_coord = oldx;
 					}
 					window.shelf.y_coord = window.shelf.y_coord + dy;
-					calcCoordinates(window.shelf);
+					rackShelfCalcCoordinates(window.shelf);
 					if (shelfBeyondRack(window.shelf))
 					{
 						window.shelf.y_coord = oldy;
-						calcCoordinates(window.shelf);
+						rackShelfCalcCoordinates(window.shelf);
 					}
 					document.getElementById('shelfX').value = window.shelf.x_coord;
 					document.getElementById('shelfY').value = window.shelf.y_coord;
@@ -680,7 +654,7 @@
 						window.shelf.x_coord = window.shelf.x_coord + dxy * window.shelf.sin / 2;
 						window.shelf.y_coord = window.shelf.y_coord - dxy * window.shelf.cos / 2;
 					}
-					calcCoordinates(window.shelf);
+					rackShelfCalcCoordinates(window.shelf);
 					if (window.shelf.x1 < 0 || window.shelf.x2 < 0 || window.shelf.x3 < 0 || window.shelf.x4 < 0 ||
 							window.shelf.x1 > window.rack.width || window.shelf.x2 > window.rack.width || window.shelf.x3 > window.rack.width || window.shelf.x4 > window.rack.width ||
 							window.shelf.y1 < 0 || window.shelf.y2 < 0 || window.shelf.y3 < 0 || window.shelf.y4 < 0 ||
@@ -689,7 +663,7 @@
 						window.shelf.y_coord = oldY;
 						window.shelf.shelf_width = oldWidth;
 						window.shelf.shelf_height = oldHeight;
-						calcCoordinates(window.shelf);
+						rackShelfCalcCoordinates(window.shelf);
 					} else {
 						document.getElementById('shelfX').value = window.shelf.x_coord;
 						document.getElementById('shelfY').value = window.shelf.y_coord;
@@ -893,7 +867,7 @@
 			if (x != null && !isNaN(x) && x != Infinity) {
 				var oldx = window.shelf.x_coord;
 				window.shelf.x_coord = x;
-				calcCoordinates(window.shelf);
+				rackShelfCalcCoordinates(window.shelf);
 				// не выходит за области сектора
 				if ((window.shelf.x_coord < oldx
 						&& (window.shelf.x1 < 0
@@ -906,7 +880,7 @@
 							|| window.shelf.x3 > window.rack.width
 							|| window.shelf.x4 > window.rack.width))) {
 					window.shelf.x_coord = oldx;
-					calcCoordinates(window.shelf);
+					rackShelfCalcCoordinates(window.shelf);
 				}
 				else {
 					drawEditCanvas();
@@ -922,7 +896,7 @@
 			if (y != null && !isNaN(y) && y != Infinity) {
 				var oldY = window.shelf.y_coord;
 				window.shelf.y_coord = y;
-				calcCoordinates(window.shelf);
+				rackShelfCalcCoordinates(window.shelf);
 				// не выходит за области сектора
 				if ((window.shelf.y_coord < oldY
 						&& (window.shelf.y1 < 0
@@ -935,7 +909,7 @@
 						|| window.shelf.y3 > window.rack.height
 						|| window.shelf.y4 > window.rack.height))) {
 					window.shelf.y_coord = oldY;
-					calcCoordinates(window.shelf);
+					rackShelfCalcCoordinates(window.shelf);
 				}
 				else {
 					drawEditCanvas();
@@ -951,10 +925,10 @@
 			if (angle >= 0 && angle <= 360) {
 				var oldAngle = window.shelf.angle;
 				window.shelf.angle = angle;
-				calcCoordinates(window.shelf);
+				rackShelfCalcCoordinates(window.shelf);
 				if (shelfBeyondRack(window.shelf)) {
 					window.shelf.angle = oldAngle;
-					calcCoordinates(window.shelf);
+					rackShelfCalcCoordinates(window.shelf);
 				}
 				else {
 					drawEditCanvas();
@@ -970,11 +944,11 @@
 			if (value != null && value>0 && value != Infinity) {
 				var oldValue = window.shelf.shelf_width;
 				window.shelf.shelf_width = value;
-				calcCoordinates(window.shelf);
+				rackShelfCalcCoordinates(window.shelf);
 				// не выходит за области сектора
 				if (shelfBeyondRack(window.shelf)) {
 					window.shelf.shelf_width = oldValue;
-					calcCoordinates(window.shelf);
+					rackShelfCalcCoordinates(window.shelf);
 				}
 				else {
 					drawEditCanvas();
@@ -990,11 +964,11 @@
 			if (value != null && value>0 && value != Infinity) {
 				var oldValue = window.shelf.shelf_height;
 				window.shelf.shelf_height = value;
-				calcCoordinates(window.shelf);
+				rackShelfCalcCoordinates(window.shelf);
 				// не выходит за области сектора
 				if (shelfBeyondRack(window.shelf)) {
 					window.shelf.shelf_height = oldValue;
-					calcCoordinates(window.shelf);
+					rackShelfCalcCoordinates(window.shelf);
 				}
 				else {
 					drawEditCanvas();

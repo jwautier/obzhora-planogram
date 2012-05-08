@@ -132,6 +132,16 @@ td.scale:hover{
 	height: 100%;
 	background-color: white;
 }
+input.basket
+{
+	background-color: red;
+	border: 3px solid white;
+}
+input.basketSelect
+{
+	background-color: red;
+	border: 3px solid blue;
+}
 
 
 
