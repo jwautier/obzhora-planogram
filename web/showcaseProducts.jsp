@@ -253,8 +253,8 @@
 				];
 		window.rackWaresList =
 				[
-						<%=new RackWares(null, 12851, 19, null, 1, 1, 25, 160, 5, 50,30, 1, null, null, null, null, 46).toJsonObject()%>,
-					<%=new RackWares(null, 12851, 19, null, 1, 1, 25, 130, 5, 30,50, 1, null, null, null, null, 46).toJsonObject()%>
+					<%=new RackWares(null, 12851, 19, null, "NA", 1, 25, 160, 5, 50,30, 1, null, null, null, null, 46).toJsonObject()%>,
+					<%=new RackWares(null, 12851, 19, null, "NA", 2, 25, 130, 5, 30,50, 1, null, null, null, null, 46).toJsonObject()%>
 				];
 		window.basket=[
 				<%=new WaresWrapper(null, 12851, 19, 46, "testWares", "шт", 5, 50, 30, null).toJsonObject()%>
@@ -284,23 +284,78 @@
 
 		window.shelfAdd = false;
 		window.editMove = 0;
-		window.previewMove = false;
+
 		x = 0;
 		y = 0;
 		window.shelf = null;
 		window.selectRackWares=[];
+		window.selectBasket=null;
 		window.copyObject=null;
 
 		for (var i = 0; i < window.rackShelfList.length; i++) {
 			rackShelfCalcCoordinates(window.rackShelfList[i]);
 		}
-		drawEditCanvas();
-		drawPreviewCanvas();
+		rackWaresLoadImage();
+//		drawEditCanvas();
+//		drawPreviewCanvas();
+
 		basketToHtml(window.basket);
 
 		setRack(window.rack);
 		editCanvasMouseListener();
 		previewCanvasMouseListener();
+	}
+
+	var images=[];
+
+	function getImage(code_image)
+	{
+		if(images[code_image] === undefined)
+		{
+//			var loadComplite=0;
+			images[code_image]= new Image();
+//			images[code_image].onload  =function (){
+//				loadComplite=1;
+//			}
+			images[code_image].src = 'image/'+code_image;
+			// TODO загрузить, а лиш потом вернуть
+//			images[code_image].load('image/'+code_image);
+//			while (loadComplite==0);
+			return images[code_image];
+		}else
+		{
+			return images[code_image];
+		}
+	}
+
+	function rackWaresLoadImage()
+	{
+		var countImg=window.rackWaresList.length;
+		for (var i = 0; i < window.rackWaresList.length; i++) {
+			var code_image=window.rackWaresList[i].code_image;
+			if(code_image>0)
+			{
+				images[code_image] = new Image();
+				images[code_image].onload = function(){
+					countImg--;
+					if (countImg==0)
+					{
+						drawEditCanvas();
+						drawPreviewCanvas();
+					}
+				}
+				images[code_image].src = 'image/'+code_image;
+			}
+			else
+			{
+				countImg--;
+				if (countImg==0)
+				{
+					drawEditCanvas();
+					drawPreviewCanvas();
+				}
+			}
+		}
 	}
 
 	function setRack(rack)
@@ -309,8 +364,18 @@
 		$('#rackWidth').text(window.rack.width);
 		$('#rackHeight').text(window.rack.height);
 		$('#rackLength').text(window.rack.length);
-		//TODO
-		$('#rackLoadSide').text(window.rack.load_side);
+		switch (window.rack.load_side) {
+			<%
+			for (final LoadSide loadSide:LoadSide.values())
+			{
+			%>
+			case '<%=loadSide.name()%>':
+				$('#rackLoadSide').text('<%=loadSide.getDesc()%>');
+				break;
+			<%
+			}
+			%>
+		}
 	}
 
 	function selectShelf(shelf) {
@@ -360,6 +425,42 @@
 		}
 		for (var i = 0; i < window.rackWaresList.length; i++) {
 			drawWares(window.rackWaresList[i], window.edit_canvas, window.edit_context, window.kx, window.ky, window.km);
+		}
+		if (window.m_select==1)
+		{
+			// select
+			window.edit_context.lineWidth = 1;
+			window.edit_context.strokeStyle = "rgba(128, 128, 128, 1)";
+			window.edit_context.strokeRect(
+					0.5+(window.m_x_begin - window.kx)/ window.km,
+					0.5+window.edit_canvas.height - (window.m_y_begin - window.ky) / window.km,
+					(window.m_x_end - window.m_x_begin) / window.km,
+					(window.m_y_begin - window.m_y_end) / window.km);
+			if (window.selectBasket!=null)
+			{
+				var m_x_begin2 = Math.min(window.m_x_end, window.m_x_begin);
+				var m_x_end2 = Math.max(window.m_x_end, window.m_x_begin);
+				var m_y_begin2 = Math.min(window.m_y_end, window.m_y_begin);
+				var m_y_end2 = Math.max(window.m_y_end, window.m_y_begin);
+				var m_x_d=window.selectBasket.width / window.km;
+				var m_y_d=-window.selectBasket.height / window.km;
+				for (var i=m_x_begin2; i<m_x_end2-window.selectBasket.width; i=i+window.selectBasket.width)
+				{
+					for (var j=m_y_begin2; j<m_y_end2-window.selectBasket.height; j=j+window.selectBasket.height)
+					{
+						window.edit_context.drawImage(getImage(window.selectBasket.code_image),
+								0.5+(i - window.kx)/ window.km,
+								0.5+window.edit_canvas.height - (j - window.ky) / window.km,
+								m_x_d ,
+								m_y_d );
+						window.edit_context.strokeRect(
+								0.5+(i - window.kx)/ window.km,
+								0.5+window.edit_canvas.height - (j - window.ky) / window.km,
+								m_x_d ,
+								m_y_d );
+					}
+				}
+			}
 		}
 	}
 	function drawPreviewCanvas()
@@ -425,30 +526,29 @@
 	}
 
 	function drawWares(rackWares, canvas, context, kx, ky, m) {
-		var img = new Image();
-		img.onload = function(){
-			var mx=(rackWares.position_x-kx)/m;
-			var my=canvas.height-(rackWares.position_y-ky)/m;
-			context.translate(mx, my);
-			// TODO angle
+		var movx = (rackWares.position_x - kx) / m;
+		var movy = canvas.height - (rackWares.position_y - ky) / m;
+		context.translate(movx, movy);
+		// TODO angle
 //			context.rotate(45*Math.PI/180);
-			var x1= -rackWares.wares_width/m/2;
-			var y1= -rackWares.wares_height/m/2;
-			var w1= rackWares.wares_width/m;
-			var h1= rackWares.wares_height/m;
-			context.drawImage(img, x1, y1, w1, h1);
-			context.lineWidth = 1;
-			if ($.inArray(rackWares, window.selectRackWares)>=0) {
-				context.strokeStyle = "BLUE";
-			}
-			else{
-				context.strokeStyle = "BLACK";
-			}
-			context.strokeRect(x1, y1, w1, h1);
-//			context.rotate(-45*Math.PI/180);
-			context.translate(-mx, -my);
+		var x1 = -rackWares.wares_width / m / 2;
+		var y1 = -rackWares.wares_height / m / 2;
+		var w1 = rackWares.wares_width / m;
+		var h1 = rackWares.wares_height / m;
+		if (rackWares.code_image > 0) {
+//			context.drawImage(rackWares.img, x1, y1, w1, h1);
+			context.drawImage(getImage(rackWares.code_image), x1, y1, w1, h1);
 		}
-		img.src = 'image/'+rackWares.code_image;
+		context.lineWidth = 1;
+		if ($.inArray(rackWares, window.selectRackWares) >= 0) {
+			context.strokeStyle = "BLUE";
+		}
+		else {
+			context.strokeStyle = "BLACK";
+		}
+		context.strokeRect(x1, y1, w1, h1);
+//			context.rotate(-45*Math.PI/180);
+		context.translate(-movx, -movy);
 	}
 
 	function basketToHtml(basket)
@@ -458,7 +558,7 @@
 		for (var i=0; i<basket.length; i++)
 		{
 			var w=basket[i];
-			var wHtml='<input type="image" src="image/'+ w.code_image+'" width="'+ w.width/window.km+'" height="'+ w.height/window.km+'" class="basket" onclick="waresSelect(this)">';
+			var wHtml='<input type="image" src="image/'+ w.code_image+'" width="'+ w.width/window.km+'" height="'+ w.height/window.km+'" class="basket" onclick="waresSelect(this, '+i+')">';
 			basketPanel.append(wHtml);
 		}
 	}
@@ -471,13 +571,41 @@
 <%--обработка событий редактора--%>
 <script type="text/javascript">
 	function editCanvasMouseListener() {
-		// TODO
+
+		window.edit_canvas.onmousedown = function (e) {
+			var evnt = ie_event(e);
+			window.m_select=1;
+			window.m_x_begin=window.kx + evnt.offsetX * window.km;
+			window.m_y_begin = window.ky + (window.edit_canvas.height - evnt.offsetY) * window.km;
+			// TODO
+		}
+
+		window.edit_canvas.onmouseup = function(e) {
+			window.m_select=0;
+			//TODO
+		}
+		window.edit_canvas.onmouseout = function(e) {
+			window.m_select=0;
+			//TODO
+		}
+		window.edit_canvas.onmousemove = function (e) {
+			if (window.m_select==1)
+			{
+				var evnt = ie_event(e);
+				window.m_x_end=window.kx + evnt.offsetX * window.km;
+				window.m_y_end = window.ky + (window.edit_canvas.height - evnt.offsetY) * window.km;
+				drawEditCanvas();
+			}
+		}
 	}
 </script>
 
 <%-- обработка событий окна навигации --%>
 <script type="text/javascript">
 	function previewCanvasMouseListener() {
+
+		window.previewMove = false;
+
 		window.preview_canvas.onmousedown = function (e) {
 			window.previewMove = true;
 			var evnt = ie_event(e);
@@ -555,19 +683,21 @@
 
 <%-- обработка событий корзины --%>
 <script type="text/javascript">
-	 function waresSelect(image)
+	 function waresSelect(image, indexBasket)
 	 {
 		 var image=$(image);
 		 if (image.hasClass('basketSelect'))
 		 {
 			 image.removeClass('basketSelect');
 			 image.addClass('basket');
+			 window.selectBasket=null;
 		 }
 		 else
 		 {
 			 $('input.basketSelect').removeClass('basketSelect').addClass('basket');
 			 image.removeClass('basket');
 			 image.addClass('basketSelect');
+			 window.selectBasket=window.basket[indexBasket];
 		 }
 	 }
 </script>

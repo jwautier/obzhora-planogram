@@ -34,6 +34,8 @@ public class TestQuery {
 			testRackTemplateModel(userContext);
 			System.out.println("-------------------------RackShelfTemplateModel-------------------------");
 			testRackShelfTemplateModel(userContext);
+			System.out.println("-------------------------RackWaresModel-------------------------");
+			testRackWaresModel(userContext);
 
 
 		} catch (Exception e) {
@@ -219,6 +221,38 @@ public class TestQuery {
 		System.out.println("delete");
 		rackShelfTemplate = rackShelfTemplateModel.select(userContext, rackShelfTemplate.getCode_shelf_template());
 		if (rackShelfTemplate != null)
+			System.out.println("Ошибка удаления");
+	}
+
+	public static void testRackWaresModel(final UserContext userContext) throws SQLException {
+		final SectorModel sectorModel = SectorModel.getInstance();
+		Sector sector = new Sector(8, null, null, "sector 1", 2000, 2000, 300, null, null, null, null, null, null);
+		sectorModel.insert(userContext, sector);
+		final RackModel rackModel = RackModel.getInstance();
+		final Rack rack = new Rack(null, null, "rack 1", "1", 50, 200, 150, sector.getCode_sector(), 1000, 1000, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null);
+		rackModel.insert(userContext, rack);
+		final RackWaresModel rackWaresModel = RackWaresModel.getInstance();
+		RackWares rackWares = new RackWares(rack.getCode_rack(), 10, 19, null, "NA", 1, 10, 10, 50, 50, 50, 1, null, null,null,null, null);
+		System.out.println(rackWares.toJsonObject());
+		rackWaresModel.insert(userContext, rackWares);
+		System.out.println("insert");
+		List<RackWares> list = rackWaresModel.list(userContext, rack.getCode_rack());
+		System.out.println("list");
+		for (final RackWares o : list) {
+			System.out.println(o.toJsonObject());
+		}
+		rackWares = rackWaresModel.select(userContext, rackWares.getCode_wares_on_rack());
+		System.out.println("select");
+		System.out.println(rackWares.toJsonObject());
+		rackWares.setWares_width(250);
+		rackWaresModel.update(userContext, rackWares);
+		System.out.println("update");
+		rackWares = rackWaresModel.select(userContext, rackWares.getCode_wares_on_rack());
+		System.out.println(rackWares.toJsonObject());
+		rackWaresModel.delete(userContext, rackWares.getCode_wares_on_rack());
+		System.out.println("delete");
+		rackWares = rackWaresModel.select(userContext, rackWares.getCode_wares_on_rack());
+		if (rackWares != null)
 			System.out.println("Ошибка удаления");
 	}
 }
