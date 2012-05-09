@@ -1,7 +1,6 @@
 package planograma.data;
 
 import com.google.gson.JsonObject;
-import planograma.constant.data.ImageConst;
 import planograma.constant.data.RackWaresConst;
 import planograma.constant.data.WaresImageConst;
 import planograma.utils.JsonUtils;
@@ -31,17 +30,17 @@ public class RackWares implements IJsonObject {
 	 */
 	private Integer code_unit;
 	/**
-	 * Код товара на полке (первичный ключ)
+	 * Код товара на стеллаже (первичный ключ)
 	 */
-	private Integer code_wares_on_shelf;
+	private Integer code_wares_on_rack;
 	/**
-	 * Номер полки
+	 * Тип товара
 	 */
-	private Integer order_number_shelf;
+	private String type_wares_on_rack;
 	/**
-	 * Номер по порядку па полке
+	 * Номер по порядку па стеллаже
 	 */
-	private Integer order_number_on_shelf;
+	private Integer order_number_on_rack;
 	/**
 	 * Положение на стеллаже по ширине
 	 */
@@ -89,13 +88,13 @@ public class RackWares implements IJsonObject {
 	private Integer code_image;
 
 
-	public RackWares(Integer code_rack, Integer code_wares, Integer code_unit, Integer code_wares_on_shelf, Integer order_number_shelf, Integer order_number_on_shelf, Integer position_x, Integer position_y, Integer wares_length, Integer wares_width, Integer wares_height, Integer count_length_on_shelf, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer code_image) {
+	public RackWares(Integer code_rack, Integer code_wares, Integer code_unit, Integer code_wares_on_rack, String type_wares_on_rack, Integer order_number_on_rack, Integer position_x, Integer position_y, Integer wares_length, Integer wares_width, Integer wares_height, Integer count_length_on_shelf, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer code_image) {
 		this.code_rack = code_rack;
 		this.code_wares = code_wares;
 		this.code_unit = code_unit;
-		this.code_wares_on_shelf = code_wares_on_shelf;
-		this.order_number_shelf = order_number_shelf;
-		this.order_number_on_shelf = order_number_on_shelf;
+		this.code_wares_on_rack = code_wares_on_rack;
+		this.type_wares_on_rack = type_wares_on_rack;
+		this.order_number_on_rack = order_number_on_rack;
 		this.position_x = position_x;
 		this.position_y = position_y;
 		this.wares_length = wares_length;
@@ -109,13 +108,150 @@ public class RackWares implements IJsonObject {
 		this.code_image = code_image;
 	}
 
+
+	public Integer getCode_rack() {
+		return code_rack;
+	}
+
+	public void setCode_rack(Integer code_rack) {
+		this.code_rack = code_rack;
+	}
+
+	public Integer getCode_wares() {
+		return code_wares;
+	}
+
+	public void setCode_wares(Integer code_wares) {
+		this.code_wares = code_wares;
+	}
+
+	public Integer getCode_unit() {
+		return code_unit;
+	}
+
+	public void setCode_unit(Integer code_unit) {
+		this.code_unit = code_unit;
+	}
+
+	public Integer getCode_wares_on_rack() {
+		return code_wares_on_rack;
+	}
+
+	public void setCode_wares_on_rack(Integer code_wares_on_rack) {
+		this.code_wares_on_rack = code_wares_on_rack;
+	}
+
+	public String getType_wares_on_rack() {
+		return type_wares_on_rack;
+	}
+
+	public void setType_wares_on_rack(String type_wares_on_rack) {
+		this.type_wares_on_rack = type_wares_on_rack;
+	}
+
+	public Integer getOrder_number_on_rack() {
+		return order_number_on_rack;
+	}
+
+	public void setOrder_number_on_rack(Integer order_number_on_rack) {
+		this.order_number_on_rack = order_number_on_rack;
+	}
+
+	public Integer getPosition_x() {
+		return position_x;
+	}
+
+	public void setPosition_x(Integer position_x) {
+		this.position_x = position_x;
+	}
+
+	public Integer getPosition_y() {
+		return position_y;
+	}
+
+	public void setPosition_y(Integer position_y) {
+		this.position_y = position_y;
+	}
+
+	public Integer getWares_length() {
+		return wares_length;
+	}
+
+	public void setWares_length(Integer wares_length) {
+		this.wares_length = wares_length;
+	}
+
+	public Integer getWares_width() {
+		return wares_width;
+	}
+
+	public void setWares_width(Integer wares_width) {
+		this.wares_width = wares_width;
+	}
+
+	public Integer getWares_height() {
+		return wares_height;
+	}
+
+	public void setWares_height(Integer wares_height) {
+		this.wares_height = wares_height;
+	}
+
+	public Integer getCount_length_on_shelf() {
+		return count_length_on_shelf;
+	}
+
+	public void setCount_length_on_shelf(Integer count_length_on_shelf) {
+		this.count_length_on_shelf = count_length_on_shelf;
+	}
+
+	public Integer getUser_insert() {
+		return user_insert;
+	}
+
+	public void setUser_insert(Integer user_insert) {
+		this.user_insert = user_insert;
+	}
+
+	public Date getDate_insert() {
+		return date_insert;
+	}
+
+	public void setDate_insert(Date date_insert) {
+		this.date_insert = date_insert;
+	}
+
+	public Integer getUser_update() {
+		return user_update;
+	}
+
+	public void setUser_update(Integer user_update) {
+		this.user_update = user_update;
+	}
+
+	public Date getDate_update() {
+		return date_update;
+	}
+
+	public void setDate_update(Date date_update) {
+		this.date_update = date_update;
+	}
+
+	public Integer getCode_image() {
+		return code_image;
+	}
+
+	public void setCode_image(Integer code_image) {
+		this.code_image = code_image;
+	}
+
 	public RackWares(final ResultSet resultSet) throws SQLException {
 		code_rack = resultSet.getInt(RackWaresConst.CODE_RACK);
 		code_wares = resultSet.getInt(RackWaresConst.CODE_WARES);
 		code_unit = resultSet.getInt(RackWaresConst.CODE_UNIT);
-		code_wares_on_shelf = resultSet.getInt(RackWaresConst.CODE_WARES_ON_SHELH);
-		order_number_shelf = resultSet.getInt(RackWaresConst.ORDER_NUMBER_SHELH);
-		order_number_on_shelf = resultSet.getInt(RackWaresConst.ORDER_NUMBER_ON_SHELH);
+		code_wares_on_rack = resultSet.getInt(RackWaresConst.CODE_WARES_ON_RACK);
+		type_wares_on_rack = resultSet.getString(RackWaresConst.TYPE_WARES_ON_RACK);
+		order_number_on_rack = resultSet.getInt(RackWaresConst.ORDER_NUMBER_ON_RACK);
 		position_x = resultSet.getInt(RackWaresConst.POSITION_X);
 		position_y = resultSet.getInt(RackWaresConst.POSITION_Y);
 		wares_length = resultSet.getInt(RackWaresConst.WARES_LENGTH);
@@ -133,9 +269,9 @@ public class RackWares implements IJsonObject {
 		code_rack = JsonUtils.getInteger(jsonObject, RackWaresConst.CODE_RACK);
 		code_wares = JsonUtils.getInteger(jsonObject, RackWaresConst.CODE_WARES);
 		code_unit = JsonUtils.getInteger(jsonObject, RackWaresConst.CODE_UNIT);
-		code_wares_on_shelf = JsonUtils.getInteger(jsonObject, RackWaresConst.CODE_WARES_ON_SHELH);
-		order_number_shelf = JsonUtils.getInteger(jsonObject, RackWaresConst.ORDER_NUMBER_SHELH);
-		order_number_on_shelf = JsonUtils.getInteger(jsonObject, RackWaresConst.ORDER_NUMBER_ON_SHELH);
+		code_wares_on_rack = JsonUtils.getInteger(jsonObject, RackWaresConst.CODE_WARES_ON_RACK);
+		type_wares_on_rack = JsonUtils.getString(jsonObject, RackWaresConst.TYPE_WARES_ON_RACK);
+		order_number_on_rack = JsonUtils.getInteger(jsonObject, RackWaresConst.ORDER_NUMBER_ON_RACK);
 		position_x = JsonUtils.getInteger(jsonObject, RackWaresConst.POSITION_X);
 		position_y = JsonUtils.getInteger(jsonObject, RackWaresConst.POSITION_Y);
 		wares_length = JsonUtils.getInteger(jsonObject, RackWaresConst.WARES_LENGTH);
@@ -155,9 +291,9 @@ public class RackWares implements IJsonObject {
 		jsonObject.addProperty(RackWaresConst.CODE_RACK, code_rack);
 		jsonObject.addProperty(RackWaresConst.CODE_WARES, code_wares);
 		jsonObject.addProperty(RackWaresConst.CODE_UNIT, code_unit);
-		jsonObject.addProperty(RackWaresConst.CODE_WARES_ON_SHELH, code_wares_on_shelf);
-		jsonObject.addProperty(RackWaresConst.ORDER_NUMBER_SHELH, order_number_shelf);
-		jsonObject.addProperty(RackWaresConst.ORDER_NUMBER_ON_SHELH, order_number_on_shelf);
+		jsonObject.addProperty(RackWaresConst.CODE_WARES_ON_RACK, code_wares_on_rack);
+		jsonObject.addProperty(RackWaresConst.TYPE_WARES_ON_RACK, type_wares_on_rack);
+		jsonObject.addProperty(RackWaresConst.ORDER_NUMBER_ON_RACK, order_number_on_rack);
 		jsonObject.addProperty(RackWaresConst.POSITION_X, position_x);
 		jsonObject.addProperty(RackWaresConst.POSITION_Y, position_y);
 		jsonObject.addProperty(RackWaresConst.WARES_LENGTH, wares_length);

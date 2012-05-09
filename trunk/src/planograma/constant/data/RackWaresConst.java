@@ -8,14 +8,14 @@ package planograma.constant.data;
  * To change this template use File | Settings | File Templates.
  */
 public interface RackWaresConst {
-	public static final String TABLE_NAME = "EUGENE_SAZ.SEV_PL_WARES_ON_SHELF";
+	public static final String TABLE_NAME = "EUGENE_SAZ.SEV_PL_WARES_ON_RACK";
 
 	public static final String CODE_RACK = "code_rack";
 	public static final String CODE_WARES = "code_wares";
 	public static final String CODE_UNIT = "code_unit";
-	public static final String CODE_WARES_ON_SHELH = "code_wares_on_shelf";
-	public static final String ORDER_NUMBER_SHELH = "order_number_shelf";
-	public static final String ORDER_NUMBER_ON_SHELH = "order_number_on_shelf";
+	public static final String CODE_WARES_ON_RACK = "code_wares_on_rack";
+	public static final String TYPE_WARES_ON_RACK = "type_wares_on_rack";
+	public static final String ORDER_NUMBER_ON_RACK = "order_number_on_rack";
 	public static final String POSITION_X = "position_x";
 	public static final String POSITION_Y = "position_y";
 	public static final String WARES_LENGTH = "wares_length";

@@ -1,15 +1,11 @@
 package planograma.model;
 
 import planograma.constant.data.RackWaresConst;
-import planograma.constant.data.WaresConst;
 import planograma.constant.data.WaresImageConst;
 import planograma.data.RackWares;
 import planograma.data.UserContext;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,23 +18,23 @@ import java.util.List;
  */
 public class RackWaresModel {
 	public static final String Q_LIST = "select " +
-			" rw."+RackWaresConst.CODE_RACK + ","+
-			" rw."+RackWaresConst.CODE_WARES + ","+
-			" rw."+RackWaresConst.CODE_UNIT + ","+
-			" rw."+RackWaresConst.CODE_WARES_ON_SHELH + ","+
-			" rw."+RackWaresConst.ORDER_NUMBER_SHELH + ","+
-			" rw."+RackWaresConst.ORDER_NUMBER_ON_SHELH + ","+
-			" rw."+RackWaresConst.POSITION_X + ","+
-			" rw."+RackWaresConst.POSITION_Y + ","+
-			" rw."+RackWaresConst.WARES_LENGTH + ","+
-			" rw."+RackWaresConst.WARES_WIDTH + ","+
-			" rw."+RackWaresConst.WARES_HEIGHT + ","+
-			" rw."+RackWaresConst.COUNT_LENGTH_ON_SHELF + ","+
-			" rw."+RackWaresConst.USER_INSERT + ","+
-			" rw."+RackWaresConst.DATE_INSERT + ","+
-			" rw."+RackWaresConst.USER_UPDATE + ","+
-			" rw."+RackWaresConst.DATE_UPDATE + ","+
-			" wi."+WaresImageConst.CODE_IMAGE + ","+
+			" rw." + RackWaresConst.CODE_RACK + "," +
+			" rw." + RackWaresConst.CODE_WARES + "," +
+			" rw." + RackWaresConst.CODE_UNIT + "," +
+			" rw." + RackWaresConst.CODE_WARES_ON_RACK + "," +
+			" rw." + RackWaresConst.TYPE_WARES_ON_RACK + "," +
+			" rw." + RackWaresConst.ORDER_NUMBER_ON_RACK + "," +
+			" rw." + RackWaresConst.POSITION_X + "," +
+			" rw." + RackWaresConst.POSITION_Y + "," +
+			" rw." + RackWaresConst.WARES_LENGTH + "," +
+			" rw." + RackWaresConst.WARES_WIDTH + "," +
+			" rw." + RackWaresConst.WARES_HEIGHT + "," +
+			" rw." + RackWaresConst.COUNT_LENGTH_ON_SHELF + "," +
+			" rw." + RackWaresConst.USER_INSERT + "," +
+			" rw." + RackWaresConst.DATE_INSERT + "," +
+			" rw." + RackWaresConst.USER_UPDATE + "," +
+			" rw." + RackWaresConst.DATE_UPDATE + "," +
+			" wi." + WaresImageConst.CODE_IMAGE + " " +
 			"from " + RackWaresConst.TABLE_NAME + " rw" +
 			" left join " + WaresImageConst.TABLE_NAME + " wi on wi." + WaresImageConst.CODE_WARES + " = rw." + RackWaresConst.CODE_WARES + " " +
 			"where " + RackWaresConst.CODE_RACK + " = ?";
@@ -59,26 +55,26 @@ public class RackWaresModel {
 	}
 
 	public static final String Q_SELECT = "select " +
-			" rw."+RackWaresConst.CODE_RACK + ","+
-			" rw."+RackWaresConst.CODE_WARES + ","+
-			" rw."+RackWaresConst.CODE_UNIT + ","+
-			" rw."+RackWaresConst.CODE_WARES_ON_SHELH + ","+
-			" rw."+RackWaresConst.ORDER_NUMBER_SHELH + ","+
-			" rw."+RackWaresConst.ORDER_NUMBER_ON_SHELH + ","+
-			" rw."+RackWaresConst.POSITION_X + ","+
-			" rw."+RackWaresConst.POSITION_Y + ","+
-			" rw."+RackWaresConst.WARES_LENGTH + ","+
-			" rw."+RackWaresConst.WARES_WIDTH + ","+
-			" rw."+RackWaresConst.WARES_HEIGHT + ","+
-			" rw."+RackWaresConst.COUNT_LENGTH_ON_SHELF + ","+
-			" rw."+RackWaresConst.USER_INSERT + ","+
-			" rw."+RackWaresConst.DATE_INSERT + ","+
-			" rw."+RackWaresConst.USER_UPDATE + ","+
-			" rw."+RackWaresConst.DATE_UPDATE + ","+
-			" wi."+WaresImageConst.CODE_IMAGE + ","+
+			" rw." + RackWaresConst.CODE_RACK + "," +
+			" rw." + RackWaresConst.CODE_WARES + "," +
+			" rw." + RackWaresConst.CODE_UNIT + "," +
+			" rw." + RackWaresConst.CODE_WARES_ON_RACK + "," +
+			" rw." + RackWaresConst.TYPE_WARES_ON_RACK + "," +
+			" rw." + RackWaresConst.ORDER_NUMBER_ON_RACK + "," +
+			" rw." + RackWaresConst.POSITION_X + "," +
+			" rw." + RackWaresConst.POSITION_Y + "," +
+			" rw." + RackWaresConst.WARES_LENGTH + "," +
+			" rw." + RackWaresConst.WARES_WIDTH + "," +
+			" rw." + RackWaresConst.WARES_HEIGHT + "," +
+			" rw." + RackWaresConst.COUNT_LENGTH_ON_SHELF + "," +
+			" rw." + RackWaresConst.USER_INSERT + "," +
+			" rw." + RackWaresConst.DATE_INSERT + "," +
+			" rw." + RackWaresConst.USER_UPDATE + "," +
+			" rw." + RackWaresConst.DATE_UPDATE + "," +
+			" wi." + WaresImageConst.CODE_IMAGE + " " +
 			"from " + RackWaresConst.TABLE_NAME + " rw" +
 			" left join " + WaresImageConst.TABLE_NAME + " wi on wi." + WaresImageConst.CODE_WARES + " = rw." + RackWaresConst.CODE_WARES + " " +
-			"where " + RackWaresConst.CODE_WARES_ON_SHELH + " = ?";
+			"where " + RackWaresConst.CODE_WARES_ON_RACK + " = ?";
 
 	public RackWares select(final UserContext userContext, final int rackShelf) throws SQLException {
 //		long time = System.currentTimeMillis();
@@ -93,7 +89,74 @@ public class RackWaresModel {
 //		System.out.println(System.currentTimeMillis()-time);
 		return item;
 	}
-	// TODO insert update delete
+
+	public static final String Q_INSERT_UPDATE = "{call :new_code_wares_on_rack := EUGENE_SAZ.SEV_PKG_PLANOGRAMS.IUWaresRack(" +
+			":mode, " +
+			":" + RackWaresConst.CODE_RACK + ", " +
+			":" + RackWaresConst.CODE_WARES + ", " +
+			":" + RackWaresConst.CODE_UNIT + ", " +
+			":" + RackWaresConst.CODE_WARES_ON_RACK + ", " +
+			":" + RackWaresConst.TYPE_WARES_ON_RACK + ", " +
+			":" + RackWaresConst.ORDER_NUMBER_ON_RACK + ", " +
+			":" + RackWaresConst.POSITION_X + ", " +
+			":" + RackWaresConst.POSITION_Y + ", " +
+			":" + RackWaresConst.WARES_LENGTH + ", " +
+			":" + RackWaresConst.WARES_WIDTH + ", " +
+			":" + RackWaresConst.WARES_HEIGHT + ", " +
+			":" + RackWaresConst.COUNT_LENGTH_ON_SHELF + ")}";
+
+
+	public int insert(final UserContext userContext, final RackWares rackWares) throws SQLException {
+		final Connection connection = userContext.getConnection();
+		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
+		callableStatement.registerOutParameter("new_code_wares_on_rack", Types.INTEGER);
+		callableStatement.setString("mode", "I");
+		callableStatement.setInt(RackWaresConst.CODE_RACK, rackWares.getCode_rack());
+		callableStatement.setInt(RackWaresConst.CODE_WARES, rackWares.getCode_wares());
+		callableStatement.setInt(RackWaresConst.CODE_UNIT, rackWares.getCode_unit());
+		callableStatement.setObject(RackWaresConst.CODE_WARES_ON_RACK, rackWares.getCode_wares_on_rack());
+		callableStatement.setString(RackWaresConst.TYPE_WARES_ON_RACK, rackWares.getType_wares_on_rack());
+		callableStatement.setInt(RackWaresConst.ORDER_NUMBER_ON_RACK, rackWares.getOrder_number_on_rack());
+		callableStatement.setInt(RackWaresConst.POSITION_X, rackWares.getPosition_x());
+		callableStatement.setInt(RackWaresConst.POSITION_Y, rackWares.getPosition_y());
+		callableStatement.setInt(RackWaresConst.WARES_LENGTH, rackWares.getWares_length());
+		callableStatement.setInt(RackWaresConst.WARES_WIDTH, rackWares.getWares_width());
+		callableStatement.setInt(RackWaresConst.WARES_HEIGHT, rackWares.getWares_height());
+		callableStatement.setInt(RackWaresConst.COUNT_LENGTH_ON_SHELF, rackWares.getCount_length_on_shelf());
+		callableStatement.execute();
+		final int id = callableStatement.getInt("new_code_wares_on_rack");
+		rackWares.setCode_wares_on_rack(id);
+		return rackWares.getCode_wares_on_rack();
+	}
+
+	public void update(final UserContext userContext, final RackWares rackWares) throws SQLException {
+		final Connection connection = userContext.getConnection();
+		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
+		callableStatement.registerOutParameter("new_code_wares_on_rack", Types.INTEGER);
+		callableStatement.setString("mode", "U");
+		callableStatement.setInt(RackWaresConst.CODE_RACK, rackWares.getCode_rack());
+		callableStatement.setInt(RackWaresConst.CODE_WARES, rackWares.getCode_wares());
+		callableStatement.setInt(RackWaresConst.CODE_UNIT, rackWares.getCode_unit());
+		callableStatement.setObject(RackWaresConst.CODE_WARES_ON_RACK, rackWares.getCode_wares_on_rack());
+		callableStatement.setString(RackWaresConst.TYPE_WARES_ON_RACK, rackWares.getType_wares_on_rack());
+		callableStatement.setInt(RackWaresConst.ORDER_NUMBER_ON_RACK, rackWares.getOrder_number_on_rack());
+		callableStatement.setInt(RackWaresConst.POSITION_X, rackWares.getPosition_x());
+		callableStatement.setInt(RackWaresConst.POSITION_Y, rackWares.getPosition_y());
+		callableStatement.setInt(RackWaresConst.WARES_LENGTH, rackWares.getWares_length());
+		callableStatement.setInt(RackWaresConst.WARES_WIDTH, rackWares.getWares_width());
+		callableStatement.setInt(RackWaresConst.WARES_HEIGHT, rackWares.getWares_height());
+		callableStatement.setInt(RackWaresConst.COUNT_LENGTH_ON_SHELF, rackWares.getCount_length_on_shelf());
+		callableStatement.execute();
+	}
+
+	private static final String Q_DELETE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.DWaresRack(:" + RackWaresConst.CODE_WARES_ON_RACK + ")}";
+
+	public void delete(final UserContext userContext, final int code_wares_on_rack) throws SQLException {
+		final Connection connection = userContext.getConnection();
+		final CallableStatement callableStatement = connection.prepareCall(Q_DELETE);
+		callableStatement.setInt(RackWaresConst.CODE_WARES_ON_RACK, code_wares_on_rack);
+		callableStatement.execute();
+	}
 
 	private static RackWaresModel instance = new RackWaresModel();
 
