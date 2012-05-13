@@ -47,10 +47,10 @@
 								<td><a href="#" onclick="return aOnClick(this)" class="disabled notReady"><%=JspUtils.toMenuTitle("Добавить товар")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this)" class="disabled notReady"><%=JspUtils.toMenuTitle("Копировать")%></a></td>
+								<td><a href="#" id="butCopy" onclick="return aOnClick(this, fCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this)" class="disabled notReady"><%=JspUtils.toMenuTitle("Вырезать")%></a></td>
+								<td><a href="#" id="butCut" onclick="return aOnClick(this, fCut)" class="disabled"><%=JspUtils.toMenuTitle("Вырезать")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" onclick="return aOnClick(this)" class="disabled notReady"><%=JspUtils.toMenuTitle("Вставить")%></a></td>
@@ -128,7 +128,7 @@
 							</tr>
 							<tr>
 								<td>
-									<table id="shelfPanel" style="display: none;">
+									<table id="shelfPanel" width="100%" style="display: none;">
 										<colgroup>
 											<col width="70"/>
 										</colgroup>
@@ -137,23 +137,31 @@
 										</tr>
 										<tr>
 											<td align="right">x&nbsp;</td>
-											<td id="sheldX"></td>
+											<td id="shelfX"></td>
 										</tr>
 										<tr>
 											<td align="right">y&nbsp;</td>
-											<td id="sheldY"></td>
+											<td id="shelfY"></td>
+										</tr>
+										<tr>
+											<td align="right">угол&nbsp;</td>
+											<td id="shelfAngle"></td>
 										</tr>
 										<tr>
 											<td align="right">ширина&nbsp;</td>
-											<td id="sheldWidth"></td>
+											<td id="shelfWidth"></td>
 										</tr>
 										<tr>
 											<td align="right">высота&nbsp;</td>
-											<td id="sheldHeight"></td>
+											<td id="shelfHeight"></td>
 										</tr>
 										<tr>
-											<td align="right">длина&nbsp;</td>
-											<td id="sheldLength"></td>
+											<td align="right">глубина&nbsp;</td>
+											<td id="shelfLength"></td>
+										</tr>
+										<tr>
+											<td align="right">тип&nbsp;</td>
+											<td id="shelfType"></td>
 										</tr>
 									</table>
 									<table id="waresPanel" style="display: none;">
@@ -196,8 +204,12 @@
 											<td id="waresHeight"></td>
 										</tr>
 										<tr>
-											<td align="right">длина&nbsp;</td>
+											<td align="right">глубина&nbsp;</td>
 											<td id="waresLength"></td>
+										</tr>
+										<tr>
+											<td align="right">кол-во в глубину</td>
+											<td><input type="text" id="waresCountInLength" onchange="changeWaresCountInLength(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
 										</tr>
 									</table>
 								</td>
@@ -243,22 +255,23 @@
 		//	window.rackWaresList = data.rackWaresList;
 		//	loadComplete2();
 		//});
-		window.rack = <%=new Rack(null, null, "testRack", null, 80, 120, 200, null, 0, 0, 0, LoadSide.F, null, true, true, TypeRack.R, null, null, null, null, null, null).toJsonObject()%>;
+		window.rack = <%=new Rack(null, null, "testRack", null, 800, 1200, 2000, null, 0, 0, 0, LoadSide.F, null, true, true, TypeRack.R, null, null, null, null, null, null).toJsonObject()%>;
 		window.rackShelfList =
 				[
-					<%=new RackShelf(null, null, 60, 1, 2, 120, 80, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>,
-					<%=new RackShelf(null, null, 60, 51, 2, 120, 80, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>,
-					<%=new RackShelf(null, null, 60, 101, 2, 120, 80, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>,
-					<%=new RackShelf(null, null, 60, 151, 2, 120, 80, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>
+					<%=new RackShelf(null, null, 600, 10, 20, 1200, 800, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>,
+					<%=new RackShelf(null, null, 600, 510, 20, 1200, 800, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>,
+					<%=new RackShelf(null, null, 600, 1010, 20, 1200, 800, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>,
+					<%=new RackShelf(null, null, 600, 1510, 20, 1200, 800, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>
 				];
 		window.rackWaresList =
 				[
-					<%=new RackWares(null, 12851, 19, null, "NA", 1, 25, 160, 5, 50,30, 1, null, null, null, null, 46).toJsonObject()%>,
-					<%=new RackWares(null, 12851, 19, null, "NA", 2, 25, 130, 5, 30,50, 1, null, null, null, null, 46).toJsonObject()%>
+					<%=new RackWares(null, 12851, 19, null, TypeRackWares.NA, 1, 250, 1600, 50, 500,300, 1, null, null, null, null, 46, "test1", "t1", "tb1").toJsonObject()%>,
+					<%=new RackWares(null, 12851, 19, null, TypeRackWares.NA, 2, 250, 1300, 50, 300,500, 1, null, null, null, null, 46, "test2", "t2", "tb2").toJsonObject()%>
 				];
-		window.basket=[
-				<%=new WaresWrapper(null, 12851, 19, 46, "testWares", "шт", 5, 50, 30, null).toJsonObject()%>
-		];
+		window.basket={
+			12851:<%=new WaresWrapper(null, 12851, 19, 46, "testWares", "шт", 50, 500, 300, null).toJsonObject()%>,
+			12852:<%=new WaresWrapper(null, 12852, 19, 45, "testWares", "шт", 50, 500, 300, null).toJsonObject()%>
+		};
 		loadComplete2();
 	}
 
@@ -282,18 +295,21 @@
 		window.kx = 0;
 		window.ky = 0;
 
-		window.shelfAdd = false;
 		window.editMove = 0;
 
 		x = 0;
 		y = 0;
 		window.shelf = null;
-		window.selectRackWares=[];
+		window.selectRackWaresList=[];
 		window.selectBasket=null;
-		window.copyObject=null;
+		window.copyObjectList=[];
 
 		for (var i = 0; i < window.rackShelfList.length; i++) {
 			rackShelfCalcCoordinates(window.rackShelfList[i]);
+		}
+
+		for (var i = 0; i < window.rackWaresList.length; i++) {
+			rackWaresCalcCoordinates(window.rackWaresList[i]);
 		}
 		rackWaresLoadImage();
 //		drawEditCanvas();
@@ -378,28 +394,93 @@
 		}
 	}
 
-	function selectShelf(shelf) {
-		if (shelf != null) {
-			document.getElementById('shelfX').value = shelf.x_coord;
-			document.getElementById('shelfY').value = shelf.y_coord;
-			document.getElementById('shelfAngle').value = shelf.angle;
-			document.getElementById('shelfWidth').value = shelf.shelf_width;
-			document.getElementById('shelfHeight').value = shelf.shelf_height;
-			document.getElementById('shelfLength').value = shelf.shelf_length;
-			document.getElementById('shelfType').value = shelf.type_shelf;
+	function fSelectRackWares()
+	{
+		if (window.selectRackWaresList.length==1)
+		{
+			var rackWares=window.selectRackWaresList[0];
+			$('#waresCode').text(rackWares.code_wares);
+			$('#waresName').text(rackWares.name_wares);
+			$('#waresUnit').text(rackWares.abr_unit);
+			$('#waresBarcode').text(rackWares.bar_code);
+			$('#waresX').val(rackWares.position_x);
+			$('#waresY').val(rackWares.position_y);
+			$('#waresWidth').text(rackWares.wares_width);
+			$('#waresHeight').text(rackWares.wares_height);
+			$('#waresLength').text(rackWares.wares_length);
+			$('#waresCountInLength').val(rackWares.count_length_on_shelf);
+			$('#waresPanel').show();
 			$('#butCopy').removeClass('disabled');
 			$('#butCut').removeClass('disabled');
-		} else {
-			document.getElementById('shelfX').value = '';
-			document.getElementById('shelfY').value = '';
-			document.getElementById('shelfAngle').value = '';
-			document.getElementById('shelfWidth').value = '';
-			document.getElementById('shelfHeight').value = '';
-			document.getElementById('shelfLength').value = '';
-			document.getElementById('shelfType').value = '';
+		}
+		else
+		{
+			$('#waresPanel').hide();
 			$('#butCopy').addClass('disabled');
 			$('#butCut').addClass('disabled');
 		}
+	}
+
+	function selectShelf(shelf) {
+		if (shelf != null) {
+			$('#shelfX').text(shelf.x_coord);
+			$('#shelfY').text(shelf.y_coord);
+			$('#shelfAngle').text(shelf.angle);
+			$('#shelfWidth').text(shelf.shelf_width);
+			$('#shelfHeight').text(shelf.shelf_height);
+			$('#shelfLength').text( shelf.shelf_length);
+			switch (shelf.type_shelf)
+			{
+			<%
+				for (final TypeShelf typeShelf:TypeShelf.values())
+				{
+					out.print("case '");
+					out.print(typeShelf.name());
+					out.print("': $('#shelfType').text('");
+					out.print(typeShelf.getDesc());
+					out.println("');");
+				}
+			%>
+			}
+			$('#shelfPanel').show();
+		} else {
+			$('#shelfPanel').hide();
+		}
+	}
+
+	/**
+	 * определить координаты каждого угла объекта
+	 * @param rackWares полка стеллажа
+	 */
+	function rackWaresCalcCoordinates(rackWares)
+	{
+		// поворот объекта
+		// TODO angle
+//		rackWares.cos = Math.cos(-rackWares.angle*Math.PI/180);
+//		rackWares.sin = Math.sin(-rackWares.angle*Math.PI/180);
+		rackWares.cos = 1;
+		rackWares.sin = 0;
+		// правый верхний угол
+		var x = rackWares.wares_width / 2;
+		var y = rackWares.wares_height / 2;
+		// относительно сцены
+		rackWares.x1 = rackWares.position_x + x * rackWares.cos - y * rackWares.sin;
+		rackWares.y1 = rackWares.position_y + x * rackWares.sin + y * rackWares.cos;
+		// правый нижний угол
+		y = -y;
+		// относительно сцены
+		rackWares.x2 = rackWares.position_x + x * rackWares.cos - y * rackWares.sin;
+		rackWares.y2 = rackWares.position_y + x * rackWares.sin + y * rackWares.cos;
+		// левый нижний угол
+		x = -x;
+		// относительно сцены
+		rackWares.x3 = rackWares.position_x + x * rackWares.cos - y * rackWares.sin;
+		rackWares.y3 = rackWares.position_y + x * rackWares.sin + y * rackWares.cos;
+		// левый верхний угол
+		y = -y;
+		// относительно сцены
+		rackWares.x4 = rackWares.position_x + x * rackWares.cos - y * rackWares.sin;
+		rackWares.y4 = rackWares.position_y + x * rackWares.sin + y * rackWares.cos;
 	}
 
 	function ie_event(e) {
@@ -540,7 +621,7 @@
 			context.drawImage(getImage(rackWares.code_image), x1, y1, w1, h1);
 		}
 		context.lineWidth = 1;
-		if ($.inArray(rackWares, window.selectRackWares) >= 0) {
+		if ($.inArray(rackWares, window.selectRackWaresList) >= 0) {
 			context.strokeStyle = "BLUE";
 		}
 		else {
@@ -555,10 +636,10 @@
 	{
 		var basketPanel=$('#basketPanel');
 		basketPanel.empty();
-		for (var i=0; i<basket.length; i++)
+		for (var i in basket)
 		{
 			var w=basket[i];
-			var wHtml='<input type="image" src="image/'+ w.code_image+'" width="'+ w.width/window.km+'" height="'+ w.height/window.km+'" class="basket" onclick="waresSelect(this, '+i+')">';
+			var wHtml='<input id="'+i+'" type="image" src="image/'+ w.code_image+'" width="'+ w.width/window.km+'" height="'+ w.height/window.km+'" class="basket" onclick="basketWaresSelect(this)">';
 			basketPanel.append(wHtml);
 		}
 	}
@@ -566,6 +647,38 @@
 <%-- обработка событий меню --%>
 <script type="text/javascript">
 	// TODO
+	function fCopy()
+	{
+		window.copyObjectList=window.selectRackWaresList;
+		if (window.copyObjectList.length>0)
+		{
+			$('#butPaste').removeClass('disabled');
+		}
+	}
+
+	function fCut()
+	{
+		window.copyObjectList=window.selectRackWaresList;
+		for (var i in window.selectRackWaresList)
+		{
+			var selectRackWares=window.selectRackWaresList[i];
+			for (var j in window.rackWaresList)
+			{
+				if (selectRackWares==window.rackWaresList[j])
+				{
+					window.rackWaresList.splice(j,1);
+				}
+			}
+		}
+		window.selectRackWaresList=[];
+		fSelectRackWares();
+		drawEditCanvas();
+		drawPreviewCanvas();
+		if (window.copyObjectList.length>0)
+		{
+			$('#butPaste').removeClass('disabled');
+		}
+	}
 </script>
 
 <%--обработка событий редактора--%>
@@ -574,29 +687,218 @@
 
 		window.edit_canvas.onmousedown = function (e) {
 			var evnt = ie_event(e);
-			window.m_select=1;
-			window.m_x_begin=window.kx + evnt.offsetX * window.km;
-			window.m_y_begin = window.ky + (window.edit_canvas.height - evnt.offsetY) * window.km;
-			// TODO
+			var sx = window.kx + evnt.offsetX * window.km;
+			var sy = window.ky + (window.edit_canvas.height - evnt.offsetY) * window.km;
+
+			var findRackWares=null;
+			window.shelf=null;
+			// поиск товара под указателем
+			for (var i= window.rackWaresList.length-1; findRackWares==null && i>=0 ;i--)
+			{
+				if (pointInsideRackWares(window.rackWaresList[i], sx, sy)) {
+					findRackWares = window.rackWaresList[i];
+				}
+			}
+			if (findRackWares!=null)
+			{
+				// перемещение товара
+				if ($.inArray(findRackWares, window.selectRackWaresList) < 0)
+				{
+					window.selectRackWaresList=[];
+					window.selectRackWaresList.push(findRackWares);
+				}
+
+				window.editMove=1;
+				x = evnt.clientX;
+				y = evnt.clientY;
+			}
+			else
+			{
+				// поиск полки под курсором
+				for (var i = window.rackShelfList.length-1; window.shelf == null && i >=0; i--) {
+					d1 = distance(window.rackShelfList[i].x1,window.rackShelfList[i].y1,
+							window.rackShelfList[i].x2,window.rackShelfList[i].y2,
+							sx,sy);
+					d2 = distance(window.rackShelfList[i].x2,window.rackShelfList[i].y2,
+							window.rackShelfList[i].x3,window.rackShelfList[i].y3,
+							sx,sy);
+					d3 = distance(window.rackShelfList[i].x3,window.rackShelfList[i].y3,
+							window.rackShelfList[i].x4,window.rackShelfList[i].y4,
+							sx,sy);
+					d4 = distance(window.rackShelfList[i].x4,window.rackShelfList[i].y4,
+							window.rackShelfList[i].x1,window.rackShelfList[i].y1,
+							sx,sy);
+					if ((d1 >= 0 && d2 >= 0 && d3 >= 0 && d4 >= 0) || (d1 <= 0 && d2 <= 0 && d3 <= 0 && d4 <= 0)) {
+						window.shelf = window.rackShelfList[i];
+						window.selectRackWaresList=[];
+						$('#butCopy').addClass('disabled');
+					}
+				}
+				if (window.shelf==null)
+				{
+					// начало области выделения
+					window.m_select=1;
+					window.m_x_begin = sx;
+					window.m_y_begin = sy;
+					window.m_x_end = sx;
+					window.m_y_end = sy;
+				}
+			}
+			fSelectRackWares();
+			selectShelf(window.shelf);
+			drawEditCanvas();
+			drawPreviewCanvas();
 		}
 
 		window.edit_canvas.onmouseup = function(e) {
-			window.m_select=0;
-			//TODO
-		}
-		window.edit_canvas.onmouseout = function(e) {
-			window.m_select=0;
-			//TODO
-		}
-		window.edit_canvas.onmousemove = function (e) {
-			if (window.m_select==1)
+			if (window.editMove==1)
 			{
-				var evnt = ie_event(e);
+				// установка товара
+				// TODO округление координат
+				window.editMove=0;
+			}
+			else if (window.m_select==1)
+			{
+				// области выделения
+				if (window.selectBasket!=null)
+				{
+					// добавление товара
+					var m_x_begin2 = Math.min(window.m_x_end, window.m_x_begin);
+					var m_x_end2 = Math.max(window.m_x_end, window.m_x_begin);
+					var m_y_begin2 = Math.min(window.m_y_end, window.m_y_begin);
+					var m_y_end2 = Math.max(window.m_y_end, window.m_y_begin);
+					var countInsert=0;
+					for (var i=m_x_begin2; i<m_x_end2-window.selectBasket.width; i=i+window.selectBasket.width)
+					{
+						for (var j=m_y_begin2; j<m_y_end2-window.selectBasket.height; j=j+window.selectBasket.height)
+						{
+							var rackWares = {
+								code_rack:window.rack.code_rack,
+								code_wares:window.selectBasket.code_wares,
+								code_unit:window.selectBasket.code_unit,
+								type_wares_on_rack:'<%=TypeRackWares.NA.name()%>',
+								order_number_on_rack:1,
+								position_x:i+window.selectBasket.width/2,
+								position_y:j+window.selectBasket.height/2,
+								wares_length:window.selectBasket.length,
+								wares_width:window.selectBasket.width,
+								wares_height:window.selectBasket.height,
+								count_length_on_shelf:Math.ceil(window.rack.length/window.selectBasket.length),
+								code_image: window.selectBasket.code_image,
+								name_wares: window.selectBasket.name_wares,
+								abr_unit: window.selectBasket.abr_unit,
+								bar_code: window.selectBasket.bar_code
+							};
+							// TODO order_number_on_rack
+							window.rackWaresList.push(rackWares);
+							rackWaresCalcCoordinates(rackWares);
+							countInsert++;
+						}
+					}
+					if (countInsert>0)
+					{
+						basketWaresDelete(window.selectBasket.code_wares);
+						window.selectBasket=null;
+					}
+				}
+				else
+				{
+					window.selectRackWaresList=[];
+					// выделение нескольких товаров
+					// поиск товара в области
+					for (var i= window.rackWaresList.length-1; i>=0 ;i--)
+					{
+						var rackWares=window.rackWaresList[i];
+						if (window.m_x_begin>window.m_x_end)
+						{
+							var t=window.m_x_begin;
+							window.m_x_begin=window.m_x_end;
+							window.m_x_end=t;
+						}
+						if (window.m_y_begin>window.m_y_end)
+						{
+							var t=window.m_y_begin;
+							window.m_y_begin=window.m_y_end;
+							window.m_y_end=t;
+						}
+						// если хоть одна из вершин лежит в области выделения
+						if ((rackWares.x1>=window.m_x_begin && rackWares.x1<=window.m_x_end && rackWares.y1>=window.m_y_begin && rackWares.y1<=window.m_y_end)||
+								(rackWares.x2>=window.m_x_begin && rackWares.x2<=window.m_x_end && rackWares.y2>=window.m_y_begin && rackWares.y2<=window.m_y_end)||
+								(rackWares.x3>=window.m_x_begin && rackWares.x3<=window.m_x_end && rackWares.y3>=window.m_y_begin && rackWares.y3<=window.m_y_end)||
+								(rackWares.x4>=window.m_x_begin && rackWares.x4<=window.m_x_end && rackWares.y4>=window.m_y_begin && rackWares.y4<=window.m_y_end))
+						{
+							window.selectRackWaresList.push(rackWares);
+						}
+						else
+						{
+							// если одна из граней пересекается с гранью области выделения
+							if (intersectionQuadrangle(rackWares.x1,rackWares.y1, rackWares.x2,rackWares.y2, rackWares.x3,rackWares.y3, rackWares.x4,rackWares.y4,
+									window.m_x_begin,window.m_y_begin, window.m_x_end,window.m_y_begin, window.m_x_end,window.m_y_end, window.m_x_begin,window.m_y_end))
+							{
+								window.selectRackWaresList.push(rackWares);
+							}
+						}
+					}
+				}
+				if (window.selectRackWaresList.length>0)
+				{
+					$('#butCopy').removeClass('disabled');
+					$('#butCut').removeClass('disabled');
+				}
+				else
+				{
+					$('#butCopy').addClass('disabled');
+					$('#butCut').addClass('disabled');
+				}
+				window.m_select=0;
+				drawEditCanvas();
+				drawPreviewCanvas();
+			}
+		}
+		window.edit_canvas.onmouseout = window.edit_canvas.onmouseup;
+
+		window.edit_canvas.onmousemove = function (e) {
+			var evnt = ie_event(e);
+			if (window.editMove==1)
+			{
+				// перемещение товара
+				var dx = (evnt.clientX - x) * window.km;
+				var dy = -(evnt.clientY - y) * window.km;
+				if (dx != 0 || dy != 0)
+				{
+					for (var i in window.selectRackWaresList)
+					{
+						var rackWares=window.selectRackWaresList[i];
+						rackWares.position_x=rackWares.position_x+dx;
+						rackWares.position_y=rackWares.position_y+dy;
+						rackWaresCalcCoordinates(rackWares);
+					}
+					if (window.selectRackWaresList.length==1)
+					{
+						$('#waresX').val(window.selectRackWaresList[0].position_x);
+						$('#waresY').val(window.selectRackWaresList[0].position_y);
+					}
+					drawEditCanvas();
+					drawPreviewCanvas();
+					x = evnt.clientX;
+					y = evnt.clientY;
+				}
+			}
+			else if (window.m_select==1)
+			{
+				// изменение области выделения
 				window.m_x_end=window.kx + evnt.offsetX * window.km;
 				window.m_y_end = window.ky + (window.edit_canvas.height - evnt.offsetY) * window.km;
 				drawEditCanvas();
 			}
 		}
+	}
+
+	function pointInsideRackWares(rackWares, x, y)
+	{
+		var f=Math.abs(x-rackWares.position_x)<rackWares.wares_width/2;
+		f=f && Math.abs(y-rackWares.position_y)<rackWares.wares_height/2;
+		return f;
 	}
 </script>
 
@@ -678,12 +980,74 @@
 
 <%-- обработка событий панели товара --%>
 <script type="text/javascript">
+	function changeWaresX(waresX)
+	{
+		if (window.selectRackWaresList.length==1) {
+			var x = Number(waresX.value);
+			if (x != null && !isNaN(x) && x != Infinity) {
+//				var oldx = window.selectRackWaresList[0].position_x;
+				window.selectRackWaresList[0].position_x = x;
+				rackWaresCalcCoordinates(window.selectRackWaresList[0]);
+				//TODO
+				// не выходит за области сектора
+//				if ((window.shelf.x_coord < oldx
+//						&& (window.shelf.x1 < 0
+//						|| window.shelf.x2 < 0
+//						|| window.shelf.x3 < 0
+//						|| window.shelf.x4 < 0))
+//						|| (window.shelf.x_coord > oldx
+//						&& (window.shelf.x1 > window.rack.width
+//						|| window.shelf.x2 > window.rack.width
+//						|| window.shelf.x3 > window.rack.width
+//						|| window.shelf.x4 > window.rack.width))) {
+//					window.shelf.x_coord = oldx;
+//					rackShelfCalcCoordinates(window.shelf);
+//				}
+//				else {
+					drawEditCanvas();
+					drawPreviewCanvas();
+//				}
+			}
+			waresX.value =window.selectRackWaresList[0].position_x;
+		}
+	}
+	function changeWaresY(waresY)
+	{
+		if (window.selectRackWaresList.length==1) {
+			var y = Number(waresY.value);
+			if (y != null && !isNaN(x) && y != Infinity) {
+//				var oldY = window.selectRackWaresList[0].position_y;
+				window.selectRackWaresList[0].position_y = y;
+				rackWaresCalcCoordinates(window.selectRackWaresList[0]);
+				//TODO
+				// не выходит за области сектора
+//				if ((window.shelf.x_coord < oldY
+//						&& (window.shelf.x1 < 0
+//						|| window.shelf.x2 < 0
+//						|| window.shelf.x3 < 0
+//						|| window.shelf.x4 < 0))
+//						|| (window.shelf.x_coord > oldY
+//						&& (window.shelf.x1 > window.rack.width
+//						|| window.shelf.x2 > window.rack.width
+//						|| window.shelf.x3 > window.rack.width
+//						|| window.shelf.x4 > window.rack.width))) {
+//					window.shelf.position_y = oldY;
+//					rackShelfCalcCoordinates(window.shelf);
+//				}
+//				else {
+				drawEditCanvas();
+				drawPreviewCanvas();
+//				}
+			}
+			waresY.value =window.selectRackWaresList[0].position_y;
+		}
+	}
 	// TODO
 </script>
 
 <%-- обработка событий корзины --%>
 <script type="text/javascript">
-	 function waresSelect(image, indexBasket)
+	 function basketWaresSelect(image)
 	 {
 		 var image=$(image);
 		 if (image.hasClass('basketSelect'))
@@ -697,9 +1061,17 @@
 			 $('input.basketSelect').removeClass('basketSelect').addClass('basket');
 			 image.removeClass('basket');
 			 image.addClass('basketSelect');
-			 window.selectBasket=window.basket[indexBasket];
+			 var code_wares=image.attr('id');
+			 window.selectBasket=window.basket[code_wares];
 		 }
 	 }
+
+	 function basketWaresDelete(code_wares)
+	 {
+		 delete window.basket[code_wares];
+		 basketToHtml(window.basket);
+	 }
+
 </script>
 </body>
 </html>
