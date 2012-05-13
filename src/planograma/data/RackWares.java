@@ -1,8 +1,7 @@
 package planograma.data;
 
 import com.google.gson.JsonObject;
-import planograma.constant.data.RackWaresConst;
-import planograma.constant.data.WaresImageConst;
+import planograma.constant.data.*;
 import planograma.utils.JsonUtils;
 
 import java.sql.ResultSet;
@@ -36,7 +35,7 @@ public class RackWares implements IJsonObject {
 	/**
 	 * Тип товара
 	 */
-	private String type_wares_on_rack;
+	private TypeRackWares type_wares_on_rack;
 	/**
 	 * Номер по порядку па стеллаже
 	 */
@@ -82,13 +81,26 @@ public class RackWares implements IJsonObject {
 	 * Дата изменения
 	 */
 	private Date date_update;
+	// из связных сущностей
 	/**
 	 * Код изображения
 	 */
-	private Integer code_image;
+	private final Integer code_image;
+	/**
+	 * Название товара
+	 */
+	private final String name_wares;
+	/**
+	 * Краткое название единицы измерения товара
+	 */
+	private final String abr_unit;
+	/**
+	 * Штрихкод товара
+	 */
+	private final String bar_code;
 
 
-	public RackWares(Integer code_rack, Integer code_wares, Integer code_unit, Integer code_wares_on_rack, String type_wares_on_rack, Integer order_number_on_rack, Integer position_x, Integer position_y, Integer wares_length, Integer wares_width, Integer wares_height, Integer count_length_on_shelf, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer code_image) {
+	public RackWares(Integer code_rack, Integer code_wares, Integer code_unit, Integer code_wares_on_rack, TypeRackWares type_wares_on_rack, Integer order_number_on_rack, Integer position_x, Integer position_y, Integer wares_length, Integer wares_width, Integer wares_height, Integer count_length_on_shelf, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer code_image, String name_wares, String abr_unit, String bar_code) {
 		this.code_rack = code_rack;
 		this.code_wares = code_wares;
 		this.code_unit = code_unit;
@@ -106,8 +118,10 @@ public class RackWares implements IJsonObject {
 		this.user_update = user_update;
 		this.date_update = date_update;
 		this.code_image = code_image;
+		this.name_wares = name_wares;
+		this.abr_unit = abr_unit;
+		this.bar_code = bar_code;
 	}
-
 
 	public Integer getCode_rack() {
 		return code_rack;
@@ -141,12 +155,20 @@ public class RackWares implements IJsonObject {
 		this.code_wares_on_rack = code_wares_on_rack;
 	}
 
-	public String getType_wares_on_rack() {
+	public TypeRackWares getType_wares_on_rack() {
 		return type_wares_on_rack;
 	}
 
-	public void setType_wares_on_rack(String type_wares_on_rack) {
+	public void setType_wares_on_rack(TypeRackWares type_wares_on_rack) {
 		this.type_wares_on_rack = type_wares_on_rack;
+	}
+
+	public String getType_wares_on_rackAtStr() {
+		return (type_wares_on_rack!=null)?type_wares_on_rack.name():"";
+	}
+
+	public void setType_wares_on_rack(String type_wares_on_rack) {
+		this.type_wares_on_rack = TypeRackWares.valueOf(type_wares_on_rack);
 	}
 
 	public Integer getOrder_number_on_rack() {
@@ -241,16 +263,12 @@ public class RackWares implements IJsonObject {
 		return code_image;
 	}
 
-	public void setCode_image(Integer code_image) {
-		this.code_image = code_image;
-	}
-
 	public RackWares(final ResultSet resultSet) throws SQLException {
 		code_rack = resultSet.getInt(RackWaresConst.CODE_RACK);
 		code_wares = resultSet.getInt(RackWaresConst.CODE_WARES);
 		code_unit = resultSet.getInt(RackWaresConst.CODE_UNIT);
 		code_wares_on_rack = resultSet.getInt(RackWaresConst.CODE_WARES_ON_RACK);
-		type_wares_on_rack = resultSet.getString(RackWaresConst.TYPE_WARES_ON_RACK);
+		setType_wares_on_rack(resultSet.getString(RackWaresConst.TYPE_WARES_ON_RACK));
 		order_number_on_rack = resultSet.getInt(RackWaresConst.ORDER_NUMBER_ON_RACK);
 		position_x = resultSet.getInt(RackWaresConst.POSITION_X);
 		position_y = resultSet.getInt(RackWaresConst.POSITION_Y);
@@ -263,6 +281,9 @@ public class RackWares implements IJsonObject {
 		user_update = resultSet.getInt(RackWaresConst.USER_UPDATE);
 		date_update = resultSet.getDate(RackWaresConst.DATE_UPDATE);
 		code_image = resultSet.getInt(WaresImageConst.CODE_IMAGE);
+		name_wares = resultSet.getString(WaresConst.NAME_WARES);
+		abr_unit = resultSet.getString(UnitDimensionConst.ABR_UNIT);
+		bar_code = resultSet.getString(AdditionUnitConst.BAR_CODE);
 	}
 
 	public RackWares(final JsonObject jsonObject) {
@@ -270,7 +291,7 @@ public class RackWares implements IJsonObject {
 		code_wares = JsonUtils.getInteger(jsonObject, RackWaresConst.CODE_WARES);
 		code_unit = JsonUtils.getInteger(jsonObject, RackWaresConst.CODE_UNIT);
 		code_wares_on_rack = JsonUtils.getInteger(jsonObject, RackWaresConst.CODE_WARES_ON_RACK);
-		type_wares_on_rack = JsonUtils.getString(jsonObject, RackWaresConst.TYPE_WARES_ON_RACK);
+		setType_wares_on_rack(JsonUtils.getString(jsonObject, RackWaresConst.TYPE_WARES_ON_RACK));
 		order_number_on_rack = JsonUtils.getInteger(jsonObject, RackWaresConst.ORDER_NUMBER_ON_RACK);
 		position_x = JsonUtils.getInteger(jsonObject, RackWaresConst.POSITION_X);
 		position_y = JsonUtils.getInteger(jsonObject, RackWaresConst.POSITION_Y);
@@ -283,6 +304,9 @@ public class RackWares implements IJsonObject {
 		user_update = JsonUtils.getInteger(jsonObject, RackWaresConst.USER_UPDATE);
 		date_update = JsonUtils.getDate(jsonObject, RackWaresConst.DATE_UPDATE);
 		code_image = JsonUtils.getInteger(jsonObject, WaresImageConst.CODE_IMAGE);
+		name_wares = JsonUtils.getString(jsonObject, WaresConst.NAME_WARES);
+		abr_unit = JsonUtils.getString(jsonObject, UnitDimensionConst.ABR_UNIT);
+		bar_code = JsonUtils.getString(jsonObject, AdditionUnitConst.BAR_CODE);
 	}
 
 	@Override
@@ -292,7 +316,7 @@ public class RackWares implements IJsonObject {
 		jsonObject.addProperty(RackWaresConst.CODE_WARES, code_wares);
 		jsonObject.addProperty(RackWaresConst.CODE_UNIT, code_unit);
 		jsonObject.addProperty(RackWaresConst.CODE_WARES_ON_RACK, code_wares_on_rack);
-		jsonObject.addProperty(RackWaresConst.TYPE_WARES_ON_RACK, type_wares_on_rack);
+		jsonObject.addProperty(RackWaresConst.TYPE_WARES_ON_RACK, getType_wares_on_rackAtStr());
 		jsonObject.addProperty(RackWaresConst.ORDER_NUMBER_ON_RACK, order_number_on_rack);
 		jsonObject.addProperty(RackWaresConst.POSITION_X, position_x);
 		jsonObject.addProperty(RackWaresConst.POSITION_Y, position_y);
@@ -305,6 +329,9 @@ public class RackWares implements IJsonObject {
 		jsonObject.addProperty(RackWaresConst.USER_UPDATE, user_update);
 		JsonUtils.set(jsonObject, RackWaresConst.DATE_UPDATE, date_update);
 		jsonObject.addProperty(WaresImageConst.CODE_IMAGE, code_image);
+		jsonObject.addProperty(WaresConst.NAME_WARES, name_wares);
+		jsonObject.addProperty(UnitDimensionConst.ABR_UNIT, abr_unit);
+		jsonObject.addProperty(AdditionUnitConst.BAR_CODE, bar_code);
 		return jsonObject;
 	}
 }

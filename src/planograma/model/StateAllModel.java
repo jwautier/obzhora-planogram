@@ -1,9 +1,6 @@
 package planograma.model;
 
-import planograma.constant.data.RackConst;
-import planograma.constant.data.RackShelfConst;
-import planograma.constant.data.SectorConst;
-import planograma.constant.data.StateAllConst;
+import planograma.constant.data.*;
 import planograma.data.*;
 
 import java.sql.Connection;
@@ -76,6 +73,10 @@ public class StateAllModel {
 					final TypeShelf typeShelf= TypeShelf.valueOf(item.getAbr_state());
 					typeShelf.setDesc(item.getState());
 					typeShelf.setColor(item.getDescription());
+					break;
+				case RackWaresConst.STATE_ALL_PART_STATE_TYPE_RACK_WARES:
+					final TypeRackWares typeRackWares= TypeRackWares.valueOf(item.getAbr_state());
+					typeRackWares.setDesc(item.getState());
 					break;
 			}
 		}

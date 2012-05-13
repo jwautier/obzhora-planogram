@@ -21,6 +21,10 @@ public enum TypeRack {
 	 */
 	DZ;
 
+	private TypeRack() {
+
+	}
+
 	private String desc;
 	private String color;
 

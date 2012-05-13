@@ -1,7 +1,6 @@
 package planograma.model;
 
-import planograma.constant.data.RackWaresConst;
-import planograma.constant.data.WaresImageConst;
+import planograma.constant.data.*;
 import planograma.data.RackWares;
 import planograma.data.UserContext;
 
@@ -17,7 +16,8 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class RackWaresModel {
-	public static final String Q_LIST = "select " +
+
+	private static final String Q_SELECT_FROM = "select " +
 			" rw." + RackWaresConst.CODE_RACK + "," +
 			" rw." + RackWaresConst.CODE_WARES + "," +
 			" rw." + RackWaresConst.CODE_UNIT + "," +
@@ -34,9 +34,17 @@ public class RackWaresModel {
 			" rw." + RackWaresConst.DATE_INSERT + "," +
 			" rw." + RackWaresConst.USER_UPDATE + "," +
 			" rw." + RackWaresConst.DATE_UPDATE + "," +
-			" wi." + WaresImageConst.CODE_IMAGE + " " +
+			" wi." + WaresImageConst.CODE_IMAGE + "," +
+			" w." + WaresConst.NAME_WARES + "," +
+			" ud." + UnitDimensionConst.ABR_UNIT + "," +
+			" au." + AdditionUnitConst.BAR_CODE + " " +
 			"from " + RackWaresConst.TABLE_NAME + " rw" +
-			" left join " + WaresImageConst.TABLE_NAME + " wi on wi." + WaresImageConst.CODE_WARES + " = rw." + RackWaresConst.CODE_WARES + " " +
+			" join " + WaresConst.TABLE_NAME + " w on w." + WaresConst.CODE_WARES + " = rw." + RackWaresConst.CODE_WARES + " " +
+			" join " + UnitDimensionConst.TABLE_NAME + " ud on ud." + UnitDimensionConst.CODE_UNIT + " = rw." + RackWaresConst.CODE_UNIT + " " +
+			" join " + AdditionUnitConst.TABLE_NAME + " au on au." + AdditionUnitConst.CODE_WARES + " = rw." + RackWaresConst.CODE_WARES + " and au." + AdditionUnitConst.CODE_UNIT + " = rw." + RackWaresConst.CODE_UNIT + " " +
+			" left join " + WaresImageConst.TABLE_NAME + " wi on wi." + WaresImageConst.CODE_WARES + " = rw." + RackWaresConst.CODE_WARES + " ";
+
+	public static final String Q_LIST = Q_SELECT_FROM +
 			"where " + RackWaresConst.CODE_RACK + " = ?";
 
 	public List<RackWares> list(final UserContext userContext, final int code_rack) throws SQLException {
@@ -54,26 +62,7 @@ public class RackWaresModel {
 		return list;
 	}
 
-	public static final String Q_SELECT = "select " +
-			" rw." + RackWaresConst.CODE_RACK + "," +
-			" rw." + RackWaresConst.CODE_WARES + "," +
-			" rw." + RackWaresConst.CODE_UNIT + "," +
-			" rw." + RackWaresConst.CODE_WARES_ON_RACK + "," +
-			" rw." + RackWaresConst.TYPE_WARES_ON_RACK + "," +
-			" rw." + RackWaresConst.ORDER_NUMBER_ON_RACK + "," +
-			" rw." + RackWaresConst.POSITION_X + "," +
-			" rw." + RackWaresConst.POSITION_Y + "," +
-			" rw." + RackWaresConst.WARES_LENGTH + "," +
-			" rw." + RackWaresConst.WARES_WIDTH + "," +
-			" rw." + RackWaresConst.WARES_HEIGHT + "," +
-			" rw." + RackWaresConst.COUNT_LENGTH_ON_SHELF + "," +
-			" rw." + RackWaresConst.USER_INSERT + "," +
-			" rw." + RackWaresConst.DATE_INSERT + "," +
-			" rw." + RackWaresConst.USER_UPDATE + "," +
-			" rw." + RackWaresConst.DATE_UPDATE + "," +
-			" wi." + WaresImageConst.CODE_IMAGE + " " +
-			"from " + RackWaresConst.TABLE_NAME + " rw" +
-			" left join " + WaresImageConst.TABLE_NAME + " wi on wi." + WaresImageConst.CODE_WARES + " = rw." + RackWaresConst.CODE_WARES + " " +
+	public static final String Q_SELECT = Q_SELECT_FROM +
 			"where " + RackWaresConst.CODE_WARES_ON_RACK + " = ?";
 
 	public RackWares select(final UserContext userContext, final int rackShelf) throws SQLException {
@@ -115,7 +104,7 @@ public class RackWaresModel {
 		callableStatement.setInt(RackWaresConst.CODE_WARES, rackWares.getCode_wares());
 		callableStatement.setInt(RackWaresConst.CODE_UNIT, rackWares.getCode_unit());
 		callableStatement.setObject(RackWaresConst.CODE_WARES_ON_RACK, rackWares.getCode_wares_on_rack());
-		callableStatement.setString(RackWaresConst.TYPE_WARES_ON_RACK, rackWares.getType_wares_on_rack());
+		callableStatement.setString(RackWaresConst.TYPE_WARES_ON_RACK, rackWares.getType_wares_on_rackAtStr());
 		callableStatement.setInt(RackWaresConst.ORDER_NUMBER_ON_RACK, rackWares.getOrder_number_on_rack());
 		callableStatement.setInt(RackWaresConst.POSITION_X, rackWares.getPosition_x());
 		callableStatement.setInt(RackWaresConst.POSITION_Y, rackWares.getPosition_y());
@@ -138,7 +127,7 @@ public class RackWaresModel {
 		callableStatement.setInt(RackWaresConst.CODE_WARES, rackWares.getCode_wares());
 		callableStatement.setInt(RackWaresConst.CODE_UNIT, rackWares.getCode_unit());
 		callableStatement.setObject(RackWaresConst.CODE_WARES_ON_RACK, rackWares.getCode_wares_on_rack());
-		callableStatement.setString(RackWaresConst.TYPE_WARES_ON_RACK, rackWares.getType_wares_on_rack());
+		callableStatement.setString(RackWaresConst.TYPE_WARES_ON_RACK, rackWares.getType_wares_on_rackAtStr());
 		callableStatement.setInt(RackWaresConst.ORDER_NUMBER_ON_RACK, rackWares.getOrder_number_on_rack());
 		callableStatement.setInt(RackWaresConst.POSITION_X, rackWares.getPosition_x());
 		callableStatement.setInt(RackWaresConst.POSITION_Y, rackWares.getPosition_y());

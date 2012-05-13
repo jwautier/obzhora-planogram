@@ -154,6 +154,87 @@ function distance(x1, y1, x2, y2, x, y) {
 	return ((y1-y2)*x+(x2-x1)*y+(x1*y2- x2*y1))/(Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)));
 }
 
+/**
+ * находит точку пересечения двух отрезков
+ * @param x1
+ * @param y1
+ * @param x2
+ * @param y2 первый отрезок
+ * @param x3
+ * @param y3
+ * @param x4
+ * @param y4 второй отрезок
+ * TODO не проверено
+ */
+function intersectionTwoSegment(x1, y1, x2, y2, x3, y3, x4, y4) {
+	var x21 = x2 - x1;
+	var y21 = y2 - y1;
+	var x43 = x4 - x3;
+	var y43 = y4 - y3;
+	// отрезки параллельны
+	if (x21 * y43 == x43 * y21)
+		return null;
+	// точка пересечения линий
+	var y = ((x2 * y1 - x1 * y2) * y43 + y21 * (x3 * y4 - x4 * y3)) / (x21 * y43 - x43 * y21);
+	var x;
+	if (y21 == 0) {
+		x = (y * x43 + x3 * y4 - x4 * y3) / y43
+	}
+	else {
+		x = (y * x21 + x1 * y2 - x2 * y1) / y21
+	}
+	// точка пересерения линий в пределах отрезков
+	if (((x1<=x && x<=x2) || (x1>=x && x>=x2))&&
+		((x3<=x && x<=x4) || (x3>=x && x>=x4))&&
+		((y1<=y && y<=y2) || (y1>=y && y>=y2))&&
+		((y3<=y && y<=y4) || (y3>=y && y>=y4)))
+		return {x:x, y:y};
+	else
+		return null;
+}
+/**
+ * пересекаются ли четырехугольники
+ * @param x1
+ * @param y1
+ * @param x2
+ * @param y2
+ * @param x3
+ * @param y3
+ * @param x4
+ * @param y4 первый четырехугольник
+ * @param x5
+ * @param y5
+ * @param x6
+ * @param y6
+ * @param x7
+ * @param y7
+ * @param x8
+ * @param y8 второй четырехугольник
+ * @return {Boolean}
+ * TODO не проверено
+ */
+function intersectionQuadrangle(x1,y1, x2,y2, x3,y3, x4,y4,  x5,y5, x6,y6, x7,y7, x8,y8) {
+	var result=intersectionTwoSegment(x1,y1, x2,y2, x5,y5, x6,y6)!=null ||
+		intersectionTwoSegment(x1,y1, x2,y2, x6,y6, x7,y7)!=null ||
+		intersectionTwoSegment(x1,y1, x2,y2, x7,y7, x8,y8)!=null ||
+		intersectionTwoSegment(x1,y1, x2,y2, x5,y5, x8,y8)!=null ||
+		intersectionTwoSegment(x2,y2, x3,y3, x5,y5, x6,y6)!=null ||
+		intersectionTwoSegment(x2,y2, x3,y3, x6,y6, x7,y7)!=null ||
+		intersectionTwoSegment(x2,y2, x3,y3, x7,y7, x8,y8)!=null ||
+		intersectionTwoSegment(x2,y2, x3,y3, x5,y5, x8,y8)!=null ||
+		intersectionTwoSegment(x3,y3, x4,y4, x5,y5, x6,y6)!=null ||
+		intersectionTwoSegment(x3,y3, x4,y4, x6,y6, x7,y7)!=null ||
+		intersectionTwoSegment(x3,y3, x4,y4, x7,y7, x8,y8)!=null ||
+		intersectionTwoSegment(x3,y3, x4,y4, x5,y5, x8,y8)!=null ||
+		intersectionTwoSegment(x1,y1, x4,y4, x5,y5, x6,y6)!=null ||
+		intersectionTwoSegment(x1,y1, x4,y4, x6,y6, x7,y7)!=null ||
+		intersectionTwoSegment(x1,y1, x4,y4, x7,y7, x8,y8)!=null ||
+		intersectionTwoSegment(x1,y1, x4,y4, x5,y5, x8,y8)!=null;
+	console.log(result);
+	return result;
+
+}
+
 function aOnClick(anchor, action) {
 	var anchor = $(anchor);
 	var res=!anchor.hasClass('disabled');

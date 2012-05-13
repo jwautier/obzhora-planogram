@@ -232,7 +232,7 @@ public class TestQuery {
 		final Rack rack = new Rack(null, null, "rack 1", "1", 50, 200, 150, sector.getCode_sector(), 1000, 1000, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null);
 		rackModel.insert(userContext, rack);
 		final RackWaresModel rackWaresModel = RackWaresModel.getInstance();
-		RackWares rackWares = new RackWares(rack.getCode_rack(), 10, 19, null, "NA", 1, 10, 10, 50, 50, 50, 1, null, null,null,null, null);
+		RackWares rackWares = new RackWares(rack.getCode_rack(), 10, 19, null, TypeRackWares.NA, 1, 10, 10, 50, 50, 50, 1, null, null,null,null, null, "waresTest", "unitTest", "barcodeTest");
 		System.out.println(rackWares.toJsonObject());
 		rackWaresModel.insert(userContext, rackWares);
 		System.out.println("insert");
