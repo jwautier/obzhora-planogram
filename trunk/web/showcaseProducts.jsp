@@ -53,7 +53,7 @@
 								<td><a href="#" id="butCut" onclick="return aOnClick(this, fCut)" class="disabled"><%=JspUtils.toMenuTitle("Вырезать")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this)" class="disabled notReady"><%=JspUtils.toMenuTitle("Вставить")%></a></td>
+								<td><a href="#" id="butPaste" onclick="return aOnClick(this, fPas)" class="disabled"><%=JspUtils.toMenuTitle("Вставить")%></a></td>
 							</tr>
 							<tr>
 								<td height="100%"></td>
@@ -296,6 +296,7 @@
 		window.ky = 0;
 
 		window.editMove = 0;
+		window.flagPaste=0;
 
 		x = 0;
 		y = 0;
@@ -394,11 +395,9 @@
 		}
 	}
 
-	function fSelectRackWares()
-	{
-		if (window.selectRackWaresList.length==1)
-		{
-			var rackWares=window.selectRackWaresList[0];
+	function fSelectRackWares() {
+		if (window.selectRackWaresList.length == 1) {
+			var rackWares = window.selectRackWaresList[0];
 			$('#waresCode').text(rackWares.code_wares);
 			$('#waresName').text(rackWares.name_wares);
 			$('#waresUnit').text(rackWares.abr_unit);
@@ -413,11 +412,12 @@
 			$('#butCopy').removeClass('disabled');
 			$('#butCut').removeClass('disabled');
 		}
-		else
-		{
+		else {
 			$('#waresPanel').hide();
-			$('#butCopy').addClass('disabled');
-			$('#butCut').addClass('disabled');
+			if (window.selectRackWaresList.length == 0) {
+				$('#butCopy').addClass('disabled');
+				$('#butCut').addClass('disabled');
+			}
 		}
 	}
 
@@ -507,7 +507,13 @@
 		for (var i = 0; i < window.rackWaresList.length; i++) {
 			drawWares(window.rackWaresList[i], window.edit_canvas, window.edit_context, window.kx, window.ky, window.km);
 		}
-		if (window.m_select==1)
+		if (window.flagPaste==2)
+		{
+			for (var i = 0; i < window.copyObjectList.length; i++) {
+				drawWares(window.copyObjectList[i], window.edit_canvas, window.edit_context, window.kx, window.ky, window.km);
+			}
+		}
+		else if (window.m_select==1)
 		{
 			// select
 			window.edit_context.lineWidth = 1;
@@ -649,7 +655,11 @@
 	// TODO
 	function fCopy()
 	{
-		window.copyObjectList=window.selectRackWaresList;
+		window.copyObjectList=[];
+		for (var i in window.selectRackWaresList)
+		{
+			window.copyObjectList[i]=clone(window.selectRackWaresList[i]);
+		}
 		if (window.copyObjectList.length>0)
 		{
 			$('#butPaste').removeClass('disabled');
@@ -658,9 +668,10 @@
 
 	function fCut()
 	{
-		window.copyObjectList=window.selectRackWaresList;
+		window.copyObjectList=[];
 		for (var i in window.selectRackWaresList)
 		{
+			window.copyObjectList[i]=clone(window.selectRackWaresList[i]);
 			var selectRackWares=window.selectRackWaresList[i];
 			for (var j in window.rackWaresList)
 			{
@@ -679,6 +690,13 @@
 			$('#butPaste').removeClass('disabled');
 		}
 	}
+	function fPas()
+	{
+		if (window.copyObjectList.length>0)
+		{
+			window.flagPaste=1;
+		}
+	}
 </script>
 
 <%--обработка событий редактора--%>
@@ -690,58 +708,78 @@
 			var sx = window.kx + evnt.offsetX * window.km;
 			var sy = window.ky + (window.edit_canvas.height - evnt.offsetY) * window.km;
 
-			var findRackWares=null;
-			window.shelf=null;
-			// поиск товара под указателем
-			for (var i= window.rackWaresList.length-1; findRackWares==null && i>=0 ;i--)
-			{
-				if (pointInsideRackWares(window.rackWaresList[i], sx, sy)) {
-					findRackWares = window.rackWaresList[i];
-				}
-			}
-			if (findRackWares!=null)
-			{
-				// перемещение товара
-				if ($.inArray(findRackWares, window.selectRackWaresList) < 0)
-				{
-					window.selectRackWaresList=[];
-					window.selectRackWaresList.push(findRackWares);
-				}
+			var oldSelectRackWaresList = window.selectRackWaresList;
 
-				window.editMove=1;
+			var findRackWares = null;
+			window.shelf = null;
+			window.selectRackWaresList = [];
+			if (window.flagPaste == 1) {
+				// найти центр
+				var centerX = 0;
+				var centerY = 0;
+				for (var i in window.copyObjectList) {
+					centerX += window.copyObjectList[i].position_x;
+					centerY += window.copyObjectList[i].position_y;
+				}
+				centerX = sx - centerX / window.copyObjectList.length;
+				centerY = sy - centerY / window.copyObjectList.length;
+				for (var i in window.copyObjectList) {
+					window.copyObjectList[i].position_x += centerX;
+					window.copyObjectList[i].position_y += centerY;
+				}
+				window.flagPaste = 2;
 				x = evnt.clientX;
 				y = evnt.clientY;
 			}
-			else
-			{
-				// поиск полки под курсором
-				for (var i = window.rackShelfList.length-1; window.shelf == null && i >=0; i--) {
-					d1 = distance(window.rackShelfList[i].x1,window.rackShelfList[i].y1,
-							window.rackShelfList[i].x2,window.rackShelfList[i].y2,
-							sx,sy);
-					d2 = distance(window.rackShelfList[i].x2,window.rackShelfList[i].y2,
-							window.rackShelfList[i].x3,window.rackShelfList[i].y3,
-							sx,sy);
-					d3 = distance(window.rackShelfList[i].x3,window.rackShelfList[i].y3,
-							window.rackShelfList[i].x4,window.rackShelfList[i].y4,
-							sx,sy);
-					d4 = distance(window.rackShelfList[i].x4,window.rackShelfList[i].y4,
-							window.rackShelfList[i].x1,window.rackShelfList[i].y1,
-							sx,sy);
-					if ((d1 >= 0 && d2 >= 0 && d3 >= 0 && d4 >= 0) || (d1 <= 0 && d2 <= 0 && d3 <= 0 && d4 <= 0)) {
-						window.shelf = window.rackShelfList[i];
-						window.selectRackWaresList=[];
-						$('#butCopy').addClass('disabled');
+			else {
+				// поиск товара под указателем
+				for (var i = window.rackWaresList.length - 1; findRackWares == null && i >= 0; i--) {
+					if (pointInsideRackWares(window.rackWaresList[i], sx, sy)) {
+						findRackWares = window.rackWaresList[i];
 					}
 				}
-				if (window.shelf==null)
-				{
-					// начало области выделения
-					window.m_select=1;
-					window.m_x_begin = sx;
-					window.m_y_begin = sy;
-					window.m_x_end = sx;
-					window.m_y_end = sy;
+				if (findRackWares != null) {
+					// перемещение товара
+					if ($.inArray(findRackWares, oldSelectRackWaresList) < 0) {
+						window.selectRackWaresList.push(findRackWares);
+					}
+					else {
+						window.selectRackWaresList = oldSelectRackWaresList;
+					}
+
+					window.editMove = 1;
+					x = evnt.clientX;
+					y = evnt.clientY;
+				}
+				else {
+					// поиск полки под курсором
+					for (var i = window.rackShelfList.length - 1; window.shelf == null && i >= 0; i--) {
+						d1 = distance(window.rackShelfList[i].x1, window.rackShelfList[i].y1,
+								window.rackShelfList[i].x2, window.rackShelfList[i].y2,
+								sx, sy);
+						d2 = distance(window.rackShelfList[i].x2, window.rackShelfList[i].y2,
+								window.rackShelfList[i].x3, window.rackShelfList[i].y3,
+								sx, sy);
+						d3 = distance(window.rackShelfList[i].x3, window.rackShelfList[i].y3,
+								window.rackShelfList[i].x4, window.rackShelfList[i].y4,
+								sx, sy);
+						d4 = distance(window.rackShelfList[i].x4, window.rackShelfList[i].y4,
+								window.rackShelfList[i].x1, window.rackShelfList[i].y1,
+								sx, sy);
+						if ((d1 >= 0 && d2 >= 0 && d3 >= 0 && d4 >= 0) || (d1 <= 0 && d2 <= 0 && d3 <= 0 && d4 <= 0)) {
+							window.shelf = window.rackShelfList[i];
+							$('#butCopy').addClass('disabled');
+							$('#butCut').addClass('disabled');
+						}
+					}
+					if (window.shelf == null) {
+						// начало области выделения
+						window.m_select = 1;
+						window.m_x_begin = sx;
+						window.m_y_begin = sy;
+						window.m_x_end = sx;
+						window.m_y_end = sy;
+					}
 				}
 			}
 			fSelectRackWares();
@@ -751,7 +789,18 @@
 		}
 
 		window.edit_canvas.onmouseup = function(e) {
-			if (window.editMove==1)
+			if (window.flagPaste==2)
+			{
+				for (var i in window.copyObjectList)
+				{
+					window.rackWaresList.push(window.copyObjectList[i]);
+				}
+				window.copyObjectList=[];
+				drawEditCanvas();
+				drawPreviewCanvas();
+				window.flagPaste=0;
+			}
+			else if (window.editMove==1)
 			{
 				// установка товара
 				// TODO округление координат
@@ -859,7 +908,27 @@
 
 		window.edit_canvas.onmousemove = function (e) {
 			var evnt = ie_event(e);
-			if (window.editMove==1)
+			if (window.flagPaste==2)
+			{
+				// перемещение товара
+				var dx = (evnt.clientX - x) * window.km;
+				var dy = -(evnt.clientY - y) * window.km;
+				if (dx != 0 || dy != 0)
+				{
+					for(var i in window.copyObjectList)
+					{
+						var rackWares=window.copyObjectList[i];
+						rackWares.position_x=rackWares.position_x+dx;
+						rackWares.position_y=rackWares.position_y+dy;
+						rackWaresCalcCoordinates(rackWares);
+					}
+					drawEditCanvas();
+					drawPreviewCanvas();
+					x = evnt.clientX;
+					y = evnt.clientY;
+				}
+			}
+			else if (window.editMove==1)
 			{
 				// перемещение товара
 				var dx = (evnt.clientX - x) * window.km;

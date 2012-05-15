@@ -508,7 +508,7 @@ function drawShowcase(showcase, context, kx, ky, m) {
 		%>
 	}
 	context.beginPath();
-	if (showcase.load_side == '<%=LoadSide.U%>')
+	if (showcase.type_rack=='<%=TypeRack.R%>' && showcase.load_side == '<%=LoadSide.U%>')
 	{
 		context.lineWidth = 4;
 	}
@@ -524,7 +524,7 @@ function drawShowcase(showcase, context, kx, ky, m) {
 	context.stroke();
 	context.fill();
 
-	if (showcase.load_side == '<%=LoadSide.F%>')
+	if (showcase.type_rack=='<%=TypeRack.R%>' && showcase.load_side == '<%=LoadSide.F%>')
 	{
 		context.beginPath();
 		context.lineWidth = 4;
