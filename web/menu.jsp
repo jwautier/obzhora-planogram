@@ -26,30 +26,33 @@
 	</tr>
 	<tr>
 		<td valign="top">
-			<table class="menu">
+			<table class="frame">
 				<tr>
-					<td><a href="sectorList.jsp"><%=JspUtils.toMenuTitle("Залы торговых площадок")%></a></td>
-				</tr>
-				<tr>
-					<td><a href="rackTemplateList.jsp"><%=JspUtils.toMenuTitle("Типовые стеллажи")%></a></td>
-				</tr>
-				<tr>
-					<td><a href="#" onclick="postJson('<%=ImageCleanCache.URL%>', null, function () {alert('Кеш очищен')})"><%=JspUtils.toMenuTitle("Очистить кеш изображений")%></a></td>
-				</tr>
-				<tr>
-					<td><a href="#" onclick="logout()"><%=JspUtils.toMenuTitle("Выход")%></a></td>
-				</tr>
-				<tr>
-					<td><a href="choiceWares.jsp"><%=JspUtils.toMenuTitle("Окно выбора товара(-)")%></a></td>
-				</tr>
-				<tr>
-					<td><a href="showcaseProducts.jsp"><%=JspUtils.toMenuTitle("Товары стеллажа(-)")%></a></td>
-				</tr>
-				<tr>
-					<td><a href="#" onclick="postJson('<%=TestAction.URL%>', null, function () {alert('Test')})"><%=JspUtils.toMenuTitle("Test(-)")%></a></td>
-				</tr>
-				<tr>
-					<td height="100%"></td>
+					<td>
+						<table class="menu">
+							<tr>
+								<td><a href="sectorList.jsp"><%=JspUtils.toMenuTitle("Залы торговых площадок")%></a></td>
+							</tr>
+							<tr>
+								<td><a href="rackTemplateList.jsp"><%=JspUtils.toMenuTitle("Типовые стеллажи")%></a></td>
+							</tr>
+							<tr>
+								<td><a href="#" onclick="postJson('<%=ImageCleanCache.URL%>', null, function () {alert('Кеш очищен')})"><%=JspUtils.toMenuTitle("Очистить кеш изображений")%></a></td>
+							</tr>
+							<tr>
+								<td><a href="#" onclick="logout()"><%=JspUtils.toMenuTitle("Выход")%></a></td>
+							</tr>
+							<tr>
+								<td><a href="#" onclick="postJson('<%=TestAction.URL%>', null, function () {alert('Test')})"><%=JspUtils.toMenuTitle("Test(-)")%></a></td>
+							</tr>
+							<tr>
+								<td height="100%"></td>
+							</tr>
+						</table>
+					</td>
+					<td width="100%" valign="top" align="left">
+						Рекомендуется при работе использовать полноэкранный режим (F11)
+					</td>
 				</tr>
 			</table>
 		</td>

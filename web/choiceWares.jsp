@@ -1,82 +1,71 @@
-<%@ page import="planograma.servlet.wares.WaresGroupTree" %>
 <%@ page import="planograma.servlet.wares.WaresList" %>
 <%@ page import="planograma.servlet.wares.WaresListSearch" %>
 <%@ page import="planograma.constant.data.WaresConst" %>
 <%@ page import="planograma.constant.data.AdditionUnitConst" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-	<title>Выбор товара</title>
-	<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
-	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
-	<script type="text/javascript" src="js/planograma.js"></script>
-	<link rel="stylesheet" href="css/planograma.css"/>
 
-	<style type="text/css">
-		#treeview {
-			padding: 0;
-			clear: both;
-			font-family: monospace;
-		}
-		#treeview ul
-		{
-			margin: 0; padding: 0 0 1.5em 0;
-			list-style-type: none;
-		}
-		#treeview ul ul {
-			/*width: auto; */
-			margin: 0; padding: 0 0 0 0.75em; }
-			/* класс для ul после которых нет li в родительских ветках */
-		#treeview ul.l {
-			border-left: 1px solid;
-			margin-left: -1px;
-			border-color: white;
-		}
-		#treeview li.cl ul { display: none; }
-		#treeview li { margin: 0; padding: 0; }
-		#treeview li li { margin: 0 0 0 0.5em; border-left: 1px dotted;  padding: 0; }
-		#treeview li div { position: relative;
-			/*height: 1.5em; */
-			min-height: 16px; //height: 1.3em; }
-		#treeview li li div { border-bottom: 1px dotted; }
-		#treeview li p
-		{
-			position: absolute; z-index: 1; top: 0.7em; //top: 0.65em; left: 1.75em;
-			width: 100%;
-			margin: 0;
-			padding: 0;
-		}
-		#treeview li p.selectNode{
-			color: white;
-			background: #d3d3d3;
-		}
-		#treeview a { padding: 0.1em 0.2em; white-space: nowrap; //height: 1px; text-decoration: none;}
-		#treeview a.sc
-		{
-			color: black;
-			position: absolute; top: 0.06em;
-			margin-left: -1em;
-			text-decoration: none;
-		}
+<style type="text/css">
+	#treeview {
+		padding: 0;
+		clear: both;
+		font-family: monospace;
+	}
+	#treeview ul
+	{
+		margin: 0; padding: 0 0 1.5em 0;
+		list-style-type: none;
+	}
+	#treeview ul ul {
+		/*width: auto; */
+		margin: 0; padding: 0 0 0 0.75em; }
+		/* класс для ul после которых нет li в родительских ветках */
+	#treeview ul.l {
+		border-left: 1px solid;
+		margin-left: -1px;
+		border-color: white;
+	}
+	#treeview li.cl ul { display: none; }
+	#treeview li { margin: 0; padding: 0; }
+	#treeview li li { margin: 0 0 0 0.5em; border-left: 1px dotted;  padding: 0; }
+	#treeview li div { position: relative;
+		/*height: 1.5em; */
+		min-height: 16px; //height: 1.3em; }
+	#treeview li li div { border-bottom: 1px dotted; }
+	#treeview li p
+	{
+		position: absolute; z-index: 1; top: 0.7em; //top: 0.65em; left: 1.75em;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+	}
+	#treeview li p.selectNode{
+		color: white;
+		background: #d3d3d3;
+	}
+	#treeview a { padding: 0.1em 0.2em; white-space: nowrap; //height: 1px; text-decoration: none;}
+	#treeview a.sc
+	{
+		color: black;
+		position: absolute; top: 0.06em;
+		margin-left: -1em;
+		text-decoration: none;
+	}
 
-		/* colors */
-		#treeview li p,
-		#treeview .sc
-		{ background: white; }
-		#treeview ul li li,
-		#treeview ul li li div
-		{ border-color: #999999; }
-		#treeview a
-		{ color: #5555bb; }
-		#treeview a:hover
-		{
-			color: white;
-			background: #808080;
-		}
-	</style>
-
-</head>
-<body>
+	/* colors */
+	#treeview li p,
+	#treeview .sc
+	{ background: white; }
+	#treeview ul li li,
+	#treeview ul li li div
+	{ border-color: #999999; }
+	#treeview a
+	{ color: #5555bb; }
+	#treeview a:hover
+	{
+		color: white;
+		background: #808080;
+	}
+</style>
 
 <table id="choiceWares">
 	<tr>
@@ -149,11 +138,10 @@
 		</td>
 	</tr>
 </table>
+
 <script type="text/javascript">
 
-	postJson('<%=WaresGroupTree.URL%>', null, function(data){
-		$('#tree').append(treeToHtml(data.waresGroupTree));
-	})
+	window.choiceWaresList={};
 
 	function treeToHtml(tree) {
 		var nodeHtml = ''
@@ -189,6 +177,7 @@
 		var i = 0
 		for (; i < list_wares.length; i++) {
 			var wares = list_wares[i];
+			window.choiceWaresList[wares.code_wares]=wares;
 			if (table_list_wares.find('input[value=' + wares.code_wares + ']').length == 0) {
 				var rowHtml = '<tr>';
 				rowHtml += '<td><input type="checkbox" name="code_wares" value="' + wares.code_wares + '"></td>';
@@ -255,11 +244,17 @@
 <script type="text/javascript">
 	function choiceWaresCancel()
 	{
-		alert("cancel");
+		$('#choiceWares').hide();
 	}
 	function choiceWaresOk()
 	{
-		alert("ok")
+		var table_list_wares = $('#list_wares');
+		table_list_wares.find('input[name=code_wares]:checked').each(function () {
+			window.basket[this.value]=window.choiceWaresList[this.value];
+		});
+		var choiceWares = $('#choiceWares');
+		choiceWares.animate({opacity:'hide'}, 500);
+		basketToHtml(window.basket);
 	}
 	function UnHide( eThis ){
 		if( eThis.innerHTML.charCodeAt(0) == 9658 ){
@@ -272,6 +267,3 @@
 		return false;
 	}
 </script>
-
-</body>
-</html>

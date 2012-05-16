@@ -124,7 +124,7 @@ td.scale:hover{
 	background-color: white;
 }
 #choiceWares{
-	/*display: none;*/
+	display: none;
 	position: absolute;
 	top: 0px;
 	left: 0px;
