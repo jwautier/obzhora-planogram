@@ -1,7 +1,8 @@
 <%@ page import="planograma.utils.JspUtils" %>
 <%@ page import="planograma.servlet.wares.WaresEdit" %>
 <%@ page import="planograma.data.*" %>
-<%@ page import="planograma.data.wrapper.WaresWrapper" %>
+<%@ page import="planograma.servlet.wares.WaresGroupTree" %>
+<%@ page import="planograma.servlet.wares.RackWaresPlacementSave" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -37,14 +38,14 @@
 					<td>
 						<table class="menu">
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this)" class="disabled notReady"><%=JspUtils.toMenuTitle("Сохранить")%></a></td>
+								<td><a href="#" onclick="return aOnClick(this, fRackWaresPlacementSave)"><%=JspUtils.toMenuTitle("Сохранить")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this)" class="disabled notReady"><%=JspUtils.toMenuTitle("Перезагрузить")%></a></td>
+								<td><a href="#" onclick="return aOnClick(this, fRackWaresPlacementReload)"><%=JspUtils.toMenuTitle("Перезагрузить")%></a></td>
 							</tr>
 							<tr><td></td></tr>
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this)" class="disabled notReady"><%=JspUtils.toMenuTitle("Добавить товар")%></a></td>
+								<td><a href="#" onclick="return aOnClick(this, fAddWares)"><%=JspUtils.toMenuTitle("Добавить товар")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="butCopy" onclick="return aOnClick(this, fCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать")%></a></td>
@@ -232,47 +233,33 @@
 	</tr>
 </table>
 
+<jsp:include page="choiceWares.jsp"/>
+<%--<%@include file="choiceWares.jsp"%>--%>
+
 <script type="text/javascript">
 	function loadComplete() {
 		var code_rack = getCookie('code_rack');
-		//postJson('<%=WaresEdit.URL%>', {code_rack:code_rack}, function (data) {
-		//	window.rack = data.rack;
-		//		switch (window.rack.load_side)
-		//	{
-		//		case '<%=LoadSide.U%>':
-		//			var temp=window.rack.width;
-		//			window.rack.width=window.rack.length;
-		//			window.rack.length=window.rack.height;
-		//			window.rack.height=temp;
-		//			break;
-		//		case '<%=LoadSide.F%>':
-		//			var temp=window.rack.width;
-		//			window.rack.width=window.rack.length;
-		//			window.rack.length=temp;
-		//			break;
-		//	}
-		//	window.rackShelfList = data.rackShelfList;
-		//	window.rackWaresList = data.rackWaresList;
-		//	loadComplete2();
-		//});
-		window.rack = <%=new Rack(null, null, "testRack", null, 800, 1200, 2000, null, 0, 0, 0, LoadSide.F, null, true, true, TypeRack.R, null, null, null, null, null, null).toJsonObject()%>;
-		window.rackShelfList =
-				[
-					<%=new RackShelf(null, null, 600, 10, 20, 1200, 800, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>,
-					<%=new RackShelf(null, null, 600, 510, 20, 1200, 800, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>,
-					<%=new RackShelf(null, null, 600, 1010, 20, 1200, 800, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>,
-					<%=new RackShelf(null, null, 600, 1510, 20, 1200, 800, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>
-				];
-		window.rackWaresList =
-				[
-					<%=new RackWares(null, 12851, 19, null, TypeRackWares.NA, 1, 250, 1600, 50, 500,300, 1, null, null, null, null, 46, "test1", "t1", "tb1").toJsonObject()%>,
-					<%=new RackWares(null, 12851, 19, null, TypeRackWares.NA, 2, 250, 1300, 50, 300,500, 1, null, null, null, null, 46, "test2", "t2", "tb2").toJsonObject()%>
-				];
-		window.basket={
-			12851:<%=new WaresWrapper(null, 12851, 19, 46, "testWares", "шт", 50, 500, 300, null).toJsonObject()%>,
-			12852:<%=new WaresWrapper(null, 12852, 19, 45, "testWares", "шт", 50, 500, 300, null).toJsonObject()%>
-		};
-		loadComplete2();
+		postJson('<%=WaresEdit.URL%>', {code_rack:code_rack}, function (data) {
+			window.rack = data.rack;
+				switch (window.rack.load_side)
+			{
+				case '<%=LoadSide.U%>':
+					var temp=window.rack.width;
+					window.rack.width=window.rack.length;
+					window.rack.length=window.rack.height;
+					window.rack.height=temp;
+					break;
+				case '<%=LoadSide.F%>':
+					var temp=window.rack.width;
+					window.rack.width=window.rack.length;
+					window.rack.length=temp;
+					break;
+			}
+			window.rackShelfList = data.rackShelfList;
+			window.rackWaresList = data.rackWaresList;
+			window.basket={};
+			loadComplete2();
+		});
 	}
 
 	function loadComplete2()
@@ -363,16 +350,9 @@
 				}
 				images[code_image].src = 'image/'+code_image;
 			}
-			else
-			{
-				countImg--;
-				if (countImg==0)
-				{
-					drawEditCanvas();
-					drawPreviewCanvas();
-				}
-			}
 		}
+		drawEditCanvas();
+		drawPreviewCanvas();
 	}
 
 	function setRack(rack)
@@ -652,7 +632,23 @@
 </script>
 <%-- обработка событий меню --%>
 <script type="text/javascript">
-	// TODO
+	function fRackWaresPlacementSave()
+	{
+		postJson('<%=RackWaresPlacementSave.URL%>', {code_rack:window.rack.code_rack, rackWaresList:window.rackWaresList}, function (data) {
+			loadComplete();
+		});
+	}
+	function fRackWaresPlacementReload()
+	{
+		window.location.reload();
+	}
+	function fAddWares()
+	{
+		postJson('<%=WaresGroupTree.URL%>', null, function(data){
+			$('#tree').append(treeToHtml(data.waresGroupTree));
+			$('#choiceWares').show();
+		})
+	}
 	function fCopy()
 	{
 		window.copyObjectList=[];
@@ -793,9 +789,11 @@
 			{
 				for (var i in window.copyObjectList)
 				{
-					window.rackWaresList.push(window.copyObjectList[i]);
+					var rackWares=clone(window.copyObjectList[i]);
+					rackWares.code_wares_on_rack=null;
+					rackWaresCalcCoordinates(rackWares);
+					window.rackWaresList.push(rackWares);
 				}
-				window.copyObjectList=[];
 				drawEditCanvas();
 				drawPreviewCanvas();
 				window.flagPaste=0;

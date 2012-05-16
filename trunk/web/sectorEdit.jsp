@@ -69,7 +69,7 @@
 								<td><a href="#" id="butEdit" onclick="return aOnClick(this, fRackEdit)" class="disabled"><%=JspUtils.toMenuTitle("Редактировать стеллаж")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this)" class="disabled notReady"><%=JspUtils.toMenuTitle("Расстановка товара")%></a></td>
+								<td><a href="#" id="butRackWaresPlacement" onclick="return aOnClick(this, fRackWaresPlacement)" class="disabled"><%=JspUtils.toMenuTitle("Расстановка товара")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="butCopy" onclick="return aOnClick(this,fRackCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать")%></a></td>
@@ -577,8 +577,10 @@ function selectShowcase(showcase) {
 		document.getElementById('rackLoadSide').value = showcase.load_side;
 		if (showcase.code_rack != null && showcase.code_rack != '') {
 			$('#butEdit').removeClass('disabled');
+			$('#butRackWaresPlacement').removeClass('disabled');
 		} else {
 			$('#butEdit').addClass('disabled');
+			$('#butRackWaresPlacement').addClass('disabled');
 		}
 		$('#butCopy').removeClass('disabled');
 		$('#butCut').removeClass('disabled');
@@ -596,6 +598,7 @@ function selectShowcase(showcase) {
 		document.getElementById('showcaseHeight').value = '';
 		document.getElementById('rackLoadSide').value = '';
 		$('#butEdit').addClass('disabled');
+		$('#butRackWaresPlacement').addClass('disabled');
 		$('#butCopy').addClass('disabled');
 		$('#butCut').addClass('disabled');
 	}
@@ -713,6 +716,20 @@ function roundRack(rack)
 			setCookie('code_rack', code_rack);
 			document.location='rackEdit.jsp';
 		}
+		}
+	}
+
+
+	function fRackWaresPlacement()
+	{
+		if (window.showcase!=null)
+		{
+			var code_rack = window.showcase.code_rack;
+			if (code_rack!=null && code_rack!='')
+			{
+				setCookie('code_rack', code_rack);
+				document.location='rackWaresPlacement.jsp';
+			}
 		}
 	}
 

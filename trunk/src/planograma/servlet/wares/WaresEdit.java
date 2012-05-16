@@ -7,9 +7,11 @@ import planograma.constant.UrlConst;
 import planograma.constant.data.RackConst;
 import planograma.data.Rack;
 import planograma.data.RackShelf;
+import planograma.data.RackWares;
 import planograma.exception.UnauthorizedException;
 import planograma.model.RackModel;
 import planograma.model.RackShelfModel;
+import planograma.model.RackWaresModel;
 import planograma.servlet.AbstractAction;
 
 import javax.servlet.ServletConfig;
@@ -26,20 +28,21 @@ import java.util.List;
  * Time: 2:13
  * To change this template use File | Settings | File Templates.
  */
-@WebServlet("/" + UrlConst.URL_WARES_EDIT)
+@WebServlet("/" + UrlConst.URL_RACK_WARES_PLACEMENT_EDIT)
 public class WaresEdit extends AbstractAction {
 
-	public static final String URL = UrlConst.URL_WARES_EDIT;
+	public static final String URL = UrlConst.URL_RACK_WARES_PLACEMENT_EDIT;
 
 	private RackModel rackModel;
 	private RackShelfModel rackShelfModel;
+	private RackWaresModel rackWaresModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		rackModel = RackModel.getInstance();
 		rackShelfModel = RackShelfModel.getInstance();
-//		waresModel = WaresModel.getInstance();
+		rackWaresModel=RackWaresModel.getInstance();
 	}
 
 	@Override
@@ -47,14 +50,23 @@ public class WaresEdit extends AbstractAction {
 		final int code_rack = requestData.getAsJsonObject().get(RackConst.CODE_RACK).getAsInt();
 
 		final JsonObject jsonObject = new JsonObject();
-		final JsonArray jsonArray = new JsonArray();
+
 		final Rack rack = rackModel.select(getUserContext(session), code_rack);
-		final List<RackShelf> list= rackShelfModel.list(getUserContext(session), code_rack);
-		for (final RackShelf item:list){
-			jsonArray.add(item.toJsonObject());
-		}
 		jsonObject.add("rack", rack.toJsonObject());
-		jsonObject.add("rackShelfList", jsonArray);
+
+		final JsonArray rackShelfListJson = new JsonArray();
+		final List<RackShelf> rackShelfList= rackShelfModel.list(getUserContext(session), code_rack);
+		for (final RackShelf item:rackShelfList){
+			rackShelfListJson.add(item.toJsonObject());
+		}
+		jsonObject.add("rackShelfList", rackShelfListJson);
+
+		final JsonArray rackWaresListJson = new JsonArray();
+		final List<RackWares> rackWaresList = rackWaresModel.list(getUserContext(session), code_rack);
+		for (final RackWares item:rackWaresList){
+			rackWaresListJson.add(item.toJsonObject());
+		}
+		jsonObject.add("rackWaresList", rackWaresListJson);
 		return jsonObject;
 	}
 }

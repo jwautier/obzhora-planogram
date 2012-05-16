@@ -31,9 +31,9 @@ public class WaresModel {
 					" wi." + WaresImageConst.CODE_IMAGE + "," +
 					" w." + WaresConst.NAME_WARES + "," +
 					" ud." + UnitDimensionConst.ABR_UNIT + "," +
-					" u." + AdditionUnitConst.LENGTH + "," +
-					" u." + AdditionUnitConst.WIDTH + "," +
-					" u." + AdditionUnitConst.HEIGHT + "," +
+					" 10*u." + AdditionUnitConst.LENGTH + " " + AdditionUnitConst.LENGTH + "," +
+					" 10*u." + AdditionUnitConst.WIDTH + " " + AdditionUnitConst.WIDTH + "," +
+					" 10*u." + AdditionUnitConst.HEIGHT + " " + AdditionUnitConst.HEIGHT + "," +
 					" u." + AdditionUnitConst.BAR_CODE + " " +
 					"from" +
 					" " + AdditionUnitConst.TABLE_NAME + " u" +
@@ -83,7 +83,7 @@ public class WaresModel {
 		if (code_group != null && code_group != 0) {
 			query += " and w." + WaresConst.CODE_GROUP + " = ? ";
 		}
-		query+=Q_ORDER_BY;
+		query += Q_ORDER_BY;
 
 		final PreparedStatement ps = connection.prepareStatement(query);
 
