@@ -13,6 +13,7 @@
 	<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
 	<script type="text/javascript" src="js/planograma.js"></script>
+	<script type="text/javascript" src="js/planogram2D.js"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
 <body onload="loadComplete();" style="overflow-x:hidden;">
@@ -529,19 +530,16 @@
 			var d2 = null;
 			var d3 = null;
 			var d4 = null;
+			var pClick=new Point2D(sx, sy);
 			for (var i = window.rackShelfList.length-1; window.shelf == null && i >=0; i--) {
-				d1 = distance(window.rackShelfList[i].x1,window.rackShelfList[i].y1,
-						window.rackShelfList[i].x2,window.rackShelfList[i].y2,
-						sx,sy);
-				d2 = distance(window.rackShelfList[i].x2,window.rackShelfList[i].y2,
-						window.rackShelfList[i].x3,window.rackShelfList[i].y3,
-						sx,sy);
-				d3 = distance(window.rackShelfList[i].x3,window.rackShelfList[i].y3,
-						window.rackShelfList[i].x4,window.rackShelfList[i].y4,
-						sx,sy);
-				d4 = distance(window.rackShelfList[i].x4,window.rackShelfList[i].y4,
-						window.rackShelfList[i].x1,window.rackShelfList[i].y1,
-						sx,sy);
+				var p1=new Point2D(window.rackShelfList[i].x1,window.rackShelfList[i].y1);
+				var p2=new Point2D(window.rackShelfList[i].x2,window.rackShelfList[i].y2);
+				var p3=new Point2D(window.rackShelfList[i].x3,window.rackShelfList[i].y3);
+				var p4=new Point2D(window.rackShelfList[i].x4,window.rackShelfList[i].y4);
+				d1 = new Segment2D(p1,p2).distance(pClick);
+				d2 = new Segment2D(p2,p3).distance(pClick);
+				d3 = new Segment2D(p3,p4).distance(pClick);
+				d4 = new Segment2D(p4,p1).distance(pClick);
 				if ((d1 >= 0 && d2 >= 0 && d3 >= 0 && d4 >= 0) || (d1 <= 0 && d2 <= 0 && d3 <= 0 && d4 <= 0)) {
 					window.shelf = window.rackShelfList[i];
 				}
@@ -690,7 +688,7 @@
 			y = evnt.clientY;
 			window.kx = evnt.offsetX * window.preview_m - window.edit_canvas.width * window.km / 2;
 //			window.ky = evnt.offsetY * window.preview_m - window.edit_canvas.height * window.km / 2;
-			window.ky = window.rack.height - evnt.offsetY * window.preview_m - window.edit_canvas.height * window.km / 2;
+			window.ky = evnt.offsetY * window.preview_m-window.preview_canvas.height*window.preview_m+window.rack.height - window.edit_canvas.height * window.km / 2;
 			checkKxKy();
 			drawPreviewCanvas();
 		};
