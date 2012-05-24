@@ -10,10 +10,8 @@ function postJson(url, data, success) {
 			data:{data:data},
 			dataType:'json',
 			success:success,
-			error:function (data, textStatus) {
-//				console.log(data);
-//				console.log(textStatus);
-				switch (data.status) {
+			error:function (errorData, textStatus) {
+				switch (errorData.status) {
 					case 401:
 						loginShow();
 						oldPost={url:url, data:data, success:success};
@@ -22,7 +20,7 @@ function postJson(url, data, success) {
 						alert('У вас нет прав на выполнение операции');
 						break;
 					case 500:
-						alert('Ошибка: ' + data.responseText);
+						alert('Ошибка: ' + errorData.responseText);
 						break;
 					default:
 						alert('Ошибка соединения с сервером попробуйте позже');
@@ -285,20 +283,24 @@ function rackShelfCalcCoordinates(shelf)
 	// относительно сцены
 	shelf.x1 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
 	shelf.y1 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
+	shelf.p1=new Point2D(shelf.x1, shelf.y1);
 	// правый нижний угол
 	y = -y;
 	// относительно сцены
 	shelf.x2 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
 	shelf.y2 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
+	shelf.p2=new Point2D(shelf.x2, shelf.y2);
 	// левый нижний угол
 	x = -x;
 	// относительно сцены
 	shelf.x3 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
 	shelf.y3 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
+	shelf.p3=new Point2D(shelf.x3, shelf.y3);
 	// левый верхний угол
 	y = -y;
 	// относительно сцены
 	shelf.x4 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
 	shelf.y4 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
+	shelf.p4=new Point2D(shelf.x4, shelf.y4);
 }
 

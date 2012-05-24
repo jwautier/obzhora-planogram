@@ -10,6 +10,7 @@
 	<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
 	<script type="text/javascript" src="js/planograma.js"></script>
+	<script type="text/javascript" src="js/planogram2D.js"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
 <body onload="loadComplete();">
@@ -237,6 +238,37 @@
 <%--<%@include file="choiceWares.jsp"%>--%>
 
 <script type="text/javascript">
+/**
+ * товары в корзине
+ * @type {Object}
+ */
+window.basket = {};
+/**
+ * выделеные товары
+ * @type {Array}
+ */
+window.selectRackWaresList = [];
+/**
+ * товар выбраный в корзине
+ * @type {*}
+ */
+window.selectBasket = null;
+/**
+ * скопированые товары
+ * @type {Array}
+ */
+window.copyObjectList = [];
+/**
+ * растояние по ширине между товарами при вставке группами
+ * @type {Number}
+ */
+window.d_wares_width = 1;
+/**
+ * растояние по высоте между товарами при вставке группами
+ * @type {Number}
+ */
+window.d_wares_height = 1;
+
 	function loadComplete() {
 		var code_rack = getCookie('code_rack');
 		postJson('<%=WaresEdit.URL%>', {code_rack:code_rack}, function (data) {
@@ -257,7 +289,6 @@
 			}
 			window.rackShelfList = data.rackShelfList;
 			window.rackWaresList = data.rackWaresList;
-			window.basket={};
 			loadComplete2();
 		});
 	}
@@ -288,9 +319,6 @@
 		x = 0;
 		y = 0;
 		window.shelf = null;
-		window.selectRackWaresList=[];
-		window.selectBasket=null;
-		window.copyObjectList=[];
 
 		for (var i = 0; i < window.rackShelfList.length; i++) {
 			rackShelfCalcCoordinates(window.rackShelfList[i]);
@@ -376,28 +404,30 @@
 	}
 
 	function fSelectRackWares() {
-		if (window.selectRackWaresList.length == 1) {
-			var rackWares = window.selectRackWaresList[0];
-			$('#waresCode').text(rackWares.code_wares);
-			$('#waresName').text(rackWares.name_wares);
-			$('#waresUnit').text(rackWares.abr_unit);
-			$('#waresBarcode').text(rackWares.bar_code);
-			$('#waresX').val(rackWares.position_x);
-			$('#waresY').val(rackWares.position_y);
-			$('#waresWidth').text(rackWares.wares_width);
-			$('#waresHeight').text(rackWares.wares_height);
-			$('#waresLength').text(rackWares.wares_length);
-			$('#waresCountInLength').val(rackWares.count_length_on_shelf);
-			$('#waresPanel').show();
+		if (window.selectRackWaresList.length > 0) {
 			$('#butCopy').removeClass('disabled');
 			$('#butCut').removeClass('disabled');
+			if (window.selectRackWaresList.length == 1) {
+				var rackWares = window.selectRackWaresList[0];
+				$('#waresCode').text(rackWares.code_wares);
+				$('#waresName').text(rackWares.name_wares);
+				$('#waresUnit').text(rackWares.abr_unit);
+				$('#waresBarcode').text(rackWares.bar_code);
+				$('#waresX').val(rackWares.position_x);
+				$('#waresY').val(rackWares.position_y);
+				$('#waresWidth').text(rackWares.wares_width);
+				$('#waresHeight').text(rackWares.wares_height);
+				$('#waresLength').text(rackWares.wares_length);
+				$('#waresCountInLength').val(rackWares.count_length_on_shelf);
+				$('#waresPanel').show();
+			} else {
+				$('#waresPanel').hide();
+			}
 		}
 		else {
 			$('#waresPanel').hide();
-			if (window.selectRackWaresList.length == 0) {
-				$('#butCopy').addClass('disabled');
-				$('#butCut').addClass('disabled');
-			}
+			$('#butCopy').addClass('disabled');
+			$('#butCut').addClass('disabled');
 		}
 	}
 
@@ -444,23 +474,23 @@
 		var x = rackWares.wares_width / 2;
 		var y = rackWares.wares_height / 2;
 		// относительно сцены
-		rackWares.x1 = rackWares.position_x + x * rackWares.cos - y * rackWares.sin;
-		rackWares.y1 = rackWares.position_y + x * rackWares.sin + y * rackWares.cos;
+		rackWares.p1 = new Point2D(rackWares.position_x + x * rackWares.cos - y * rackWares.sin,
+									rackWares.position_y + x * rackWares.sin + y * rackWares.cos);
 		// правый нижний угол
 		y = -y;
 		// относительно сцены
-		rackWares.x2 = rackWares.position_x + x * rackWares.cos - y * rackWares.sin;
-		rackWares.y2 = rackWares.position_y + x * rackWares.sin + y * rackWares.cos;
+		rackWares.p2 = new Point2D(rackWares.position_x + x * rackWares.cos - y * rackWares.sin,
+									rackWares.position_y + x * rackWares.sin + y * rackWares.cos);
 		// левый нижний угол
 		x = -x;
 		// относительно сцены
-		rackWares.x3 = rackWares.position_x + x * rackWares.cos - y * rackWares.sin;
-		rackWares.y3 = rackWares.position_y + x * rackWares.sin + y * rackWares.cos;
+		rackWares.p3 = new Point2D(rackWares.position_x + x * rackWares.cos - y * rackWares.sin,
+									rackWares.position_y + x * rackWares.sin + y * rackWares.cos);
 		// левый верхний угол
 		y = -y;
 		// относительно сцены
-		rackWares.x4 = rackWares.position_x + x * rackWares.cos - y * rackWares.sin;
-		rackWares.y4 = rackWares.position_y + x * rackWares.sin + y * rackWares.cos;
+		rackWares.p4 = new Point2D(rackWares.position_x + x * rackWares.cos - y * rackWares.sin,
+									rackWares.position_y + x * rackWares.sin + y * rackWares.cos);
 	}
 
 	function ie_event(e) {
@@ -511,15 +541,18 @@
 				var m_y_end2 = Math.max(window.m_y_end, window.m_y_begin);
 				var m_x_d=window.selectBasket.width / window.km;
 				var m_y_d=-window.selectBasket.height / window.km;
-				for (var i=m_x_begin2; i<m_x_end2-window.selectBasket.width; i=i+window.selectBasket.width)
+				for (var i=m_x_begin2; i<m_x_end2-window.selectBasket.width-window.d_wares_width; i=i+window.selectBasket.width+window.d_wares_width)
 				{
-					for (var j=m_y_begin2; j<m_y_end2-window.selectBasket.height; j=j+window.selectBasket.height)
+					for (var j=m_y_begin2; j<m_y_end2-window.selectBasket.height-window.d_wares_height; j=j+window.selectBasket.height+window.d_wares_height)
 					{
-						window.edit_context.drawImage(getImage(window.selectBasket.code_image),
-								0.5+(i - window.kx)/ window.km,
-								0.5+window.edit_canvas.height - (j - window.ky) / window.km,
-								m_x_d ,
-								m_y_d );
+						if (window.selectBasket.code_image>0)
+						{
+							window.edit_context.drawImage(getImage(window.selectBasket.code_image),
+									0.5+(i - window.kx)/ window.km,
+									0.5+window.edit_canvas.height - (j - window.ky) / window.km,
+									m_x_d ,
+									m_y_d );
+						}
 						window.edit_context.strokeRect(
 								0.5+(i - window.kx)/ window.km,
 								0.5+window.edit_canvas.height - (j - window.ky) / window.km,
@@ -575,14 +608,14 @@
 			 %>
 		}
 		context.beginPath();
-		var x1 = (shelf.x1 - kx) / m;
-		var y1 = canvas.height - (shelf.y1 - ky) / m;
-		var x2 = (shelf.x2 - kx) / m;
-		var y2 = canvas.height - (shelf.y2 - ky) / m;
-		var x3 = (shelf.x3 - kx) / m;
-		var y3 = canvas.height - (shelf.y3 - ky) / m;
-		var x4 = (shelf.x4 - kx) / m;
-		var y4 = canvas.height - (shelf.y4 - ky) / m;
+		var x1 = (shelf.p1.x - kx) / m;
+		var y1 = canvas.height - (shelf.p1.y - ky) / m;
+		var x2 = (shelf.p2.x - kx) / m;
+		var y2 = canvas.height - (shelf.p2.y - ky) / m;
+		var x3 = (shelf.p3.x - kx) / m;
+		var y3 = canvas.height - (shelf.p3.y - ky) / m;
+		var x4 = (shelf.p4.x - kx) / m;
+		var y4 = canvas.height - (shelf.p4.y - ky) / m;
 		context.moveTo(x1, y1);
 		context.lineTo(x2, y2);
 		context.lineTo(x3, y3);
@@ -603,7 +636,6 @@
 		var w1 = rackWares.wares_width / m;
 		var h1 = rackWares.wares_height / m;
 		if (rackWares.code_image > 0) {
-//			context.drawImage(rackWares.img, x1, y1, w1, h1);
 			context.drawImage(getImage(rackWares.code_image), x1, y1, w1, h1);
 		}
 		context.lineWidth = 1;
@@ -625,18 +657,80 @@
 		for (var i in basket)
 		{
 			var w=basket[i];
-			var wHtml='<input id="'+i+'" type="image" src="image/'+ w.code_image+'" width="'+ w.width/window.km+'" height="'+ w.height/window.km+'" class="basket" onclick="basketWaresSelect(this)">';
+			var wHtml='<input id="'+i+'" type="image"';
+			if (w.code_image>0)
+			{
+				wHtml=wHtml+' src="image/'+ w.code_image+'"';
+			}
+			wHtml=wHtml+' width="'+ w.width/window.km+'"';
+			wHtml=wHtml+' height="'+ w.height/window.km+'"';
+			wHtml=wHtml+' title="'+ w.code_wares+'\n'+ w.name_wares+'\n'+ w.abr_unit+'"';
+			wHtml=wHtml+' class="basket"';
+			wHtml=wHtml+' onclick="basketWaresSelect(this)">';
 			basketPanel.append(wHtml);
 		}
 	}
 </script>
 <%-- обработка событий меню --%>
 <script type="text/javascript">
-	function fRackWaresPlacementSave()
-	{
-		postJson('<%=RackWaresPlacementSave.URL%>', {code_rack:window.rack.code_rack, rackWaresList:window.rackWaresList}, function (data) {
-			loadComplete();
-		});
+	function fRackWaresPlacementSave() {
+		// проверить выход товара за стеллаж
+		var rackWaresOutside = [];
+		var sr = new SelectRectangle2D(new Point2D(0, 0), new Point2D(window.rack.width, window.rack.height));
+		for (var i in window.rackWaresList) {
+			var rackWares = window.rackWaresList[i];
+			if (!rackWares.p1.insideSelectRectangle(sr) ||
+					!rackWares.p2.insideSelectRectangle(sr) ||
+					!rackWares.p3.insideSelectRectangle(sr) ||
+					!rackWares.p4.insideSelectRectangle(sr)) {
+				rackWaresOutside.push(rackWares);
+			}
+		}
+		if (rackWaresOutside.length == 0 || confirm("Все товары выходящие за приделы стеллажа будут удалены.")) {
+			for (var i in rackWaresOutside) {
+				window.rackWaresList.splice(window.rackWaresList.indexOf(rackWaresOutside[i]), 1);
+			}
+			// проверить пересечение товаров между собой и стеллажами
+			var rackWaresIntersects = [];
+			var map = [];
+			for (var i in window.rackShelfList) {
+				var rackShelf = window.rackShelfList[i];
+				drawQuadrangle(map, window.rack.width, window.rack.height,
+						new Point2D(rackShelf.x1, rackShelf.y1),
+						new Point2D(rackShelf.x2, rackShelf.y2),
+						new Point2D(rackShelf.x3, rackShelf.y3),
+						new Point2D(rackShelf.x4, rackShelf.y4))
+			}
+			for (var i in window.rackWaresList) {
+				var rackWares = window.rackWaresList[i];
+				if (drawQuadrangle(map, window.rack.width, window.rack.height,
+						rackWares.p1,
+						rackWares.p2,
+						rackWares.p3,
+						rackWares.p4)) {
+					rackWaresIntersects.push(rackWares);
+				}
+			}
+			if (rackWaresIntersects.length > 0) {
+				alert("Сохранение отменено.\n Существуют товары которые пересекаются.\n Переместите их или удалите.");
+				window.selectRackWaresList = rackWaresIntersects;
+				fSelectRackWares();
+				drawEditCanvas();
+				drawPreviewCanvas();
+			}
+			else {
+				postJson('<%=RackWaresPlacementSave.URL%>', {code_rack:window.rack.code_rack, rackWaresList:window.rackWaresList}, function (data) {
+					loadComplete();
+				});
+			}
+		}
+		else {
+			alert("Сохранение отменено");
+			window.selectRackWaresList = rackWaresOutside;
+			fSelectRackWares();
+			drawEditCanvas();
+			drawPreviewCanvas();
+		}
 	}
 	function fRackWaresPlacementReload()
 	{
@@ -749,19 +843,12 @@
 				}
 				else {
 					// поиск полки под курсором
+					var pClick=new Point2D(sx, sy);
 					for (var i = window.rackShelfList.length - 1; window.shelf == null && i >= 0; i--) {
-						d1 = distance(window.rackShelfList[i].x1, window.rackShelfList[i].y1,
-								window.rackShelfList[i].x2, window.rackShelfList[i].y2,
-								sx, sy);
-						d2 = distance(window.rackShelfList[i].x2, window.rackShelfList[i].y2,
-								window.rackShelfList[i].x3, window.rackShelfList[i].y3,
-								sx, sy);
-						d3 = distance(window.rackShelfList[i].x3, window.rackShelfList[i].y3,
-								window.rackShelfList[i].x4, window.rackShelfList[i].y4,
-								sx, sy);
-						d4 = distance(window.rackShelfList[i].x4, window.rackShelfList[i].y4,
-								window.rackShelfList[i].x1, window.rackShelfList[i].y1,
-								sx, sy);
+						d1 = new Segment2D(window.rackShelfList[i].p1,window.rackShelfList[i].p2).distance(pClick);
+						d2 = new Segment2D(window.rackShelfList[i].p2,window.rackShelfList[i].p3).distance(pClick);
+						d3 = new Segment2D(window.rackShelfList[i].p3,window.rackShelfList[i].p4).distance(pClick);
+						d4 = new Segment2D(window.rackShelfList[i].p4,window.rackShelfList[i].p1).distance(pClick);
 						if ((d1 >= 0 && d2 >= 0 && d3 >= 0 && d4 >= 0) || (d1 <= 0 && d2 <= 0 && d3 <= 0 && d4 <= 0)) {
 							window.shelf = window.rackShelfList[i];
 							$('#butCopy').addClass('disabled');
@@ -815,9 +902,9 @@
 					var m_y_begin2 = Math.min(window.m_y_end, window.m_y_begin);
 					var m_y_end2 = Math.max(window.m_y_end, window.m_y_begin);
 					var countInsert=0;
-					for (var i=m_x_begin2; i<m_x_end2-window.selectBasket.width; i=i+window.selectBasket.width)
+					for (var i=m_x_begin2; i<m_x_end2-window.selectBasket.width-window.d_wares_width; i=i+window.selectBasket.width+window.d_wares_width)
 					{
-						for (var j=m_y_begin2; j<m_y_end2-window.selectBasket.height; j=j+window.selectBasket.height)
+						for (var j=m_y_begin2; j<m_y_end2-window.selectBasket.height-window.d_wares_height; j=j+window.selectBasket.height+window.d_wares_height)
 						{
 							var rackWares = {
 								code_rack:window.rack.code_rack,
@@ -869,35 +956,32 @@
 							window.m_y_end=t;
 						}
 						// если хоть одна из вершин лежит в области выделения
-						if ((rackWares.x1>=window.m_x_begin && rackWares.x1<=window.m_x_end && rackWares.y1>=window.m_y_begin && rackWares.y1<=window.m_y_end)||
-								(rackWares.x2>=window.m_x_begin && rackWares.x2<=window.m_x_end && rackWares.y2>=window.m_y_begin && rackWares.y2<=window.m_y_end)||
-								(rackWares.x3>=window.m_x_begin && rackWares.x3<=window.m_x_end && rackWares.y3>=window.m_y_begin && rackWares.y3<=window.m_y_end)||
-								(rackWares.x4>=window.m_x_begin && rackWares.x4<=window.m_x_end && rackWares.y4>=window.m_y_begin && rackWares.y4<=window.m_y_end))
+						var sr=new SelectRectangle2D(new Point2D(window.m_x_begin, window.m_y_begin), new Point2D(window.m_x_end,window.m_y_end));
+						if (rackWares.p1.insideSelectRectangle(sr)||
+							rackWares.p2.insideSelectRectangle(sr)||
+							rackWares.p3.insideSelectRectangle(sr)||
+							rackWares.p4.insideSelectRectangle(sr))
 						{
 							window.selectRackWaresList.push(rackWares);
 						}
 						else
 						{
 							// если одна из граней пересекается с гранью области выделения
-							if (intersectionQuadrangle(rackWares.x1,rackWares.y1, rackWares.x2,rackWares.y2, rackWares.x3,rackWares.y3, rackWares.x4,rackWares.y4,
-									window.m_x_begin,window.m_y_begin, window.m_x_end,window.m_y_begin, window.m_x_end,window.m_y_end, window.m_x_begin,window.m_y_end))
+							if (
+								new Segment2D(rackWares.p1, rackWares.p2).intersectsSelectRectangle(sr) ||
+								new Segment2D(rackWares.p2, rackWares.p3).intersectsSelectRectangle(sr) ||
+								new Segment2D(rackWares.p3, rackWares.p4).intersectsSelectRectangle(sr) ||
+								new Segment2D(rackWares.p4, rackWares.p1).intersectsSelectRectangle(sr)
+							)
 							{
 								window.selectRackWaresList.push(rackWares);
 							}
 						}
 					}
 				}
-				if (window.selectRackWaresList.length>0)
-				{
-					$('#butCopy').removeClass('disabled');
-					$('#butCut').removeClass('disabled');
-				}
-				else
-				{
-					$('#butCopy').addClass('disabled');
-					$('#butCut').addClass('disabled');
-				}
+
 				window.m_select=0;
+				fSelectRackWares();
 				drawEditCanvas();
 				drawPreviewCanvas();
 			}

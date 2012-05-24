@@ -181,9 +181,10 @@
 			if (table_list_wares.find('input[value=' + wares.code_wares + ']').length == 0) {
 				var rowHtml = '<tr>';
 				rowHtml += '<td><input type="checkbox" name="code_wares" value="' + wares.code_wares + '"></td>';
-				rowHtml += '<td style="min-width: 100px">';
+				rowHtml += '<td style="min-width: 100px" align="center">';
+				var k=100/Math.max(wares.width, wares.height)
 				if (wares.code_image != 0) {
-					rowHtml += '<img style="max-width: 100px; max-height: 100px" src="image/' + wares.code_image + '" >';
+					rowHtml += '<img width="'+(k*wares.width)+'" height="'+(k*wares.height)+'" src="image/' + wares.code_image + '" >';
 				}
 				rowHtml += '</td>';
 				rowHtml += '<td>&nbsp;</td>';
