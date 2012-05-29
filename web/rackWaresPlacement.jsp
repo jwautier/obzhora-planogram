@@ -98,23 +98,12 @@
 											<col width="70"/>
 										</colgroup>
 										<tr>
-											<td colspan="2">свойства стеллажа:</td>
-										</tr>
-										<tr>
-											<td align="right">название&nbsp;</td>
+											<td align="right">стеллаж&nbsp;</td>
 											<td id="rackName"></td>
 										</tr>
 										<tr>
-											<td align="right">ширина&nbsp;</td>
-											<td id="rackWidth"></td>
-										</tr>
-										<tr>
-											<td align="right">высота&nbsp;</td>
-											<td id="rackHeight"></td>
-										</tr>
-										<tr>
-											<td align="right">глубина&nbsp;</td>
-											<td id="rackLength"></td>
+											<td align="right">габариты&nbsp;</td>
+											<td id="rackSize"></td>
 										</tr>
 										<tr>
 											<td align="right">загрузка&nbsp;</td>
@@ -386,9 +375,7 @@ window.d_wares_height = 1;
 	function setRack(rack)
 	{
 		$('#rackName').text(window.rack.name_rack);
-		$('#rackWidth').text(window.rack.width);
-		$('#rackHeight').text(window.rack.height);
-		$('#rackLength').text(window.rack.length);
+		$('#rackSize').text(window.rack.width + 'x' + window.rack.height + 'x' + window.rack.length);
 		switch (window.rack.load_side) {
 			<%
 			for (final LoadSide loadSide:LoadSide.values())
@@ -499,6 +486,12 @@ window.d_wares_height = 1;
 		}
 		return e;
 	}
+	function roundRackWares(rackWares)
+	{
+		rackWares.position_x=Math.round(rackWares.position_x);
+		rackWares.position_y=Math.round(rackWares.position_y);
+		rackWaresCalcCoordinates(rackWares);
+	}
 </script>
 <%--прорисовка элементов--%>
 <script type="text/javascript">
@@ -535,15 +528,21 @@ window.d_wares_height = 1;
 					(window.m_y_begin - window.m_y_end) / window.km);
 			if (window.selectBasket!=null)
 			{
-				var m_x_begin2 = Math.min(window.m_x_end, window.m_x_begin);
-				var m_x_end2 = Math.max(window.m_x_end, window.m_x_begin);
-				var m_y_begin2 = Math.min(window.m_y_end, window.m_y_begin);
-				var m_y_end2 = Math.max(window.m_y_end, window.m_y_begin);
+				var m_x_begin2 = Math.round(Math.min(window.m_x_end, window.m_x_begin));
+				var m_x_end2 = Math.round(Math.max(window.m_x_end, window.m_x_begin));
+				var m_y_begin2 = Math.round(Math.min(window.m_y_end, window.m_y_begin));
+				var m_y_end2 = Math.round(Math.max(window.m_y_end, window.m_y_begin));
 				var m_x_d=window.selectBasket.width / window.km;
 				var m_y_d=-window.selectBasket.height / window.km;
-				for (var i=m_x_begin2; i<m_x_end2-window.selectBasket.width-window.d_wares_width; i=i+window.selectBasket.width+window.d_wares_width)
+				var dx=window.selectBasket.width+window.d_wares_width;
+				if (dx%2!=0)
+					dx++;
+				var dy=window.selectBasket.height+window.d_wares_height;
+				if (dy%2!=0)
+					dy++;
+				for (var i=m_x_begin2; i<m_x_end2-dx; i=i+dx)
 				{
-					for (var j=m_y_begin2; j<m_y_end2-window.selectBasket.height-window.d_wares_height; j=j+window.selectBasket.height+window.d_wares_height)
+					for (var j=m_y_begin2; j<m_y_end2-dy; j=j+dy)
 					{
 						if (window.selectBasket.code_image>0)
 						{
@@ -692,14 +691,14 @@ window.d_wares_height = 1;
 			}
 			// проверить пересечение товаров между собой и стеллажами
 			var rackWaresIntersects = [];
-			var map = [];
+			var map = new Array(window.rack.width*window.rack.height);
 			for (var i in window.rackShelfList) {
 				var rackShelf = window.rackShelfList[i];
 				drawQuadrangle(map, window.rack.width, window.rack.height,
-						new Point2D(rackShelf.x1, rackShelf.y1),
-						new Point2D(rackShelf.x2, rackShelf.y2),
-						new Point2D(rackShelf.x3, rackShelf.y3),
-						new Point2D(rackShelf.x4, rackShelf.y4))
+						rackShelf.p1,
+						rackShelf.p2,
+						rackShelf.p3,
+						rackShelf.p4)
 			}
 			for (var i in window.rackWaresList) {
 				var rackWares = window.rackWaresList[i];
@@ -711,6 +710,10 @@ window.d_wares_height = 1;
 					rackWaresIntersects.push(rackWares);
 				}
 			}
+
+//			drawTestMap(window.edit_canvas, window.edit_context, window.rack.width, window.rack.height, map);
+//			return;
+
 			if (rackWaresIntersects.length > 0) {
 				alert("Сохранение отменено.\n Существуют товары которые пересекаются.\n Переместите их или удалите.");
 				window.selectRackWaresList = rackWaresIntersects;
@@ -874,21 +877,26 @@ window.d_wares_height = 1;
 		window.edit_canvas.onmouseup = function(e) {
 			if (window.flagPaste==2)
 			{
+				window.selectRackWaresList=[];
 				for (var i in window.copyObjectList)
 				{
 					var rackWares=clone(window.copyObjectList[i]);
 					rackWares.code_wares_on_rack=null;
-					rackWaresCalcCoordinates(rackWares);
+					roundRackWares(rackWares);
+					window.selectRackWaresList.push(rackWares);
 					window.rackWaresList.push(rackWares);
 				}
-				drawEditCanvas();
-				drawPreviewCanvas();
 				window.flagPaste=0;
 			}
 			else if (window.editMove==1)
 			{
 				// установка товара
-				// TODO округление координат
+				for (var i in window.selectRackWaresList)
+				{
+					var rackWares=window.selectRackWaresList[i];
+					// округление координат
+					roundRackWares(rackWares);
+				}
 				window.editMove=0;
 			}
 			else if (window.m_select==1)
@@ -897,14 +905,21 @@ window.d_wares_height = 1;
 				if (window.selectBasket!=null)
 				{
 					// добавление товара
-					var m_x_begin2 = Math.min(window.m_x_end, window.m_x_begin);
-					var m_x_end2 = Math.max(window.m_x_end, window.m_x_begin);
-					var m_y_begin2 = Math.min(window.m_y_end, window.m_y_begin);
-					var m_y_end2 = Math.max(window.m_y_end, window.m_y_begin);
+					var m_x_begin2 = Math.round(Math.min(window.m_x_end, window.m_x_begin));
+					var m_x_end2 = Math.round(Math.max(window.m_x_end, window.m_x_begin));
+					var m_y_begin2 = Math.round(Math.min(window.m_y_end, window.m_y_begin));
+					var m_y_end2 = Math.round(Math.max(window.m_y_end, window.m_y_begin));
 					var countInsert=0;
-					for (var i=m_x_begin2; i<m_x_end2-window.selectBasket.width-window.d_wares_width; i=i+window.selectBasket.width+window.d_wares_width)
+					window.selectRackWaresList=[];
+					var dx=window.selectBasket.width+window.d_wares_width;
+					if (dx%2!=0)
+						dx++;
+					var dy=window.selectBasket.height+window.d_wares_height;
+					if (dy%2!=0)
+						dy++;
+					for (var i=m_x_begin2; i<m_x_end2-dx; i=i+dx)
 					{
-						for (var j=m_y_begin2; j<m_y_end2-window.selectBasket.height-window.d_wares_height; j=j+window.selectBasket.height+window.d_wares_height)
+						for (var j=m_y_begin2; j<m_y_end2-dy; j=j+dy)
 						{
 							var rackWares = {
 								code_rack:window.rack.code_rack,
@@ -912,8 +927,8 @@ window.d_wares_height = 1;
 								code_unit:window.selectBasket.code_unit,
 								type_wares_on_rack:'<%=TypeRackWares.NA.name()%>',
 								order_number_on_rack:1,
-								position_x:i+window.selectBasket.width/2,
-								position_y:j+window.selectBasket.height/2,
+								position_x:i+Math.ceil(window.selectBasket.width/2),
+								position_y:j+Math.ceil(window.selectBasket.height/2),
 								wares_length:window.selectBasket.length,
 								wares_width:window.selectBasket.width,
 								wares_height:window.selectBasket.height,
@@ -923,9 +938,10 @@ window.d_wares_height = 1;
 								abr_unit: window.selectBasket.abr_unit,
 								bar_code: window.selectBasket.bar_code
 							};
+							roundRackWares(rackWares);
 							// TODO order_number_on_rack
 							window.rackWaresList.push(rackWares);
-							rackWaresCalcCoordinates(rackWares);
+							window.selectRackWaresList.push(rackWares);
 							countInsert++;
 						}
 					}
@@ -979,12 +995,11 @@ window.d_wares_height = 1;
 						}
 					}
 				}
-
 				window.m_select=0;
-				fSelectRackWares();
-				drawEditCanvas();
-				drawPreviewCanvas();
 			}
+			fSelectRackWares();
+			drawEditCanvas();
+			drawPreviewCanvas();
 		}
 		window.edit_canvas.onmouseout = window.edit_canvas.onmouseup;
 
@@ -1138,7 +1153,7 @@ window.d_wares_height = 1;
 			if (x != null && !isNaN(x) && x != Infinity) {
 //				var oldx = window.selectRackWaresList[0].position_x;
 				window.selectRackWaresList[0].position_x = x;
-				rackWaresCalcCoordinates(window.selectRackWaresList[0]);
+				roundRackWares(window.selectRackWaresList[0]);
 				//TODO
 				// не выходит за области сектора
 //				if ((window.shelf.x_coord < oldx
@@ -1169,7 +1184,7 @@ window.d_wares_height = 1;
 			if (y != null && !isNaN(x) && y != Infinity) {
 //				var oldY = window.selectRackWaresList[0].position_y;
 				window.selectRackWaresList[0].position_y = y;
-				rackWaresCalcCoordinates(window.selectRackWaresList[0]);
+				roundRackWares(window.selectRackWaresList[0]);
 				//TODO
 				// не выходит за области сектора
 //				if ((window.shelf.x_coord < oldY
