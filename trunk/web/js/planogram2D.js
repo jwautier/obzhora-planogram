@@ -193,60 +193,68 @@ function drawQuadrangle(map, width, height, p1, p2, p3, p4) {
 	var intersects = false;
 	var t;
 	// сортировка вершин
-	if (p1.y < p4.y) {
+	if (p4.y >= p3.y && p4.y >= p2.y && p4.y > p1.y) {
 		t = p1;
 		p1 = p4;
-		p4 = t;
+		p4 = p3;
+		p3 = p2
+		p2 = t;
 	}
-	if (p1.y < p3.y) {
+	else if (p3.y >= p4.y && p3.y >= p2.y && p3.y > p1.y) {
 		t = p1;
 		p1 = p3;
 		p3 = t;
+		t = p2;
+		p2 = p4
+		p4 = t;
 	}
-	if (p1.y < p2.y) {
+	else if (p2.y >= p4.y && p2.y >= p3.y && p2.y > p1.y) {
 		t = p1;
 		p1 = p2;
-		p2 = t;
+		p2 = p3;
+		p3 = p4
+		p4 = t;
 	}
 	if (p2.y < p4.y) {
 		t = p2;
 		p2 = p4;
 		p4 = t;
 	}
-	if (p2.y < p3.y) {
-		t = p2;
-		p2 = p3;
-		p3 = t;
-	}
-	if (p3.y < p4.y) {
-		t = p3;
-		p3 = p4;
-		p4 = t;
-	}
 	var sy;
 	var x1, x2;
 	// нижний треугольник
-	for (sy = Math.max(0,p4.y); sy < p3.y && sy < height; sy++) {
-		x1 = Math.round(p4.x + (sy - p4.y) * (p2.x - p4.x) / (p2.y - p4.y));
-		x2 = Math.round(p4.x + (sy - p4.y) * (p3.x - p4.x) / (p3.y - p4.y));
-		intersects = intersects || drawHorizontalLine(map, width, sy, x1, x2)
+	for (sy = Math.max(0, p3.y); sy < p2.y && sy < p4.y && sy < height; sy++) {
+		x1 = p3.x + (sy - p3.y) * (p2.x - p3.x) / (p2.y - p3.y);
+		x2 = p3.x + (sy - p3.y) * (p4.x - p3.x) / (p4.y - p3.y);
+		intersects = drawHorizontalLine(map, width, sy, x1, x2) || intersects;
 	}
 	// средний четырехугольник
-	for (sy = Math.max(0,p3.y); sy < p2.y && sy < height; sy++) {
-		x1 = Math.round(p4.x + (sy - p4.y) * (p2.x - p4.x) / (p2.y - p4.y));
-		x2 = Math.round(p3.x + (sy - p3.y) * (p1.x - p3.x) / (p1.y - p3.y));
-		intersects = intersects || drawHorizontalLine(map, width, sy, x1, x2)
+	for (sy = Math.max(0, Math.min(p2.y, p4.y)); (sy < p2.y || sy < p4.y) && sy < height; sy++) {
+		if (p1.y == p4.y)
+			x1 = p4.x;
+		else
+			x1 = p4.x + (sy - p4.y) * (p1.x - p4.x) / (p1.y - p4.y);
+		if (p3.y == p2.y)
+			x2 = p2.x;
+		else
+			x2 = p2.x + (sy - p2.y) * (p3.x - p2.x) / (p3.y - p2.y);
+		intersects = drawHorizontalLine(map, width, sy, x1, x2) || intersects;
 	}
 	// верхний треугольник
-	for (sy = Math.max(0,p2.y); sy <= p1.y && sy < height; sy++) {
-		x1 = Math.round(p3.x + (sy - p3.y) * (p1.x - p3.x) / (p1.y - p3.y));
-		if (p2.y == p1.y) {
-			x2 = p2.x
+	for (sy = Math.max(0, p2.y, p4.y); sy <= p1.y && sy < height; sy++) {
+		if (p4.y == p1.y) {
+			x1 = p4.x;
 		}
 		else {
-			x2 = Math.round(p2.x + (sy - p2.y) * (p1.x - p2.x) / (p1.y - p2.y));
+			x1 = p1.x + (sy - p1.y) * (p4.x - p1.x) / (p4.y - p1.y);
 		}
-		intersects = intersects || drawHorizontalLine(map, width, sy, x1, x2)
+		if (p2.y == p1.y) {
+			x2 = p2.x;
+		}
+		else {
+			x2 = p1.x + (sy - p1.y) * (p2.x - p1.x) / (p2.y - p1.y);
+		}
+		intersects = drawHorizontalLine(map, width, sy, x1, x2) || intersects;
 	}
 	return intersects;
 }
@@ -257,13 +265,35 @@ function drawHorizontalLine(map, width, sy, x1, x2) {
 		x1 = x2;
 		x2 = t;
 	}
-	for (var x = Math.max(0,x1); x <= x2 && x<width; x++) {
+	sy=Math.round(sy);
+	x1=Math.round(x1);
+	x2=Math.round(x2);
+	for (var x = Math.max(0, x1); x < x2 && x < width; x++) {
 		var i = sy * width + x;
 		if (map[i] == 1) {
-			var intersects = true;
+			intersects = true;
 		}
-		else
+		else {
 			map[i] = 1;
+		}
 	}
 	return intersects;
+}
+
+function drawTestMap(canvas, context, width, height, map) {
+	canvas.width = width;
+	canvas.height = height;
+	var image1 = context.getImageData(0, 0, width, height);
+	var imageData1 = image1.data;
+	for (var y = 0; y < height; y++) {
+		var i = y * width;
+		for (var x = 0; x < width; x++) {
+			if (map[i + x] == 1) {
+				var j = 4 * (i + x);
+				imageData1[j] = 255;
+				imageData1[j + 3] = 255; // alpha
+			}
+		}
+	}
+	context.putImageData(image1, 0, 0);
 }
