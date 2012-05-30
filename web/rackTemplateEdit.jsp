@@ -731,8 +731,7 @@
 			x = evnt.clientX;
 			y = evnt.clientY;
 			window.kx = evnt.offsetX * window.preview_m - window.edit_canvas.width * window.km / 2;
-//			window.ky = evnt.offsetY * window.preview_m - window.edit_canvas.height * window.km / 2;
-			window.ky = window.rackTemplate.height - evnt.offsetY * window.preview_m - window.edit_canvas.height * window.km / 2;
+			window.ky = (window.preview_canvas.height-evnt.offsetY) * window.preview_m - window.edit_canvas.height * window.km / 2;
 			checkKxKy();
 			drawPreviewCanvas();
 		};
