@@ -2,12 +2,13 @@ var oldPost=null;
 
 function postJson(url, data, success) {
 	loadingShow();
+	var dataJson=null;
 	if (data != null)
-		data = $.toJSON(data);
+		dataJson = $.toJSON(data);
 	$.ajax(
 		url, {
 			type:'post',
-			data:{data:data},
+			data:{data:dataJson},
 			dataType:'json',
 			success:success,
 			error:function (errorData, textStatus) {

@@ -199,7 +199,7 @@
 											<td id="waresLength"></td>
 										</tr>
 										<tr>
-											<td align="right">кол-во в глубину</td>
+											<td align="right" title="количество товара в глубину стеллажа">кол-во</td>
 											<td><input type="text" id="waresCountInLength" onchange="changeWaresCountInLength(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
 										</tr>
 									</table>
@@ -932,7 +932,7 @@ window.d_wares_height = 1;
 								wares_length:window.selectBasket.length,
 								wares_width:window.selectBasket.width,
 								wares_height:window.selectBasket.height,
-								count_length_on_shelf:Math.ceil(window.rack.length/window.selectBasket.length),
+								count_length_on_shelf:Math.floor(window.rack.length/window.selectBasket.length),
 								code_image: window.selectBasket.code_image,
 								name_wares: window.selectBasket.name_wares,
 								abr_unit: window.selectBasket.abr_unit,
@@ -1080,7 +1080,7 @@ window.d_wares_height = 1;
 			x = evnt.clientX;
 			y = evnt.clientY;
 			window.kx = evnt.offsetX * window.preview_m - window.edit_canvas.width * window.km / 2;
-			window.ky = window.rack.height - evnt.offsetY * window.preview_m - window.edit_canvas.height * window.km / 2;
+			window.ky = (window.preview_canvas.height-evnt.offsetY) * window.preview_m - window.edit_canvas.height * window.km / 2;
 			checkKxKy();
 			drawPreviewCanvas();
 		};
@@ -1208,7 +1208,16 @@ window.d_wares_height = 1;
 			waresY.value =window.selectRackWaresList[0].position_y;
 		}
 	}
-	// TODO
+	function changeWaresCountInLength(waresCountInLength) {
+		if (window.selectRackWaresList.length == 1) {
+			var value = Number(waresCountInLength.value);
+			var max = Math.floor(window.rack.length / window.selectRackWaresList[0].wares_length);
+			if (value > 0 && value <= max) {
+				window.selectRackWaresList[0].count_length_on_shelf = value;
+			}
+			waresCountInLength.value = window.selectRackWaresList[0].count_length_on_shelf;
+		}
+	}
 </script>
 
 <%-- обработка событий корзины --%>
