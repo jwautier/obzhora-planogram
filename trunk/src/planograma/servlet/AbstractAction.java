@@ -7,7 +7,9 @@ import com.google.gson.JsonObject;
 import planograma.constant.SessionConst;
 import planograma.data.UserContext;
 import planograma.exception.InvalidLoginOrPassword;
+import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
+import planograma.model.SecurityModel;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -31,12 +33,14 @@ import java.sql.SQLException;
 public abstract class AbstractAction extends HttpServlet {
 	public static final String REQUEST_DATA = "data";
 	protected Gson gson;
+	private SecurityModel securityModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		final GsonBuilder gsonbuilder = new GsonBuilder();
 		gson = gsonbuilder.create();
+		securityModel = SecurityModel.getInstance();
 	}
 
 	@Override
@@ -96,6 +100,11 @@ public abstract class AbstractAction extends HttpServlet {
 				return userContext;
 		}
 		throw UnauthorizedException.getInstance();
+	}
+
+	public void checkAccess(final UserContext userContext, int code_object) throws NotAccessException {
+		if (!securityModel.canAccess(userContext, code_object))
+			throw NotAccessException.getInstance();
 	}
 
 	public static void rollback(final HttpSession session) {

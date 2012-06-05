@@ -76,7 +76,14 @@ function loginSend() {
 				loginHide();
 				if (oldPost!=null)
 				{
-					postJson(oldPost.url, oldPost.data, oldPost.success);
+					if (oldPost.url!=null)
+					{
+						postJson(oldPost.url, oldPost.data, oldPost.success);
+					}
+					else
+					{
+						oldPost.success();
+					}
 					oldPost=null;
 				}
 			});

@@ -1,7 +1,7 @@
 <%@ page import="planograma.constant.SessionConst" %>
 <%@ page import="planograma.utils.JspUtils" %>
 <%@ page import="planograma.servlet.image.ImageCleanCache" %>
-<%@ page import="planograma.servlet.TestAction" %>
+<%@ page import="planograma.constant.SecurityConst" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -37,13 +37,10 @@
 								<td><a href="rackTemplateList.jsp"><%=JspUtils.toMenuTitle("Типовые стеллажи")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" onclick="postJson('<%=ImageCleanCache.URL%>', null, function () {alert('Кеш очищен')})"><%=JspUtils.toMenuTitle("Очистить кеш изображений")%></a></td>
+								<td><a href="#" onclick="return aOnClick(this, fCleanCache)" class="<%=JspUtils.actionAccess(session, SecurityConst.ACCESS_IMAGE_CLEAN_CACHE)%>"><%=JspUtils.toMenuTitle("Очистить кеш изображений")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" onclick="logout()"><%=JspUtils.toMenuTitle("Выход")%></a></td>
-							</tr>
-							<tr>
-								<td><a href="#" onclick="postJson('<%=TestAction.URL%>', null, function () {alert('Test')})"><%=JspUtils.toMenuTitle("Test(-)")%></a></td>
 							</tr>
 							<tr>
 								<td height="100%"></td>
@@ -60,9 +57,22 @@
 </table>
 </body>
 <script type="text/javascript">
+	function fMenuReload()
+	{
+		window.location.reload();
+	}
+	function fCleanCache()
+	{
+		postJson('<%=ImageCleanCache.URL%>',
+				null,
+				function ()
+					{alert('Кеш очищен')}
+		)
+	}
 	<%
 	if (session.getAttribute(SessionConst.SESSION_USER)==null)
 	{
+		out.write("oldPost={url:null, data:null, success:fMenuReload};");
 		out.write("loginShow();\n");
 	}
 	%>

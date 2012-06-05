@@ -6,7 +6,11 @@
 <%@ page import="planograma.data.RackShelf" %>
 <%@ page import="planograma.data.LoadSide" %>
 <%@ page import="planograma.data.TypeShelf" %>
+<%@ page import="planograma.constant.SecurityConst" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+	final String access_rack_edit=JspUtils.actionAccess(session, SecurityConst.ACCESS_RACK_EDIT);
+%>
 <html>
 <head>
 	<title>Редактирование стеллажа</title>
@@ -42,14 +46,14 @@
 					<td>
 						<table class="menu">
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this, fRackSave)"><%=JspUtils.toMenuTitle("Сохранить")%></a></td>
+								<td><a href="#" onclick="return aOnClick(this, fRackSave)" class="<%=access_rack_edit%>"><%=JspUtils.toMenuTitle("Сохранить")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" onclick="return aOnClick(this, fRackReload)"><%=JspUtils.toMenuTitle("Перезагрузить")%></a></td>
 							</tr>
 							<tr><td></td></tr>
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this, fRackShelfAdd)"><%=JspUtils.toMenuTitle("Добавить полку")%></a></td>
+								<td><a href="#" onclick="return aOnClick(this, fRackShelfAdd)" class="<%=access_rack_edit%>"><%=JspUtils.toMenuTitle("Добавить полку")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="butCopy" onclick="return aOnClick(this, fCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать")%></a></td>
@@ -218,6 +222,9 @@
 </table>
 
 <script type="text/javascript">
+
+	var canRackEdit='<%=access_rack_edit%>';
+
 	function loadComplete() {
 		var code_rack = getCookie('code_rack');
 		postJson('<%=RackEdit.URL%>', {code_rack:code_rack}, function (data) {
@@ -297,8 +304,11 @@
 			document.getElementById('shelfHeight').value = shelf.shelf_height;
 			document.getElementById('shelfLength').value = shelf.shelf_length;
 			document.getElementById('shelfType').value = shelf.type_shelf;
-			$('#butCopy').removeClass('disabled');
-			$('#butCut').removeClass('disabled');
+			if (canRackEdit!='disabled')
+			{
+				$('#butCopy').removeClass('disabled');
+				$('#butCut').removeClass('disabled');
+			}
 		} else {
 			document.getElementById('shelfX').value = '';
 			document.getElementById('shelfY').value = '';

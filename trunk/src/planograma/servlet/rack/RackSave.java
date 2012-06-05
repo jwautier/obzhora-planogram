@@ -3,11 +3,13 @@ package planograma.servlet.rack;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.RackConst;
 import planograma.data.Rack;
 import planograma.data.RackShelf;
 import planograma.data.UserContext;
+import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
 import planograma.model.RackShelfModel;
 import planograma.model.RackModel;
@@ -44,8 +46,9 @@ public class RackSave extends AbstractAction {
 	}
 
 	@Override
-	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
+	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException, NotAccessException {
 		final UserContext userContext = getUserContext(session);
+		checkAccess(userContext, SecurityConst.ACCESS_RACK_EDIT);
 		final JsonObject rackJson = requestData.getAsJsonObject().getAsJsonObject("rack");
 		final Rack rack = new Rack(rackJson);
 		final JsonArray shelfListJson = requestData.getAsJsonObject().getAsJsonArray("rackShelfList");

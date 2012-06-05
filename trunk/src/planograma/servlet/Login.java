@@ -2,10 +2,12 @@ package planograma.servlet;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import planograma.constant.SecurityConst;
 import planograma.constant.SessionConst;
 import planograma.constant.UrlConst;
 import planograma.data.UserContext;
 import planograma.exception.InvalidLoginOrPassword;
+import planograma.exception.NotAccessException;
 import planograma.model.StateAllModel;
 
 import javax.servlet.ServletConfig;
@@ -41,6 +43,7 @@ public class Login extends AbstractAction {
 			throw InvalidLoginOrPassword.getInstance();
 		session.removeAttribute(SessionConst.SESSION_USER);
 		final UserContext userContext = new UserContext(login, password);
+		checkAccess(userContext, SecurityConst.ACCESS_MODULE);
 		session.setAttribute(SessionConst.SESSION_USER, userContext);
 		stateAllModel.initEnum(userContext);
 		return null;

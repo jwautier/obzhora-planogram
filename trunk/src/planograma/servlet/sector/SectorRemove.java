@@ -2,11 +2,13 @@ package planograma.servlet.sector;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.SectorConst;
 import planograma.data.Rack;
 import planograma.data.RackShelf;
 import planograma.data.UserContext;
+import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
 import planograma.model.RackModel;
 import planograma.model.RackShelfModel;
@@ -44,9 +46,10 @@ public class SectorRemove extends AbstractAction {
 	}
 
 	@Override
-	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
-		final int code_sector = Integer.valueOf(requestData.getAsJsonObject().get(SectorConst.CODE_SECTOR).getAsString());
+	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException, NotAccessException {
 		final UserContext userContext = getUserContext(session);
+		checkAccess(userContext, SecurityConst.ACCESS_SECTOR_EDIT);
+		final int code_sector = Integer.valueOf(requestData.getAsJsonObject().get(SectorConst.CODE_SECTOR).getAsString());
 		for (final Rack rack : rackModel.list(userContext, code_sector)) {
 			for (final RackShelf rackShelf : rackShelfModel.list(userContext, rack.getCode_rack())) {
 				rackShelfModel.delete(userContext, rackShelf.getCode_shelf());

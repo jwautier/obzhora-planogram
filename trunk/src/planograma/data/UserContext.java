@@ -41,7 +41,7 @@ public class UserContext implements Serializable {
 
 	@Override
 	protected void finalize() throws Throwable {
-		if (connection != null) {
+		if (connection != null && !connection.isClosed()) {
 			connection.close();
 		}
 	}

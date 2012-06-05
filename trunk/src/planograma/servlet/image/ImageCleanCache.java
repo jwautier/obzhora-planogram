@@ -3,7 +3,10 @@ package planograma.servlet.image;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
+import planograma.data.UserContext;
+import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
 import planograma.model.ImageModel;
 import planograma.servlet.AbstractAction;
@@ -35,8 +38,9 @@ public class ImageCleanCache extends AbstractAction {
 	}
 
 	@Override
-	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
-		getUserContext(session);
+	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException, NotAccessException {
+		final UserContext userContext=getUserContext(session);
+		checkAccess(userContext, SecurityConst.ACCESS_IMAGE_CLEAN_CACHE);
 		imageModel.clearCache();
 		return null;
 	}
