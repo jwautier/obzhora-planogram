@@ -1,5 +1,11 @@
 package planograma.utils;
 
+import planograma.constant.SessionConst;
+import planograma.data.UserContext;
+import planograma.model.SecurityModel;
+
+import javax.servlet.http.HttpSession;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Admin
@@ -18,5 +24,18 @@ public class JspUtils {
 			add--;
 		}
 		return res.toString();
+	}
+
+	public static String actionAccess(final HttpSession session, final int code_object) {
+		String result = "disabled";
+		if (session != null) {
+			final UserContext userContext = (UserContext) session.getAttribute(SessionConst.SESSION_USER);
+			if (userContext != null) {
+				if (SecurityModel.getInstance().canAccess(userContext, code_object)) {
+					result = "";
+				}
+			}
+		}
+		return result;
 	}
 }

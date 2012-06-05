@@ -2,10 +2,12 @@ package planograma.servlet.racktemplate;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.RackTemplateConst;
 import planograma.data.RackShelfTemplate;
 import planograma.data.UserContext;
+import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
 import planograma.model.RackShelfTemplateModel;
 import planograma.model.RackTemplateModel;
@@ -40,9 +42,10 @@ public class RackTemplateRemove extends AbstractAction {
 	}
 
 	@Override
-	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
-		final int code_rack_template = Integer.valueOf(requestData.getAsJsonObject().get(RackTemplateConst.CODE_RACK_TEMPLATE).getAsString());
+	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException, NotAccessException {
 		final UserContext userContext = getUserContext(session);
+		checkAccess(userContext, SecurityConst.ACCESS_RACK_TEMPLATE_EDIT);
+		final int code_rack_template = Integer.valueOf(requestData.getAsJsonObject().get(RackTemplateConst.CODE_RACK_TEMPLATE).getAsString());
 		for (final RackShelfTemplate rackShelfTemplate : rackShelfTemplateModel.list(userContext, code_rack_template)) {
 			rackShelfTemplateModel.delete(userContext, rackShelfTemplate.getCode_shelf_template());
 		}

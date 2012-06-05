@@ -3,9 +3,11 @@ package planograma.servlet.sector;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.SectorConst;
 import planograma.data.*;
+import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
 import planograma.model.*;
 import planograma.servlet.AbstractAction;
@@ -45,8 +47,9 @@ public class SectorSave extends AbstractAction {
 	}
 
 	@Override
-	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
+	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException, NotAccessException {
 		final UserContext userContext = getUserContext(session);
+		checkAccess(userContext, SecurityConst.ACCESS_SECTOR_EDIT);
 		final JsonObject sectorJson = requestData.getAsJsonObject().getAsJsonObject("sector");
 		final Sector sector = new Sector(sectorJson);
 		final JsonArray rackListJson = requestData.getAsJsonObject().getAsJsonArray("rackList");

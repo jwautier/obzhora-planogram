@@ -7,7 +7,11 @@
 <%@ page import="planograma.data.LoadSide" %>
 <%@ page import="planograma.servlet.racktemplate.RackTemplateList" %>
 <%@ page import="planograma.data.TypeRack" %>
+<%@ page import="planograma.constant.SecurityConst" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+	final String access_sector_edit=JspUtils.actionAccess(session, SecurityConst.ACCESS_SECTOR_EDIT);
+%>
 <%-- TODO Отслеживать изменния размера окна --%>
 <%-- TODO отмена действий --%>
 <%-- TODO перед отправкой на сервер ругаться на незаполненые поля --%>
@@ -50,20 +54,17 @@
 					<td>
 						<table class="menu">
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this, fSectorSave)"><%=JspUtils.toMenuTitle("Сохранить")%></a></td>
+								<td><a href="#" onclick="return aOnClick(this, fSectorSave)" class="<%=access_sector_edit%>"><%=JspUtils.toMenuTitle("Сохранить")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" onclick="return aOnClick(this, fSectorReload)"><%=JspUtils.toMenuTitle("Перезагрузить")%></a></td>
 							</tr>
 							<tr><td></td></tr>
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this, fRackAdd)"><%=JspUtils.toMenuTitle("Добавить объект")%></a></td>
+								<td><a href="#" onclick="return aOnClick(this, fRackAdd)" class="<%=access_sector_edit%>"><%=JspUtils.toMenuTitle("Добавить объект")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this, fRackTemplateAdd)"><%=JspUtils.toMenuTitle("Добавить стандартный стеллаж")%></a></td>
-							</tr>
-							<tr>
-								<td><a href="#" onclick="return aOnClick(this)" class="disabled notReady"><%=JspUtils.toMenuTitle("Просмотреть стеллаж")%></a></td>
+								<td><a href="#" onclick="return aOnClick(this, fRackTemplateAdd)" class="<%=access_sector_edit%>"><%=JspUtils.toMenuTitle("Добавить стандартный стеллаж")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="butEdit" onclick="return aOnClick(this, fRackEdit)" class="disabled"><%=JspUtils.toMenuTitle("Редактировать стеллаж")%></a></td>
@@ -582,8 +583,11 @@ function selectShowcase(showcase) {
 			$('#butEdit').addClass('disabled');
 			$('#butRackWaresPlacement').addClass('disabled');
 		}
-		$('#butCopy').removeClass('disabled');
-		$('#butCut').removeClass('disabled');
+		if ('<%=access_sector_edit%>'!='disabled')
+		{
+			$('#butCopy').removeClass('disabled');
+			$('#butCut').removeClass('disabled');
+		}
 	} else {
 		document.getElementById('rackType').value = '';
 		document.getElementById('rackName').value = '';

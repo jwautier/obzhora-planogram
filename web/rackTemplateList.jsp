@@ -1,7 +1,12 @@
 <%@ page import="planograma.utils.JspUtils" %>
 <%@ page import="planograma.servlet.racktemplate.RackTemplateList" %>
 <%@ page import="planograma.servlet.racktemplate.RackTemplateRemove" %>
+<%@ page import="planograma.servlet.racktemplate.RackTemplateSave" %>
+<%@ page import="planograma.constant.SecurityConst" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+	final String access_rack_template_edit=JspUtils.actionAccess(session, SecurityConst.ACCESS_RACK_TEMPLATE_EDIT);
+%>
 <html>
 <head>
 	<title>Стантартные типы стеллажей</title>
@@ -37,10 +42,7 @@
 					<td>
 						<table class="menu">
 							<tr>
-								<td><a href="#" id="rackTemplateAdd" onclick="return aOnClick(this, fRackTemplateAdd)"><%=JspUtils.toMenuTitle("Добавить стеллаж")%></a></td>
-							</tr>
-							<tr>
-								<td><a href="#" id="rackTemplateView" onclick="return aOnClick(this, fRackTemplateView)" class="disabled"><%=JspUtils.toMenuTitle("Просмотр стеллажа")%></a></td>
+								<td><a href="#" id="rackTemplateAdd" onclick="return aOnClick(this, fRackTemplateAdd)" class="<%=access_rack_template_edit%>"><%=JspUtils.toMenuTitle("Добавить стеллаж")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="rackTemplateViewHistory" onclick="return aOnClick(this, fRackTemplateViewHistory)" class="disabled"><%=JspUtils.toMenuTitle("Просмотр истории стеллажа")%></a></td>
@@ -75,14 +77,13 @@
 	</tr>
 </table>
 <script type="text/javascript">
+
+	var canRackTemplateEdit='<%=access_rack_template_edit%>';
+
 	function fRackTemplateAdd()
 	{
 		setCookie('code_rack_template', '');
 		document.location='rackTemplateEdit.jsp';
-	}
-	function fRackTemplateView()
-	{
-		//TODO
 	}
 	function fRackTemplateViewHistory()
 	{
@@ -129,7 +130,10 @@
 				$('#rackTemplateView').removeClass('disabled');
 				$('#rackTemplateEdit').removeClass('disabled');
 				$('#rackTemplateUnlock').removeClass('disabled');
-				$('#rackTemplateRemove').removeClass('disabled');
+				if (canRackTemplateEdit!='disabled')
+				{
+					$('#rackTemplateRemove').removeClass('disabled');
+				}
 				setCookie('code_rack_template', code_rack_template);
 			}
 			else {

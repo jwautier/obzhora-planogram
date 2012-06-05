@@ -3,7 +3,11 @@
 <%@ page import="planograma.data.*" %>
 <%@ page import="planograma.servlet.wares.WaresGroupTree" %>
 <%@ page import="planograma.servlet.wares.RackWaresPlacementSave" %>
+<%@ page import="planograma.constant.SecurityConst" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+	final String access_rack_wares_placement=JspUtils.actionAccess(session, SecurityConst.ACCESS_RACK_WARES_PLACEMENT);
+%>
 <html>
 <head>
 	<title>Товары стеллажа</title>
@@ -39,14 +43,14 @@
 					<td>
 						<table class="menu">
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this, fRackWaresPlacementSave)"><%=JspUtils.toMenuTitle("Сохранить")%></a></td>
+								<td><a href="#" onclick="return aOnClick(this, fRackWaresPlacementSave)" class="<%=access_rack_wares_placement%>"><%=JspUtils.toMenuTitle("Сохранить")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" onclick="return aOnClick(this, fRackWaresPlacementReload)"><%=JspUtils.toMenuTitle("Перезагрузить")%></a></td>
 							</tr>
 							<tr><td></td></tr>
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this, fAddWares)"><%=JspUtils.toMenuTitle("Добавить товар")%></a></td>
+								<td><a href="#" onclick="return aOnClick(this, fAddWares)" class="<%=access_rack_wares_placement%>"><%=JspUtils.toMenuTitle("Добавить товар")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="butCopy" onclick="return aOnClick(this, fCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать")%></a></td>
@@ -258,6 +262,8 @@ window.d_wares_width = 1;
  */
 window.d_wares_height = 1;
 
+var canRackWaresPlacement='<%=access_rack_wares_placement%>';
+
 	function loadComplete() {
 		var code_rack = getCookie('code_rack');
 		postJson('<%=WaresEdit.URL%>', {code_rack:code_rack}, function (data) {
@@ -392,8 +398,11 @@ window.d_wares_height = 1;
 
 	function fSelectRackWares() {
 		if (window.selectRackWaresList.length > 0) {
-			$('#butCopy').removeClass('disabled');
-			$('#butCut').removeClass('disabled');
+			if (canRackWaresPlacement!='disabled')
+			{
+				$('#butCopy').removeClass('disabled');
+				$('#butCut').removeClass('disabled');
+			}
 			if (window.selectRackWaresList.length == 1) {
 				var rackWares = window.selectRackWaresList[0];
 				$('#waresCode').text(rackWares.code_wares);

@@ -2,7 +2,11 @@
 <%@ page import="planograma.servlet.sector.SectorList" %>
 <%@ page import="planograma.servlet.sector.SectorRemove" %>
 <%@ page import="planograma.servlet.shop.ShopList" %>
+<%@ page import="planograma.constant.SecurityConst" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+	final String access_sector_edit=JspUtils.actionAccess(session, SecurityConst.ACCESS_SECTOR_EDIT);
+%>
 <%-- TODO предпросмотр зала--%>
 <html>
 <head>
@@ -40,16 +44,13 @@
 					<td valign="top">
 						<table class="menu">
 							<tr>
-								<td><a href="#" id="sectorAdd" onclick="return aOnClick(this, sectorAdd)" class="disabled"><%=JspUtils.toMenuTitle("Добавить зал")%></a></td>
+								<td><a href="#" id="sectorAdd" onclick="return aOnClick(this, fSectorAdd)" class="disabled"><%=JspUtils.toMenuTitle("Добавить зал")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" id="sectorView" onclick="return aOnClick(this, sectorView)" class="disabled"><%=JspUtils.toMenuTitle("Просмотр зала")%></a></td>
+								<td><a href="#" id="sectorViewHistory" onclick="return aOnClick(this, fSectorViewHistory)" class="disabled"><%=JspUtils.toMenuTitle("Просмотр истории зала")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" id="sectorViewHistory" onclick="return aOnClick(this, sectorViewHistory)" class="disabled"><%=JspUtils.toMenuTitle("Просмотр истории зала")%></a></td>
-							</tr>
-							<tr>
-								<td><a href="#" id="sectorEdit" onclick="return aOnClick(this, sectorEdit)" class="disabled"><%=JspUtils.toMenuTitle("Редактировать зал")%></a></td>
+								<td><a href="#" id="sectorEdit" onclick="return aOnClick(this, fSectorEdit)" class="disabled"><%=JspUtils.toMenuTitle("Редактировать зал")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="sectorActive" onclick="return aOnClick(this, fSectorActive)" class="disabled"><%=JspUtils.toMenuTitle("Активировать")%></a></td>
@@ -58,7 +59,7 @@
 								<td><a href="#" id="sectorNotActive" onclick="return aOnClick(this, fSectorNotActive)" class="disabled"><%=JspUtils.toMenuTitle("Заблокировать")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" id="sectorRemove" onclick="return aOnClick(this, sectorRemove)" class="disabled"><%=JspUtils.toMenuTitle("Удалить зал")%></a></td>
+								<td><a href="#" id="sectorRemove" onclick="return aOnClick(this, fSectorRemove)" class="disabled"><%=JspUtils.toMenuTitle("Удалить зал")%></a></td>
 							</tr>
 							<tr>
 								<td height="100%"></td>
@@ -89,13 +90,19 @@
 </table>
 </body>
 <script type="text/javascript">
+
+	var canSectorEdit='<%=access_sector_edit%>';
+
 	function selectShop(code_shop) {
 		if (code_shop != null && code_shop != '') {
 			var shopList = $('#shopList');
 			var option = shopList.find('option[value=' + code_shop + ']');
 			if (option.length==1) {
 				option.attr('selected', 'selected');
-				$('#sectorAdd').removeClass('disabled');
+				if (canSectorEdit!='disabled')
+				{
+					$('#sectorAdd').removeClass('disabled');
+				}
 				$('#sectorView').addClass('disabled');
 				$('#sectorEdit').addClass('disabled');
 				$('#sectorActive').addClass('disabled');
@@ -131,10 +138,12 @@
 				option.attr('selected', 'selected');
 				$('#sectorView').removeClass('disabled');
 				$('#sectorEdit').removeClass('disabled');
-				//TODO for state view button
 				$('#sectorActive').removeClass('disabled');
 				$('#sectorNotActive').removeClass('disabled');
-				$('#sectorRemove').removeClass('disabled');
+				if (canSectorEdit!='disabled')
+				{
+					$('#sectorRemove').removeClass('disabled');
+				}
 				setCookie('code_sector', code_sector);
 				//	TODO preview
 			}
@@ -146,7 +155,7 @@
 			setCookie('code_sector', '');
 		}
 	}
-	function sectorAdd()
+	function fSectorAdd()
 	{
 		var code_shop=$('#shopList').val();
 		if (code_shop!=null && code_shop.length>0)
@@ -156,17 +165,12 @@
 			document.location='sectorEdit.jsp';
 		}
 	}
-	function sectorView()
+	function fSectorViewHistory()
 	{
 		//TODO
 		alert('Функционал на стадии разработки');
 	}
-	function sectorViewHistory()
-	{
-		//TODO
-		alert('Функционал на стадии разработки');
-	}
-	function sectorEdit()
+	function fSectorEdit()
 	{
 		var code_sector = $('#sectorList').val();
 		if (code_sector!=null && code_sector.length>0)
@@ -185,7 +189,7 @@
 		//TODO
 		alert('Функционал на стадии разработки');
 	}
-	function sectorRemove()
+	function fSectorRemove()
 	{
 		var code_sector=$('#sectorList').val();
 		if (code_sector!=null && code_sector.length>0)

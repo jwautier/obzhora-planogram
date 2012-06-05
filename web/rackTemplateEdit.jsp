@@ -6,7 +6,11 @@
 <%@ page import="planograma.data.RackShelfTemplate" %>
 <%@ page import="planograma.data.LoadSide" %>
 <%@ page import="planograma.data.TypeShelf" %>
+<%@ page import="planograma.constant.SecurityConst" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+	final String access_rack_template_edit=JspUtils.actionAccess(session, SecurityConst.ACCESS_RACK_TEMPLATE_EDIT);
+%>
 <html>
 <head>
 	<title>Редактирование стеллажа стандартного типа</title>
@@ -39,14 +43,14 @@
 					<td>
 						<table class="menu">
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this, fRackTemplateSave)"><%=JspUtils.toMenuTitle("Сохранить")%></a></td>
+								<td><a href="#" onclick="return aOnClick(this, fRackTemplateSave)" class="<%=access_rack_template_edit%>"><%=JspUtils.toMenuTitle("Сохранить")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" onclick="return aOnClick(this, fRackTemplateReload)"><%=JspUtils.toMenuTitle("Перезагрузить")%></a></td>
 							</tr>
 							<tr><td></td></tr>
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this, fRackTemplateShelfAdd)"><%=JspUtils.toMenuTitle("Добавить полку")%></a></td>
+								<td><a href="#" onclick="return aOnClick(this, fRackTemplateShelfAdd)" class="<%=access_rack_template_edit%>"><%=JspUtils.toMenuTitle("Добавить полку")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="butCopy" onclick="return aOnClick(this, fCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать")%></a></td>
@@ -210,6 +214,9 @@
 </table>
 
 <script type="text/javascript">
+
+	var canRackTemplateEdit='<%=access_rack_template_edit%>';
+
 	function loadComplete()
 	{
 		var code_rack_template=getCookie('code_rack_template');
@@ -299,8 +306,11 @@
 			document.getElementById('shelfHeight').value = shelf.shelf_height;
 			document.getElementById('shelfLength').value = shelf.shelf_length;
 			document.getElementById('shelfType').value = shelf.type_shelf;
-			$('#butCopy').removeClass('disabled');
-			$('#butCut').removeClass('disabled');
+			if (canRackTemplateEdit!='disabled')
+			{
+				$('#butCopy').removeClass('disabled');
+				$('#butCut').removeClass('disabled');
+			}
 		} else {
 			document.getElementById('shelfX').value = '';
 			document.getElementById('shelfY').value = '';
