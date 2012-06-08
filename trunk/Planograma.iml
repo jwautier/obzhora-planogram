@@ -27,6 +27,7 @@
         <JAVADOC />
         <SOURCES>
           <root url="jar://$MODULE_DIR$/libSources/gson-2.1-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/libSources/itextpdf-5.2.1-sources.jar!/" />
         </SOURCES>
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>

@@ -15,6 +15,7 @@ public interface UrlConst {
 
 	public static final String URL_SECTOR_LIST = "servlet/sector/list";
 	public static final String URL_SECTOR_REMOVE = "servlet/sector/remove";
+	public static final String URL_SECTOR_PRINT = "servlet/sector/print/";
 
 	public static final String URL_SECTOR_EDIT = "servlet/sector/edit";
 	public static final String URL_SECTOR_SAVE = "servlet/sector/save";
@@ -30,6 +31,7 @@ public interface UrlConst {
 	public static final String URL_WARES_GROUP_TREE = "servlet/wares/group_tree";
 	public static final String URL_WARES_LIST = "servlet/wares/list";
 	public static final String URL_WARES_LIST_SEARCH = "servlet/wares/list/search";
+	public static final String URL_RACK_WARES_PLACEMENT_PRINT = "servlet/rackWaresPlacement/print/";
 	public static final String URL_RACK_WARES_PLACEMENT_EDIT = "servlet/rackWaresPlacement/edit";
 	public static final String URL_RACK_WARES_PLACEMENT_SAVE = "servlet/rackWaresPlacement/save";
 
