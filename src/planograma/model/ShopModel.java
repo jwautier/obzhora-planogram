@@ -40,6 +40,26 @@ public class ShopModel {
 		return list;
 	}
 
+	private static final String Q_SELECT = "select" +
+			" " + ShopConst.CODE_SHOP + "," +
+			" " + ShopConst.NAME_SHOP + " " +
+			"from " + ShopConst.TABLE_NAME + " " +
+			"where " + ShopConst.CODE_SHOP + "=?";
+
+	public Shop select(final UserContext userContext, final int code_shop) throws SQLException {
+//		long time=System.currentTimeMillis();
+		final Connection connection = userContext.getConnection();
+		final PreparedStatement ps = connection.prepareStatement(Q_SELECT);
+		ps.setInt(1, code_shop);
+		final ResultSet resultSet = ps.executeQuery();
+		Shop shop = null;
+		if (resultSet.next()) {
+			shop = new Shop(resultSet);
+		}
+//		System.out.println(System.currentTimeMillis()-time);
+		return shop;
+	}
+
 	private static ShopModel instance = new ShopModel();
 
 	public static ShopModel getInstance() {

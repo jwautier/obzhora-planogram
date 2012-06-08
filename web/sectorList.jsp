@@ -3,6 +3,7 @@
 <%@ page import="planograma.servlet.sector.SectorRemove" %>
 <%@ page import="planograma.servlet.shop.ShopList" %>
 <%@ page import="planograma.constant.SecurityConst" %>
+<%@ page import="planograma.servlet.sector.SectorPrint" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
 	final String access_sector_edit=JspUtils.actionAccess(session, SecurityConst.ACCESS_SECTOR_EDIT);
@@ -45,6 +46,9 @@
 						<table class="menu">
 							<tr>
 								<td><a href="#" id="sectorAdd" onclick="return aOnClick(this, fSectorAdd)" class="disabled"><%=JspUtils.toMenuTitle("Добавить зал")%></a></td>
+							</tr>
+							<tr>
+								<td><a href="#" id="sectorView" onclick="return aOnClick(this)" target="pdf" class="disabled"><%=JspUtils.toMenuTitle("Просмотр зала")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="sectorViewHistory" onclick="return aOnClick(this, fSectorViewHistory)" class="disabled"><%=JspUtils.toMenuTitle("Просмотр истории зала")%></a></td>
@@ -103,7 +107,7 @@
 				{
 					$('#sectorAdd').removeClass('disabled');
 				}
-				$('#sectorView').addClass('disabled');
+				$('#sectorView').addClass('disabled').attr('href', '#');
 				$('#sectorEdit').addClass('disabled');
 				$('#sectorActive').addClass('disabled');
 				$('#sectorNotActive').addClass('disabled');
@@ -136,7 +140,7 @@
 			var option = sectorList.find('option[value=' + code_sector + ']');
 			if (option.length==1) {
 				option.attr('selected', 'selected');
-				$('#sectorView').removeClass('disabled');
+				$('#sectorView').removeClass('disabled').attr('href','<%=SectorPrint.URL%>'+code_sector);
 				$('#sectorEdit').removeClass('disabled');
 				$('#sectorActive').removeClass('disabled');
 				$('#sectorNotActive').removeClass('disabled');
