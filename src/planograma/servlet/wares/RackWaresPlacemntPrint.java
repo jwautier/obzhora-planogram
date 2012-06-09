@@ -8,6 +8,7 @@ import planograma.data.*;
 import planograma.data.geometry.RackShelf2D;
 import planograma.data.geometry.RackWares2D;
 import planograma.model.*;
+import planograma.utils.FormattingUtils;
 import planograma.utils.geometry.Point2D;
 
 import javax.servlet.ServletConfig;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -83,6 +85,7 @@ public class RackWaresPlacemntPrint extends HttpServlet {
 			for (final RackWares rackWares : rackWaresList) {
 				rackWares2DList.add(new RackWares2D(rackWares));
 			}
+			resp.setContentType("application/pdf");
 
 			final BaseFont baseFont = BaseFont.createFont(getServletContext().getRealPath("font/FreeSerif.ttf"), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
 			final Font font = new Font(baseFont, Font.DEFAULTSIZE, Font.NORMAL);
@@ -98,8 +101,20 @@ public class RackWaresPlacemntPrint extends HttpServlet {
 			final PdfContentByte cb = writer.getDirectContent();
 			final float m = Math.max(rack.getWidth() / (pageSize.getWidth() - marginLeft - marginRight), rack.getHeight() / (pageSize.getHeight() - marginTop - marginTitle - marginBottom));
 			final float y0 = pageSize.getHeight() - marginTop - marginTitle - rack.getHeight() / m;
-
-			Paragraph p = new Paragraph(shop.getName_shop() + " (" + sector.getName_sector() + ") стеллаж " + rack.getRack_barcode(), font);
+			// максимальная дата изменения
+			Date date_update = null;
+			for (final RackShelf2D rackShelf2D : rackShelf2DList) {
+				if (date_update == null || rackShelf2D.getRackShelf().getDate_update().after(date_update)) {
+					date_update = rackShelf2D.getRackShelf().getDate_update();
+				}
+			}
+			for (final RackWares2D rackWares2D : rackWares2DList) {
+				if (date_update == null || rackWares2D.getRackWares().getDate_update().after(date_update)) {
+					date_update = rackWares2D.getRackWares().getDate_update();
+				}
+			}
+			final String title = shop.getName_shop() + " (" + sector.getName_sector() + ") стеллаж " + rack.getRack_barcode() + " от " + FormattingUtils.datetime2String(date_update);
+			Paragraph p = new Paragraph(title, font);
 			p.setAlignment(Element.ALIGN_CENTER);
 			document.add(p);
 			// стеллаж
@@ -116,21 +131,60 @@ public class RackWaresPlacemntPrint extends HttpServlet {
 			document.setPageSize(PageSize.A4);
 			document.newPage();
 
-			final PdfPTable table = new PdfPTable(8);
+			final PdfPTable table = new PdfPTable(6);
 			table.setWidthPercentage(100);
-//			int widths[] = new int[8];
-//			table.setWidths(widths);
+			int widths[] = new int[6];
+			widths[0] = 6;
+			widths[1] = 14;
+			widths[2] = 46;
+			widths[3] = 8;
+			widths[4] = 18;
+			widths[5] = 8;
+			table.setWidths(widths);
 			PdfPCell cell;
 			cell = new PdfPCell(new Paragraph("№", font));
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			table.addCell(cell);
+			cell = new PdfPCell(new Paragraph("Код товара", font));
+			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			table.addCell(cell);
+			cell = new PdfPCell(new Paragraph("Название", font));
+			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			table.addCell(cell);
+			cell = new PdfPCell(new Paragraph("Е.И.", font));
+			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			table.addCell(cell);
+			cell = new PdfPCell(new Paragraph("Штрихкод", font));
+			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			table.addCell(cell);
+			cell = new PdfPCell(new Paragraph("Кол-во", font));
+			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			table.addCell(cell);
+			RackWares2D oldRackWares = null;
+			int count = 0;
 			for (final RackWares2D rackWares2D : rackWares2DList) {
-				table.addCell(new PdfPCell(new Paragraph(String.valueOf(rackWares2D.getRackWares().getOrder_number_on_rack()), font)));
+				if (oldRackWares == null) {
+					oldRackWares = rackWares2D;
+					count += oldRackWares.getRackWares().getCount_length_on_shelf();
+				} else if (!oldRackWares.getRackWares().getCode_wares().equals(rackWares2D.getRackWares().getCode_wares())) {
+					fillTable(cb, table, oldRackWares, count, font);
+					oldRackWares = rackWares2D;
+					count = 0;
+				} else {
+					count += rackWares2D.getRackWares().getCount_length_on_shelf();
+				}
+			}
+			if (oldRackWares != null) {
+				fillTable(cb, table, oldRackWares, count, font);
 			}
 			document.add(table);
 			document.close();
-			resp.setContentType("application/pdf");
 		} catch (Exception e) {
 			e.printStackTrace();
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -194,12 +248,35 @@ public class RackWaresPlacemntPrint extends HttpServlet {
 		final String indexStr = String.valueOf(rackWares2D.getRackWares().getOrder_number_on_rack());
 		float wM = minSize / baseFont.getWidthPoint(indexStr, Font.DEFAULTSIZE);
 		float x = marginLeft + rackWares2D.getRackWares().getPosition_x() / m;
-		float y = y0+ rackWares2D.getRackWares().getPosition_y() / m;
+		float y = y0 + rackWares2D.getRackWares().getPosition_y() / m;
 		cb.moveText(x - minSize / 2, y - minSize / 2.5F);
 		cb.setFontAndSize(baseFont, Font.DEFAULTSIZE * wM);
 		cb.showText(indexStr);
 		cb.endText();
 
 		cb.restoreState();
+	}
+
+	private void fillTable(final PdfContentByte cb, final PdfPTable table, final RackWares2D oldRackWares, final int count, final Font font) {
+		// №
+		table.addCell(new PdfPCell(new Paragraph(String.valueOf(oldRackWares.getRackWares().getOrder_number_on_rack()), font)));
+		// Код товара
+		table.addCell(new PdfPCell(new Paragraph(String.valueOf(oldRackWares.getRackWares().getCode_wares()), font)));
+		// Название
+		table.addCell(new PdfPCell(new Paragraph(oldRackWares.getRackWares().getName_wares(), font)));
+		// Е.И.
+		table.addCell(new PdfPCell(new Paragraph(oldRackWares.getRackWares().getAbr_unit(), font)));
+		// Штрихкод
+		try {
+			BarcodeEAN codeEAN = new BarcodeEAN();
+			codeEAN.setCode(oldRackWares.getRackWares().getBar_code());
+			PdfPCell cell=new PdfPCell(codeEAN.createImageWithBarcode(cb, null, null));
+			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(cell);
+		} catch (Exception e) {
+			table.addCell(new PdfPCell(new Paragraph(oldRackWares.getRackWares().getBar_code(), font)));
+		}
+		// Кол-во
+		table.addCell(new PdfPCell(new Paragraph(String.valueOf(count), font)));
 	}
 }
