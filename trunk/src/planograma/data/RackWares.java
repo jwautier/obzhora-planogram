@@ -263,6 +263,18 @@ public class RackWares implements IJsonObject {
 		return code_image;
 	}
 
+	public String getName_wares() {
+		return name_wares;
+	}
+
+	public String getAbr_unit() {
+		return abr_unit;
+	}
+
+	public String getBar_code() {
+		return bar_code;
+	}
+
 	public RackWares(final ResultSet resultSet) throws SQLException {
 		code_rack = resultSet.getInt(RackWaresConst.CODE_RACK);
 		code_wares = resultSet.getInt(RackWaresConst.CODE_WARES);

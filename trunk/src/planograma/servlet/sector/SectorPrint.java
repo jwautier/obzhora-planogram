@@ -9,6 +9,7 @@ import planograma.data.geometry.Rack2D;
 import planograma.model.RackModel;
 import planograma.model.SectorModel;
 import planograma.model.ShopModel;
+import planograma.utils.FormattingUtils;
 import planograma.utils.geometry.Point2D;
 
 import javax.servlet.ServletConfig;
@@ -64,6 +65,7 @@ public class SectorPrint extends HttpServlet {
 			for (final Rack rack : list) {
 				rackList.add(new Rack2D(rack));
 			}
+			resp.setContentType("application/pdf");
 
 			final BaseFont baseFont = BaseFont.createFont(getServletContext().getRealPath("font/FreeSerif.ttf"), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
 			final Font font = new Font(baseFont, Font.DEFAULTSIZE, Font.NORMAL);
@@ -79,7 +81,8 @@ public class SectorPrint extends HttpServlet {
 			final PdfContentByte cb = writer.getDirectContent();
 			final float m = Math.max(sector.getLength() / (pageSize.getWidth() - marginLeft - marginRight), sector.getWidth() / (pageSize.getHeight() - marginTop - marginTitle - marginBottom));
 
-			Paragraph p = new Paragraph(shop.getName_shop() + " (" + sector.getName_sector() + ")", font);
+			final String title=shop.getName_shop() + " (" + sector.getName_sector() + ") от "+ FormattingUtils.datetime2String(sector.getDate_update());
+			Paragraph p = new Paragraph(title, font);
 			p.setAlignment(Element.ALIGN_CENTER);
 			document.add(p);
 
@@ -89,7 +92,6 @@ public class SectorPrint extends HttpServlet {
 			for (final Rack2D rack2D : rackList) {
 				drawRack2D(cb, rack2D, index++, m, pageSize, baseFont);
 			}
-//			document.setPageSize(PageSize.A4.rotate());
 			document.setPageSize(PageSize.A4);
 			document.newPage();
 
@@ -97,14 +99,6 @@ public class SectorPrint extends HttpServlet {
 			table.setWidthPercentage(100);
 
 			int widths[] = new int[8];
-//			widths[0] = 4;
-//			widths[1] = 31;
-//			widths[2] = 31;
-//			widths[3] = 8;
-//			widths[4] = 8;
-//			widths[5] = 6;
-//			widths[6] = 6;
-//			widths[7] = 6;
 			widths[0] = 5;
 			widths[1] = 31;
 			widths[2] = 22;
@@ -155,8 +149,7 @@ public class SectorPrint extends HttpServlet {
 
 					try {
 						BarcodeEAN codeEAN = new BarcodeEAN();
-						codeEAN.setCode("4512345678906");
-//						codeEAN.setCode(rack2D.getRack().getRack_barcode());
+						codeEAN.setCode(rack2D.getRack().getRack_barcode());
 						cell=new PdfPCell(codeEAN.createImageWithBarcode(cb, null, null));
 						cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 						table.addCell(cell);
@@ -173,7 +166,6 @@ public class SectorPrint extends HttpServlet {
 			}
 			document.add(table);
 			document.close();
-			resp.setContentType("application/pdf");
 		} catch (Exception e) {
 			e.printStackTrace();
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -227,10 +219,11 @@ public class SectorPrint extends HttpServlet {
 			float minSize = Math.min(rack2D.getRack().getWidth(), rack2D.getRack().getLength()) / m;
 			final String indexStr = String.valueOf(index);
 			float wM = minSize / baseFont.getWidthPoint(indexStr, Font.DEFAULTSIZE);
+			float hM = minSize / Font.DEFAULTSIZE;
 			float x = marginLeft + rack2D.getRack().getX_coord() / m;
 			float y = pageSize.getHeight() - marginTop - marginTitle - rack2D.getRack().getY_coord() / m;
 			cb.moveText(x - minSize / 2, y - minSize / 2.5F);
-			cb.setFontAndSize(baseFont, Font.DEFAULTSIZE * wM);
+			cb.setFontAndSize(baseFont, Font.DEFAULTSIZE * Math.min(wM, hM));
 
 			cb.showText(indexStr);
 			cb.endText();
