@@ -28,7 +28,9 @@
 	<title>Редактирование зала</title>
 	<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
-	<script type="text/javascript" src="js/planograma.js"></script>
+	<script type="text/javascript" src="js/planogram.js"></script>
+	<script type="text/javascript" src="js/draw/calcCoordinatesRack.js"></script>
+	<script type="text/javascript" src="js/draw/drawRack.jsp"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
 <body onload="loadComplete();" style="overflow-x:hidden;">
@@ -382,7 +384,7 @@ function loadComplete2()
  copyObject=null;
 
 for (var i = 0; i < window.showcaseList.length; i++) {
-	calcCoordinates(window.showcaseList[i]);
+	calcCoordinatesRack(window.showcaseList[i]);
 }
 
 drawEditCanvas();
@@ -393,38 +395,6 @@ setSectorProperty(sector);
 
 	editCanvasMouseListener();
 	previewCanvasMouseListener();
-}
-
-/**
- * определить координаты каждого угла объекта
- * @param showcase
- */
-function calcCoordinates(showcase)
-{
-	// поворот объекта
-	showcase.cos = Math.cos(showcase.angle*Math.PI/180);
-	showcase.sin = Math.sin(showcase.angle*Math.PI/180);
-	// правый верхний угол
-	var x = showcase.length / 2;
-	var y = showcase.width / 2;
-	// относительно сцены
-	showcase.x1 = showcase.x_coord + x * showcase.cos - y * showcase.sin;
-	showcase.y1 = showcase.y_coord + x * showcase.sin + y * showcase.cos;
-	// правый нижний угол
-	y = -y;
-	// относительно сцены
-	showcase.x2 = showcase.x_coord + x * showcase.cos - y * showcase.sin;
-	showcase.y2 = showcase.y_coord + x * showcase.sin + y * showcase.cos;
-	// левый нижний угол
-	x = -x;
-	// относительно сцены
-	showcase.x3 = showcase.x_coord + x * showcase.cos - y * showcase.sin;
-	showcase.y3 = showcase.y_coord + x * showcase.sin + y * showcase.cos;
-	// левый верхний угол
-	y = -y;
-	// относительно сцены
-	showcase.x4 = showcase.x_coord + x * showcase.cos - y * showcase.sin;
-	showcase.y4 = showcase.y_coord + x * showcase.sin + y * showcase.cos;
 }
 
 function setSectorProperty(sector) {
@@ -451,7 +421,7 @@ function drawEditCanvas() {
 			window.sector.length / window.km,
 			window.sector.width / window.km);
 	for (var i = 0; i < window.showcaseList.length; i++) {
-		drawShowcase(window.showcaseList[i], window.edit_context, window.kx, window.ky, window.km);
+		drawRack(window.showcaseList[i], window.edit_context, window.kx, window.ky, window.km);
 	}
 }
 
@@ -461,7 +431,7 @@ function drawPreviewCanvas() {
 	window.preview_context.strokeStyle = "BLACK";
 	window.preview_context.strokeRect(0, 0, window.sector.length / window.preview_m, window.sector.width / window.preview_m);
 	for (var i = 0; i < window.showcaseList.length; i++) {
-		drawShowcase(window.showcaseList[i], window.preview_context, 0, 0, window.preview_m);
+		drawRack(window.showcaseList[i], window.preview_context, 0, 0, window.preview_m);
 	}
 	window.preview_context.lineWidth = 1;
 	window.preview_context.strokeStyle = "BLUE";
@@ -470,76 +440,9 @@ function drawPreviewCanvas() {
 			window.edit_canvas.width * window.km / window.preview_m,
 			window.edit_canvas.height * window.km / window.preview_m);
 }
+</script>
 
-function drawShowcase(showcase, context, kx, ky, m) {
-//	var x1 = 0.5+Math.round((showcase.x1 - kx) / m);
-//	var y1 = 0.5+Math.round((showcase.y1 - ky) / m);
-//	var x2 = 0.5+Math.round((showcase.x2 - kx) / m);
-//	var y2 = 0.5+Math.round((showcase.y2 - ky) / m);
-//	var x3 = 0.5+Math.round((showcase.x3 - kx) / m);
-//	var y3 = 0.5+Math.round((showcase.y3 - ky) / m);
-//	var x4 = 0.5+Math.round((showcase.x4 - kx) / m);
-//	var y4 = 0.5+Math.round((showcase.y4 - ky) / m);
-
-	var x1 = (showcase.x1 - kx) / m;
-	var y1 = (showcase.y1 - ky) / m;
-	var x2 = (showcase.x2 - kx) / m;
-	var y2 = (showcase.y2 - ky) / m;
-	var x3 = (showcase.x3 - kx) / m;
-	var y3 = (showcase.y3 - ky) / m;
-	var x4 = (showcase.x4 - kx) / m;
-	var y4 = (showcase.y4 - ky) / m;
-
-
-	if (window.showcase==showcase)
-	{
-		context.strokeStyle = "BLUE";
-	}
-	else
-	{
-		context.strokeStyle = "BLACK";
-	}
-	switch (showcase.type_rack)
-	{
-		<%
-		for (final TypeRack typeRack:TypeRack.values())
-		{
-			out.print("case '");
-			out.print(typeRack.name());
-			out.print("': context.fillStyle = '");
-			out.print(typeRack.getColor());
-			out.println("'; break;");
-		}
-		%>
-	}
-	context.beginPath();
-	if (showcase.type_rack=='<%=TypeRack.R%>' && showcase.load_side == '<%=LoadSide.U%>')
-	{
-		context.lineWidth = 4;
-	}
-	else
-	{
-		context.lineWidth = 1;
-	}
-	context.moveTo(x1, y1);
-	context.lineTo(x2, y2);
-	context.lineTo(x3, y3);
-	context.lineTo(x4, y4);
-	context.closePath();
-	context.stroke();
-	context.fill();
-
-	if (showcase.type_rack=='<%=TypeRack.R%>' && showcase.load_side == '<%=LoadSide.F%>')
-	{
-		context.beginPath();
-		context.lineWidth = 4;
-		context.moveTo(x1, y1);
-		context.lineTo(x4, y4);
-		context.stroke();
-	}
-//	context.clip();
-}
-
+<script type="text/javascript">
 function selectShowcase(showcase) {
 	if (showcase != null) {
 		document.getElementById('rackType').value = showcase.type_rack;
@@ -624,7 +527,7 @@ function roundRack(rack)
 		rack.height=Math.round(rack.height);
 		rack.length=Math.round(rack.length);
 		selectShowcase(rack);
-		calcCoordinates(rack);
+		calcCoordinatesRack(rack);
 		drawEditCanvas();
 		drawPreviewCanvas();
 	}
@@ -674,7 +577,7 @@ function roundRack(rack)
 				setSectorProperty(sector);
 				window.showcaseList = data.rackList;
 				for (var i = 0; i < window.showcaseList.length; i++) {
-					calcCoordinates(window.showcaseList[i]);
+					calcCoordinatesRack(window.showcaseList[i]);
 				}
 				drawEditCanvas();
 				drawPreviewCanvas();
@@ -785,7 +688,7 @@ function roundRack(rack)
 			window.showcaseList.push(window.showcase);
 			window.copyObject=window.showcase;
 			selectShowcase(window.showcase);
-			calcCoordinates(window.showcase);
+			calcCoordinatesRack(window.showcase);
 			drawEditCanvas();
 			drawPreviewCanvas();
 		}
@@ -811,7 +714,7 @@ function roundRack(rack)
 				window.showcase.y_coord=sy;
 				window.showcaseList.push(window.showcase);
 				selectShowcase(window.showcase);
-				calcCoordinates(window.showcase);
+				calcCoordinatesRack(window.showcase);
 				drawEditCanvas();
 				drawPreviewCanvas();
 				x = evnt.clientX;
@@ -835,7 +738,7 @@ function roundRack(rack)
 				window.showcase.lock_size='Y';
 				window.showcaseList.push(window.showcase);
 				selectShowcase(window.showcase);
-				calcCoordinates(window.showcase);
+				calcCoordinatesRack(window.showcase);
 				drawEditCanvas();
 				drawPreviewCanvas();
 				x = evnt.clientX;
@@ -910,14 +813,14 @@ function roundRack(rack)
 						// перемещение
 						window.showcase.x_coord = window.showcase.x_coord + dx;
 						window.showcase.y_coord = window.showcase.y_coord + dy;
-						calcCoordinates(window.showcase);
+						calcCoordinatesRack(window.showcase);
 						if ((showcase.x_coord < oldx && (showcase.x1 < 0 || showcase.x2 < 0 || showcase.x3 < 0 || showcase.x4 < 0)) ||
 								(showcase.x_coord > oldx && (showcase.x1 > sector.length || showcase.x2 > sector.length || showcase.x3 > sector.length || showcase.x4 > sector.length)) ||
 								(showcase.y_coord < oldy && (showcase.y1 < 0 || showcase.y2 < 0 || showcase.y3 < 0 || showcase.y4 < 0)) ||
 								(showcase.y_coord > oldy && (showcase.y1 > sector.width || showcase.y2 > sector.width || showcase.y3 > sector.width || showcase.y4 > sector.width))) {
 							showcase.x_coord = oldx;
 							showcase.y_coord = oldy;
-							calcCoordinates(showcase);
+							calcCoordinatesRack(showcase);
 						} else {
 							document.getElementById('showcaseX').value = showcase.x_coord;
 							document.getElementById('showcaseY').value = showcase.y_coord;
@@ -962,7 +865,7 @@ function roundRack(rack)
 							showcase.x_coord = showcase.x_coord + dxy * showcase.sin / 2;
 							showcase.y_coord = showcase.y_coord - dxy * showcase.cos / 2;
 						}
-						calcCoordinates(showcase);
+						calcCoordinatesRack(showcase);
 						if (showcase.x1 < 0 || showcase.x2 < 0 || showcase.x3 < 0 || showcase.x4 < 0 ||
 								showcase.x1 > sector.length || showcase.x2 > sector.length || showcase.x3 > sector.length || showcase.x4 > sector.length ||
 								showcase.y1 < 0 || showcase.y2 < 0 || showcase.y3 < 0 || showcase.y4 < 0 ||
@@ -971,7 +874,7 @@ function roundRack(rack)
 							showcase.y_coord = oldY;
 							showcase.length = oldLength;
 							showcase.width = oldWidth;
-							calcCoordinates(showcase);
+							calcCoordinatesRack(showcase);
 						} else {
 							document.getElementById('showcaseX').value = showcase.x_coord;
 							document.getElementById('showcaseY').value = showcase.y_coord;
@@ -1211,12 +1114,12 @@ function roundRack(rack)
 			if (x != null && !isNaN(x) && x != Infinity) {
 				var oldx = showcase.x_coord;
 				showcase.x_coord = x;
-				calcCoordinates(showcase);
+				calcCoordinatesRack(showcase);
 				// не выходит за области сектора
 				if ((showcase.x_coord < oldx && (showcase.x1 < 0 || showcase.x2 < 0 || showcase.x3 < 0 || showcase.x4 < 0)) ||
 						(showcase.x_coord > oldx && (showcase.x1 > sector.length || showcase.x2 > sector.length || showcase.x3 > sector.length || showcase.x4 > sector.length))) {
 					showcase.x_coord = oldx;
-					calcCoordinates(showcase);
+					calcCoordinatesRack(showcase);
 				}
 				else {
 					drawEditCanvas();
@@ -1233,12 +1136,12 @@ function roundRack(rack)
 			if (y != null && !isNaN(y) && y != Infinity) {
 				var oldy = showcase.y_coord;
 				showcase.y_coord = y;
-				calcCoordinates(showcase);
+				calcCoordinatesRack(showcase);
 				// не выходит за области сектора
 				if ((showcase.y_coord < oldy && (showcase.y1 < 0 || showcase.y2 < 0 || showcase.y3 < 0 || showcase.y4 < 0)) ||
 						(showcase.y_coord > oldy && (showcase.y1 > sector.width || showcase.y2 > sector.width || showcase.y3 > sector.width || showcase.y4 > sector.width))) {
 					showcase.y_coord = oldy;
-					calcCoordinates(showcase);
+					calcCoordinatesRack(showcase);
 				}
 				else {
 					drawEditCanvas();
@@ -1255,7 +1158,7 @@ function roundRack(rack)
 			var angle = Number(showcaseAngle.value);
 			if (angle >= 0 && angle <= 360) {
 				showcase.angle = angle;
-				calcCoordinates(showcase);
+				calcCoordinatesRack(showcase);
 				drawEditCanvas();
 				drawPreviewCanvas();
 			}
@@ -1292,13 +1195,13 @@ function roundRack(rack)
 			if (width > 0 && width != Infinity) {
 				var oldWidth = showcase.width;
 				showcase.width = width;
-				calcCoordinates(showcase);
+				calcCoordinatesRack(showcase);
 				if (showcase.x1 < 0 || showcase.x2 < 0 || showcase.x3 < 0 || showcase.x4 < 0 ||
 						showcase.x1 > sector.length || showcase.x2 > sector.length || showcase.x3 > sector.length || showcase.x4 > sector.length ||
 						showcase.y1 < 0 || showcase.y2 < 0 || showcase.y3 < 0 || showcase.y4 < 0 ||
 						showcase.y1 > sector.width || showcase.y2 > sector.width || showcase.y3 > sector.width || showcase.y4 > sector.width) {
 					showcase.width = oldWidth;
-					calcCoordinates(showcase);
+					calcCoordinatesRack(showcase);
 				}
 				else {
 					drawEditCanvas();
@@ -1316,13 +1219,13 @@ function roundRack(rack)
 			if (length > 0 && length != Infinity) {
 				var oldLength = showcase.length;
 				showcase.length = length;
-				calcCoordinates(showcase);
+				calcCoordinatesRack(showcase);
 				if (showcase.x1 < 0 || showcase.x2 < 0 || showcase.x3 < 0 || showcase.x4 < 0 ||
 						showcase.x1 > sector.length || showcase.x2 > sector.length || showcase.x3 > sector.length || showcase.x4 > sector.length ||
 						showcase.y1 < 0 || showcase.y2 < 0 || showcase.y3 < 0 || showcase.y4 < 0 ||
 						showcase.y1 > sector.width || showcase.y2 > sector.width || showcase.y3 > sector.width || showcase.y4 > sector.width) {
 					showcase.length = oldLength;
-					calcCoordinates(showcase);
+					calcCoordinatesRack(showcase);
 				}
 				else {
 					drawEditCanvas();

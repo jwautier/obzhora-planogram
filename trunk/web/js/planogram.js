@@ -1,7 +1,7 @@
 var oldPost=null;
 
-function postJson(url, data, success) {
-	loadingShow();
+function postJson(url, data, success, disableElementId) {
+	loadingShow(disableElementId);
 	var dataJson=null;
 	if (data != null)
 		dataJson = $.toJSON(data);
@@ -100,7 +100,7 @@ function logout() {
 
 var loadingIndex = 0;
 
-function loadingShow() {
+function loadingShow(id) {
 	var loading = $('#loading');
 	if (loading[0] == null) {
 		loading = $('<table id="loading">\n' +
@@ -112,7 +112,22 @@ function loadingShow() {
 			'</table>');
 		$('body').append(loading);
 	}
-	loading.animate({opacity:'show'}, 100);
+	var top =0;
+	var left=0;
+	var width = '100%';
+	var height = '100%';
+	if (id !== undefined || id != null)
+	{
+		var el=$('#'+id);
+		if (el!=null)
+		{
+			top=el.offset().top;
+			left=el.offset().left;
+			width=el.width();
+			height=el.height();
+		}
+	}
+	loading.animate({opacity:'show', top:top, left:left,  width:width, height:height}, 100);
 	loadingIndex++;
 }
 
