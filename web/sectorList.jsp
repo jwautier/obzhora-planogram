@@ -4,17 +4,19 @@
 <%@ page import="planograma.servlet.shop.ShopList" %>
 <%@ page import="planograma.constant.SecurityConst" %>
 <%@ page import="planograma.servlet.sector.SectorPrint" %>
+<%@ page import="planograma.servlet.sector.SectorEdit" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
 	final String access_sector_edit=JspUtils.actionAccess(session, SecurityConst.ACCESS_SECTOR_EDIT);
 %>
-<%-- TODO предпросмотр зала--%>
 <html>
 <head>
 	<title>Редактирование залов торговой площадки</title>
 	<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
-	<script type="text/javascript" src="js/planograma.js"></script>
+	<script type="text/javascript" src="js/planogram.js"></script>
+	<script type="text/javascript" src="js/draw/drawRack.jsp"></script>
+	<script type="text/javascript" src="js/draw/calcCoordinatesRack.js"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
 <body>
@@ -37,9 +39,9 @@
 			<table class="frame">
 				<colgroup>
 					<col/>
-					<col width="25%"/>
-					<col width="25%"/>
-					<col width="50%"/>
+					<col/>
+					<col/>
+					<col width="100%"/>
 				</colgroup>
 				<tr>
 					<td valign="top">
@@ -73,19 +75,19 @@
 					<td>
 						<select id="shopList"
 								size="20"
-								style="width: 100%; height: 100%; min-width: 150px;"
+								style="width: 200px; height: 100%; "
 								onchange="selectShop(value)">
 						</select>
 					</td>
 					<td>
 						<select id="sectorList"
 								size="20"
-								style="width: 100%; height: 100%; min-width: 150px;"
+								style="width: 200px; height: 100%; "
 								onchange="selectSector(value)">
 						</select>
 					</td>
-					<td style="min-width: 150px; background-color: #dcdcdc;">
-						preview
+					<td id="preview_td" valign="top">
+						<canvas id="preview_canvas" style="display: none;" width="150" height="150">canvas not supported</canvas>
 					</td>
 				</tr>
 			</table>
@@ -112,6 +114,7 @@
 				$('#sectorActive').addClass('disabled');
 				$('#sectorNotActive').addClass('disabled');
 				$('#sectorRemove').addClass('disabled');
+				$('#preview_canvas').hide();
 				setCookie('code_shop', code_shop);
 				postJson('<%=SectorList.URL%>', {code_shop:code_shop}, function (data) {
 					var sectorList = $('#sectorList');
@@ -135,6 +138,7 @@
 		}
 	}
 	function selectSector(code_sector) {
+		$('#preview_canvas').hide();
 		if (code_sector != null && code_sector != '') {
 			var sectorList = $('#sectorList');
 			var option = sectorList.find('option[value=' + code_sector + ']');
@@ -149,7 +153,12 @@
 					$('#sectorRemove').removeClass('disabled');
 				}
 				setCookie('code_sector', code_sector);
-				//	TODO preview
+
+				postJson('<%=SectorEdit.URL%>', {code_sector:code_sector}, function (data) {
+					window.sector=data.sector;
+					window.rackList = data.rackList;
+					selectSector2();
+				}, 'preview_td');
 			}
 			else {
 				setCookie('code_sector', '');
@@ -158,6 +167,26 @@
 		else {
 			setCookie('code_sector', '');
 		}
+	}
+	function selectSector2()
+	{
+		window.preview_canvas = document.getElementById("preview_canvas");
+		window.preview_context = window.preview_canvas.getContext("2d");
+		var preview_td = $('#preview_td');
+		var width=preview_td.width() - 4;
+		var height= preview_td.height() - 4;
+		window.preview_m = Math.max(window.sector.length / width, window.sector.width / height);
+		window.preview_canvas.width = window.sector.length/window.preview_m;
+		window.preview_canvas.height = window.sector.width/window.preview_m;
+
+		for (var i = 0; i < window.rackList.length; i++) {
+			calcCoordinatesRack(window.rackList[i]);
+			drawRack(window.rackList[i], window.preview_context, 0, 0, window.preview_m);
+		}
+		var title=window.sector.name_sector;
+		title+='\n'+window.sector.length+'x'+window.sector.width+'x'+window.sector.height;
+		$('#preview_canvas').attr('title', title);
+		$('#preview_canvas').show();
 	}
 	function fSectorAdd()
 	{

@@ -16,7 +16,9 @@
 	<title>Редактирование стеллажа стандартного типа</title>
 	<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
-	<script type="text/javascript" src="js/planograma.js"></script>
+	<script type="text/javascript" src="js/planogram.js"></script>
+	<script type="text/javascript" src="js/draw/calcCoordinatesRackShelfTemplate.js"></script>
+	<script type="text/javascript" src="js/draw/drawRackShelfTemplate.jsp"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
 <body onload="loadComplete();" style="overflow-x:hidden;">
@@ -278,7 +280,7 @@
 		window.copyObject=null;
 
 		for (var i = 0; i < window.rackShelfTemplateList.length; i++) {
-			calcCoordinates(window.rackShelfTemplateList[i]);
+			calcCoordinatesRackShelfTemplate(window.rackShelfTemplateList[i]);
 		}
 		drawEditCanvas();
 		drawPreviewCanvas();
@@ -331,37 +333,6 @@
 		return e;
 	}
 
-	/**
-	 * определить координаты каждого угла объекта
-	 * @param shelf
-	 */
-	function calcCoordinates(shelf)
-	{
-		// поворот объекта
-		shelf.cos = Math.cos(-shelf.angle*Math.PI/180);
-		shelf.sin = Math.sin(-shelf.angle*Math.PI/180);
-		// правый верхний угол
-		var x = shelf.shelf_width / 2;
-		var y = shelf.shelf_height / 2;
-		// относительно сцены
-		shelf.x1 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
-		shelf.y1 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
-		// правый нижний угол
-		y = -y;
-		// относительно сцены
-		shelf.x2 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
-		shelf.y2 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
-		// левый нижний угол
-		x = -x;
-		// относительно сцены
-		shelf.x3 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
-		shelf.y3 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
-		// левый верхний угол
-		y = -y;
-		// относительно сцены
-		shelf.x4 = shelf.x_coord + x * shelf.cos - y * shelf.sin;
-		shelf.y4 = shelf.y_coord + x * shelf.sin + y * shelf.cos;
-	}
 	function roundShelf(shelf)
 	{
 		shelf.x_coord=Math.round(shelf.x_coord);
@@ -370,7 +341,7 @@
 		shelf.shelf_height=Math.round(shelf.shelf_height);
 		shelf.shelf_length=Math.round(shelf.shelf_length);
 		selectShelf(shelf);
-		calcCoordinates(shelf);
+		calcCoordinatesRackShelfTemplate(shelf);
 		drawEditCanvas();
 		drawPreviewCanvas();
 	}
@@ -387,7 +358,7 @@
 				window.rackTemplate.width / window.km,
 				- window.rackTemplate.height / window.km);
 		for (var i = 0; i < window.rackShelfTemplateList.length; i++) {
-			drawShelf( window.rackShelfTemplateList[i], window.edit_canvas, window.edit_context, window.kx, window.ky, window.km);
+			drawRackShelfTemplate( window.rackShelfTemplateList[i], window.edit_canvas, window.edit_context, window.kx, window.ky, window.km);
 		}
 	}
 	function drawPreviewCanvas()
@@ -399,7 +370,7 @@
 				window.rackTemplate.width / window.preview_m,
 				-window.rackTemplate.height / window.preview_m);
 		for (var i = 0; i < window.rackShelfTemplateList.length; i++) {
-			drawShelf(window.rackShelfTemplateList[i], window.preview_canvas, window.preview_context, 0, 0, window.preview_m);
+			drawRackShelfTemplate(window.rackShelfTemplateList[i], window.preview_canvas, window.preview_context, 0, 0, window.preview_m);
 		}
 		window.preview_context.lineWidth = 1;
 		window.preview_context.strokeStyle = "BLUE";
@@ -407,46 +378,6 @@
 				window.preview_canvas.height - window.ky / window.preview_m,
 				window.edit_canvas.width * window.km / window.preview_m,
 				- window.edit_canvas.height * window.km / window.preview_m);
-	}
-	function drawShelf(shelfTemplate, canvas, context, kx, ky, m) {
-		context.lineWidth = 1;
-		if (window.shelf==shelfTemplate)
-		{
-			context.strokeStyle = "BLUE";
-		}
-		else
-		{
-			context.strokeStyle = "BLACK";
-		}
-		switch (shelfTemplate.type_shelf)
-		{
-			<%
-			for (final TypeShelf typeShelf:TypeShelf.values())
-			{
-				out.print("case '");
-				out.print(typeShelf.name());
-				out.print("': context.fillStyle = '");
-				out.print(typeShelf.getColor());
-				out.println("'; break;");
-			}
-			%>
-		}
-		context.beginPath();
-		var x1 = (shelfTemplate.x1 - kx) / m;
-		var y1 = canvas.height - (shelfTemplate.y1 - ky) / m;
-		var x2 = (shelfTemplate.x2 - kx) / m;
-		var y2 = canvas.height - (shelfTemplate.y2 - ky) / m;
-		var x3 = (shelfTemplate.x3 - kx) / m;
-		var y3 = canvas.height - (shelfTemplate.y3 - ky) / m;
-		var x4 = (shelfTemplate.x4 - kx) / m;
-		var y4 = canvas.height - (shelfTemplate.y4 - ky) / m;
-		context.moveTo(x1, y1);
-		context.lineTo(x2, y2);
-		context.lineTo(x3, y3);
-		context.lineTo(x4, y4);
-		context.closePath();
-		context.stroke();
-		context.fill();
 	}
 </script>
 <%-- обработка событий меню --%>
@@ -521,16 +452,16 @@
 			window.shelf.x_coord = window.copyObject.x_coord + window.copyObject.shelf_width;
 			window.shelf.y_coord;
 
-			calcCoordinates(window.shelf);
+			calcCoordinatesRackShelfTemplate(window.shelf);
 			if (shelfBeyondRack(window.shelf))
 			{
 				window.shelf.x_coord = window.copyObject.x_coord;
 				window.shelf.y_coord = window.copyObject.y_coord + window.copyObject.shelf_height;
-				calcCoordinates(window.shelf);
+				calcCoordinatesRackShelfTemplate(window.shelf);
 				if (shelfBeyondRack(window.shelf)){
 					window.shelf.x_coord = window.copyObject.x_coord;
 					window.shelf.y_coord = window.copyObject.y_coord;
-					calcCoordinates(window.shelf);
+					calcCoordinatesRackShelfTemplate(window.shelf);
 				}
 			}
 
@@ -566,7 +497,7 @@
 			window.shelf.y_coord=sy;
 			rackShelfTemplateList.push(window.shelf);
 			selectShelf(window.shelf);
-			calcCoordinates(window.shelf);
+			calcCoordinatesRackShelfTemplate(window.shelf);
 			drawEditCanvas();
 			drawPreviewCanvas();
 			x = evnt.clientX;
@@ -653,17 +584,17 @@
 					var oldy = window.shelf.y_coord;
 					// перемещение
 					window.shelf.x_coord = window.shelf.x_coord + dx;
-					calcCoordinates(window.shelf);
+					calcCoordinatesRackShelfTemplate(window.shelf);
 					if (shelfBeyondRack(window.shelf))
 					{
 						window.shelf.x_coord = oldx;
 					}
 					window.shelf.y_coord = window.shelf.y_coord + dy;
-					calcCoordinates(window.shelf);
+					calcCoordinatesRackShelfTemplate(window.shelf);
 					if (shelfBeyondRack(window.shelf))
 					{
 						window.shelf.y_coord = oldy;
-						calcCoordinates(window.shelf);
+						calcCoordinatesRackShelfTemplate(window.shelf);
 					}
 					document.getElementById('shelfX').value = window.shelf.x_coord;
 					document.getElementById('shelfY').value = window.shelf.y_coord;
@@ -706,7 +637,7 @@
 						window.shelf.x_coord = window.shelf.x_coord + dxy * window.shelf.sin / 2;
 						window.shelf.y_coord = window.shelf.y_coord - dxy * window.shelf.cos / 2;
 					}
-					calcCoordinates(window.shelf);
+					calcCoordinatesRackShelfTemplate(window.shelf);
 					if (window.shelf.x1 < 0 || window.shelf.x2 < 0 || window.shelf.x3 < 0 || window.shelf.x4 < 0 ||
 							window.shelf.x1 > window.rackTemplate.width || window.shelf.x2 > window.rackTemplate.width || window.shelf.x3 > window.rackTemplate.width || window.shelf.x4 > window.rackTemplate.width ||
 							window.shelf.y1 < 0 || window.shelf.y2 < 0 || window.shelf.y3 < 0 || window.shelf.y4 < 0 ||
@@ -715,7 +646,7 @@
 						window.shelf.y_coord = oldY;
 						window.shelf.shelf_width = oldWidth;
 						window.shelf.shelf_height = oldHeight;
-						calcCoordinates(window.shelf);
+						calcCoordinatesRackShelfTemplate(window.shelf);
 					} else {
 						document.getElementById('shelfX').value = window.shelf.x_coord;
 						document.getElementById('shelfY').value = window.shelf.y_coord;
@@ -917,7 +848,7 @@
 			if (x != null && !isNaN(x) && x != Infinity) {
 				var oldx = window.shelf.x_coord;
 				window.shelf.x_coord = x;
-				calcCoordinates(window.shelf);
+				calcCoordinatesRackShelfTemplate(window.shelf);
 				// не выходит за области сектора
 				if ((window.shelf.x_coord < oldx
 						&& (window.shelf.x1 < 0
@@ -930,7 +861,7 @@
 							|| window.shelf.x3 > window.rackTemplate.width
 							|| window.shelf.x4 > window.rackTemplate.width))) {
 					window.shelf.x_coord = oldx;
-					calcCoordinates(window.shelf);
+					calcCoordinatesRackShelfTemplate(window.shelf);
 				}
 				else {
 					drawEditCanvas();
@@ -946,7 +877,7 @@
 			if (y != null && !isNaN(y) && y != Infinity) {
 				var oldY = window.shelf.y_coord;
 				window.shelf.y_coord = y;
-				calcCoordinates(window.shelf);
+				calcCoordinatesRackShelfTemplate(window.shelf);
 				// не выходит за области сектора
 				if ((window.shelf.y_coord < oldY
 						&& (window.shelf.y1 < 0
@@ -959,7 +890,7 @@
 						|| window.shelf.y3 > window.rackTemplate.height
 						|| window.shelf.y4 > window.rackTemplate.height))) {
 					window.shelf.y_coord = oldY;
-					calcCoordinates(window.shelf);
+					calcCoordinatesRackShelfTemplate(window.shelf);
 				}
 				else {
 					drawEditCanvas();
@@ -975,10 +906,10 @@
 			if (angle >= 0 && angle <= 360) {
 				var oldAngle = window.shelf.angle;
 				window.shelf.angle = angle;
-				calcCoordinates(window.shelf);
+				calcCoordinatesRackShelfTemplate(window.shelf);
 				if (shelfBeyondRack(window.shelf)) {
 					window.shelf.angle = oldAngle;
-					calcCoordinates(window.shelf);
+					calcCoordinatesRackShelfTemplate(window.shelf);
 				}
 				else {
 					drawEditCanvas();
@@ -994,11 +925,11 @@
 			if (value != null && value>0 && value != Infinity) {
 				var oldValue = window.shelf.shelf_width;
 				window.shelf.shelf_width = value;
-				calcCoordinates(window.shelf);
+				calcCoordinatesRackShelfTemplate(window.shelf);
 				// не выходит за области сектора
 				if (shelfBeyondRack(window.shelf)) {
 					window.shelf.shelf_width = oldValue;
-					calcCoordinates(window.shelf);
+					calcCoordinatesRackShelfTemplate(window.shelf);
 				}
 				else {
 					drawEditCanvas();
@@ -1014,11 +945,11 @@
 			if (value != null && value>0 && value != Infinity) {
 				var oldValue = window.shelf.shelf_height;
 				window.shelf.shelf_height = value;
-				calcCoordinates(window.shelf);
+				calcCoordinatesRackShelfTemplate(window.shelf);
 				// не выходит за области сектора
 				if (shelfBeyondRack(window.shelf)) {
 					window.shelf.shelf_height = oldValue;
-					calcCoordinates(window.shelf);
+					calcCoordinatesRackShelfTemplate(window.shelf);
 				}
 				else {
 					drawEditCanvas();

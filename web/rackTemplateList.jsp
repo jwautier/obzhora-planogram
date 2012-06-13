@@ -1,8 +1,9 @@
 <%@ page import="planograma.utils.JspUtils" %>
 <%@ page import="planograma.servlet.racktemplate.RackTemplateList" %>
 <%@ page import="planograma.servlet.racktemplate.RackTemplateRemove" %>
-<%@ page import="planograma.servlet.racktemplate.RackTemplateSave" %>
 <%@ page import="planograma.constant.SecurityConst" %>
+<%@ page import="planograma.servlet.racktemplate.RackTemplateEdit" %>
+<%@ page import="planograma.data.LoadSide" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
 	final String access_rack_template_edit=JspUtils.actionAccess(session, SecurityConst.ACCESS_RACK_TEMPLATE_EDIT);
@@ -12,7 +13,9 @@
 	<title>Стантартные типы стеллажей</title>
 	<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
-	<script type="text/javascript" src="js/planograma.js"></script>
+	<script type="text/javascript" src="js/planogram.js"></script>
+	<script type="text/javascript" src="js/draw/calcCoordinatesRackShelfTemplate.js"></script>
+	<script type="text/javascript" src="js/draw/drawRackShelfTemplate.jsp"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
 <body onload="loadComplete();">
@@ -35,8 +38,8 @@
 			<table class="frame">
 				<colgroup>
 					<col/>
-					<col width="25%"/>
-					<col width="75%"/>
+					<col/>
+					<col width="100%"/>
 				</colgroup>
 				<tr>
 					<td>
@@ -65,11 +68,11 @@
 						</table>
 					</td>
 					<td>
-						<select id="rackTemplateList" size="20" style="width: 100%; height: 100%; min-width: 150px;" onchange="selectRackTemplate(value)">
+						<select id="rackTemplateList" size="20" style="width: 200px; height: 100%;" onchange="selectRackTemplate(value)">
 						</select>
 					</td>
-					<td style="min-width: 150px; background-color: #dcdcdc;">
-						preview
+					<td id="preview_td" valign="top">
+						<canvas id="preview_canvas" style="display: none;" width="150" height="150">canvas not supported</canvas>
 					</td>
 				</tr>
 			</table>
@@ -122,6 +125,7 @@
 </script>
 <script type="text/javascript">
 	function selectRackTemplate(code_rack_template) {
+		$('#preview_canvas').hide();
 		if (code_rack_template != null && code_rack_template != '') {
 			var rackTemplateList = $('#rackTemplateList');
 			var option = rackTemplateList.find('option[value=' + code_rack_template + ']');
@@ -135,6 +139,25 @@
 					$('#rackTemplateRemove').removeClass('disabled');
 				}
 				setCookie('code_rack_template', code_rack_template);
+				postJson('<%=RackTemplateEdit.URL%>', {code_rack_template:code_rack_template}, function (data) {
+					window.rackTemplate=data.rackTemplate;
+					switch (window.rackTemplate.load_side)
+					{
+						case '<%=LoadSide.U%>':
+							var temp=window.rackTemplate.width;
+							window.rackTemplate.width=window.rackTemplate.length;
+							window.rackTemplate.length=window.rackTemplate.height;
+							window.rackTemplate.height=temp;
+							break;
+						case '<%=LoadSide.F%>':
+							var temp=window.rackTemplate.width;
+							window.rackTemplate.width=window.rackTemplate.length;
+							window.rackTemplate.length=temp;
+							break;
+					}
+					window.rackShelfTemplateList = data.rackShelfTemplateList;
+					selectRackTemplate2();
+				}, 'preview_td');
 			}
 			else {
 				setCookie('code_rack_template', '');
@@ -143,6 +166,28 @@
 		else {
 			setCookie('code_rack_template', '');
 		}
+	}
+
+	function selectRackTemplate2()
+	{
+		window.preview_canvas = document.getElementById("preview_canvas");
+		window.preview_context = window.preview_canvas.getContext("2d");
+		var preview_td = $('#preview_td');
+		var width=preview_td.width() - 4;
+		var height= preview_td.height() - 4;
+		window.preview_m = Math.max(window.rackTemplate.width / width, window.rackTemplate.height / height);
+		window.preview_canvas.width = window.rackTemplate.width/window.preview_m;
+		window.preview_canvas.height = window.rackTemplate.height/window.preview_m;
+
+		for (var i = 0; i < window.rackShelfTemplateList.length; i++) {
+			calcCoordinatesRackShelfTemplate(window.rackShelfTemplateList[i]);
+			drawRackShelfTemplate(window.rackShelfTemplateList[i], window.preview_canvas, window.preview_context, 0, 0, window.preview_m);
+		}
+
+		var title=window.rackTemplate.name_rack_template;
+		title+='\n'+window.rackTemplate.width+'x'+window.rackTemplate.height+'x'+window.rackTemplate.length;
+		$('#preview_canvas').attr('title', title);
+		$('#preview_canvas').show();
 	}
 </script>
 <script type="text/javascript">

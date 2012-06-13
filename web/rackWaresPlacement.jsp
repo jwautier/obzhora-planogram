@@ -13,7 +13,7 @@
 	<title>Товары стеллажа</title>
 	<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
-	<script type="text/javascript" src="js/planograma.js"></script>
+	<script type="text/javascript" src="js/planogram.js"></script>
 	<script type="text/javascript" src="js/planogram2D.js"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
