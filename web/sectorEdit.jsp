@@ -31,6 +31,8 @@
 	<script type="text/javascript" src="js/planogram.js"></script>
 	<script type="text/javascript" src="js/draw/calcCoordinatesRack.js"></script>
 	<script type="text/javascript" src="js/draw/drawRack.jsp"></script>
+	<script type="text/javascript" src="js/draw/calcCoordinatesRackShelfTemplate.js"></script>
+	<script type="text/javascript" src="js/draw/drawRackShelfTemplate.jsp"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
 <body onload="loadComplete();" style="overflow-x:hidden;">
@@ -268,50 +270,7 @@
 	</tr>
 </table>
 
-<table id="rackTemplate">
-	<tr>
-		<td class="path">
-			<table>
-				<tr>
-					<td><i>Выбор стандартного стеллажа</i></td>
-					<td width="100%"></td>
-					<td><a href="#" onclick="rackTemplateCancel()">&#x2715;</a></td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<table class="frame">
-			<colgroup>
-				<col width="25%"/>
-				<col width="75%"/>
-			</colgroup>
-				<tr>
-					<td>
-						<select id="rackTemplateList" size="20" style="width: 100%; height: 100%; min-width: 150px;" onchange="selectRackTemplate(value)">
-						</select>
-					</td>
-					<td style="min-width: 150px; background-color: #dcdcdc;">
-						preview
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	<tr>
-		<td class="path">
-			<table>
-				<tr>
-					<td width="100%"></td>
-					<td><a href="#" onclick="rackTemplateCancel()">Отмена</a></td>
-					<td>&nbsp;</td>
-					<td><a href="#" onclick="rackTemplateOk()">Ок</a></td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-</table>
+<jsp:include page="choiceRackTemplate.jsp"/>
 
 <script type="text/javascript">
 
@@ -614,6 +573,7 @@ function roundRack(rack)
 				if (option.length == 1) {
 					option.attr('selected', 'selected');
 				}
+				selectRackTemplate(code_rack_template);
 			}
 			var rackTemplate=$('#rackTemplate');
 			rackTemplate.animate({opacity:'show'},500);
@@ -1264,33 +1224,6 @@ function roundRack(rack)
 			drawEditCanvas();
 			drawPreviewCanvas();
 //			}
-		}
-	}
-</script>
-<%-- обработка событий окно выбора стандартного стеллажа --%>
-<script type="text/javascript">
-
-	function selectRackTemplate(rackTemplateId)
-	{
-//		TODO
-	}
-
-	function rackTemplateCancel() {
-		var rackTemplate = $('#rackTemplate');
-		rackTemplate.animate({opacity:'hide'}, 500);
-	}
-	function rackTemplateOk() {
-		var rackTemplate = $('#rackTemplate');
-		rackTemplate.animate({opacity:'hide'}, 500);
-		var rackTemplateList = $('#rackTemplateList');
-		var code_rack_template = rackTemplateList.val();
-		if (code_rack_template != null && code_rack_template.length > 0) {
-			setCookie('code_rack_template', code_rack_template);
-			var option = rackTemplateList.find('option[value=' + code_rack_template + ']');
-			if (option.length == 1) {
-				window.rackAdd=false;
-				window.rackTemplateAdd = $.evalJSON(option.attr('json'));
-			}
 		}
 	}
 </script>

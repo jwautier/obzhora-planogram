@@ -88,9 +88,9 @@ public class SectorPrint extends HttpServlet {
 
 			drawSector(cb, sector, m, pageSize);
 
-			int index = 1;
-			for (final Rack2D rack2D : rackList) {
-				drawRack2D(cb, rack2D, index++, m, pageSize, baseFont);
+			for (int index=0; index<rackList.size(); index++) {
+				final Rack2D rack2D=rackList.get(index);
+				drawRack2D(cb, rack2D, index+1, m, pageSize, baseFont);
 			}
 			document.setPageSize(PageSize.A4);
 			document.newPage();
@@ -141,10 +141,10 @@ public class SectorPrint extends HttpServlet {
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			table.addCell(cell);
-			index = 1;
-			for (final Rack2D rack2D : rackList) {
+			for (int index=0; index<rackList.size(); index++) {
+				final Rack2D rack2D=rackList.get(index);
 				if (rack2D.getRack().getType_race() != TypeRack.DZ) {
-					table.addCell(new PdfPCell(new Paragraph(String.valueOf(index++), font)));
+					table.addCell(new PdfPCell(new Paragraph(String.valueOf(index+1), font)));
 					table.addCell(new PdfPCell(new Paragraph(rack2D.getRack().getName_rack(), font)));
 
 					try {
@@ -222,7 +222,7 @@ public class SectorPrint extends HttpServlet {
 			float hM = minSize / Font.DEFAULTSIZE;
 			float x = marginLeft + rack2D.getRack().getX_coord() / m;
 			float y = pageSize.getHeight() - marginTop - marginTitle - rack2D.getRack().getY_coord() / m;
-			cb.moveText(x - minSize / 2, y - minSize / 2.5F);
+			cb.moveText(x - minSize / 2, y - minSize / 3F);
 			cb.setFontAndSize(baseFont, Font.DEFAULTSIZE * Math.min(wM, hM));
 
 			cb.showText(indexStr);
