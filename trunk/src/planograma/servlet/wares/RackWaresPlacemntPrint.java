@@ -249,7 +249,7 @@ public class RackWaresPlacemntPrint extends HttpServlet {
 		float wM = minSize / baseFont.getWidthPoint(indexStr, Font.DEFAULTSIZE);
 		float x = marginLeft + rackWares2D.getRackWares().getPosition_x() / m;
 		float y = y0 + rackWares2D.getRackWares().getPosition_y() / m;
-		cb.moveText(x - minSize / 2, y - minSize / 2.5F);
+		cb.moveText(x - minSize / 2, y - minSize / 3F);
 		cb.setFontAndSize(baseFont, Font.DEFAULTSIZE * wM);
 		cb.showText(indexStr);
 		cb.endText();
