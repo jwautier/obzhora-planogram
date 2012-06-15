@@ -37,7 +37,7 @@ public class SectorModel {
 			"order by " + SectorConst.NAME_SECTOR;
 
 	public List<Sector> list(final UserContext userContext, final int code_shop) throws SQLException {
-		//		long time=System.currentTimeMillis();
+//		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
 		ps.setInt(1, code_shop);

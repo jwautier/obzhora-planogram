@@ -19,7 +19,7 @@ public class TestQuery {
 
 		UserContext userContext = null;
 		try {
-			userContext = new UserContext("", "");
+			userContext = new UserContext("a_poljakov", "FecUnRec");
 			System.out.println("-------------------------StateAllModel-------------------------");
 			testStateAllModel(userContext);
 			System.out.println("-------------------------ShopModel-------------------------");
@@ -232,9 +232,12 @@ public class TestQuery {
 		final Rack rack = new Rack(null, null, "rack 1", "1", 50, 200, 150, sector.getCode_sector(), 1000, 1000, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null);
 		rackModel.insert(userContext, rack);
 		final RackWaresModel rackWaresModel = RackWaresModel.getInstance();
+		final RackWaresHModel rackWaresHModel = RackWaresHModel.getInstance();
+		int version=rackWaresHModel.nextVersion(userContext);
+		System.out.println("version = "+version);
 		RackWares rackWares = new RackWares(rack.getCode_rack(), 10, 19, null, TypeRackWares.NA, 1, 10, 10, 50, 50, 50, 1, null, null,null,null, null, "waresTest", "unitTest", "barcodeTest");
 		System.out.println(rackWares.toJsonObject());
-		rackWaresModel.insert(userContext, rackWares);
+		rackWaresModel.insert(userContext, rackWares, version);
 		System.out.println("insert");
 		List<RackWares> list = rackWaresModel.list(userContext, rack.getCode_rack());
 		System.out.println("list");
@@ -244,8 +247,10 @@ public class TestQuery {
 		rackWares = rackWaresModel.select(userContext, rackWares.getCode_wares_on_rack());
 		System.out.println("select");
 		System.out.println(rackWares.toJsonObject());
+		version=rackWaresHModel.nextVersion(userContext);
+		System.out.println("version = "+version);
 		rackWares.setWares_width(250);
-		rackWaresModel.update(userContext, rackWares);
+		rackWaresModel.update(userContext, rackWares, version);
 		System.out.println("update");
 		rackWares = rackWaresModel.select(userContext, rackWares.getCode_wares_on_rack());
 		System.out.println(rackWares.toJsonObject());
