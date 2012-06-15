@@ -10,6 +10,7 @@ import planograma.data.RackWares;
 import planograma.data.UserContext;
 import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
+import planograma.model.RackWaresHModel;
 import planograma.model.RackWaresModel;
 import planograma.servlet.AbstractAction;
 
@@ -34,11 +35,13 @@ public class RackWaresPlacementSave extends AbstractAction {
 	public static final String URL = UrlConst.URL_RACK_WARES_PLACEMENT_SAVE;
 
 	private RackWaresModel rackWaresModel;
+	private RackWaresHModel rackWaresHModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		rackWaresModel = RackWaresModel.getInstance();
+		rackWaresHModel = RackWaresHModel.getInstance();
 	}
 
 	@Override
@@ -54,6 +57,7 @@ public class RackWaresPlacementSave extends AbstractAction {
 			itemList.add(item);
 		}
 		List<RackWares> oldItemList = rackWaresModel.list(userContext, code_rack);
+		final int version=rackWaresHModel.nextVersion(userContext);
 		for (final RackWares oldItem : oldItemList) {
 			RackWares findItem = null;
 //				поиск среди сохраненых рание
@@ -62,7 +66,7 @@ public class RackWaresPlacementSave extends AbstractAction {
 				if (oldItem.getCode_wares_on_rack().equals(currentItem.getCode_wares_on_rack())) {
 					findItem = currentItem;
 //					запись была обновлена
-					rackWaresModel.update(userContext, findItem);
+					rackWaresModel.update(userContext, findItem, version);
 					itemList.remove(i);
 					i--;
 				}
@@ -75,7 +79,7 @@ public class RackWaresPlacementSave extends AbstractAction {
 		for (final RackWares newItem : itemList) {
 //			запись была добавлена
 			newItem.setCode_rack(code_rack);
-			rackWaresModel.insert(userContext, newItem);
+			rackWaresModel.insert(userContext, newItem, version);
 		}
 		commit(userContext);
 		return null;

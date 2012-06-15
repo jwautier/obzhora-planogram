@@ -92,10 +92,11 @@ public class RackWaresModel {
 			":" + RackWaresConst.WARES_LENGTH + ", " +
 			":" + RackWaresConst.WARES_WIDTH + ", " +
 			":" + RackWaresConst.WARES_HEIGHT + ", " +
-			":" + RackWaresConst.COUNT_LENGTH_ON_SHELF + ")}";
+			":" + RackWaresConst.COUNT_LENGTH_ON_SHELF + ", " +
+			":" + RackWaresHConst.VERSION_WARES + ")}";
 
 
-	public int insert(final UserContext userContext, final RackWares rackWares) throws SQLException {
+	public int insert(final UserContext userContext, final RackWares rackWares, final int version) throws SQLException {
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_wares_on_rack", Types.INTEGER);
@@ -112,13 +113,14 @@ public class RackWaresModel {
 		callableStatement.setInt(RackWaresConst.WARES_WIDTH, rackWares.getWares_width());
 		callableStatement.setInt(RackWaresConst.WARES_HEIGHT, rackWares.getWares_height());
 		callableStatement.setInt(RackWaresConst.COUNT_LENGTH_ON_SHELF, rackWares.getCount_length_on_shelf());
+		callableStatement.setInt(RackWaresHConst.VERSION_WARES, version);
 		callableStatement.execute();
 		final int id = callableStatement.getInt("new_code_wares_on_rack");
 		rackWares.setCode_wares_on_rack(id);
 		return rackWares.getCode_wares_on_rack();
 	}
 
-	public void update(final UserContext userContext, final RackWares rackWares) throws SQLException {
+	public void update(final UserContext userContext, final RackWares rackWares, final int version) throws SQLException {
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_wares_on_rack", Types.INTEGER);
@@ -135,6 +137,7 @@ public class RackWaresModel {
 		callableStatement.setInt(RackWaresConst.WARES_WIDTH, rackWares.getWares_width());
 		callableStatement.setInt(RackWaresConst.WARES_HEIGHT, rackWares.getWares_height());
 		callableStatement.setInt(RackWaresConst.COUNT_LENGTH_ON_SHELF, rackWares.getCount_length_on_shelf());
+		callableStatement.setInt(RackWaresHConst.VERSION_WARES, version);
 		callableStatement.execute();
 	}
 
