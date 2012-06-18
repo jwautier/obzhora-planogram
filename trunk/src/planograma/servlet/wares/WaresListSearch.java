@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import planograma.constant.UrlConst;
+import planograma.constant.data.WaresConst;
 import planograma.constant.data.WaresGroupConst;
 import planograma.data.wrapper.WaresWrapper;
 import planograma.exception.UnauthorizedException;
@@ -39,10 +40,21 @@ public class WaresListSearch extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
-		final JsonObject requestObject=requestData.getAsJsonObject();
-		final String searchText=requestObject.get("searchText").getAsString();
+		final JsonObject requestObject = requestData.getAsJsonObject();
+		final String searchText = requestObject.get("searchText").getAsString();
 		final String searchBy = requestObject.get("searchBy").getAsString();
-		final int code_group = requestObject.get(WaresGroupConst.CODE_GROUP_WARES).getAsInt();
+		if (WaresConst.CODE_WARES.equals(searchBy)) {
+			try {
+				Integer.parseInt(searchText);
+			} catch (Exception e) {
+				throw new SQLException("Недопустимое значение кода: \"" + searchText+"\"");
+			}
+		}
+		final int code_group;
+		if (requestObject.has(WaresGroupConst.CODE_GROUP_WARES))
+			code_group = requestObject.get(WaresGroupConst.CODE_GROUP_WARES).getAsInt();
+		else
+			code_group = 0;
 
 		final JsonObject jsonObject = new JsonObject();
 		final JsonArray jsonArray = new JsonArray();

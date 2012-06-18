@@ -72,7 +72,7 @@
 								<td><a href="#" onclick="return aOnClick(this, fRackTemplateAdd)" class="<%=access_sector_edit%>"><%=JspUtils.toMenuTitle("Добавить стандартный стеллаж")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" id="butView" onclick="return aOnClick(this)" target="pdf" class="disabled"><%=JspUtils.toMenuTitle("Просмотр стеллажа")%></a></td>
+								<td><a href="#" id="butPrint" onclick="return aOnClick(this)" target="pdf" class="disabled"><%=JspUtils.toMenuTitle("Печать стеллажа")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="butEdit" onclick="return aOnClick(this, fRackEdit)" class="disabled"><%=JspUtils.toMenuTitle("Редактировать стеллаж")%></a></td>
@@ -443,11 +443,11 @@ function selectShowcase(showcase) {
 		document.getElementById('showcaseHeight').value = showcase.height;
 		document.getElementById('rackLoadSide').value = showcase.load_side;
 		if (showcase.code_rack != null && showcase.code_rack != '') {
-			$('#butView').removeClass('disabled').attr('href','<%=RackWaresPlacemntPrint.URL%>'+showcase.code_rack);
+			$('#butPrint').removeClass('disabled').attr('href','<%=RackWaresPlacemntPrint.URL%>'+showcase.code_rack);
 			$('#butEdit').removeClass('disabled');
 			$('#butRackWaresPlacement').removeClass('disabled');
 		} else {
-			$('#butView').addClass('disabled').attr('href', '#');
+			$('#butPrint').addClass('disabled').attr('href', '#');
 			$('#butEdit').addClass('disabled');
 			$('#butRackWaresPlacement').addClass('disabled');
 		}
@@ -469,7 +469,7 @@ function selectShowcase(showcase) {
 		document.getElementById('showcaseLength').value = '';
 		document.getElementById('showcaseHeight').value = '';
 		document.getElementById('rackLoadSide').value = '';
-		$('#butView').addClass('disabled').attr('href', '#');
+		$('#butPrint').addClass('disabled').attr('href', '#');
 		$('#butEdit').addClass('disabled');
 		$('#butRackWaresPlacement').addClass('disabled');
 		$('#butCopy').addClass('disabled');

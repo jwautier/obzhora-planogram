@@ -67,7 +67,7 @@ public class WaresModel {
 	}
 
 	public List<WaresWrapper> search(final UserContext userContext, final String text, final String field,
-									 final Integer code_group) throws SQLException {
+									 final int code_group) throws SQLException {
 //		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 
@@ -80,7 +80,7 @@ public class WaresModel {
 		} else if (AdditionUnitConst.BAR_CODE.equals(field)) {
 			query += " and u." + AdditionUnitConst.BAR_CODE + " like ? ";
 		}
-		if (code_group != null && code_group != 0) {
+		if (code_group != 0) {
 			query += " and w." + WaresConst.CODE_GROUP + " = ? ";
 		}
 		query += Q_ORDER_BY;
@@ -90,12 +90,12 @@ public class WaresModel {
 		if (WaresConst.CODE_WARES.equals(field)) {
 			ps.setInt(1, Integer.valueOf(text));
 		} else if (WaresConst.NAME_WARES.equals(field)) {
-			ps.setString(1, text);
+			ps.setString(1, "%"+text+"%");
 		} else if (AdditionUnitConst.BAR_CODE.equals(field)) {
-			ps.setString(1, text);
+			ps.setString(1, "%"+text+"%");
 		}
 
-		if (code_group != null && code_group != 0) {
+		if (code_group != 0) {
 			ps.setInt(2, code_group);
 		}
 
