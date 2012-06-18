@@ -694,7 +694,7 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 				rackWaresOutside.push(rackWares);
 			}
 		}
-		if (rackWaresOutside.length == 0 || confirm("Все товары выходящие за приделы стеллажа будут удалены.")) {
+		if (rackWaresOutside.length == 0 || confirm("Все товары выходящие за пределы стеллажа будут удалены.")) {
 			for (var i in rackWaresOutside) {
 				window.rackWaresList.splice(window.rackWaresList.indexOf(rackWaresOutside[i]), 1);
 			}
