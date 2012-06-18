@@ -172,10 +172,10 @@ public class RackWaresPlacemntPrint extends HttpServlet {
 				if (oldRackWares == null) {
 					oldRackWares = rackWares2D;
 					count += oldRackWares.getRackWares().getCount_length_on_shelf();
-				} else if (!oldRackWares.getRackWares().getCode_wares().equals(rackWares2D.getRackWares().getCode_wares())) {
+				} else if (!oldRackWares.getRackWares().getOrder_number_on_rack().equals(rackWares2D.getRackWares().getOrder_number_on_rack())) {
 					fillTable(cb, table, oldRackWares, count, font);
 					oldRackWares = rackWares2D;
-					count = 0;
+					count = rackWares2D.getRackWares().getCount_length_on_shelf();
 				} else {
 					count += rackWares2D.getRackWares().getCount_length_on_shelf();
 				}

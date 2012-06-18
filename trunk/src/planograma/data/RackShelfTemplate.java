@@ -207,9 +207,9 @@ public class RackShelfTemplate implements IJsonObject{
 		angle = resultSet.getInt(RackShelfTemplateConst.ANGLE);
 		setType_shelf(resultSet.getString(RackShelfTemplateConst.TYPE_SHELF));
 		user_insert = resultSet.getInt(RackShelfTemplateConst.USER_INSERT);
-		date_insert = resultSet.getDate(RackShelfTemplateConst.DATE_INSERT);
+		date_insert = resultSet.getTimestamp(RackShelfTemplateConst.DATE_INSERT);
 		user_update = resultSet.getInt(RackShelfTemplateConst.USER_UPDATE);
-		date_update = resultSet.getDate(RackShelfTemplateConst.DATE_UPDATE);
+		date_update = resultSet.getTimestamp(RackShelfTemplateConst.DATE_UPDATE);
 	}
 
 	public RackShelfTemplate(final JsonObject rackShelfTemplateJson) throws SQLException {

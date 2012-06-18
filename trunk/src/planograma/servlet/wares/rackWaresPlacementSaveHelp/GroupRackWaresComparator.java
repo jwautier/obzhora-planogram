@@ -1,4 +1,4 @@
-package planograma.servlet.test;
+package planograma.servlet.wares.rackWaresPlacementSaveHelp;
 
 import java.util.Comparator;
 

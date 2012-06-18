@@ -356,11 +356,11 @@ public class Rack implements IJsonObject {
 		setLock_move(resultSet.getString(RackConst.LOCK_MOVE));
 		setType_race(resultSet.getString(RackConst.TYPE_RACK));
 		user_insert = resultSet.getInt(RackConst.USER_INSERT);
-		date_insert = resultSet.getDate(RackConst.DATE_INSERT);
+		date_insert = resultSet.getTimestamp(RackConst.DATE_INSERT);
 		user_update = resultSet.getInt(RackConst.USER_UPDATE);
-		date_update = resultSet.getDate(RackConst.DATE_UPDATE);
+		date_update = resultSet.getTimestamp(RackConst.DATE_UPDATE);
 		user_draft = resultSet.getInt(RackConst.USER_DRAFT);
-		date_draft = resultSet.getDate(RackConst.DATE_DRAFT);
+		date_draft = resultSet.getTimestamp(RackConst.DATE_DRAFT);
 	}
 
 	public Rack(final JsonObject rackJson) {

@@ -211,11 +211,11 @@ public class RackTemplate implements IJsonObject {
 		setLoad_side(resultSet.getString(RackTemplateConst.LOAD_SIDE));
 		code_rack_template = resultSet.getInt(RackTemplateConst.CODE_RACK_TEMPLATE);
 		user_insert = resultSet.getInt(RackTemplateConst.USER_INSERT);
-		date_insert = resultSet.getDate(RackTemplateConst.DATE_INSERT);
+		date_insert = resultSet.getTimestamp(RackTemplateConst.DATE_INSERT);
 		user_update = resultSet.getInt(RackTemplateConst.USER_UPDATE);
-		date_update = resultSet.getDate(RackTemplateConst.DATE_UPDATE);
+		date_update = resultSet.getTimestamp(RackTemplateConst.DATE_UPDATE);
 		user_draft = resultSet.getInt(RackTemplateConst.USER_DRAFT);
-		date_draft = resultSet.getDate(RackTemplateConst.DATE_DRAFT);
+		date_draft = resultSet.getTimestamp(RackTemplateConst.DATE_DRAFT);
 	}
 
 	public RackTemplate(final JsonObject rackJson) {
