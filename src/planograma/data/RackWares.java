@@ -289,9 +289,9 @@ public class RackWares implements IJsonObject {
 		wares_height = resultSet.getInt(RackWaresConst.WARES_HEIGHT);
 		count_length_on_shelf = resultSet.getInt(RackWaresConst.COUNT_LENGTH_ON_SHELF);
 		user_insert = resultSet.getInt(RackWaresConst.USER_INSERT);
-		date_insert = resultSet.getDate(RackWaresConst.DATE_INSERT);
+		date_insert = resultSet.getTimestamp(RackWaresConst.DATE_INSERT);
 		user_update = resultSet.getInt(RackWaresConst.USER_UPDATE);
-		date_update = resultSet.getDate(RackWaresConst.DATE_UPDATE);
+		date_update = resultSet.getTimestamp(RackWaresConst.DATE_UPDATE);
 		code_image = resultSet.getInt(WaresImageConst.CODE_IMAGE);
 		name_wares = resultSet.getString(WaresConst.NAME_WARES);
 		abr_unit = resultSet.getString(UnitDimensionConst.ABR_UNIT);

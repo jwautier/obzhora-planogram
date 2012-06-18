@@ -204,11 +204,11 @@ public class Sector implements IJsonObject {
 		width = resultSet.getInt(SectorConst.WIDTH);
 		height = resultSet.getInt(SectorConst.HEIGHT);
 		user_insert = resultSet.getInt(SectorConst.USER_INSERT);
-		date_insert = resultSet.getDate(SectorConst.DATE_INSERT);
+		date_insert = resultSet.getTimestamp(SectorConst.DATE_INSERT);
 		user_update = resultSet.getInt(SectorConst.USER_UPDATE);
-		date_update = resultSet.getDate(SectorConst.DATE_UPDATE);
+		date_update = resultSet.getTimestamp(SectorConst.DATE_UPDATE);
 		user_draft = resultSet.getInt(SectorConst.USER_DRAFT);
-		date_draft = resultSet.getDate(SectorConst.DATE_DRAFT);
+		date_draft = resultSet.getTimestamp(SectorConst.DATE_DRAFT);
 	}
 
 	public Sector(final JsonObject sectorJson) {

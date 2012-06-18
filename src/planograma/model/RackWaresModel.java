@@ -45,7 +45,8 @@ public class RackWaresModel {
 			" left join " + WaresImageConst.TABLE_NAME + " wi on wi." + WaresImageConst.CODE_WARES + " = rw." + RackWaresConst.CODE_WARES + " ";
 
 	public static final String Q_LIST = Q_SELECT_FROM +
-			"where " + RackWaresConst.CODE_RACK + " = ?";
+			"where " + RackWaresConst.CODE_RACK + " = ? " +
+			"order by " + RackWaresConst.ORDER_NUMBER_ON_RACK;
 
 	public List<RackWares> list(final UserContext userContext, final int code_rack) throws SQLException {
 //		long time = System.currentTimeMillis();

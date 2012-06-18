@@ -1,4 +1,4 @@
-package planograma.servlet.test;
+package planograma.servlet.wares.rackWaresPlacementSaveHelp;
 
 import planograma.data.geometry.RackWares2D;
 import planograma.utils.geometry.Rectangle2D;

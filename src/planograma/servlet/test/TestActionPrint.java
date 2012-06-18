@@ -10,10 +10,9 @@ import planograma.data.*;
 import planograma.data.geometry.RackShelf2D;
 import planograma.data.geometry.RackWares2D;
 import planograma.model.*;
+import planograma.servlet.wares.rackWaresPlacementSaveHelp.GroupRackWares;
 import planograma.utils.FormattingUtils;
-import planograma.utils.geometry.Intersection2DUtils;
 import planograma.utils.geometry.Point2D;
-import planograma.utils.geometry.Rectangle2D;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -23,7 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -130,11 +130,11 @@ public class TestActionPrint extends HttpServlet {
 				drawRackWares2D(cb, rackWares2D, m, y0, baseFont);
 			}
 
-			final List<GroupRackWares> groups = split(rackShelf2DList, rackWares2DList);
-			for (int i = 0; i < groups.size(); i++) {
-				final GroupRackWares group = groups.get(i);
-				drawGroupRackWares(cb, group, i + 1, m, y0, baseFont);
-			}
+//			final List<GroupRackWares> groups = split(rackShelf2DList, rackWares2DList);
+//			for (int i = 0; i < groups.size(); i++) {
+//				final GroupRackWares group = groups.get(i);
+//				drawGroupRackWares(cb, group, i + 1, m, y0, baseFont);
+//			}
 
 			document.close();
 		} catch (Exception e) {
@@ -246,106 +246,6 @@ public class TestActionPrint extends HttpServlet {
 		cb.restoreState();
 	}
 
-	private List<GroupRackWares> split(final List<RackShelf2D> rackShelf2DList, final List<RackWares2D> rackWares2DList) {
-		final List<GroupRackWares> groups = new ArrayList();
-		// обединение одинаковых товаров в группы
-		float minWidth=Integer.MAX_VALUE;
-		float minHeight=Integer.MAX_VALUE;
 
-		for (final RackWares2D rackWares2D : rackWares2DList) {
-			minWidth=Math.min(minWidth, rackWares2D.getMaxX()-rackWares2D.getMinX());
-			minHeight=Math.min(minHeight, rackWares2D.getMaxY()-rackWares2D.getMinY());
-			GroupRackWares groupRackWares = findGroup(groups, rackWares2D.getRackWares().getCode_wares());
-			if (groupRackWares == null) {
-				groupRackWares = new GroupRackWares(rackWares2D);
-				groups.add(groupRackWares);
-			} else {
-				groupRackWares.add(rackWares2D);
-			}
-		}
-		// проверить цельность группы (нет пересечений с другими товарами или полками)
-		for (int i = 0; i < groups.size(); i++) {
-			final GroupRackWares group = groups.get(i);
-			if (!group.getWaresInGroup().isEmpty()) {
-				for (final RackShelf2D rackShelf2D : rackShelf2DList) {
-					if (!group.getWaresInGroup().isEmpty()) {
-						final Rectangle2D rackShelfRectangle2D = rackShelf2D.getDescribedRectangle2D();
-						final Rectangle2D intersection = Intersection2DUtils.intersection(group, rackShelfRectangle2D);
-						if (intersection != null) {
-							split(groups, group, intersection);
-						}
-					} else break;
-				}
-				if (!group.getWaresInGroup().isEmpty()) {
-					for (final RackWares2D rackWares2D : rackWares2DList) {
-						if (!group.getWaresInGroup().isEmpty()) {
-							if (group.code_wares != rackWares2D.getRackWares().getCode_wares()) {
-								final Rectangle2D rackWaresRectangle2D = rackWares2D.getDescribedRectangle2D();
-								final Rectangle2D intersection = Intersection2DUtils.intersection(group, rackWaresRectangle2D);
-								if (intersection != null) {
-									split(groups, group, intersection);
-								}
-							}
-						} else break;
-					}
-				}
-			}
-		}
-		// удаление пустых групп
-		final Iterator<GroupRackWares> iterator = groups.iterator();
-		while (iterator.hasNext()) {
-			final GroupRackWares group = iterator.next();
-			if (group.getWaresInGroup().isEmpty())
-				iterator.remove();
-		}
-		// проставить номера
-		Collections.sort(groups, new GroupRackWaresComparator(minWidth/2, minHeight/2));
-		return groups;
-	}
-
-	private void split(final List<GroupRackWares> groups, final GroupRackWares group, final Rectangle2D intersection) {
-		final GroupRackWares g[] = new GroupRackWares[9];
-		final List<RackWares2D> list = new ArrayList<RackWares2D>(group.getWaresInGroup());
-		group.getWaresInGroup().clear();
-
-		for (int i = 0; i < list.size(); i++) {
-			final RackWares2D rackWares2D = list.get(i);
-			final int column;
-			if (rackWares2D.getMaxX() < intersection.getMinX()) {
-				column = 0;
-			} else if (rackWares2D.getMinX() > intersection.getMaxX()) {
-				column = 2;
-			} else {
-				column = 1;
-			}
-			final int row;
-			if (rackWares2D.getMaxY() < intersection.getMinY()) {
-				row = 0;
-			} else if (rackWares2D.getMinY() > intersection.getMaxY()) {
-				row = 2;
-			} else {
-				row = 1;
-			}
-			final int index = row * 3 + column;
-			if (g[index] == null) {
-				g[index] = new GroupRackWares(rackWares2D);
-			} else {
-				g[index].add(rackWares2D);
-			}
-		}
-		for (int i = 0; i < 9; i++) {
-			if (g[i] != null) {
-				groups.add(g[i]);
-			}
-		}
-	}
-
-	private GroupRackWares findGroup(final List<GroupRackWares> groups, int code_wares) {
-		for (final GroupRackWares groupRackWares : groups) {
-			if (groupRackWares.getCode_wares() == code_wares)
-				return groupRackWares;
-		}
-		return null;
-	}
 
 }

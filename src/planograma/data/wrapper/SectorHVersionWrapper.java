@@ -21,7 +21,7 @@ public class SectorHVersionWrapper {
 
 	public SectorHVersionWrapper(final ResultSet resultSet) throws SQLException {
 		version = resultSet.getInt(SectorHConst.VERSION);
-		date_insert = resultSet.getDate(SectorHConst.DATE_INSERT);
+		date_insert = resultSet.getTimestamp(SectorHConst.DATE_INSERT);
 		user_insert = resultSet.getInt(SectorHConst.USER_INSERT);
 		user_fullname = resultSet.getString("user_fullname");
 	}
