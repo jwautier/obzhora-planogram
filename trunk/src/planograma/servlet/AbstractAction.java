@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.log4j.Logger;
 import planograma.constant.SessionConst;
 import planograma.data.UserContext;
 import planograma.exception.InvalidLoginOrPassword;
@@ -32,6 +33,9 @@ import java.sql.SQLException;
  */
 public abstract class AbstractAction extends HttpServlet {
 	public static final String REQUEST_DATA = "data";
+
+	public static final Logger LOG = Logger.getLogger(AbstractAction.class);
+
 	protected Gson gson;
 	private SecurityModel securityModel;
 
@@ -108,6 +112,7 @@ public abstract class AbstractAction extends HttpServlet {
 	}
 
 	public static void rollback(final HttpSession session) {
+		long time = System.currentTimeMillis();
 		final UserContext userContext = (UserContext) session.getAttribute(SessionConst.SESSION_USER);
 		if (userContext != null) {
 			final Connection connection = userContext.getConnection();
@@ -119,13 +124,18 @@ public abstract class AbstractAction extends HttpServlet {
 				}
 			}
 		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 	}
 
 	public static void commit(final UserContext userContext) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		if (connection != null) {
 			connection.commit();
 		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 	}
 
 	protected abstract JsonObject execute(final HttpSession session, final JsonElement requestData) throws Exception;

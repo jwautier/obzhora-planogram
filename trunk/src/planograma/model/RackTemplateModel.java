@@ -1,5 +1,6 @@
 package planograma.model;
 
+import org.apache.log4j.Logger;
 import planograma.constant.data.RackTemplateConst;
 import planograma.data.RackTemplate;
 import planograma.data.UserContext;
@@ -16,6 +17,8 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class RackTemplateModel {
+
+	public static final Logger LOG = Logger.getLogger(RackTemplateModel.class);
 
 	public static final String Q_LIST = "select" +
 			" " + RackTemplateConst.CODE_RACK_TEMPLATE + "," +
@@ -35,7 +38,7 @@ public class RackTemplateModel {
 			"order by " + RackTemplateConst.NAME_RACK_TEMPLATE;
 
 	public List<RackTemplate> list(final UserContext userContext) throws SQLException {
-		//		long time=System.currentTimeMillis();
+				long time=System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
 		final ResultSet resultSet = ps.executeQuery();
@@ -44,7 +47,8 @@ public class RackTemplateModel {
 			final RackTemplate item = new RackTemplate(resultSet);
 			list.add(item);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return list;
 	}
 
@@ -66,7 +70,7 @@ public class RackTemplateModel {
 			"where " + RackTemplateConst.CODE_RACK_TEMPLATE + " = ?";
 
 	public RackTemplate select(final UserContext userContext, final int code_rack_template) throws SQLException {
-		//		long time=System.currentTimeMillis();
+				long time=System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_SELECT);
 		ps.setInt(1, code_rack_template);
@@ -75,7 +79,8 @@ public class RackTemplateModel {
 		if (resultSet.next()) {
 			rackTemplate = new RackTemplate(resultSet);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_rack_template:"+code_rack_template+")");
 		return rackTemplate;
 	}
 
@@ -89,6 +94,7 @@ public class RackTemplateModel {
 			":" + RackTemplateConst.LOAD_SIDE + ")}";
 
 	public int insert(final UserContext userContext, final RackTemplate rackTemplate) throws SQLException {
+		long time=System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_rack_template", Types.INTEGER);
@@ -102,10 +108,13 @@ public class RackTemplateModel {
 		callableStatement.execute();
 		final int id = callableStatement.getInt("new_code_rack_template");
 		rackTemplate.setCode_rack_template(id);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return rackTemplate.getCode_rack_template();
 	}
 
 	public void update(final UserContext userContext, final RackTemplate rackTemplate) throws SQLException {
+		long time=System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_rack_template", Types.INTEGER);
@@ -117,6 +126,8 @@ public class RackTemplateModel {
 		callableStatement.setInt(RackTemplateConst.HEIGHT, rackTemplate.getHeight());
 		callableStatement.setString(RackTemplateConst.LOAD_SIDE, rackTemplate.getLoad_sideAtStr());
 		callableStatement.execute();
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 	}
 
 	public static final String Q_CHANGESTATE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.CHANGESTATERACK(" +
@@ -124,20 +135,26 @@ public class RackTemplateModel {
 			":" + RackTemplateConst.STATE_RACK_TEMPLATE + ")}";
 
 	public void changestate(final UserContext userContext, final int code_rack_template, final String state_rack_template) throws SQLException {
+		long time=System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_CHANGESTATE);
 		callableStatement.setInt(RackTemplateConst.CODE_RACK_TEMPLATE, code_rack_template);
 		callableStatement.setString(RackTemplateConst.STATE_RACK_TEMPLATE, state_rack_template);
 		callableStatement.execute();
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 	}
 
 	private static final String Q_DELETE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.DRACKTEMPLATE(:" + RackTemplateConst.CODE_RACK_TEMPLATE + ")}";
 
 	public void delete(final UserContext userContext, final int code_rack_template) throws SQLException {
+		long time=System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_DELETE);
 		callableStatement.setInt(RackTemplateConst.CODE_RACK_TEMPLATE, code_rack_template);
 		callableStatement.execute();
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_rack_template:"+code_rack_template+")");
 	}
 
 	private static RackTemplateModel instance = new RackTemplateModel();

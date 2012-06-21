@@ -2,6 +2,7 @@ package planograma.servlet.wares;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
+import org.apache.log4j.Logger;
 import planograma.constant.SessionConst;
 import planograma.constant.UrlConst;
 import planograma.data.*;
@@ -34,6 +35,8 @@ import java.util.List;
 public class RackWaresPlacemntPrint extends HttpServlet {
 	public static final String URL = UrlConst.URL_RACK_WARES_PLACEMENT_PRINT;
 
+	public static final Logger LOG = Logger.getLogger(RackWaresPlacemntPrint.class);
+
 	private static final float marginLeft = 28;
 	private static final float marginRight = 28;
 	private static final float marginTop = 28;
@@ -57,6 +60,7 @@ public class RackWaresPlacemntPrint extends HttpServlet {
 	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse resp) throws IOException {
+		long time = System.currentTimeMillis();
 		try {
 			int code_rack = Integer.parseInt(request.getPathInfo().substring(1));
 			final HttpSession session = request.getSession(false);
@@ -189,6 +193,8 @@ public class RackWaresPlacemntPrint extends HttpServlet {
 			e.printStackTrace();
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 	}
 
 	private void drawRack(final PdfContentByte cb, final Rack rack, final float m, final float y0) {

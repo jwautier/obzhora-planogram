@@ -2,6 +2,7 @@ package planograma.servlet.sector;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.log4j.Logger;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.SectorConst;
@@ -33,6 +34,8 @@ public class SectorRemove extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_SECTOR_REMOVE;
 
+	public static final Logger LOG = Logger.getLogger(SectorRemove.class);
+
 	private SectorModel sectorModel;
 	private RackModel rackModel;
 	private RackShelfModel rackShelfModel;
@@ -47,6 +50,7 @@ public class SectorRemove extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException, NotAccessException {
+		long time = System.currentTimeMillis();
 		final UserContext userContext = getUserContext(session);
 		checkAccess(userContext, SecurityConst.ACCESS_SECTOR_EDIT);
 		final int code_sector = Integer.valueOf(requestData.getAsJsonObject().get(SectorConst.CODE_SECTOR).getAsString());
@@ -58,6 +62,8 @@ public class SectorRemove extends AbstractAction {
 		}
 		sectorModel.delete(userContext, code_sector);
 		commit(userContext);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return null;
 	}
 }

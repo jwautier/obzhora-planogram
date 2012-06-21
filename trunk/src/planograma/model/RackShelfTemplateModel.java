@@ -1,5 +1,6 @@
 package planograma.model;
 
+import org.apache.log4j.Logger;
 import planograma.constant.data.RackShelfTemplateConst;
 import planograma.data.RackShelfTemplate;
 import planograma.data.UserContext;
@@ -16,6 +17,9 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class RackShelfTemplateModel {
+
+	public static final Logger LOG = Logger.getLogger(RackShelfTemplateModel.class);
+
 	public static final String Q_LIST = "select " +
 			" " + RackShelfTemplateConst.CODE_RACK_TEMPLATE + "," +
 			" " + RackShelfTemplateConst.CODE_SHELF_TEMPLATE + "," +
@@ -34,7 +38,7 @@ public class RackShelfTemplateModel {
 			"where " + RackShelfTemplateConst.CODE_RACK_TEMPLATE + "=? ";
 
 	public List<RackShelfTemplate> list(final UserContext userContext, final int code_rack_template) throws SQLException {
-		//		long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
 		ps.setInt(1, code_rack_template);
@@ -44,7 +48,8 @@ public class RackShelfTemplateModel {
 			final RackShelfTemplate item = new RackShelfTemplate(resultSet);
 			list.add(item);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_rack_template:"+code_rack_template+")");
 		return list;
 	}
 
@@ -66,7 +71,7 @@ public class RackShelfTemplateModel {
 			"where " + RackShelfTemplateConst.CODE_SHELF_TEMPLATE + " = ?";
 
 	public RackShelfTemplate select(final UserContext userContext, final int code_shelf_template) throws SQLException {
-		//		long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_SELECT);
 		ps.setInt(1, code_shelf_template);
@@ -75,7 +80,8 @@ public class RackShelfTemplateModel {
 		if (resultSet.next()) {
 			rackShelfTemplate = new RackShelfTemplate(resultSet);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_shelf_template:"+code_shelf_template+")");
 		return rackShelfTemplate;
 	}
 
@@ -92,6 +98,7 @@ public class RackShelfTemplateModel {
 			":" + RackShelfTemplateConst.TYPE_SHELF + ")}";
 
 	public int insert(final UserContext userContext, final RackShelfTemplate rackShelfTemplate) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_shelf_template", Types.INTEGER);
@@ -108,10 +115,13 @@ public class RackShelfTemplateModel {
 		callableStatement.execute();
 		final int id = callableStatement.getInt("new_code_shelf_template");
 		rackShelfTemplate.setCode_shelf_template(id);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return rackShelfTemplate.getCode_shelf_template();
 	}
 
 	public void update(final UserContext userContext, final RackShelfTemplate rackShelfTemplate) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_shelf_template", Types.INTEGER);
@@ -126,15 +136,20 @@ public class RackShelfTemplateModel {
 		callableStatement.setInt(RackShelfTemplateConst.Y_COORD, rackShelfTemplate.getY_coord());
 		callableStatement.setString(RackShelfTemplateConst.TYPE_SHELF, rackShelfTemplate.getType_shelfAtStr());
 		callableStatement.execute();
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 	}
 
 	private static final String Q_DELETE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.DShelfTemplate(:" + RackShelfTemplateConst.CODE_SHELF_TEMPLATE + ")}";
 
 	public void delete(final UserContext userContext, final int code_shelf_template) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_DELETE);
 		callableStatement.setInt(RackShelfTemplateConst.CODE_SHELF_TEMPLATE, code_shelf_template);
 		callableStatement.execute();
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_shelf_template:"+code_shelf_template+")");
 	}
 
 	private static RackShelfTemplateModel instance = new RackShelfTemplateModel();

@@ -1,5 +1,6 @@
 package planograma.model;
 
+import org.apache.log4j.Logger;
 import planograma.constant.data.ShopConst;
 import planograma.data.Shop;
 import planograma.data.UserContext;
@@ -20,6 +21,8 @@ import java.util.List;
  */
 public class ShopModel {
 
+	public static final Logger LOG = Logger.getLogger(ShopModel.class);
+
 	private static final String Q_LIST = "select" +
 			" " + ShopConst.CODE_SHOP + "," +
 			" " + ShopConst.NAME_SHOP + " " +
@@ -27,7 +30,7 @@ public class ShopModel {
 			"order by " + ShopConst.NAME_SHOP;
 
 	public List<Shop> list(final UserContext userContext) throws SQLException {
-//		long time=System.currentTimeMillis();
+		long time=System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
 		final ResultSet resultSet = ps.executeQuery();
@@ -36,7 +39,8 @@ public class ShopModel {
 			final Shop item = new Shop(resultSet);
 			list.add(item);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return list;
 	}
 
@@ -47,7 +51,7 @@ public class ShopModel {
 			"where " + ShopConst.CODE_SHOP + "=?";
 
 	public Shop select(final UserContext userContext, final int code_shop) throws SQLException {
-//		long time=System.currentTimeMillis();
+		long time=System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_SELECT);
 		ps.setInt(1, code_shop);
@@ -56,7 +60,8 @@ public class ShopModel {
 		if (resultSet.next()) {
 			shop = new Shop(resultSet);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_shop:"+code_shop+")");
 		return shop;
 	}
 

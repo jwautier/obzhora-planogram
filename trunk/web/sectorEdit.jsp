@@ -306,9 +306,10 @@ function loadComplete()
 	}
 	else
 	{
-		window.sector=<%=new Sector(null, null, null, "Наименование", 1200, 600, 300, null, null,null, null,null,null).toJsonObject()%>;
+		window.sector=<%=new Sector(null, null, null, "Наименование", 12000, 6000, 3000, null, null,null, null,null,null).toJsonObject()%>;
 		window.sector.code_shop=code_shop;
-		window.showcaseList = [<%=new Rack(null, null, "Наименование", "",100, 100, 100, null, 100, 100, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null).toJsonObject()%>];
+	<%--window.showcaseList = [<%=new Rack(null, null, "Наименование", "",100, 100, 100, null, 100, 100, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null).toJsonObject()%>];--%>
+		window.showcaseList = [];
 		loadComplete2();
 	}
 }
@@ -640,10 +641,34 @@ function roundRack(rack)
 					window.showcase.copy_from_code_rack = window.showcase.code_rack;
 				}
 			window.showcase.code_rack = '';
-			window.showcase.name_rack = window.showcase.name_rack + ' copy';
-			//TODO
-			window.showcase.x_coord = window.showcase.x_coord + 10 * km;
-			window.showcase.y_coord = window.showcase.y_coord + 10 * km;
+			window.showcase.name_rack = window.showcase.name_rack;
+			// копия в право
+			window.showcase.x_coord = window.copyObject.x_coord + window.copyObject.length;
+			calcCoordinatesRack(window.showcase);
+			if (rackBeyondSector(window.showcase)) {
+				// в право нельзя копия в низ
+				window.showcase.x_coord = window.copyObject.x_coord;
+				window.showcase.y_coord = window.copyObject.y_coord + window.copyObject.width;
+				calcCoordinatesRack(window.showcase);
+				if (rackBeyondSector(window.showcase)) {
+					// в низ нельзя копия в лево
+					window.showcase.x_coord = window.copyObject.x_coord - window.copyObject.length;
+					window.showcase.y_coord = window.copyObject.y_coord;
+					calcCoordinatesRack(window.showcase);
+					if (rackBeyondSector(window.showcase)) {
+						// в лево нельзя копия в верх
+						window.showcase.x_coord = window.copyObject.x_coord;
+						window.showcase.y_coord = window.copyObject.y_coord - window.copyObject.width;
+						calcCoordinatesRack(window.showcase);
+						if (rackBeyondSector(window.showcase)) {
+							// в верх нельзя копия на месте
+							window.showcase.x_coord = window.copyObject.x_coord;
+							window.showcase.y_coord = window.copyObject.y_coord;
+							calcCoordinatesRack(window.showcase);
+						}
+					}
+				}
+			}
 			window.showcase.lock_move = 'N';
 			window.showcaseList.push(window.showcase);
 			window.copyObject=window.showcase;
@@ -774,10 +799,7 @@ function roundRack(rack)
 						window.showcase.x_coord = window.showcase.x_coord + dx;
 						window.showcase.y_coord = window.showcase.y_coord + dy;
 						calcCoordinatesRack(window.showcase);
-						if ((showcase.x_coord < oldx && (showcase.x1 < 0 || showcase.x2 < 0 || showcase.x3 < 0 || showcase.x4 < 0)) ||
-								(showcase.x_coord > oldx && (showcase.x1 > sector.length || showcase.x2 > sector.length || showcase.x3 > sector.length || showcase.x4 > sector.length)) ||
-								(showcase.y_coord < oldy && (showcase.y1 < 0 || showcase.y2 < 0 || showcase.y3 < 0 || showcase.y4 < 0)) ||
-								(showcase.y_coord > oldy && (showcase.y1 > sector.width || showcase.y2 > sector.width || showcase.y3 > sector.width || showcase.y4 > sector.width))) {
+						if (rackBeyondSector(window.showcase)) {
 							showcase.x_coord = oldx;
 							showcase.y_coord = oldy;
 							calcCoordinatesRack(showcase);
@@ -1225,6 +1247,26 @@ function roundRack(rack)
 			drawPreviewCanvas();
 //			}
 		}
+	}
+
+	function rackBeyondSector(rack)
+	{
+		return rack.x1 < 0
+				|| rack.x2 < 0
+				|| rack.x3 < 0
+				|| rack.x4 < 0
+				|| rack.y1 < 0
+				|| rack.y2 < 0
+				|| rack.y3 < 0
+				|| rack.y4 < 0
+				|| rack.x1 > window.sector.length
+				|| rack.x2 > window.sector.length
+				|| rack.x3 > window.sector.length
+				|| rack.x4 > window.sector.length
+				|| rack.y1 > window.sector.width
+				|| rack.y2 > window.sector.width
+				|| rack.y3 > window.sector.width
+				|| rack.y4 > window.sector.width;
 	}
 </script>
 </body>

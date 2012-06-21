@@ -1,5 +1,6 @@
 package planograma.model;
 
+import org.apache.log4j.Logger;
 import planograma.constant.data.RackShelfConst;
 import planograma.data.RackShelf;
 import planograma.data.UserContext;
@@ -16,6 +17,9 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class RackShelfModel {
+
+	public static final Logger LOG = Logger.getLogger(RackShelfModel.class);
+
 	public static final String Q_LIST = "select " +
 			" " + RackShelfConst.CODE_RACK + "," +
 			" " + RackShelfConst.CODE_SHELF + "," +
@@ -34,7 +38,7 @@ public class RackShelfModel {
 			"where " + RackShelfConst.CODE_RACK + "=? ";
 
 	public List<RackShelf> list(final UserContext userContext, final int code_rack) throws SQLException {
-		//		long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
 		ps.setInt(1, code_rack);
@@ -44,7 +48,8 @@ public class RackShelfModel {
 			final RackShelf item = new RackShelf(resultSet);
 			list.add(item);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_rack:"+code_rack+")");
 		return list;
 	}
 
@@ -66,7 +71,7 @@ public class RackShelfModel {
 			"where " + RackShelfConst.CODE_SHELF + " = ?";
 
 	public RackShelf select(final UserContext userContext, final int code_shelf) throws SQLException {
-		//		long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_SELECT);
 		ps.setInt(1, code_shelf);
@@ -75,7 +80,8 @@ public class RackShelfModel {
 		if (resultSet.next()) {
 			rackShelf = new RackShelf(resultSet);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_shelf:"+code_shelf+")");
 		return rackShelf;
 	}
 
@@ -92,6 +98,7 @@ public class RackShelfModel {
 			":" + RackShelfConst.TYPE_SHELF + ")}";
 
 	public int insert(final UserContext userContext, final RackShelf rackShelf) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_shelf", Types.INTEGER);
@@ -108,10 +115,13 @@ public class RackShelfModel {
 		callableStatement.execute();
 		final int id = callableStatement.getInt("new_code_shelf");
 		rackShelf.setCode_shelf(id);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return rackShelf.getCode_shelf();
 	}
 
 	public void update(final UserContext userContext, final RackShelf rackShelf) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_shelf", Types.INTEGER);
@@ -126,15 +136,20 @@ public class RackShelfModel {
 		callableStatement.setInt(RackShelfConst.Y_COORD, rackShelf.getY_coord());
 		callableStatement.setString(RackShelfConst.TYPE_SHELF, rackShelf.getType_shelfAtStr());
 		callableStatement.execute();
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 	}
 
 	private static final String Q_DELETE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.DShelf(:" + RackShelfConst.CODE_SHELF + ")}";
 
-	public void delete(final UserContext userContext, final int code_shelf_template) throws SQLException {
+	public void delete(final UserContext userContext, final int code_shelf) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_DELETE);
-		callableStatement.setInt(RackShelfConst.CODE_SHELF, code_shelf_template);
+		callableStatement.setInt(RackShelfConst.CODE_SHELF, code_shelf);
 		callableStatement.execute();
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_shelf:"+code_shelf+")");
 	}
 
 	private static RackShelfModel instance = new RackShelfModel();

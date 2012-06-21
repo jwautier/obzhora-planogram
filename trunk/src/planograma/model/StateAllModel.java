@@ -1,5 +1,6 @@
 package planograma.model;
 
+import org.apache.log4j.Logger;
 import planograma.constant.data.*;
 import planograma.data.*;
 
@@ -18,11 +19,15 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class StateAllModel {
+
+	public static final Logger LOG = Logger.getLogger(StateAllModel.class);
+
 	public static final String Q_LIST = "select * " +
 			"from " + StateAllConst.TABLE_NAME + " " +
 			"where " + StateAllConst.PART_STATE + " = ?";
 
 	public List<StateAll> list(final UserContext userContext, int part_state) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
 		ps.setInt(1, part_state);
@@ -32,6 +37,8 @@ public class StateAllModel {
 			final StateAll item = new StateAll(resultSet);
 			list.add(item);
 		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return list;
 	}
 
@@ -41,6 +48,7 @@ public class StateAllModel {
 			"order by " + StateAllConst.PART_STATE;
 
 	public void initEnum(final UserContext userContext) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_INIT);
 		ps.setInt(1, RackConst.STATE_ALL_PART_STATE_STATE_RACK);		// -63 STATE_RACK
@@ -80,6 +88,8 @@ public class StateAllModel {
 					break;
 			}
 		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 	}
 
 	private static StateAllModel instance = new StateAllModel();

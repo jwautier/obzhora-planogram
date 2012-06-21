@@ -1,5 +1,6 @@
 package planograma.model;
 
+import org.apache.log4j.Logger;
 import planograma.data.UserContext;
 
 import java.sql.Connection;
@@ -16,9 +17,12 @@ import java.sql.SQLException;
  */
 public class SecurityModel {
 
+	public static final Logger LOG = Logger.getLogger(SecurityModel.class);
+
 	public static final String Q_CAN_ACCESS = "select ADM.CAN_I_GET_THIS_OBJECT(?) intRES from dual";
 
 	public boolean canAccess(final UserContext userContext, final int code_object) {
+		long time = System.currentTimeMillis();
 		boolean result = false;
 		try {
 			final Connection connection = userContext.getConnection();
@@ -32,6 +36,8 @@ public class SecurityModel {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_object:"+code_object+")");
 		return result;
 	}
 	private static SecurityModel instance = new SecurityModel();

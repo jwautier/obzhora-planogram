@@ -2,6 +2,7 @@ package planograma.servlet.racktemplate;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.log4j.Logger;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.RackTemplateConst;
@@ -31,6 +32,8 @@ public class RackTemplateRemove extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_RACK_TEMPLATE_REMOVE;
 
+	public static final Logger LOG = Logger.getLogger(RackTemplateRemove.class);
+
 	private RackTemplateModel rackTemplateModel;
 	private RackShelfTemplateModel rackShelfTemplateModel;
 
@@ -43,6 +46,7 @@ public class RackTemplateRemove extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException, NotAccessException {
+		long time = System.currentTimeMillis();
 		final UserContext userContext = getUserContext(session);
 		checkAccess(userContext, SecurityConst.ACCESS_RACK_TEMPLATE_EDIT);
 		final int code_rack_template = Integer.valueOf(requestData.getAsJsonObject().get(RackTemplateConst.CODE_RACK_TEMPLATE).getAsString());
@@ -51,6 +55,8 @@ public class RackTemplateRemove extends AbstractAction {
 		}
 		rackTemplateModel.delete(userContext, code_rack_template);
 		commit(userContext);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return null;
 	}
 }

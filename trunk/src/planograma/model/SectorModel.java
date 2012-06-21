@@ -1,5 +1,6 @@
 package planograma.model;
 
+import org.apache.log4j.Logger;
 import planograma.constant.data.SectorConst;
 import planograma.data.Sector;
 import planograma.data.UserContext;
@@ -17,6 +18,8 @@ import java.util.List;
  */
 
 public class SectorModel {
+
+	public static final Logger LOG = Logger.getLogger(SectorModel.class);
 
 	public static final String Q_LIST = "select" +
 			" " + SectorConst.CODE_SHOP + "," +
@@ -37,7 +40,7 @@ public class SectorModel {
 			"order by " + SectorConst.NAME_SECTOR;
 
 	public List<Sector> list(final UserContext userContext, final int code_shop) throws SQLException {
-//		long time = System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
 		ps.setInt(1, code_shop);
@@ -47,7 +50,8 @@ public class SectorModel {
 			final Sector item = new Sector(resultSet);
 			list.add(item);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_shop:"+code_shop+")");
 		return list;
 	}
 
@@ -69,7 +73,7 @@ public class SectorModel {
 			"where " + SectorConst.CODE_SECTOR + " = ?";
 
 	public Sector select(final UserContext userContext, final int code_sector) throws SQLException {
-		//		long time=System.currentTimeMillis();
+				long time=System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_SELECT);
 		ps.setInt(1, code_sector);
@@ -78,7 +82,8 @@ public class SectorModel {
 		if (resultSet.next()) {
 			sector = new Sector(resultSet);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_sector:"+code_sector+")");
 		return sector;
 	}
 
@@ -92,6 +97,7 @@ public class SectorModel {
 			":" + SectorConst.HEIGHT + ")}";
 
 	public int insert(final UserContext userContext, final Sector sector) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_sector", Types.INTEGER);
@@ -105,10 +111,13 @@ public class SectorModel {
 		callableStatement.execute();
 		final int id = callableStatement.getInt("new_code_sector");
 		sector.setCode_sector(id);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return sector.getCode_sector();
 	}
 
 	public void update(final UserContext userContext, final Sector sector) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_sector", Types.INTEGER);
@@ -120,6 +129,8 @@ public class SectorModel {
 		callableStatement.setInt(SectorConst.WIDTH, sector.getWidth());
 		callableStatement.setInt(SectorConst.HEIGHT, sector.getHeight());
 		callableStatement.execute();
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 	}
 
 	public static final String Q_CHANGESTATE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.CHANGESTATESECTOR(" +
@@ -127,20 +138,26 @@ public class SectorModel {
 			":" + SectorConst.STATE_SECTOR + ")}";
 
 	public void changestate(final UserContext userContext, final int code_sector, final String state_sector) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_CHANGESTATE);
 		callableStatement.setInt(SectorConst.CODE_SECTOR, code_sector);
 		callableStatement.setString(SectorConst.STATE_SECTOR, state_sector);
 		callableStatement.execute();
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 	}
 
 	private static final String Q_DELETE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.DSector(:" + SectorConst.CODE_SECTOR + ")}";
 
 	public void delete(final UserContext userContext, final int code_sector) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_DELETE);
 		callableStatement.setInt(SectorConst.CODE_SECTOR, code_sector);
 		callableStatement.execute();
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_sector:"+code_sector+")");
 	}
 
 	private static SectorModel instance = new SectorModel();
