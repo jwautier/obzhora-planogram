@@ -1,5 +1,6 @@
 package planograma.model;
 
+import org.apache.log4j.Logger;
 import planograma.constant.data.WaresGroupConst;
 import planograma.data.UserContext;
 import planograma.data.WaresGroup;
@@ -22,6 +23,8 @@ import java.util.List;
  */
 public class WaresGroupModel {
 
+	public static final Logger LOG = Logger.getLogger(WaresGroupModel.class);
+
 	public static final String Q_TREE = "SELECT" +
 			" " + WaresGroupConst.CODE_GROUP_WARES + "," +
 			" " + WaresGroupConst.CODE_PARENT_GROUP_WARES + "," +
@@ -30,7 +33,7 @@ public class WaresGroupModel {
 			"order by " + WaresGroupConst.CODE_GROUP_WARES;
 
 	public List<WaresGroup> tree(final UserContext userContext) throws SQLException {
-//		long time = System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_TREE);
 		final ResultSet resultSet = ps.executeQuery();
@@ -71,7 +74,8 @@ public class WaresGroupModel {
 				throw new SQLException("Ошибка целостности данных");
 			}
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return rootList;
 	}
 

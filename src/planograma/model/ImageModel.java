@@ -1,5 +1,6 @@
 package planograma.model;
 
+import org.apache.log4j.Logger;
 import planograma.constant.data.ImageConst;
 import planograma.data.UserContext;
 import planograma.utils.FileUtils;
@@ -18,6 +19,9 @@ import java.sql.SQLException;
  * To change this template use File | Settings | File Templates.
  */
 public class ImageModel {
+
+	public static final Logger LOG = Logger.getLogger(ImageModel.class);
+
 	private final File tempDir;
 	public static final String Q_SELECT = "select" +
 			" " + ImageConst.IMAGE_THUMBNAIL + " " +
@@ -25,7 +29,7 @@ public class ImageModel {
 			"where " + ImageConst.CODE_IMAGE + " = ?";
 
 	public InputStream select(final UserContext userContext, final int code_image) throws SQLException, IOException {
-		//		long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		InputStream in = null;
 		File file = new File(tempDir, String.valueOf(code_image));
 		if (!file.isFile()) {
@@ -39,15 +43,19 @@ public class ImageModel {
 			}
 		}
 		in = new FileInputStream(file);
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return in;
 	}
 
 	public void clearCache() {
+		long time = System.currentTimeMillis();
 		if (tempDir != null) {
 			for (final File f : tempDir.listFiles())
 				FileUtils.delete(f);
 		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 	}
 
 	private static ImageModel instance = new ImageModel();

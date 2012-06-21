@@ -1,5 +1,6 @@
 package planograma.model;
 
+import org.apache.log4j.Logger;
 import planograma.constant.data.RackConst;
 import planograma.data.Rack;
 import planograma.data.UserContext;
@@ -16,6 +17,8 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class RackModel {
+
+	public static final Logger LOG = Logger.getLogger(RackModel.class);
 
 	public static final String Q_LIST = "select" +
 			" " + RackConst.CODE_RACK + "," +
@@ -45,7 +48,7 @@ public class RackModel {
 			"order by " + RackConst.NAME_RACK;
 
 	public List<Rack> list(final UserContext userContext, final Integer code_sector) throws SQLException {
-		//		long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
 		ps.setLong(1, code_sector);
@@ -55,7 +58,8 @@ public class RackModel {
 			final Rack item = new Rack(resultSet);
 			list.add(item);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_sector:"+code_sector+")");
 		return list;
 	}
 
@@ -86,7 +90,7 @@ public class RackModel {
 			"where " + RackConst.CODE_RACK + " = ?";
 
 	public Rack select(final UserContext userContext, final int code_rack) throws SQLException {
-		//		long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_SELECT);
 		ps.setInt(1, code_rack);
@@ -95,7 +99,8 @@ public class RackModel {
 		if (resultSet.next()) {
 			rack = new Rack(resultSet);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_rack:"+code_rack+")");
 		return rack;
 	}
 
@@ -112,13 +117,14 @@ public class RackModel {
 			":" + RackConst.HEIGHT + ", " +
 			":" + RackConst.LOAD_SIDE + ", " +
 			":" + RackConst.ANGLE + "," +
-			":" + RackConst.CODE_RACK_TEMPLATE +"," +
-			":" + RackConst.LOCK_SIZE +"," +
-			":" + RackConst.LOCK_MOVE +"," +
+			":" + RackConst.CODE_RACK_TEMPLATE + "," +
+			":" + RackConst.LOCK_SIZE + "," +
+			":" + RackConst.LOCK_MOVE + "," +
 			":" + RackConst.TYPE_RACK +
 			")}";
 
 	public int insert(final UserContext userContext, final Rack rack) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_rack", Types.INTEGER);
@@ -135,16 +141,19 @@ public class RackModel {
 		callableStatement.setString(RackConst.LOAD_SIDE, rack.getLoad_sideAtStr());
 		callableStatement.setInt(RackConst.ANGLE, rack.getAngle());
 		callableStatement.setObject(RackConst.CODE_RACK_TEMPLATE, rack.getCode_rack_template());
-		callableStatement.setString(RackConst.LOCK_SIZE, (rack.isLock_size())?"Y":"N");
-		callableStatement.setString(RackConst.LOCK_MOVE, (rack.isLock_move())?"Y":"N");
+		callableStatement.setString(RackConst.LOCK_SIZE, (rack.isLock_size()) ? "Y" : "N");
+		callableStatement.setString(RackConst.LOCK_MOVE, (rack.isLock_move()) ? "Y" : "N");
 		callableStatement.setString(RackConst.TYPE_RACK, rack.getType_raceAtStr());
 		callableStatement.execute();
 		final int id = callableStatement.getInt("new_code_rack");
 		rack.setCode_rack(id);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return rack.getCode_rack();
 	}
 
 	public void update(final UserContext userContext, final Rack rack) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_rack", Types.INTEGER);
@@ -161,10 +170,12 @@ public class RackModel {
 		callableStatement.setString(RackConst.LOAD_SIDE, rack.getLoad_sideAtStr());
 		callableStatement.setInt(RackConst.ANGLE, rack.getAngle());
 		callableStatement.setObject(RackConst.CODE_RACK_TEMPLATE, rack.getCode_rack_template());
-		callableStatement.setString(RackConst.LOCK_SIZE, (rack.isLock_size())?"Y":"N");
-		callableStatement.setString(RackConst.LOCK_MOVE, (rack.isLock_move())?"Y":"N");
+		callableStatement.setString(RackConst.LOCK_SIZE, (rack.isLock_size()) ? "Y" : "N");
+		callableStatement.setString(RackConst.LOCK_MOVE, (rack.isLock_move()) ? "Y" : "N");
 		callableStatement.setString(RackConst.TYPE_RACK, rack.getType_raceAtStr());
 		callableStatement.execute();
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 	}
 
 	public static final String Q_CHANGESTATE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.CHANGESTATERACK(" +
@@ -172,20 +183,26 @@ public class RackModel {
 			":" + RackConst.STATE_RACK + ")}";
 
 	public void changestate(final UserContext userContext, final int code_rack, final String state_rack) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_CHANGESTATE);
 		callableStatement.setInt(RackConst.CODE_RACK, code_rack);
 		callableStatement.setString(RackConst.STATE_RACK, state_rack);
 		callableStatement.execute();
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 	}
 
 	private static final String Q_DELETE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.DRack(:" + RackConst.CODE_RACK + ")}";
 
 	public void delete(final UserContext userContext, final int code_rack) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_DELETE);
 		callableStatement.setInt(RackConst.CODE_RACK, code_rack);
 		callableStatement.execute();
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_rack:"+code_rack+")");
 	}
 
 	private static RackModel instance = new RackModel();

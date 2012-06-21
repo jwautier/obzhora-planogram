@@ -478,19 +478,32 @@
 		if (window.copyObject != null) {
 			window.shelf = clone(window.copyObject);
 			window.shelf.code_rack = '';
+			// копия в право
 			window.shelf.x_coord = window.copyObject.x_coord + window.copyObject.shelf_width;
-			window.shelf.y_coord;
-
 			rackShelfCalcCoordinates(window.shelf);
 			if (shelfBeyondRack(window.shelf))
 			{
+				// в право нельзя копия в низ
 				window.shelf.x_coord = window.copyObject.x_coord;
-				window.shelf.y_coord = window.copyObject.y_coord + window.copyObject.shelf_height;
+				window.shelf.y_coord = window.copyObject.y_coord - window.copyObject.shelf_height;
 				rackShelfCalcCoordinates(window.shelf);
 				if (shelfBeyondRack(window.shelf)){
-					window.shelf.x_coord = window.copyObject.x_coord;
+					// в низ нельзя копия в лево
+					window.shelf.x_coord = window.copyObject.x_coord - window.copyObject.shelf_width;
 					window.shelf.y_coord = window.copyObject.y_coord;
 					rackShelfCalcCoordinates(window.shelf);
+					if (shelfBeyondRack(window.shelf)){
+						// в лево нельзя копия в верх
+						window.shelf.x_coord = window.copyObject.x_coord;
+						window.shelf.y_coord = window.copyObject.y_coord + window.copyObject.shelf_height;
+						rackShelfCalcCoordinates(window.shelf);
+						if (shelfBeyondRack(window.shelf)){
+							// в верх нельзя копия на месте
+							window.shelf.x_coord = window.copyObject.x_coord;
+							window.shelf.y_coord = window.copyObject.y_coord;
+							rackShelfCalcCoordinates(window.shelf);
+						}
+					}
 				}
 			}
 

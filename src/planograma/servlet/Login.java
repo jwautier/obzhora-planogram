@@ -2,6 +2,7 @@ package planograma.servlet;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.log4j.Logger;
 import planograma.constant.SecurityConst;
 import planograma.constant.SessionConst;
 import planograma.constant.UrlConst;
@@ -27,6 +28,8 @@ public class Login extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_LOGIN;
 
+	public static final Logger LOG = Logger.getLogger(Login.class);
+
 	private StateAllModel stateAllModel;
 
 	@Override
@@ -37,6 +40,7 @@ public class Login extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(final HttpSession session, final JsonElement requestData) throws Exception {
+		long time = System.currentTimeMillis();
 		final String login = requestData.getAsJsonObject().get("login").getAsString();
 		final String password = requestData.getAsJsonObject().get("password").getAsString();
 		if (login == null || password == null || login.isEmpty() || password.isEmpty())
@@ -46,6 +50,8 @@ public class Login extends AbstractAction {
 		checkAccess(userContext, SecurityConst.ACCESS_MODULE);
 		session.setAttribute(SessionConst.SESSION_USER, userContext);
 		stateAllModel.initEnum(userContext);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return null;
 	}
 }

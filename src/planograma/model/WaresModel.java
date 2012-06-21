@@ -1,5 +1,6 @@
 package planograma.model;
 
+import org.apache.log4j.Logger;
 import planograma.constant.data.AdditionUnitConst;
 import planograma.constant.data.UnitDimensionConst;
 import planograma.constant.data.WaresConst;
@@ -22,6 +23,8 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class WaresModel {
+
+	public static final Logger LOG = Logger.getLogger(WaresModel.class);
 
 	private static final String Q_SELECT_FROM_WHERE =
 			"select" +
@@ -52,7 +55,7 @@ public class WaresModel {
 			Q_ORDER_BY;
 
 	public List<WaresWrapper> list(final UserContext userContext, final Integer code_group) throws SQLException {
-//		long time = System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
 		ps.setInt(1, code_group);
@@ -62,13 +65,14 @@ public class WaresModel {
 			final WaresWrapper item = new WaresWrapper(resultSet);
 			list.add(item);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_group:"+code_group+")");
 		return list;
 	}
 
 	public List<WaresWrapper> search(final UserContext userContext, final String text, final String field,
 									 final int code_group) throws SQLException {
-//		long time = System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 
 		String query = Q_SELECT_FROM_WHERE;
@@ -105,7 +109,8 @@ public class WaresModel {
 			final WaresWrapper item = new WaresWrapper(resultSet);
 			list.add(item);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (text:"+text+"; field:"+field+"; code_group:"+code_group+")");
 		return list;
 	}
 

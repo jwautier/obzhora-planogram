@@ -1,5 +1,6 @@
 package planograma.model;
 
+import org.apache.log4j.Logger;
 import planograma.data.UserContext;
 
 import java.sql.Connection;
@@ -15,10 +16,13 @@ import java.sql.SQLException;
  * To change this template use File | Settings | File Templates.
  */
 public class RackWaresHModel {
+
+	public static final Logger LOG = Logger.getLogger(RackWaresHModel.class);
+
 	private static final String Q_NEXT_VERSION = "SELECT EUGENE_SAZ.SEV_GEN_VERSION_WARES_ON_RACK.NEXTVAL FROM dual";
 
 	public int nextVersion(final UserContext userContext) throws SQLException {
-//		long time = System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_NEXT_VERSION);
 		final ResultSet resultSet = ps.executeQuery();
@@ -26,7 +30,8 @@ public class RackWaresHModel {
 		if (resultSet.next()) {
 			next_version = resultSet.getInt(1);
 		}
-//		System.out.println(System.currentTimeMillis() - time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return next_version;
 	}
 

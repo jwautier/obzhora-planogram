@@ -1,5 +1,6 @@
 package planograma.model;
 
+import org.apache.log4j.Logger;
 import planograma.constant.data.*;
 import planograma.data.RackWares;
 import planograma.data.UserContext;
@@ -16,6 +17,8 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class RackWaresModel {
+
+	public static final Logger LOG = Logger.getLogger(RackWaresModel.class);
 
 	private static final String Q_SELECT_FROM = "select " +
 			" rw." + RackWaresConst.CODE_RACK + "," +
@@ -49,7 +52,7 @@ public class RackWaresModel {
 			"order by " + RackWaresConst.ORDER_NUMBER_ON_RACK;
 
 	public List<RackWares> list(final UserContext userContext, final int code_rack) throws SQLException {
-//		long time = System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
 		ps.setInt(1, code_rack);
@@ -59,24 +62,26 @@ public class RackWaresModel {
 			final RackWares item = new RackWares(resultSet);
 			list.add(item);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_rack:"+code_rack+")");
 		return list;
 	}
 
 	public static final String Q_SELECT = Q_SELECT_FROM +
 			"where " + RackWaresConst.CODE_WARES_ON_RACK + " = ?";
 
-	public RackWares select(final UserContext userContext, final int rackShelf) throws SQLException {
-//		long time = System.currentTimeMillis();
+	public RackWares select(final UserContext userContext, final int code_rack_wares) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_SELECT);
-		ps.setInt(1, rackShelf);
+		ps.setInt(1, code_rack_wares);
 		final ResultSet resultSet = ps.executeQuery();
 		RackWares item = null;
 		if (resultSet.next()) {
 			item = new RackWares(resultSet);
 		}
-//		System.out.println(System.currentTimeMillis()-time);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_rack_wares:"+code_rack_wares+")");
 		return item;
 	}
 
@@ -98,6 +103,7 @@ public class RackWaresModel {
 
 
 	public int insert(final UserContext userContext, final RackWares rackWares, final int version) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_wares_on_rack", Types.INTEGER);
@@ -118,10 +124,13 @@ public class RackWaresModel {
 		callableStatement.execute();
 		final int id = callableStatement.getInt("new_code_wares_on_rack");
 		rackWares.setCode_wares_on_rack(id);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return rackWares.getCode_wares_on_rack();
 	}
 
 	public void update(final UserContext userContext, final RackWares rackWares, final int version) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_wares_on_rack", Types.INTEGER);
@@ -140,15 +149,20 @@ public class RackWaresModel {
 		callableStatement.setInt(RackWaresConst.COUNT_LENGTH_ON_SHELF, rackWares.getCount_length_on_shelf());
 		callableStatement.setInt(RackWaresHConst.VERSION_WARES, version);
 		callableStatement.execute();
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 	}
 
 	private static final String Q_DELETE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.DWaresRack(:" + RackWaresConst.CODE_WARES_ON_RACK + ")}";
 
-	public void delete(final UserContext userContext, final int code_wares_on_rack) throws SQLException {
+	public void delete(final UserContext userContext, final int code_rack_wares) throws SQLException {
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_DELETE);
-		callableStatement.setInt(RackWaresConst.CODE_WARES_ON_RACK, code_wares_on_rack);
+		callableStatement.setInt(RackWaresConst.CODE_WARES_ON_RACK, code_rack_wares);
 		callableStatement.execute();
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_rack_wares:"+code_rack_wares+")");
 	}
 
 	private static RackWaresModel instance = new RackWaresModel();

@@ -3,6 +3,7 @@ package planograma.servlet.sector;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.log4j.Logger;
 import planograma.constant.UrlConst;
 import planograma.constant.data.SectorConst;
 import planograma.data.Sector;
@@ -29,6 +30,8 @@ public class SectorList extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_SECTOR_LIST;
 
+	public static final Logger LOG = Logger.getLogger(SectorList.class);
+
 	private SectorModel sectorModel;
 
 	@Override
@@ -39,6 +42,7 @@ public class SectorList extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
+		long time = System.currentTimeMillis();
 		final int code_shop = requestData.getAsJsonObject().get(SectorConst.CODE_SHOP).getAsInt();
 
 		final JsonObject jsonObject = new JsonObject();
@@ -48,6 +52,8 @@ public class SectorList extends AbstractAction {
 			jsonArray.add(sector.toJsonObject());
 		}
 		jsonObject.add("sectorList", jsonArray);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return jsonObject;
 	}
 }

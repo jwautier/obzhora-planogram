@@ -3,6 +3,7 @@ package planograma.servlet.wares;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.log4j.Logger;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.RackConst;
@@ -44,6 +45,8 @@ public class RackWaresPlacementSave extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_RACK_WARES_PLACEMENT_SAVE;
 
+	public static final Logger LOG = Logger.getLogger(RackWaresPlacementSave.class);
+
 	private RackShelfModel rackShelfModel;
 	private RackWaresModel rackWaresModel;
 	private RackWaresHModel rackWaresHModel;
@@ -58,6 +61,7 @@ public class RackWaresPlacementSave extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException, NotAccessException {
+		long time = System.currentTimeMillis();
 		final UserContext userContext = getUserContext(session);
 		checkAccess(userContext, SecurityConst.ACCESS_RACK_WARES_PLACEMENT);
 		final int code_rack = requestData.getAsJsonObject().getAsJsonPrimitive(RackConst.CODE_RACK).getAsInt();
@@ -108,6 +112,8 @@ public class RackWaresPlacementSave extends AbstractAction {
 			rackWaresModel.insert(userContext, newItem.getRackWares(), version);
 		}
 		commit(userContext);
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 		return null;
 	}
 

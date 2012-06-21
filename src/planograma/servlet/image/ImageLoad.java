@@ -1,5 +1,6 @@
 package planograma.servlet.image;
 
+import org.apache.log4j.Logger;
 import planograma.constant.SessionConst;
 import planograma.constant.UrlConst;
 import planograma.data.UserContext;
@@ -30,6 +31,8 @@ public class ImageLoad extends HttpServlet {
 
 	public static final String URL = UrlConst.URL_IMAGE_LOAD;
 
+	public static final Logger LOG = Logger.getLogger(ImageLoad.class);
+
 	private ImageModel imageModel;
 
 	@Override
@@ -40,6 +43,7 @@ public class ImageLoad extends HttpServlet {
 
 
 	public void doGet(HttpServletRequest request, HttpServletResponse resp) throws IOException {
+		long time = System.currentTimeMillis();
 		try {
 			int code_image = Integer.parseInt(request.getPathInfo().substring(1));
 			final HttpSession session = request.getSession(false);
@@ -53,6 +57,8 @@ public class ImageLoad extends HttpServlet {
 			e.printStackTrace();
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms");
 	}
 
 }
