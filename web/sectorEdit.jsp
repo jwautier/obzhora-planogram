@@ -15,14 +15,6 @@
 %>
 <%-- TODO Отслеживать изменния размера окна --%>
 <%-- TODO отмена действий --%>
-<%-- TODO перед отправкой на сервер ругаться на незаполненые поля --%>
-<%-- TODO del --%>
-<%-- TODO ctrl+c ctrl+v
-	$(document).keypress("c",function(e) {
-		if(e.ctrlKey)
-			alert("Ctrl+C was pressed!!");
-	});
---%>
 <html>
 <head>
 	<title>Редактирование зала</title>
@@ -81,13 +73,13 @@
 								<td><a href="#" id="butRackWaresPlacement" onclick="return aOnClick(this, fRackWaresPlacement)" class="disabled"><%=JspUtils.toMenuTitle("Расстановка товара")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" id="butCopy" onclick="return aOnClick(this,fRackCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать")%></a></td>
+								<td><a href="#" id="butCopy" onclick="return aOnClick(this,fCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" id="butCut" onclick="return aOnClick(this,fRackCut)" class="disabled"><%=JspUtils.toMenuTitle("Вырезать")%></a></td>
+								<td><a href="#" id="butCut" onclick="return aOnClick(this,fCut)" class="disabled"><%=JspUtils.toMenuTitle("Вырезать")%></a></td>
 							</tr>
 							<tr>
-								<td><a  href="#" id="butPaste" onclick="return aOnClick(this,fRackPaste)" class="disabled"><%=JspUtils.toMenuTitle("Вставить")%></a></td>
+								<td><a  href="#" id="butPaste" onclick="return aOnClick(this,fPaste)" class="disabled"><%=JspUtils.toMenuTitle("Вставить")%></a></td>
 							</tr>
 							<tr>
 								<td height="100%"></td>
@@ -608,7 +600,7 @@ function roundRack(rack)
 		}
 	}
 
-	function fRackCopy()
+	function fCopy()
 	{
 		if (window.showcase!=null)
 		{
@@ -617,7 +609,7 @@ function roundRack(rack)
 		}
 	}
 
-	function fRackCut() {
+	function fCut() {
 		if (window.showcase != null) {
 			for (var i = 0; i < window.showcaseList.length; i++) {
 				if (window.showcaseList[i] == window.showcase) {
@@ -634,7 +626,7 @@ function roundRack(rack)
 		}
 	}
 
-	function fRackPaste() {
+	function fPaste() {
 		if (window.copyObject != null) {
 				window.showcase = clone(window.copyObject);
 				if (window.showcase.code_rack != null && window.showcase.code_rack != '') {
@@ -674,6 +666,21 @@ function roundRack(rack)
 			window.copyObject=window.showcase;
 			selectShowcase(window.showcase);
 			calcCoordinatesRack(window.showcase);
+			drawEditCanvas();
+			drawPreviewCanvas();
+		}
+	}
+
+	function fDel() {
+		if (window.showcase != null) {
+			for (var i = 0; i < window.showcaseList.length; i++) {
+				if (window.showcaseList[i] == window.showcase) {
+					window.showcaseList.splice(i, 1);
+					i = window.showcaseList.length;
+				}
+			}
+			window.showcase = null;
+			selectShowcase(window.showcase);
 			drawEditCanvas();
 			drawPreviewCanvas();
 		}
@@ -1268,6 +1275,33 @@ function roundRack(rack)
 				|| rack.y3 > window.sector.width
 				|| rack.y4 > window.sector.width;
 	}
+</script>
+<%-- обработка событий клавиатуры --%>
+<script type="text/javascript">
+	$(document).bind('keydown', function(e){
+		var obj = $(e.target);
+		if (!obj.is('input') && !obj.is('textarea'))
+		{
+			switch (e.keyCode)
+			{
+				case 67:
+					if (e.ctrlKey)
+						fCopy();
+					break;
+				case 88:
+					if (e.ctrlKey)
+						fCut();
+					break;
+				case 86:
+					if (e.ctrlKey)
+						fPaste();
+					break;
+				case 46:
+					fDel();
+					break;
+			}
+		}
+	});
 </script>
 </body>
 </html>

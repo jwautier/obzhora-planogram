@@ -13,7 +13,6 @@
 	<title>Товары стеллажа</title>
 	<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
-	<script type="text/javascript" src="js/jquery.hotkeys-0.7.9.js"></script>
 	<script type="text/javascript" src="js/planogram.js"></script>
 	<script type="text/javascript" src="js/planogram2D.js"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
@@ -60,7 +59,7 @@
 								<td><a href="#" id="butCut" onclick="return aOnClick(this, fCut)" class="disabled"><%=JspUtils.toMenuTitle("Вырезать")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" id="butPaste" onclick="return aOnClick(this, fPas)" class="disabled"><%=JspUtils.toMenuTitle("Вставить")%></a></td>
+								<td><a href="#" id="butPaste" onclick="return aOnClick(this, fPaste)" class="disabled"><%=JspUtils.toMenuTitle("Вставить")%></a></td>
 							</tr>
 							<tr>
 								<td height="100%"></td>
@@ -793,7 +792,7 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 			$('#butPaste').removeClass('disabled');
 		}
 	}
-	function fPas()
+	function fPaste()
 	{
 		if (window.copyObjectList.length>0)
 		{
@@ -1274,10 +1273,30 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 </script>
 <%-- обработка событий клавиатуры --%>
 <script type="text/javascript">
-    $(document).bind('keydown', {combi:'Ctrl+c', disableInInput: true}, fCopy);
-    $(document).bind('keydown', {combi:'Ctrl+x', disableInInput: true}, fCut);
-    $(document).bind('keydown', {combi:'Ctrl+v', disableInInput: true}, fPas);
-    $(document).bind('keydown', {combi:'del', disableInInput: true}, fDel);
+	$(document).bind('keydown', function(e){
+		var obj = $(e.target);
+		if (!obj.is('input') && !obj.is('textarea'))
+		{
+			switch (e.keyCode)
+			{
+				case 67:
+					if (e.ctrlKey)
+						fCopy();
+					break;
+				case 88:
+					if (e.ctrlKey)
+						fCut();
+					break;
+				case 86:
+					if (e.ctrlKey)
+						fPaste();
+					break;
+				case 46:
+					fDel();
+					break;
+			}
+		}
+	});
 </script>
 </body>
 </html>
