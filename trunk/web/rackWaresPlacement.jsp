@@ -13,6 +13,7 @@
 	<title>Товары стеллажа</title>
 	<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
+	<script type="text/javascript" src="js/jquery.hotkeys-0.7.9.js"></script>
 	<script type="text/javascript" src="js/planogram.js"></script>
 	<script type="text/javascript" src="js/planogram2D.js"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
@@ -799,6 +800,20 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 			window.flagPaste=1;
 		}
 	}
+	function fDel() {
+		for (var i in window.selectRackWaresList) {
+			var selectRackWares = window.selectRackWaresList[i];
+			for (var j in window.rackWaresList) {
+				if (selectRackWares == window.rackWaresList[j]) {
+					window.rackWaresList.splice(j, 1);
+				}
+			}
+		}
+		window.selectRackWaresList = [];
+		fSelectRackWares();
+		drawEditCanvas();
+		drawPreviewCanvas();
+	}
 </script>
 
 <%--обработка событий редактора--%>
@@ -1256,6 +1271,13 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 		 basketToHtml(window.basket);
 	 }
 
+</script>
+<%-- обработка событий клавиатуры --%>
+<script type="text/javascript">
+    $(document).bind('keydown', {combi:'Ctrl+c', disableInInput: true}, fCopy);
+    $(document).bind('keydown', {combi:'Ctrl+x', disableInInput: true}, fCut);
+    $(document).bind('keydown', {combi:'Ctrl+v', disableInInput: true}, fPas);
+    $(document).bind('keydown', {combi:'del', disableInInput: true}, fDel);
 </script>
 </body>
 </html>
