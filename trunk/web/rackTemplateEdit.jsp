@@ -472,7 +472,22 @@
 			drawPreviewCanvas();
 		}
 	}
-
+	function fDel()
+	{
+		if (window.shelf!=null)
+		{
+			for (var i = 0; i < window.rackShelfTemplateList.length; i++) {
+				if (window.rackShelfTemplateList[i] == window.shelf) {
+					window.rackShelfTemplateList.splice(i, 1);
+					i = window.rackShelfTemplateList.length;
+				}
+			}
+			window.shelf = null;
+			selectShelf(window.shelf);
+			drawEditCanvas();
+			drawPreviewCanvas();
+		}
+	}
 </script>
 <%--обработка событий редактора--%>
 <script type="text/javascript">
@@ -993,9 +1008,32 @@
 				|| shelf.y4 > rackTemplate.height;
 	}
 </script>
-
-
-
-
+<%-- обработка событий клавиатуры --%>
+<script type="text/javascript">
+	$(document).bind('keydown', function(e){
+		var obj = $(e.target);
+		if (!obj.is('input') && !obj.is('textarea'))
+		{
+			switch (e.keyCode)
+			{
+				case 67:
+					if (e.ctrlKey)
+						fCopy();
+					break;
+				case 88:
+					if (e.ctrlKey)
+						fCut();
+					break;
+				case 86:
+					if (e.ctrlKey)
+						fPaste();
+					break;
+				case 46:
+					fDel();
+					break;
+			}
+		}
+	});
+</script>
 </body>
 </html>
