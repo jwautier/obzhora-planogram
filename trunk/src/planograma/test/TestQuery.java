@@ -233,11 +233,9 @@ public class TestQuery {
 		rackModel.insert(userContext, rack);
 		final RackWaresModel rackWaresModel = RackWaresModel.getInstance();
 		final RackWaresHModel rackWaresHModel = RackWaresHModel.getInstance();
-		int version=rackWaresHModel.nextVersion(userContext);
-		System.out.println("version = "+version);
 		RackWares rackWares = new RackWares(rack.getCode_rack(), 10, 19, null, TypeRackWares.NA, 1, 10, 10, 50, 50, 50, 1, null, null,null,null, null, "waresTest", "unitTest", "barcodeTest");
 		System.out.println(rackWares.toJsonObject());
-		rackWaresModel.insert(userContext, rackWares, version);
+		rackWaresModel.insert(userContext, rackWares);
 		System.out.println("insert");
 		List<RackWares> list = rackWaresModel.list(userContext, rack.getCode_rack());
 		System.out.println("list");
@@ -247,10 +245,8 @@ public class TestQuery {
 		rackWares = rackWaresModel.select(userContext, rackWares.getCode_wares_on_rack());
 		System.out.println("select");
 		System.out.println(rackWares.toJsonObject());
-		version=rackWaresHModel.nextVersion(userContext);
-		System.out.println("version = "+version);
 		rackWares.setWares_width(250);
-		rackWaresModel.update(userContext, rackWares, version);
+		rackWaresModel.update(userContext, rackWares);
 		System.out.println("update");
 		rackWares = rackWaresModel.select(userContext, rackWares.getCode_wares_on_rack());
 		System.out.println(rackWares.toJsonObject());

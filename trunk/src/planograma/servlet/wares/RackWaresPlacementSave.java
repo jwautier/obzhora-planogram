@@ -87,7 +87,6 @@ public class RackWaresPlacementSave extends AbstractAction {
 		}
 
 		List<RackWares> oldItemList = rackWaresModel.list(userContext, code_rack);
-		final int version = rackWaresHModel.nextVersion(userContext);
 		for (final RackWares oldItem : oldItemList) {
 			RackWares findItem = null;
 //				поиск среди сохраненых рание
@@ -96,7 +95,7 @@ public class RackWaresPlacementSave extends AbstractAction {
 				if (oldItem.getCode_wares_on_rack().equals(currentItem.getCode_wares_on_rack())) {
 					findItem = currentItem;
 //					запись была обновлена
-					rackWaresModel.update(userContext, findItem, version);
+					rackWaresModel.update(userContext, findItem);
 					rackWares2DList.remove(i);
 					i--;
 				}
@@ -109,7 +108,7 @@ public class RackWaresPlacementSave extends AbstractAction {
 		for (final RackWares2D newItem : rackWares2DList) {
 //			запись была добавлена
 			newItem.getRackWares().setCode_rack(code_rack);
-			rackWaresModel.insert(userContext, newItem.getRackWares(), version);
+			rackWaresModel.insert(userContext, newItem.getRackWares());
 		}
 		commit(userContext);
 		time = System.currentTimeMillis() - time;

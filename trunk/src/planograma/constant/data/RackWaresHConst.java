@@ -10,6 +10,4 @@ package planograma.constant.data;
 public interface RackWaresHConst {
 	// TODO
 	//public static final String TABLE_NAME = "EUGENE_SAZ.SEV_PL_WARES_ON_RACK";
-
-	public static final String VERSION_WARES = "version_wares";
 }

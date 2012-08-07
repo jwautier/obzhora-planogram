@@ -21,6 +21,7 @@ public class RackWaresHModel {
 
 	private static final String Q_NEXT_VERSION = "SELECT EUGENE_SAZ.SEV_GEN_VERSION_WARES_ON_RACK.NEXTVAL FROM dual";
 
+	@Deprecated
 	public int nextVersion(final UserContext userContext) throws SQLException {
 		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
