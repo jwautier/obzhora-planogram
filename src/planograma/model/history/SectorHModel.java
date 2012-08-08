@@ -1,16 +1,14 @@
 package planograma.model.history;
 
 import org.apache.log4j.Logger;
+import planograma.constant.data.SectorConst;
 import planograma.constant.data.history.SectorHConst;
+import planograma.data.Sector;
 import planograma.data.UserContext;
-import planograma.data.wrapper.SectorHVersionWrapper;
+import planograma.utils.FormattingUtils;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.*;
+import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,28 +21,40 @@ public class SectorHModel {
 
 	public static final Logger LOG = Logger.getLogger(SectorHModel.class);
 
-	public static final String Q_LIST = "select" +
-			" " + SectorHConst.DATE_INSERT + "," +
+	public static final String Q_SELECT = "select" +
+			" " + SectorHConst.CODE_SHOP + "," +
+			" " + SectorHConst.CODE_SECTOR + "," +
+			" " + SectorHConst.STATE_SECTOR + "," +
+			" " + SectorHConst.NAME_SECTOR + "," +
+			" " + SectorHConst.LENGTH + "," +
+			" " + SectorHConst.WIDTH + "," +
+			" " + SectorHConst.HEIGHT + "," +
 			" " + SectorHConst.USER_INSERT + "," +
-			" ADM.ADM_GET_NAME_USER (" + SectorHConst.USER_INSERT + ") user_fullname " +
+			" " + SectorHConst.DATE_INSERT + "," +
+			" " + SectorHConst.USER_INSERT + " "+SectorConst.USER_UPDATE+"," +
+			" " + SectorHConst.DATE_INSERT + " "+SectorConst.USER_UPDATE+"," +
+			" " + SectorHConst.USER_DRAFT + "," +
+			" " + SectorHConst.DATE_DRAFT + " " +
 			"from " + SectorHConst.TABLE_NAME + " " +
-			"where " + SectorHConst.CODE_SECTOR + "=? " +
-			"order by " + SectorHConst.DATE_INSERT + " desc";
+			"where " + SectorHConst.CODE_SECTOR + " = ?" +
+			" and " +SectorHConst.DATE_INSERT+" <= ?"+
+			"order by "+SectorHConst.DATE_INSERT+" desc";
 
-	public List<SectorHVersionWrapper> list(final UserContext userContext, final int code_sector) throws SQLException {
-		long time = System.currentTimeMillis();
+	public Sector select(final UserContext userContext, final int code_sector, final Date date) throws SQLException {
+		long time=System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
-		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
+		final PreparedStatement ps = connection.prepareStatement(Q_SELECT);
 		ps.setInt(1, code_sector);
+		ps.setTimestamp(2, new Timestamp(date.getTime()));
+		ps.setMaxRows(1);
 		final ResultSet resultSet = ps.executeQuery();
-		final List<SectorHVersionWrapper> list = new ArrayList<SectorHVersionWrapper>();
-		while (resultSet.next()) {
-			final SectorHVersionWrapper item = new SectorHVersionWrapper(resultSet);
-			list.add(item);
+		Sector sector = null;
+		if (resultSet.next()) {
+			sector = new Sector(resultSet);
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms");
-		return list;
+		LOG.debug(time + " ms (code_sector:"+code_sector+", date:"+ FormattingUtils.datetime2String(date)+")");
+		return sector;
 	}
 
 	private static SectorHModel instance = new SectorHModel();

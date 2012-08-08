@@ -1,11 +1,18 @@
 package planograma.test;
 
 import planograma.constant.data.*;
+import planograma.constant.data.history.RackHConst;
+import planograma.constant.data.history.SectorHConst;
 import planograma.data.*;
 import planograma.model.*;
+import planograma.model.history.HistoryModel;
 import planograma.model.history.RackWaresHModel;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,7 +44,13 @@ public class TestQuery {
 			testRackShelfTemplateModel(userContext);
 			System.out.println("-------------------------RackWaresModel-------------------------");
 			testRackWaresModel(userContext);
-
+			System.out.println("-------------------------HistoryModel-------------------------");
+			testHistoryModel(userContext);
+			//TODO
+			System.out.println("-------------------------SectorHModel-------------------------");
+			System.out.println("-------------------------RackHModel-------------------------");
+			System.out.println("-------------------------RackShelfHModel-------------------------");
+			System.out.println("-------------------------RackWaresHModel-------------------------");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -234,7 +247,7 @@ public class TestQuery {
 		rackModel.insert(userContext, rack);
 		final RackWaresModel rackWaresModel = RackWaresModel.getInstance();
 		final RackWaresHModel rackWaresHModel = RackWaresHModel.getInstance();
-		RackWares rackWares = new RackWares(rack.getCode_rack(), 10, 19, null, TypeRackWares.NA, 1, 10, 10, 50, 50, 50, 1, null, null,null,null, null, "waresTest", "unitTest", "barcodeTest");
+		RackWares rackWares = new RackWares(rack.getCode_rack(), 10, 19, null, TypeRackWares.NA, 1, 10, 10, 50, 50, 50, 1, null, null, null, null, null, "waresTest", "unitTest", "barcodeTest");
 		System.out.println(rackWares.toJsonObject());
 		rackWaresModel.insert(userContext, rackWares);
 		System.out.println("insert");
@@ -256,5 +269,40 @@ public class TestQuery {
 		rackWares = rackWaresModel.select(userContext, rackWares.getCode_wares_on_rack());
 		if (rackWares != null)
 			System.out.println("Ошибка удаления");
+	}
+
+	public static void testHistoryModel(final UserContext userContext) throws SQLException {
+
+		final HistoryModel historyModel = HistoryModel.getInstance();
+		List<Date> list = historyModel.getHistoryMark(userContext);
+		System.out.print("getHistoryMark ");
+		if (list != null && !list.isEmpty()) {
+			System.out.print(list.get(0) + " - " + list.get(list.size() - 1));
+		}
+		System.out.println();
+
+		final Connection connection = userContext.getConnection();
+		final Statement statement = connection.createStatement();
+		ResultSet resultSet = statement.executeQuery("select " + SectorHConst.CODE_SECTOR + " from " + SectorHConst.TABLE_NAME);
+		if (resultSet.next()) {
+			final int code_sector = resultSet.getInt(1);
+			list = historyModel.getHistoryMarkForSector(userContext, code_sector);
+			System.out.print("getHistoryMarkForSector ");
+			if (list != null && !list.isEmpty()) {
+				System.out.print(list.get(0) + " - " + list.get(list.size() - 1));
+			}
+			System.out.println();
+		}
+
+		resultSet = statement.executeQuery("select " + RackHConst.CODE_RACK + " from " + RackHConst.TABLE_NAME);
+		if (resultSet.next()) {
+			final int code_rack = resultSet.getInt(1);
+			list = historyModel.getHistoryMarkForRack(userContext, code_rack);
+			System.out.print("getHistoryMarkForRack ");
+			if (list != null && !list.isEmpty()) {
+				System.out.print(list.get(0) + " - " + list.get(list.size() - 1));
+			}
+			System.out.println();
+		}
 	}
 }
