@@ -3,6 +3,7 @@ package planograma.test;
 import planograma.constant.data.*;
 import planograma.data.*;
 import planograma.model.*;
+import planograma.model.history.RackWaresHModel;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -19,7 +20,7 @@ public class TestQuery {
 
 		UserContext userContext = null;
 		try {
-			userContext = new UserContext("a_poljakov", "FecUnRec");
+			userContext = new UserContext("", "");
 			System.out.println("-------------------------StateAllModel-------------------------");
 			testStateAllModel(userContext);
 			System.out.println("-------------------------ShopModel-------------------------");

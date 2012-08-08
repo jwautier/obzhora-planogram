@@ -15,7 +15,6 @@ import planograma.data.geometry.RackWares2D;
 import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
 import planograma.model.RackShelfModel;
-import planograma.model.RackWaresHModel;
 import planograma.model.RackWaresModel;
 import planograma.servlet.AbstractAction;
 import planograma.servlet.wares.rackWaresPlacementSaveHelp.GroupRackWares;
@@ -49,14 +48,12 @@ public class RackWaresPlacementSave extends AbstractAction {
 
 	private RackShelfModel rackShelfModel;
 	private RackWaresModel rackWaresModel;
-	private RackWaresHModel rackWaresHModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		rackShelfModel = RackShelfModel.getInstance();
 		rackWaresModel = RackWaresModel.getInstance();
-		rackWaresHModel = RackWaresHModel.getInstance();
 	}
 
 	@Override

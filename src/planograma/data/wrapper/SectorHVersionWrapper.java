@@ -1,6 +1,6 @@
 package planograma.data.wrapper;
 
-import planograma.constant.data.SectorHConst;
+import planograma.constant.data.history.SectorHConst;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,13 +14,11 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 public class SectorHVersionWrapper {
-	private final int version;
 	private final Date date_insert;
 	private final int user_insert;
 	private final String user_fullname;
 
 	public SectorHVersionWrapper(final ResultSet resultSet) throws SQLException {
-		version = resultSet.getInt(SectorHConst.VERSION);
 		date_insert = resultSet.getTimestamp(SectorHConst.DATE_INSERT);
 		user_insert = resultSet.getInt(SectorHConst.USER_INSERT);
 		user_fullname = resultSet.getString("user_fullname");
