@@ -145,7 +145,9 @@ public class TestDBscheme {
 					SectorHConst.STATE_SECTOR,
 					SectorHConst.USER_INSERT,
 					SectorHConst.DATE_INSERT,
-					SectorHConst.TYPE_OPERATION);
+					SectorHConst.TYPE_OPERATION,
+					SectorHConst.USER_DRAFT,
+					SectorHConst.DATE_DRAFT);
 			checkTable(psColumns, RackHConst.TABLE_NAME,
 					RackHConst.CODE_SECTOR,
 					RackHConst.CODE_RACK,

@@ -1,0 +1,1 @@
+select ADM.ADM_GET_NAME_USER (304252) from dual
