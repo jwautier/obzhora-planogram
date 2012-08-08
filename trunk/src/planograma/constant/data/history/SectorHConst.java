@@ -1,4 +1,6 @@
-package planograma.constant.data;
+package planograma.constant.data.history;
+
+import planograma.constant.data.SectorConst;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,5 +21,5 @@ public interface SectorHConst {
 	public static final String STATE_SECTOR = SectorConst.STATE_SECTOR;
 	public static final String USER_INSERT = "user_insert";
 	public static final String DATE_INSERT = "date_insert";
-	public static final String VERSION = "version";
+	public static final String TYPE_OPERATION = "type_operation";
 }
