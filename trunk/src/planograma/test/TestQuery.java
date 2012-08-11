@@ -46,9 +46,11 @@ public class TestQuery {
 			testRackWaresModel(userContext);
 			System.out.println("-------------------------HistoryModel-------------------------");
 			testHistoryModel(userContext);
-			//TODO
 			System.out.println("-------------------------SectorHModel-------------------------");
+			TestSectorHModel.testSectorHModel(userContext);
 			System.out.println("-------------------------RackHModel-------------------------");
+			TestRackHModel.testRackHModel(userContext);
+			//TODO
 			System.out.println("-------------------------RackShelfHModel-------------------------");
 			System.out.println("-------------------------RackWaresHModel-------------------------");
 
