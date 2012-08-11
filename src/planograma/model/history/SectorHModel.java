@@ -32,9 +32,10 @@ public class SectorHModel {
 			" " + SectorHConst.USER_INSERT + "," +
 			" " + SectorHConst.DATE_INSERT + "," +
 			" " + SectorHConst.USER_INSERT + " "+SectorConst.USER_UPDATE+"," +
-			" " + SectorHConst.DATE_INSERT + " "+SectorConst.USER_UPDATE+"," +
+			" " + SectorHConst.DATE_INSERT + " "+SectorConst.DATE_UPDATE+"," +
 			" " + SectorHConst.USER_DRAFT + "," +
-			" " + SectorHConst.DATE_DRAFT + " " +
+			" " + SectorHConst.DATE_DRAFT + "," +
+			" " + SectorHConst.TYPE_OPERATION + " " +
 			"from " + SectorHConst.TABLE_NAME + " " +
 			"where " + SectorHConst.CODE_SECTOR + " = ?" +
 			" and " +SectorHConst.DATE_INSERT+" <= ?"+
@@ -50,7 +51,11 @@ public class SectorHModel {
 		final ResultSet resultSet = ps.executeQuery();
 		Sector sector = null;
 		if (resultSet.next()) {
-			sector = new Sector(resultSet);
+			final String type_operation=resultSet.getString(SectorHConst.TYPE_OPERATION);
+			if (!type_operation.equals("D"))
+			{
+				sector = new Sector(resultSet);
+			}
 		}
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms (code_sector:"+code_sector+", date:"+ FormattingUtils.datetime2String(date)+")");
