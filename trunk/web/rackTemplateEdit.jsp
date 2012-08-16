@@ -246,8 +246,8 @@
 		}
 		else
 		{
-			window.rackTemplate=<%=new RackTemplate(null, null, null, 100, 100, 100, LoadSide.F, null,null, null,null,null,null).toJsonObject()%>;
-			window.rackShelfTemplateList = [<%=new RackShelfTemplate(null, null, 50, 3, 5,100, 100, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>];
+			window.rackTemplate=<%=new RackTemplate(null, null, null, 1000, 1000, 1000, LoadSide.F, null,null, null,null,null,null, 1000,1000,1000,0,0).toJsonObject()%>;
+			window.rackShelfTemplateList = [];
 			loadComplete2();
 		}
 	}

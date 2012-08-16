@@ -37,15 +37,15 @@ public class Rack implements IJsonObject {
 	 */
 	private String rack_barcode;
 	/**
-	 * Длина, см
+	 * Длина, мм
 	 */
 	private Integer length;
 	/**
-	 * Ширина, см
+	 * Ширина, мм
 	 */
 	private Integer width;
 	/**
-	 * Высота, см
+	 * Высота, мм
 	 */
 	private Integer height;
 	/**
@@ -104,8 +104,28 @@ public class Rack implements IJsonObject {
 	 * дата изъятия для редактирования
 	 */
 	private Date date_draft;
+	/**
+	 * Доступная длина, мм
+	 */
+	private Integer real_length;
+	/**
+	 * Доступная ширина, мм
+	 */
+	private Integer real_width;
+	/**
+	 * Доступная высота, мм
+	 */
+	private Integer real_height;
+	/**
+	 * Смещение доступной области относительно левой стороны обекта (со стороны загрузки)
+	 */
+	private Integer x_offset;
+	/**
+	 * Смещение доступной области относительно низа обекта (со стороны загрузки)
+	 */
+	private Integer y_offset;
 
-	public Rack(Integer code_rack, StateRack state_rack, String name_rack, String rack_barcode, Integer length, Integer width, Integer height, Integer code_sector, Integer x_coord, Integer y_coord, Integer angle, LoadSide load_side, Integer code_rack_template, boolean lock_size, boolean lock_move, TypeRack type_race, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer user_draft, Date date_draft) {
+	public Rack(Integer code_sector, Integer code_rack, StateRack state_rack, String name_rack, String rack_barcode, Integer length, Integer width, Integer height, Integer x_coord, Integer y_coord, Integer angle, LoadSide load_side, Integer code_rack_template, boolean lock_size, boolean lock_move, TypeRack type_race, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer user_draft, Date date_draft, Integer real_length, Integer real_width, Integer real_height, Integer x_offset, Integer y_offset) {
 		this.code_sector = code_sector;
 		this.code_rack = code_rack;
 		this.state_rack = state_rack;
@@ -119,7 +139,7 @@ public class Rack implements IJsonObject {
 		this.angle = angle;
 		this.load_side = load_side;
 		this.code_rack_template = code_rack_template;
-		this.load_side = load_side;
+		this.lock_size = lock_size;
 		this.lock_move = lock_move;
 		this.type_race = type_race;
 		this.user_insert = user_insert;
@@ -128,6 +148,11 @@ public class Rack implements IJsonObject {
 		this.date_update = date_update;
 		this.user_draft = user_draft;
 		this.date_draft = date_draft;
+		this.real_length = real_length;
+		this.real_width = real_width;
+		this.real_height = real_height;
+		this.x_offset = x_offset;
+		this.y_offset = y_offset;
 	}
 
 	public Integer getCode_sector() {
@@ -151,7 +176,7 @@ public class Rack implements IJsonObject {
 	}
 
 	public String getState_rackAtStr() {
-		return (state_rack!=null)?state_rack.name():null;
+		return (state_rack != null) ? state_rack.name() : null;
 	}
 
 	public void setState_rack(StateRack state_rack) {
@@ -338,6 +363,46 @@ public class Rack implements IJsonObject {
 		this.date_draft = date_draft;
 	}
 
+	public Integer getReal_length() {
+		return real_length;
+	}
+
+	public void setReal_length(Integer real_length) {
+		this.real_length = real_length;
+	}
+
+	public Integer getReal_width() {
+		return real_width;
+	}
+
+	public void setReal_width(Integer real_width) {
+		this.real_width = real_width;
+	}
+
+	public Integer getReal_height() {
+		return real_height;
+	}
+
+	public void setReal_height(Integer real_height) {
+		this.real_height = real_height;
+	}
+
+	public Integer getX_offset() {
+		return x_offset;
+	}
+
+	public void setX_offset(Integer x_offset) {
+		this.x_offset = x_offset;
+	}
+
+	public Integer getY_offset() {
+		return y_offset;
+	}
+
+	public void setY_offset(Integer y_offset) {
+		this.y_offset = y_offset;
+	}
+
 	public Rack(final ResultSet resultSet) throws SQLException {
 		code_sector = resultSet.getInt(RackConst.CODE_SECTOR);
 		code_rack = resultSet.getInt(RackConst.CODE_RACK);
@@ -361,6 +426,11 @@ public class Rack implements IJsonObject {
 		date_update = resultSet.getTimestamp(RackConst.DATE_UPDATE);
 		user_draft = resultSet.getInt(RackConst.USER_DRAFT);
 		date_draft = resultSet.getTimestamp(RackConst.DATE_DRAFT);
+		real_length = resultSet.getInt(RackConst.REAL_LENGTH);
+		real_width = resultSet.getInt(RackConst.REAL_WIDTH);
+		real_height = resultSet.getInt(RackConst.REAL_HEIGHT);
+		x_offset = resultSet.getInt(RackConst.X_OFFSET);
+		y_offset = resultSet.getInt(RackConst.Y_OFFEST);
 	}
 
 	public Rack(final JsonObject rackJson) {
@@ -377,8 +447,8 @@ public class Rack implements IJsonObject {
 		angle = JsonUtils.getInteger(rackJson, RackConst.ANGLE);
 		setLoad_side(JsonUtils.getString(rackJson, RackConst.LOAD_SIDE));
 		code_rack_template = JsonUtils.getInteger(rackJson, RackConst.CODE_RACK_TEMPLATE);
-		lock_size=JsonUtils.getBoolean(rackJson, RackConst.LOCK_SIZE);
-		lock_move=JsonUtils.getBoolean(rackJson, RackConst.LOCK_MOVE);
+		lock_size = JsonUtils.getBoolean(rackJson, RackConst.LOCK_SIZE);
+		lock_move = JsonUtils.getBoolean(rackJson, RackConst.LOCK_MOVE);
 		setType_race(JsonUtils.getString(rackJson, RackConst.TYPE_RACK));
 		user_insert = JsonUtils.getInteger(rackJson, RackConst.USER_INSERT);
 		date_insert = JsonUtils.getDate(rackJson, RackConst.DATE_INSERT);
@@ -386,6 +456,11 @@ public class Rack implements IJsonObject {
 		date_update = JsonUtils.getDate(rackJson, RackConst.DATE_UPDATE);
 		user_draft = JsonUtils.getInteger(rackJson, RackConst.USER_DRAFT);
 		date_draft = JsonUtils.getDate(rackJson, RackConst.DATE_DRAFT);
+		real_length = JsonUtils.getInteger(rackJson, RackConst.REAL_LENGTH);
+		real_width = JsonUtils.getInteger(rackJson, RackConst.REAL_WIDTH);
+		real_height = JsonUtils.getInteger(rackJson, RackConst.REAL_HEIGHT);
+		x_offset = JsonUtils.getInteger(rackJson, RackConst.X_OFFSET);
+		y_offset = JsonUtils.getInteger(rackJson, RackConst.Y_OFFEST);
 	}
 
 	@Override
@@ -404,8 +479,8 @@ public class Rack implements IJsonObject {
 		jsonObject.addProperty(RackConst.ANGLE, angle);
 		jsonObject.addProperty(RackConst.LOAD_SIDE, getLoad_sideAtStr());
 		jsonObject.addProperty(RackConst.CODE_RACK_TEMPLATE, code_rack_template);
-		jsonObject.addProperty(RackConst.LOCK_SIZE, (lock_size)?"Y":"N");
-		jsonObject.addProperty(RackConst.LOCK_MOVE, (lock_move)?"Y":"N");
+		jsonObject.addProperty(RackConst.LOCK_SIZE, (lock_size) ? "Y" : "N");
+		jsonObject.addProperty(RackConst.LOCK_MOVE, (lock_move) ? "Y" : "N");
 		jsonObject.addProperty(RackConst.TYPE_RACK, getType_raceAtStr());
 		jsonObject.addProperty(RackConst.USER_INSERT, user_insert);
 		JsonUtils.set(jsonObject, RackConst.DATE_INSERT, date_insert);
@@ -413,6 +488,11 @@ public class Rack implements IJsonObject {
 		JsonUtils.set(jsonObject, RackConst.DATE_UPDATE, date_update);
 		jsonObject.addProperty(RackConst.USER_DRAFT, user_draft);
 		JsonUtils.set(jsonObject, RackConst.DATE_DRAFT, date_draft);
+		jsonObject.addProperty(RackConst.REAL_LENGTH, real_length);
+		jsonObject.addProperty(RackConst.REAL_WIDTH, real_width);
+		jsonObject.addProperty(RackConst.REAL_HEIGHT, real_height);
+		jsonObject.addProperty(RackConst.X_OFFSET, x_offset);
+		jsonObject.addProperty(RackConst.Y_OFFEST, y_offset);
 		return jsonObject;
 	}
 }

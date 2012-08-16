@@ -23,6 +23,11 @@ public interface RackTemplateConst {
 	public static final String DATE_UPDATE = "date_update";
 	public static final String DATE_DRAFT = "date_draft";
 	public static final String USER_DRAFT = "user_draft";
+	public static final String REAL_LENGTH = "real_length";
+	public static final String REAL_WIDTH = "real_width";
+	public static final String REAL_HEIGHT = "real_height";
+	public static final String X_OFFSET = "x_offset";
+	public static final String Y_OFFEST = "y_offset";
 
 	public static final int STATE_ALL_PART_STATE_STATE_RACK_TEMPLATE = -63;
 	public static final int STATE_ALL_PART_STATE_LOAD_SIDE = -64;

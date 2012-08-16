@@ -24,8 +24,10 @@ public class TestRackHModel {
 
 		Sector sector = new Sector(8, null, null, "sector 1", 2000, 2000, 300, null, null, null, null, null, null);
 		sectorModel.insert(userContext, sector);
-
-		Rack rack = new Rack(null, null, "rack 1", "bar code 1", 50, 200, 150, sector.getCode_sector(), 50, 50, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null);
+		final int length=20;
+		final int width=200;
+		final int height=150;
+		Rack rack = new Rack(sector.getCode_sector(), null, null, "rack 1", "bar code 1", length, width, height, 50, 50, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null, length, width, height, 0, 0);
 		rackModel.insert(userContext, rack);
 		rack=rackModel.select(userContext, rack.getCode_rack());
 		final Date inserted = rack.getDate_insert();

@@ -69,7 +69,12 @@ public class TestDBscheme {
 					RackConst.USER_DRAFT,
 					RackConst.LOCK_SIZE,
 					RackConst.LOCK_MOVE,
-					RackConst.TYPE_RACK);
+					RackConst.TYPE_RACK,
+					RackConst.REAL_LENGTH,
+					RackConst.REAL_WIDTH,
+					RackConst.REAL_HEIGHT,
+					RackConst.X_OFFSET,
+					RackConst.Y_OFFEST);
 			checkTable(psColumns, RackShelfConst.TABLE_NAME,
 					RackShelfConst.CODE_RACK,
 					RackShelfConst.CODE_SHELF,
@@ -116,7 +121,12 @@ public class TestDBscheme {
 					RackTemplateConst.USER_UPDATE,
 					RackTemplateConst.DATE_UPDATE,
 					RackTemplateConst.DATE_DRAFT,
-					RackTemplateConst.USER_DRAFT
+					RackTemplateConst.USER_DRAFT,
+					RackTemplateConst.REAL_LENGTH,
+					RackTemplateConst.REAL_WIDTH,
+					RackTemplateConst.REAL_HEIGHT,
+					RackTemplateConst.X_OFFSET,
+					RackTemplateConst.Y_OFFEST
 			);
 			checkTable(psColumns, RackShelfTemplateConst.TABLE_NAME,
 					RackShelfTemplateConst.CODE_RACK_TEMPLATE,
@@ -169,7 +179,12 @@ public class TestDBscheme {
 					RackHConst.LOCK_SIZE,
 					RackHConst.LOCK_MOVE,
 					RackHConst.TYPE_RACK,
-					RackHConst.TYPE_OPERATION);
+					RackHConst.TYPE_OPERATION,
+					RackHConst.REAL_LENGTH,
+					RackHConst.REAL_WIDTH,
+					RackHConst.REAL_HEIGHT,
+					RackHConst.X_OFFSET,
+					RackHConst.Y_OFFEST);
 			checkTable(psColumns, RackShelfHConst.TABLE_NAME,
 					RackShelfHConst.CODE_RACK,
 					RackShelfHConst.CODE_SHELF,

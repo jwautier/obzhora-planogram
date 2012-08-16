@@ -20,7 +20,7 @@ public class RackModel {
 
 	public static final Logger LOG = Logger.getLogger(RackModel.class);
 
-	public static final String Q_LIST = "select" +
+	private static final String Q_SELECT_FROM = "select" +
 			" " + RackConst.CODE_RACK + "," +
 			" " + RackConst.STATE_RACK + "," +
 			" " + RackConst.NAME_RACK + "," +
@@ -42,8 +42,15 @@ public class RackModel {
 			" " + RackConst.USER_UPDATE + "," +
 			" " + RackConst.DATE_UPDATE + "," +
 			" " + RackConst.USER_DRAFT + "," +
-			" " + RackConst.DATE_DRAFT + " " +
-			"from " + RackConst.TABLE_NAME + " " +
+			" " + RackConst.DATE_DRAFT + "," +
+			" " + RackConst.REAL_LENGTH + "," +
+			" " + RackConst.REAL_WIDTH + "," +
+			" " + RackConst.REAL_HEIGHT + "," +
+			" " + RackConst.X_OFFSET + "," +
+			" " + RackConst.Y_OFFEST + " " +
+			"from " + RackConst.TABLE_NAME + " ";
+
+	public static final String Q_LIST = Q_SELECT_FROM +
 			"where " + RackConst.CODE_SECTOR + "=? " +
 			"order by " + RackConst.NAME_RACK;
 
@@ -63,30 +70,7 @@ public class RackModel {
 		return list;
 	}
 
-	public static final String Q_SELECT = "select" +
-			" " + RackConst.CODE_RACK + "," +
-			" " + RackConst.STATE_RACK + "," +
-			" " + RackConst.NAME_RACK + "," +
-			" " + RackConst.RACK_BARCODE + "," +
-			" " + RackConst.LENGTH + "," +
-			" " + RackConst.WIDTH + "," +
-			" " + RackConst.HEIGHT + "," +
-			" " + RackConst.CODE_SECTOR + "," +
-			" " + RackConst.X_COORD + "," +
-			" " + RackConst.Y_COORD + "," +
-			" " + RackConst.ANGLE + "," +
-			" " + RackConst.LOAD_SIDE + "," +
-			" " + RackConst.CODE_RACK_TEMPLATE + "," +
-			" " + RackConst.LOCK_SIZE + "," +
-			" " + RackConst.LOCK_MOVE + "," +
-			" " + RackConst.TYPE_RACK + "," +
-			" " + RackConst.USER_INSERT + "," +
-			" " + RackConst.DATE_INSERT + "," +
-			" " + RackConst.USER_UPDATE + "," +
-			" " + RackConst.DATE_UPDATE + "," +
-			" " + RackConst.USER_DRAFT + "," +
-			" " + RackConst.DATE_DRAFT + " " +
-			"from " + RackConst.TABLE_NAME + " " +
+	public static final String Q_SELECT = Q_SELECT_FROM +
 			"where " + RackConst.CODE_RACK + " = ?";
 
 	public Rack select(final UserContext userContext, final int code_rack) throws SQLException {
@@ -120,7 +104,12 @@ public class RackModel {
 			":" + RackConst.CODE_RACK_TEMPLATE + "," +
 			":" + RackConst.LOCK_SIZE + "," +
 			":" + RackConst.LOCK_MOVE + "," +
-			":" + RackConst.TYPE_RACK +
+			":" + RackConst.TYPE_RACK +"," +
+			":" + RackConst.REAL_LENGTH +"," +
+			":" + RackConst.REAL_WIDTH +"," +
+			":" + RackConst.REAL_HEIGHT +"," +
+			":" + RackConst.X_OFFSET +"," +
+			":" + RackConst.Y_OFFEST +
 			")}";
 
 	public int insert(final UserContext userContext, final Rack rack) throws SQLException {
@@ -144,6 +133,13 @@ public class RackModel {
 		callableStatement.setString(RackConst.LOCK_SIZE, (rack.isLock_size()) ? "Y" : "N");
 		callableStatement.setString(RackConst.LOCK_MOVE, (rack.isLock_move()) ? "Y" : "N");
 		callableStatement.setString(RackConst.TYPE_RACK, rack.getType_raceAtStr());
+		//TODO
+		callableStatement.setInt(RackConst.REAL_LENGTH, rack.getLength());
+		callableStatement.setInt(RackConst.REAL_WIDTH, rack.getWidth());
+		callableStatement.setInt(RackConst.REAL_HEIGHT, rack.getHeight());
+		callableStatement.setInt(RackConst.X_OFFSET, 0);
+		callableStatement.setInt(RackConst.Y_OFFEST, 0);
+
 		callableStatement.execute();
 		final int id = callableStatement.getInt("new_code_rack");
 		rack.setCode_rack(id);
@@ -173,6 +169,14 @@ public class RackModel {
 		callableStatement.setString(RackConst.LOCK_SIZE, (rack.isLock_size()) ? "Y" : "N");
 		callableStatement.setString(RackConst.LOCK_MOVE, (rack.isLock_move()) ? "Y" : "N");
 		callableStatement.setString(RackConst.TYPE_RACK, rack.getType_raceAtStr());
+
+		//TODO
+		callableStatement.setInt(RackConst.REAL_LENGTH, rack.getLength());
+		callableStatement.setInt(RackConst.REAL_WIDTH, rack.getWidth());
+		callableStatement.setInt(RackConst.REAL_HEIGHT, rack.getHeight());
+		callableStatement.setInt(RackConst.X_OFFSET, 0);
+		callableStatement.setInt(RackConst.Y_OFFEST, 0);
+
 		callableStatement.execute();
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms");
