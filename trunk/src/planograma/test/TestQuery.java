@@ -50,9 +50,10 @@ public class TestQuery {
 			TestSectorHModel.testSectorHModel(userContext);
 			System.out.println("-------------------------RackHModel-------------------------");
 			TestRackHModel.testRackHModel(userContext);
-			//TODO
 			System.out.println("-------------------------RackShelfHModel-------------------------");
+			TestRackShelfHModel.testRackShelfHModel(userContext);
 			System.out.println("-------------------------RackWaresHModel-------------------------");
+			TestRackWaresHModel.testRackWaresHModel(userContext);
 
 		} catch (Exception e) {
 			e.printStackTrace();

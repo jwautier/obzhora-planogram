@@ -5,6 +5,7 @@ import planograma.constant.data.RackConst;
 import planograma.constant.data.history.RackHConst;
 import planograma.data.Rack;
 import planograma.data.UserContext;
+import planograma.utils.FormattingUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import java.util.List;
  * Date: 21.03.12
  * Time: 1:18
  * To change this template use File | Settings | File Templates.
- * TODO
  */
 public class RackHModel {
 
@@ -56,8 +56,8 @@ public class RackHModel {
 
 	public static final String Q_LIST = Q_SELECT_FROM +
 			"where " +
-			" " +RackHConst.TYPE_OPERATION +"<> 'D'"+
-			" and "+
+			" " + RackHConst.TYPE_OPERATION + "<> 'D'" +
+			" and " +
 			" (" + RackHConst.CODE_RACK + ", " + RackHConst.DATE_INSERT + ") in " +
 			"  (select ss1." + RackHConst.CODE_RACK + ", max(ss1." + RackHConst.DATE_INSERT + ")" +
 			"   from " + RackHConst.TABLE_NAME + " ss1" +
@@ -80,7 +80,7 @@ public class RackHModel {
 			list.add(item);
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_sector:" + code_sector + ")");
+		LOG.debug(time + " ms (code_sector:" + code_sector + ", date:" + FormattingUtils.datetime2String(date) + ")");
 		return list;
 	}
 
@@ -105,7 +105,7 @@ public class RackHModel {
 			}
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_rack:" + code_rack + ")");
+		LOG.debug(time + " ms (code_rack:" + code_rack + ", date:" + FormattingUtils.datetime2String(date) + ")");
 		return rack;
 	}
 
