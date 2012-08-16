@@ -58,7 +58,7 @@ public class SectorHModel {
 			}
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_sector:"+code_sector+", date:"+ FormattingUtils.datetime2String(date)+")");
+		LOG.debug(time + " ms (code_sector:"+code_sector+ ", date:" + FormattingUtils.datetime2String(date) +")");
 		return sector;
 	}
 
