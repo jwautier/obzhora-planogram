@@ -20,7 +20,7 @@ public class RackTemplateModel {
 
 	public static final Logger LOG = Logger.getLogger(RackTemplateModel.class);
 
-	public static final String Q_LIST = "select" +
+	private static final String Q_SELECT_FROM = "select" +
 			" " + RackTemplateConst.CODE_RACK_TEMPLATE + "," +
 			" " + RackTemplateConst.STATE_RACK_TEMPLATE + "," +
 			" " + RackTemplateConst.NAME_RACK_TEMPLATE + "," +
@@ -33,12 +33,19 @@ public class RackTemplateModel {
 			" " + RackTemplateConst.USER_UPDATE + "," +
 			" " + RackTemplateConst.DATE_UPDATE + "," +
 			" " + RackTemplateConst.USER_DRAFT + "," +
-			" " + RackTemplateConst.DATE_DRAFT + " " +
-			"from " + RackTemplateConst.TABLE_NAME + " " +
+			" " + RackTemplateConst.DATE_DRAFT + "," +
+			" " + RackTemplateConst.REAL_LENGTH + "," +
+			" " + RackTemplateConst.REAL_WIDTH + "," +
+			" " + RackTemplateConst.REAL_HEIGHT + "," +
+			" " + RackTemplateConst.X_OFFSET + "," +
+			" " + RackTemplateConst.Y_OFFEST + " " +
+			"from " + RackTemplateConst.TABLE_NAME + " ";
+
+	public static final String Q_LIST = Q_SELECT_FROM +
 			"order by " + RackTemplateConst.NAME_RACK_TEMPLATE;
 
 	public List<RackTemplate> list(final UserContext userContext) throws SQLException {
-				long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
 		final ResultSet resultSet = ps.executeQuery();
@@ -52,25 +59,11 @@ public class RackTemplateModel {
 		return list;
 	}
 
-	public static final String Q_SELECT = "select" +
-			" " + RackTemplateConst.CODE_RACK_TEMPLATE + "," +
-			" " + RackTemplateConst.STATE_RACK_TEMPLATE + "," +
-			" " + RackTemplateConst.NAME_RACK_TEMPLATE + "," +
-			" " + RackTemplateConst.LENGTH + "," +
-			" " + RackTemplateConst.WIDTH + "," +
-			" " + RackTemplateConst.HEIGHT + "," +
-			" " + RackTemplateConst.LOAD_SIDE + "," +
-			" " + RackTemplateConst.USER_INSERT + "," +
-			" " + RackTemplateConst.DATE_INSERT + "," +
-			" " + RackTemplateConst.USER_UPDATE + "," +
-			" " + RackTemplateConst.DATE_UPDATE + "," +
-			" " + RackTemplateConst.USER_DRAFT + "," +
-			" " + RackTemplateConst.DATE_DRAFT + " " +
-			"from " + RackTemplateConst.TABLE_NAME + " " +
+	public static final String Q_SELECT = Q_SELECT_FROM +
 			"where " + RackTemplateConst.CODE_RACK_TEMPLATE + " = ?";
 
 	public RackTemplate select(final UserContext userContext, final int code_rack_template) throws SQLException {
-				long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_SELECT);
 		ps.setInt(1, code_rack_template);
@@ -80,7 +73,7 @@ public class RackTemplateModel {
 			rackTemplate = new RackTemplate(resultSet);
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_rack_template:"+code_rack_template+")");
+		LOG.debug(time + " ms (code_rack_template:" + code_rack_template + ")");
 		return rackTemplate;
 	}
 
@@ -91,10 +84,16 @@ public class RackTemplateModel {
 			":" + RackTemplateConst.LENGTH + ", " +
 			":" + RackTemplateConst.WIDTH + ", " +
 			":" + RackTemplateConst.HEIGHT + ", " +
-			":" + RackTemplateConst.LOAD_SIDE + ")}";
+			":" + RackTemplateConst.LOAD_SIDE + ", " +
+			":" + RackTemplateConst.REAL_LENGTH + ", " +
+			":" + RackTemplateConst.REAL_WIDTH + ", " +
+			":" + RackTemplateConst.REAL_HEIGHT + ", " +
+			":" + RackTemplateConst.X_OFFSET + ", " +
+			":" + RackTemplateConst.Y_OFFEST +
+			")}";
 
 	public int insert(final UserContext userContext, final RackTemplate rackTemplate) throws SQLException {
-		long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_rack_template", Types.INTEGER);
@@ -105,6 +104,13 @@ public class RackTemplateModel {
 		callableStatement.setInt(RackTemplateConst.WIDTH, rackTemplate.getWidth());
 		callableStatement.setInt(RackTemplateConst.HEIGHT, rackTemplate.getHeight());
 		callableStatement.setString(RackTemplateConst.LOAD_SIDE, rackTemplate.getLoad_sideAtStr());
+		//TODO
+		callableStatement.setInt(RackTemplateConst.REAL_LENGTH, rackTemplate.getLength());
+		callableStatement.setInt(RackTemplateConst.REAL_WIDTH, rackTemplate.getWidth());
+		callableStatement.setInt(RackTemplateConst.REAL_HEIGHT, rackTemplate.getHeight());
+		callableStatement.setInt(RackTemplateConst.X_OFFSET, 0);
+		callableStatement.setInt(RackTemplateConst.Y_OFFEST, 0);
+
 		callableStatement.execute();
 		final int id = callableStatement.getInt("new_code_rack_template");
 		rackTemplate.setCode_rack_template(id);
@@ -114,7 +120,7 @@ public class RackTemplateModel {
 	}
 
 	public void update(final UserContext userContext, final RackTemplate rackTemplate) throws SQLException {
-		long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_INSERT_UPDATE);
 		callableStatement.registerOutParameter("new_code_rack_template", Types.INTEGER);
@@ -125,6 +131,13 @@ public class RackTemplateModel {
 		callableStatement.setInt(RackTemplateConst.WIDTH, rackTemplate.getWidth());
 		callableStatement.setInt(RackTemplateConst.HEIGHT, rackTemplate.getHeight());
 		callableStatement.setString(RackTemplateConst.LOAD_SIDE, rackTemplate.getLoad_sideAtStr());
+		//TODO
+		callableStatement.setInt(RackTemplateConst.REAL_LENGTH, rackTemplate.getLength());
+		callableStatement.setInt(RackTemplateConst.REAL_WIDTH, rackTemplate.getWidth());
+		callableStatement.setInt(RackTemplateConst.REAL_HEIGHT, rackTemplate.getHeight());
+		callableStatement.setInt(RackTemplateConst.X_OFFSET, 0);
+		callableStatement.setInt(RackTemplateConst.Y_OFFEST, 0);
+
 		callableStatement.execute();
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms");
@@ -135,7 +148,7 @@ public class RackTemplateModel {
 			":" + RackTemplateConst.STATE_RACK_TEMPLATE + ")}";
 
 	public void changestate(final UserContext userContext, final int code_rack_template, final String state_rack_template) throws SQLException {
-		long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_CHANGESTATE);
 		callableStatement.setInt(RackTemplateConst.CODE_RACK_TEMPLATE, code_rack_template);
@@ -148,13 +161,13 @@ public class RackTemplateModel {
 	private static final String Q_DELETE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.DRACKTEMPLATE(:" + RackTemplateConst.CODE_RACK_TEMPLATE + ")}";
 
 	public void delete(final UserContext userContext, final int code_rack_template) throws SQLException {
-		long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final CallableStatement callableStatement = connection.prepareCall(Q_DELETE);
 		callableStatement.setInt(RackTemplateConst.CODE_RACK_TEMPLATE, code_rack_template);
 		callableStatement.execute();
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_rack_template:"+code_rack_template+")");
+		LOG.debug(time + " ms (code_rack_template:" + code_rack_template + ")");
 	}
 
 	private static RackTemplateModel instance = new RackTemplateModel();

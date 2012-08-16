@@ -46,7 +46,12 @@ public class RackHModel {
 			" " + RackHConst.DATE_INSERT + " " + RackConst.DATE_UPDATE + "," +
 			" " + RackHConst.USER_DRAFT + "," +
 			" " + RackHConst.DATE_DRAFT + "," +
-			" " + RackHConst.TYPE_OPERATION + " " +
+			" " + RackHConst.TYPE_OPERATION + "," +
+			" " + RackHConst.REAL_LENGTH + "," +
+			" " + RackHConst.REAL_WIDTH + "," +
+			" " + RackHConst.REAL_HEIGHT + "," +
+			" " + RackHConst.X_OFFSET + "," +
+			" " + RackHConst.Y_OFFEST + " " +
 			"from " + RackHConst.TABLE_NAME + " ";
 
 	public static final String Q_LIST = Q_SELECT_FROM +

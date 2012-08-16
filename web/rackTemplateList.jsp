@@ -68,7 +68,7 @@
 						</table>
 					</td>
 					<td>
-						<select id="rackTemplateList" size="20" style="width: 200px; height: 100%;" onchange="selectRackTemplate(value)">
+						<select id="rackTemplateList" size="20" style="width: 250px; height: 100%;" onchange="selectRackTemplate(value)">
 						</select>
 					</td>
 					<td id="preview_td" valign="top">

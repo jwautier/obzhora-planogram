@@ -31,4 +31,9 @@ public interface RackHConst {
 	public static final String LOCK_MOVE = "lock_move";
 	public static final String TYPE_RACK = "type_rack";
 	public static final String TYPE_OPERATION = "type_operation";
+	public static final String REAL_LENGTH = "real_length";
+	public static final String REAL_WIDTH = "real_width";
+	public static final String REAL_HEIGHT = "real_height";
+	public static final String X_OFFSET = "x_offset";
+	public static final String Y_OFFEST = "y_offset";
 }

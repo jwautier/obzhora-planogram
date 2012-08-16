@@ -181,12 +181,11 @@
 										<tr>
 											<td align="right">название</td>
 											<td><input type="text" id="rackName"
-													   onchange="changeShowcaseName(this)"/></td>
+													   onchange="changeShowcaseName(this)" onkeyup="changeShowcaseName(this)"/></td>
 										</tr>
 										<tr>
 											<td align="right">штрихкод</td>
-											<td><input type="text" id="rackBarcode"
-													   onchange="changeRackBarcode(this)"/></td>
+											<td><input type="text" id="rackBarcode" disabled="disabled"/></td>
 										</tr>
 										<tr>
 											<td colspan="2">
@@ -510,15 +509,6 @@ function roundRack(rack)
 				$('#rackName').focus();
 				alert('отсутствует наименование');
 			}
-			else if (window.showcaseList[i].rack_barcode == null || window.showcaseList[i].rack_barcode.length == 0) {
-				noneError = false;
-				window.showcase = window.showcaseList[i];
-				selectShowcase(window.showcase);
-				drawEditCanvas();
-				drawPreviewCanvas();
-				$('#rackBarcode').focus();
-				alert('отсутствует штрихкод');
-			}
 		}
 		if (noneError)
 		{
@@ -700,7 +690,7 @@ function roundRack(rack)
 				if (sx>0 && sy>0 && sx<window.sector.length && sy<window.sector.width)
 				{
 				window.rackAdd=false;
-				window.showcase=<%=new Rack(null, null, "", "", 1, 1, 1,null, 0, 0, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null).toJsonObject()%>;
+				window.showcase =<%=new Rack(null, null, null, "", "", 1, 1, 1000, 0, 0, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null, 1, 1, 1000, 0, 0).toJsonObject()%>;
 				window.showcase.code_sector=window.sector.code_sector;
 				window.showcase.x_coord=sx;
 				window.showcase.y_coord=sy;
@@ -1071,12 +1061,6 @@ function roundRack(rack)
 	function changeShowcaseName(rackName) {
 		if (showcase != null) {
 			showcase.name_rack = rackName.value;
-		}
-	}
-
-	function changeRackBarcode(rackBarcode) {
-		if (showcase != null) {
-			showcase.rack_barcode = rackBarcode.value;
 		}
 	}
 
