@@ -46,7 +46,8 @@ public class TestDBscheme {
 					SectorConst.USER_UPDATE,
 					SectorConst.DATE_UPDATE,
 					SectorConst.USER_DRAFT,
-					SectorConst.DATE_DRAFT);
+					SectorConst.DATE_DRAFT
+			);
 			checkTable(psColumns, RackConst.TABLE_NAME,
 					RackConst.CODE_SECTOR,
 					RackConst.CODE_RACK,
@@ -74,7 +75,9 @@ public class TestDBscheme {
 					RackConst.REAL_WIDTH,
 					RackConst.REAL_HEIGHT,
 					RackConst.X_OFFSET,
-					RackConst.Y_OFFEST);
+					RackConst.Y_OFFSET,
+					RackConst.Z_OFFSET
+			);
 			checkTable(psColumns, RackShelfConst.TABLE_NAME,
 					RackShelfConst.CODE_RACK,
 					RackShelfConst.CODE_SHELF,
@@ -126,7 +129,8 @@ public class TestDBscheme {
 					RackTemplateConst.REAL_WIDTH,
 					RackTemplateConst.REAL_HEIGHT,
 					RackTemplateConst.X_OFFSET,
-					RackTemplateConst.Y_OFFEST
+					RackTemplateConst.Y_OFFSET,
+					RackTemplateConst.Z_OFFSET
 			);
 			checkTable(psColumns, RackShelfTemplateConst.TABLE_NAME,
 					RackShelfTemplateConst.CODE_RACK_TEMPLATE,
@@ -157,7 +161,8 @@ public class TestDBscheme {
 					SectorHConst.DATE_INSERT,
 					SectorHConst.TYPE_OPERATION,
 					SectorHConst.USER_DRAFT,
-					SectorHConst.DATE_DRAFT);
+					SectorHConst.DATE_DRAFT
+			);
 			checkTable(psColumns, RackHConst.TABLE_NAME,
 					RackHConst.CODE_SECTOR,
 					RackHConst.CODE_RACK,
@@ -184,7 +189,9 @@ public class TestDBscheme {
 					RackHConst.REAL_WIDTH,
 					RackHConst.REAL_HEIGHT,
 					RackHConst.X_OFFSET,
-					RackHConst.Y_OFFEST);
+					RackHConst.Y_OFFEST,
+					RackHConst.Z_OFFEST
+			);
 			checkTable(psColumns, RackShelfHConst.TABLE_NAME,
 					RackShelfHConst.CODE_RACK,
 					RackShelfHConst.CODE_SHELF,
@@ -197,7 +204,8 @@ public class TestDBscheme {
 					RackShelfHConst.TYPE_SHELF,
 					RackShelfHConst.USER_INSERT,
 					RackShelfHConst.DATE_INSERT,
-					RackShelfHConst.TYPE_OPERATION);
+					RackShelfHConst.TYPE_OPERATION
+			);
 			checkTable(psColumns, RackWaresHConst.TABLE_NAME,
 					RackWaresHConst.CODE_RACK,
 					RackWaresHConst.CODE_WARES,
@@ -213,7 +221,8 @@ public class TestDBscheme {
 					RackWaresHConst.COUNT_LENGTH_ON_SHELF,
 					RackWaresHConst.USER_INSERT,
 					RackWaresHConst.DATE_INSERT,
-					RackWaresHConst.TYPE_OPERATION);
+					RackWaresHConst.TYPE_OPERATION
+			);
 
 		} catch (Exception e) {
 			e.printStackTrace();

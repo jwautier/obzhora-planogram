@@ -36,4 +36,5 @@ public interface RackHConst {
 	public static final String REAL_HEIGHT = "real_height";
 	public static final String X_OFFSET = "x_offset";
 	public static final String Y_OFFEST = "y_offset";
+	public static final String Z_OFFEST = "z_offset";
 }

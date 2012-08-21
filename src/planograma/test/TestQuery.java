@@ -126,10 +126,10 @@ public class TestQuery {
 		Sector sector = new Sector(8, null, null, "sector 1", 2000, 2000, 300, null, null, null, null, null, null);
 		sectorModel.insert(userContext, sector);
 		final RackModel rackModel = RackModel.getInstance();
-		final int length=50;
-		final int width=200;
-		final int height=150;
-		Rack rack = new Rack(sector.getCode_sector(), null, null, "rack 1", "bar code 1", length, width, height, 50, 50, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null, length, width, height,0,0);
+		final int length = 50;
+		final int width = 200;
+		final int height = 150;
+		Rack rack = new Rack(sector.getCode_sector(), null, null, "rack 1", "bar code 1", length, width, height, 50, 50, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null, length, width, height, 0, 0, 0);
 		System.out.println(rack.toJsonObject());
 		rackModel.insert(userContext, rack);
 		System.out.println("insert");
@@ -160,10 +160,10 @@ public class TestQuery {
 		Sector sector = new Sector(8, null, null, "sector 1", 2000, 2000, 300, null, null, null, null, null, null);
 		sectorModel.insert(userContext, sector);
 		final RackModel rackModel = RackModel.getInstance();
-		final int length=50;
-		final int width=200;
-		final int height=150;
-		final Rack rack = new Rack(sector.getCode_sector(), null, null, "rack 1", "1", length, width, height, 1000, 1000, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null, length, width, height, 0, 0);
+		final int length = 50;
+		final int width = 200;
+		final int height = 150;
+		final Rack rack = new Rack(sector.getCode_sector(), null, null, "rack 1", "1", length, width, height, 1000, 1000, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null, length, width, height, 0, 0, 0);
 		rackModel.insert(userContext, rack);
 		final RackShelfModel rackShelfModel = RackShelfModel.getInstance();
 		RackShelf rackShelf = new RackShelf(rack.getCode_rack(), null, 10, 10, 50, 50, 50, 0, TypeShelf.DZ, null, null, null, null);
@@ -193,10 +193,10 @@ public class TestQuery {
 
 	public static void testRackTemplateModel(final UserContext userContext) throws SQLException {
 		final RackTemplateModel rackTemplateModel = RackTemplateModel.getInstance();
-		final int length=20;
-		final int width=200;
-		final int height=150;
-		RackTemplate rackTemplate = new RackTemplate(null, null, "rack template 1", length, width, height, LoadSide.F, null, null, null, null, null, null, length, width, height, 0, 0);
+		final int length = 20;
+		final int width = 200;
+		final int height = 150;
+		RackTemplate rackTemplate = new RackTemplate(null, null, "rack template 1", length, width, height, LoadSide.F, null, null, null, null, null, null, length, width, height, 0, 0, 0);
 		System.out.println(rackTemplate.toJsonObject());
 		rackTemplateModel.insert(userContext, rackTemplate);
 		System.out.println("insert");
@@ -224,10 +224,10 @@ public class TestQuery {
 
 	public static void testRackShelfTemplateModel(final UserContext userContext) throws SQLException {
 		final RackTemplateModel rackTemplateModel = RackTemplateModel.getInstance();
-		final int length=20;
-		final int width=200;
-		final int height=150;
-		final RackTemplate rackTemplate = new RackTemplate(null, null, "rack template 1", length, width, height, LoadSide.F, null, null, null, null, null, null, length,width,height,0,0);
+		final int length = 20;
+		final int width = 200;
+		final int height = 150;
+		final RackTemplate rackTemplate = new RackTemplate(null, null, "rack template 1", length, width, height, LoadSide.F, null, null, null, null, null, null, length, width, height, 0, 0, 0);
 		rackTemplateModel.insert(userContext, rackTemplate);
 		final RackShelfTemplateModel rackShelfTemplateModel = RackShelfTemplateModel.getInstance();
 		RackShelfTemplate rackShelfTemplate = new RackShelfTemplate(rackTemplate.getCode_rack_template(), null, 10, 10, 50, 50, 50, 0, TypeShelf.DZ, null, null, null, null);
@@ -260,10 +260,10 @@ public class TestQuery {
 		Sector sector = new Sector(8, null, null, "sector 1", 2000, 2000, 300, null, null, null, null, null, null);
 		sectorModel.insert(userContext, sector);
 		final RackModel rackModel = RackModel.getInstance();
-		final int length=20;
-		final int width=200;
-		final int height=150;
-		final Rack rack = new Rack(sector.getCode_sector(), null, null, "rack 1", "1", length, width, height, 1000, 1000, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null, length, width, height, 0,0);
+		final int length = 20;
+		final int width = 200;
+		final int height = 150;
+		final Rack rack = new Rack(sector.getCode_sector(), null, null, "rack 1", "1", length, width, height, 1000, 1000, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null, length, width, height, 0, 0, 0);
 		rackModel.insert(userContext, rack);
 		final RackWaresModel rackWaresModel = RackWaresModel.getInstance();
 		final RackWaresHModel rackWaresHModel = RackWaresHModel.getInstance();

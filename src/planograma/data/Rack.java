@@ -124,8 +124,12 @@ public class Rack implements IJsonObject {
 	 * Смещение доступной области относительно низа обекта (со стороны загрузки)
 	 */
 	private Integer y_offset;
+	/**
+	 * Смещение доступной области относительно дальней стенки (со стороны загрузки)
+	 */
+	private Integer z_offset;
 
-	public Rack(Integer code_sector, Integer code_rack, StateRack state_rack, String name_rack, String rack_barcode, Integer length, Integer width, Integer height, Integer x_coord, Integer y_coord, Integer angle, LoadSide load_side, Integer code_rack_template, boolean lock_size, boolean lock_move, TypeRack type_race, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer user_draft, Date date_draft, Integer real_length, Integer real_width, Integer real_height, Integer x_offset, Integer y_offset) {
+	public Rack(Integer code_sector, Integer code_rack, StateRack state_rack, String name_rack, String rack_barcode, Integer length, Integer width, Integer height, Integer x_coord, Integer y_coord, Integer angle, LoadSide load_side, Integer code_rack_template, boolean lock_size, boolean lock_move, TypeRack type_race, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer user_draft, Date date_draft, Integer real_length, Integer real_width, Integer real_height, Integer x_offset, Integer y_offset, Integer z_offset) {
 		this.code_sector = code_sector;
 		this.code_rack = code_rack;
 		this.state_rack = state_rack;
@@ -153,6 +157,7 @@ public class Rack implements IJsonObject {
 		this.real_height = real_height;
 		this.x_offset = x_offset;
 		this.y_offset = y_offset;
+		this.z_offset = z_offset;
 	}
 
 	public Integer getCode_sector() {
@@ -241,6 +246,14 @@ public class Rack implements IJsonObject {
 
 	public void setY_coord(Integer y_coord) {
 		this.y_coord = y_coord;
+	}
+
+	public Integer getZ_offset() {
+		return z_offset;
+	}
+
+	public void setZ_offset(Integer z_offset) {
+		this.z_offset = z_offset;
 	}
 
 	public Integer getAngle() {
@@ -430,7 +443,8 @@ public class Rack implements IJsonObject {
 		real_width = resultSet.getInt(RackConst.REAL_WIDTH);
 		real_height = resultSet.getInt(RackConst.REAL_HEIGHT);
 		x_offset = resultSet.getInt(RackConst.X_OFFSET);
-		y_offset = resultSet.getInt(RackConst.Y_OFFEST);
+		y_offset = resultSet.getInt(RackConst.Y_OFFSET);
+		z_offset = resultSet.getInt(RackConst.Z_OFFSET);
 	}
 
 	public Rack(final JsonObject rackJson) {
@@ -460,7 +474,8 @@ public class Rack implements IJsonObject {
 		real_width = JsonUtils.getInteger(rackJson, RackConst.REAL_WIDTH);
 		real_height = JsonUtils.getInteger(rackJson, RackConst.REAL_HEIGHT);
 		x_offset = JsonUtils.getInteger(rackJson, RackConst.X_OFFSET);
-		y_offset = JsonUtils.getInteger(rackJson, RackConst.Y_OFFEST);
+		y_offset = JsonUtils.getInteger(rackJson, RackConst.Y_OFFSET);
+		z_offset = JsonUtils.getInteger(rackJson, RackConst.Z_OFFSET);
 	}
 
 	@Override
@@ -492,7 +507,8 @@ public class Rack implements IJsonObject {
 		jsonObject.addProperty(RackConst.REAL_WIDTH, real_width);
 		jsonObject.addProperty(RackConst.REAL_HEIGHT, real_height);
 		jsonObject.addProperty(RackConst.X_OFFSET, x_offset);
-		jsonObject.addProperty(RackConst.Y_OFFEST, y_offset);
+		jsonObject.addProperty(RackConst.Y_OFFSET, y_offset);
+		jsonObject.addProperty(RackConst.Z_OFFSET, z_offset);
 		return jsonObject;
 	}
 }

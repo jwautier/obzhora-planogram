@@ -690,7 +690,7 @@ function roundRack(rack)
 				if (sx>0 && sy>0 && sx<window.sector.length && sy<window.sector.width)
 				{
 				window.rackAdd=false;
-				window.showcase =<%=new Rack(null, null, null, "", "", 1, 1, 1000, 0, 0, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null, 1, 1, 1000, 0, 0).toJsonObject()%>;
+				window.showcase =<%=new Rack(null, null, null, "", "", 1, 1, 1000, 0, 0, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null, 1, 1, 1000, 0, 0, 0).toJsonObject()%>;
 				window.showcase.code_sector=window.sector.code_sector;
 				window.showcase.x_coord=sx;
 				window.showcase.y_coord=sy;

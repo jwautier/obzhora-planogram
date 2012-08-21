@@ -36,7 +36,8 @@ public interface RackConst {
 	public static final String REAL_WIDTH = "real_width";
 	public static final String REAL_HEIGHT = "real_height";
 	public static final String X_OFFSET = "x_offset";
-	public static final String Y_OFFEST = "y_offset";
+	public static final String Y_OFFSET = "y_offset";
+	public static final String Z_OFFSET = "z_offset";
 
 
 	public static final int STATE_ALL_PART_STATE_STATE_RACK = -63;

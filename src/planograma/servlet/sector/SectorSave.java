@@ -38,6 +38,8 @@ public class SectorSave extends AbstractAction {
 	private SectorModel sectorModel;
 	private RackModel rackModel;
 	private RackShelfModel rackShelfModel;
+	private RackWaresModel rackWaresModel;
+	private RackTemplateModel rackTemplateModel;
 	private RackShelfTemplateModel rackShelfTemplateModel;
 
 	@Override
@@ -45,7 +47,9 @@ public class SectorSave extends AbstractAction {
 		super.init(config);
 		sectorModel = SectorModel.getInstance();
 		rackModel = RackModel.getInstance();
-		rackShelfModel=RackShelfModel.getInstance();
+		rackShelfModel = RackShelfModel.getInstance();
+		rackWaresModel = RackWaresModel.getInstance();
+		rackTemplateModel = RackTemplateModel.getInstance();
 		rackShelfTemplateModel = RackShelfTemplateModel.getInstance();
 	}
 
@@ -88,9 +92,12 @@ public class SectorSave extends AbstractAction {
 				}
 				if (findRack == null) {
 					// запись была удалена
+					// удаление товаров со стеллажа
+					for (final RackWares rackWares : rackWaresModel.list(userContext, oldRack.getCode_rack())) {
+						rackWaresModel.delete(userContext, rackWares.getCode_wares());
+					}
 					// удаление полок
-					for (final RackShelf rackShelf:rackShelfModel.list(userContext, oldRack.getCode_rack()))
-					{
+					for (final RackShelf rackShelf : rackShelfModel.list(userContext, oldRack.getCode_rack())) {
 						rackShelfModel.delete(userContext, rackShelf.getCode_shelf());
 					}
 					// удаление стеллажа
@@ -101,13 +108,21 @@ public class SectorSave extends AbstractAction {
 		for (final Rack newRack : rackList) {
 			// запись была добавлена
 			newRack.setCode_sector(sector.getCode_sector());
+			if (newRack.getCode_rack_template() != null) {
+				// копирование параметров полезной области из шаблона в новый стеллаж
+				final RackTemplate rackTemplate = rackTemplateModel.select(userContext, newRack.getCode_rack_template());
+				newRack.setReal_length(rackTemplate.getReal_length());
+				newRack.setReal_width(rackTemplate.getReal_width());
+				newRack.setReal_height(rackTemplate.getReal_height());
+				newRack.setX_offset(rackTemplate.getX_offset());
+				newRack.setY_offset(rackTemplate.getY_offset());
+				newRack.setZ_offset(rackTemplate.getZ_offset());
+			}
 			rackModel.insert(userContext, newRack);
-			if (newRack.getCode_rack_template()!=null)
-			{
+			if (newRack.getCode_rack_template() != null) {
 				// копируем полки с шаблонного стеллажа
-				for (final RackShelfTemplate shelfTemplate:rackShelfTemplateModel.list(userContext, newRack.getCode_rack_template()))
-				{
-					final RackShelf shelf=new RackShelf(newRack.getCode_rack(), null,
+				for (final RackShelfTemplate shelfTemplate : rackShelfTemplateModel.list(userContext, newRack.getCode_rack_template())) {
+					final RackShelf shelf = new RackShelf(newRack.getCode_rack(), null,
 							shelfTemplate.getX_coord(), shelfTemplate.getY_coord(),
 							shelfTemplate.getShelf_height(), shelfTemplate.getShelf_width(), shelfTemplate.getShelf_length(),
 							shelfTemplate.getAngle(), shelfTemplate.getType_shelf(), null, null, null, null);
@@ -116,7 +131,7 @@ public class SectorSave extends AbstractAction {
 			}
 		}
 		commit(userContext);
-		final JsonObject jsonObject=new JsonObject();
+		final JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty(SectorConst.CODE_SECTOR, sector.getCode_sector());
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms");
