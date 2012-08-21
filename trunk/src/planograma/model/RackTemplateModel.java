@@ -38,7 +38,8 @@ public class RackTemplateModel {
 			" " + RackTemplateConst.REAL_WIDTH + "," +
 			" " + RackTemplateConst.REAL_HEIGHT + "," +
 			" " + RackTemplateConst.X_OFFSET + "," +
-			" " + RackTemplateConst.Y_OFFEST + " " +
+			" " + RackTemplateConst.Y_OFFSET + "," +
+			" " + RackTemplateConst.Z_OFFSET + " " +
 			"from " + RackTemplateConst.TABLE_NAME + " ";
 
 	public static final String Q_LIST = Q_SELECT_FROM +
@@ -89,7 +90,8 @@ public class RackTemplateModel {
 			":" + RackTemplateConst.REAL_WIDTH + ", " +
 			":" + RackTemplateConst.REAL_HEIGHT + ", " +
 			":" + RackTemplateConst.X_OFFSET + ", " +
-			":" + RackTemplateConst.Y_OFFEST +
+			":" + RackTemplateConst.Y_OFFSET + ", " +
+			":" + RackTemplateConst.Z_OFFSET +
 			")}";
 
 	public int insert(final UserContext userContext, final RackTemplate rackTemplate) throws SQLException {
@@ -104,12 +106,12 @@ public class RackTemplateModel {
 		callableStatement.setInt(RackTemplateConst.WIDTH, rackTemplate.getWidth());
 		callableStatement.setInt(RackTemplateConst.HEIGHT, rackTemplate.getHeight());
 		callableStatement.setString(RackTemplateConst.LOAD_SIDE, rackTemplate.getLoad_sideAtStr());
-		//TODO
-		callableStatement.setInt(RackTemplateConst.REAL_LENGTH, rackTemplate.getLength());
-		callableStatement.setInt(RackTemplateConst.REAL_WIDTH, rackTemplate.getWidth());
-		callableStatement.setInt(RackTemplateConst.REAL_HEIGHT, rackTemplate.getHeight());
-		callableStatement.setInt(RackTemplateConst.X_OFFSET, 0);
-		callableStatement.setInt(RackTemplateConst.Y_OFFEST, 0);
+		callableStatement.setInt(RackTemplateConst.REAL_LENGTH, rackTemplate.getReal_length());
+		callableStatement.setInt(RackTemplateConst.REAL_WIDTH, rackTemplate.getReal_width());
+		callableStatement.setInt(RackTemplateConst.REAL_HEIGHT, rackTemplate.getReal_height());
+		callableStatement.setInt(RackTemplateConst.X_OFFSET, rackTemplate.getX_offset());
+		callableStatement.setInt(RackTemplateConst.Y_OFFSET, rackTemplate.getY_offset());
+		callableStatement.setInt(RackTemplateConst.Z_OFFSET, rackTemplate.getZ_offset());
 
 		callableStatement.execute();
 		final int id = callableStatement.getInt("new_code_rack_template");
@@ -131,12 +133,12 @@ public class RackTemplateModel {
 		callableStatement.setInt(RackTemplateConst.WIDTH, rackTemplate.getWidth());
 		callableStatement.setInt(RackTemplateConst.HEIGHT, rackTemplate.getHeight());
 		callableStatement.setString(RackTemplateConst.LOAD_SIDE, rackTemplate.getLoad_sideAtStr());
-		//TODO
-		callableStatement.setInt(RackTemplateConst.REAL_LENGTH, rackTemplate.getLength());
-		callableStatement.setInt(RackTemplateConst.REAL_WIDTH, rackTemplate.getWidth());
-		callableStatement.setInt(RackTemplateConst.REAL_HEIGHT, rackTemplate.getHeight());
-		callableStatement.setInt(RackTemplateConst.X_OFFSET, 0);
-		callableStatement.setInt(RackTemplateConst.Y_OFFEST, 0);
+		callableStatement.setInt(RackTemplateConst.REAL_LENGTH, rackTemplate.getReal_length());
+		callableStatement.setInt(RackTemplateConst.REAL_WIDTH, rackTemplate.getReal_width());
+		callableStatement.setInt(RackTemplateConst.REAL_HEIGHT, rackTemplate.getReal_height());
+		callableStatement.setInt(RackTemplateConst.X_OFFSET, rackTemplate.getX_offset());
+		callableStatement.setInt(RackTemplateConst.Y_OFFSET, rackTemplate.getY_offset());
+		callableStatement.setInt(RackTemplateConst.Z_OFFSET, rackTemplate.getZ_offset());
 
 		callableStatement.execute();
 		time = System.currentTimeMillis() - time;

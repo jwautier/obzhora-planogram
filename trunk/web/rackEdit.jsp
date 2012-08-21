@@ -105,29 +105,14 @@
 											<col width="70"/>
 										</colgroup>
 										<tr>
-											<td colspan="2">свойства стеллажа:</td>
+											<td colspan="3">свойства стеллажа:</td>
 										</tr>
 										<tr>
 											<td align="right">название</td>
-											<td>
+											<td colspan="2">
 												<input type="text" id="rackName"
 													   onchange="changeRackName(this)"/>
 											</td>
-										</tr>
-										<tr>
-											<td align="right">ширина</td>
-											<td><input type="text" id="rackWidth"
-													   onchange="changeRackWidth(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
-										</tr>
-										<tr>
-											<td align="right">высота</td>
-											<td><input type="text" id="rackHeight"
-													   onchange="changeRackHeight(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
-										</tr>
-										<tr>
-											<td align="right">глубина</td>
-											<td><input type="text" id="rackLength"
-													   onchange="changeRackLength(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
 										</tr>
 										<tr>
 											<td align="right">загрузка</td>
@@ -145,6 +130,50 @@
 													%>
 												</select>
 											</td>
+										</tr>
+										<tr>
+											<td>объем</td>
+											<td>стеллажа</td>
+											<td>полезный</td>
+										</tr>
+										<tr>
+											<td align="right">ширина</td>
+											<td><input type="text" id="rackWidth" size="4"
+													   onchange="changeRackWidth(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+											<td><input type="text" id="rackRealWidth" size="4"
+													   onchange="changeRackRealWidth(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+										</tr>
+										<tr>
+											<td align="right">высота</td>
+											<td><input type="text" id="rackHeight" size="4"
+													   onchange="changeRackHeight(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+											<td><input type="text" id="rackRealHeight" size="4"
+													   onchange="changeRackRealHeight(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+										</tr>
+										<tr>
+											<td align="right">глубина</td>
+											<td><input type="text" id="rackLength" size="4"
+													   onchange="changeRackLength(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+											<td><input type="text" id="rackRealLength" size="4"
+													   onchange="changeRackRealLength(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+										</tr>
+										<tr>
+											<td align="right" title="Смещение полезного обема относительно нижнего левого дальнего угла стеллажа">смещение</td>
+											<td align="right">слева</td>
+											<td><input type="text" id="rackX_offset" size="4"
+													   onchange="changeRackX_offset(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+										</tr>
+										<tr>
+											<td></td>
+											<td align="right">снизу</td>
+											<td><input type="text" id="rackY_offset" size="4"
+													   onchange="changeRackY_offset(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+										</tr>
+										<tr>
+											<td></td>
+											<td align="right">сзади</td>
+											<td><input type="text" id="rackZ_offset" size="4"
+													   onchange="changeRackZ_offset(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
 										</tr>
 									</table>
 								</td>
@@ -236,13 +265,32 @@
 					window.rack.width=window.rack.length;
 					window.rack.length=window.rack.height;
 					window.rack.height=temp;
+
+					temp=window.rack.real_width;
+					window.rack.real_width=window.rack.real_length;
+					window.rack.real_length=window.rack.real_height;
+					window.rack.real_height=temp;
+
+					// TODO x_offset
 					break;
 				case '<%=LoadSide.F%>':
 					var temp=window.rack.width;
 					window.rack.width=window.rack.length;
 					window.rack.length=temp;
+
+					temp=window.rack.real_width;
+					window.rack.real_width=window.rack.real_length;
+					window.rack.real_length=temp;
+
+					// TODO x_offset
 					break;
 			}
+			// определение максимальных габаритов
+			window.rack.min_x=Math.min(0, window.rack.x_offset);
+			window.rack.max_x=Math.max(window.rack.width, Math.max(0,window.rack.x_offset)+window.rack.real_width);
+			window.rack.min_y=Math.min(0, window.rack.y_offset);
+			window.rack.max_y=Math.max(window.rack.height, Math.max(0,window.rack.y_offset)+window.rack.real_height);
+
 			window.rackShelfList = data.rackShelfList;
 			loadComplete2();
 		});
@@ -254,14 +302,14 @@
 		var edit_td = $('#edit_td');
 		window.edit_canvas.width = edit_td.width() - 6;
 		window.edit_canvas.height = edit_td.height() - 6;
-		window.edit_m = Math.max(window.rack.width / edit_canvas.width, window.rack.height / edit_canvas.height)
+		window.edit_m = Math.max(window.rack.max_x / edit_canvas.width, window.rack.max_y / edit_canvas.height)
 
 		window.preview_canvas = document.getElementById("preview_canvas");
 		window.preview_context = preview_canvas.getContext("2d");
 		var preview_td = $('#preview_td');
 		window.preview_canvas.width = preview_td.width();// - 4;
 		window.preview_canvas.height = preview_td.height();// - 4;
-		window.preview_m = Math.max(window.rack.width / preview_canvas.width,  window.rack.height / preview_canvas.height);
+		window.preview_m = Math.max(window.rack.max_x / preview_canvas.width,  window.rack.max_y / preview_canvas.height);
 
 		window.km = edit_m;
 		window.kx = 0;
@@ -290,9 +338,16 @@
 	{
 		document.getElementById('rackName').value = window.rack.name_rack;
 		document.getElementById('rackWidth').value =window.rack.width;
+		document.getElementById('rackRealWidth').value =window.rack.real_width;
 		document.getElementById('rackHeight').value =window.rack.height;
+		document.getElementById('rackRealHeight').value =window.rack.real_height;
 		document.getElementById('rackLength').value =window.rack.length;
+		document.getElementById('rackRealLength').value =window.rack.real_length;
+		document.getElementById('rackX_offset').value =window.rack.x_offset;
+		document.getElementById('rackY_offset').value =window.rack.y_offset;
+		document.getElementById('rackZ_offset').value =window.rack.z_offset;
 		document.getElementById('rackLoadSide').value =window.rack.load_side;
+
 	}
 
 	function selectShelf(shelf) {
@@ -344,6 +399,7 @@
 </script>
 <%--прорисовка элементов--%>
 <script type="text/javascript">
+	// TODO
 	function drawEditCanvas() {
 		window.edit_context.clearRect(0, 0, window.edit_canvas.width, window.edit_canvas.height);
 		window.edit_context.lineWidth = 1;
@@ -794,6 +850,8 @@
 		window.rack.name_rack = rackName.value;
 	}
 	function changeRackWidth(rackWidth) {
+		// TODO  RackRealWidth
+		// TODO  min_x max_x
 		var currentWidth = Number(rackWidth.value);
 		var maxWidth = 0;
 		for (var i = 0; i < window.rackShelfList.length; i++) {
@@ -833,6 +891,8 @@
 		}
 	}
 	function changeRackHeight(rackHeight) {
+		// TODO  RackRealHeight
+		// TODO  min_y max_y
 		var currentHeight = Number(rackHeight.value);
 		var maxHeight = 0;
 		for (var i = 0; i < window.rackShelfList.length; i++) {
@@ -872,6 +932,7 @@
 		}
 	}
 	function changeRackLength(rackLength) {
+		// TODO  RackRealLength
 		var currentLength = Number(rackLength.value);
 		var maxLength = 0;
 		for (var i = 0; i < window.rackShelfList.length; i++) {
@@ -890,6 +951,19 @@
 			else
 				rackLength.value = window.rack.length;
 		}
+	}
+	function changeRackRealWidth(realWidth){
+		//TODO
+		// TODO  min_x max_x
+	}
+
+	function changeRackRealHeight(realHeight) {
+		// TODO
+		// TODO  min_y max_y
+	}
+
+	function changeRackRealLength(realLength) {
+		//TODO
 	}
 
 	function changeRackLoadSide(rackLoadSide) {

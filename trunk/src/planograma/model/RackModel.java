@@ -47,7 +47,8 @@ public class RackModel {
 			" " + RackConst.REAL_WIDTH + "," +
 			" " + RackConst.REAL_HEIGHT + "," +
 			" " + RackConst.X_OFFSET + "," +
-			" " + RackConst.Y_OFFEST + " " +
+			" " + RackConst.Y_OFFSET + "," +
+			" " + RackConst.Z_OFFSET + " " +
 			"from " + RackConst.TABLE_NAME + " ";
 
 	public static final String Q_LIST = Q_SELECT_FROM +
@@ -109,7 +110,8 @@ public class RackModel {
 			":" + RackConst.REAL_WIDTH +"," +
 			":" + RackConst.REAL_HEIGHT +"," +
 			":" + RackConst.X_OFFSET +"," +
-			":" + RackConst.Y_OFFEST +
+			":" + RackConst.Y_OFFSET +"," +
+			":" + RackConst.Z_OFFSET +
 			")}";
 
 	public int insert(final UserContext userContext, final Rack rack) throws SQLException {
@@ -133,12 +135,12 @@ public class RackModel {
 		callableStatement.setString(RackConst.LOCK_SIZE, (rack.isLock_size()) ? "Y" : "N");
 		callableStatement.setString(RackConst.LOCK_MOVE, (rack.isLock_move()) ? "Y" : "N");
 		callableStatement.setString(RackConst.TYPE_RACK, rack.getType_raceAtStr());
-		//TODO
-		callableStatement.setInt(RackConst.REAL_LENGTH, rack.getLength());
-		callableStatement.setInt(RackConst.REAL_WIDTH, rack.getWidth());
-		callableStatement.setInt(RackConst.REAL_HEIGHT, rack.getHeight());
-		callableStatement.setInt(RackConst.X_OFFSET, 0);
-		callableStatement.setInt(RackConst.Y_OFFEST, 0);
+		callableStatement.setInt(RackConst.REAL_LENGTH, rack.getReal_length());
+		callableStatement.setInt(RackConst.REAL_WIDTH, rack.getReal_width());
+		callableStatement.setInt(RackConst.REAL_HEIGHT, rack.getReal_height());
+		callableStatement.setInt(RackConst.X_OFFSET, rack.getX_offset());
+		callableStatement.setInt(RackConst.Y_OFFSET, rack.getY_offset());
+		callableStatement.setInt(RackConst.Z_OFFSET, rack.getZ_offset());
 
 		callableStatement.execute();
 		final int id = callableStatement.getInt("new_code_rack");
@@ -169,13 +171,12 @@ public class RackModel {
 		callableStatement.setString(RackConst.LOCK_SIZE, (rack.isLock_size()) ? "Y" : "N");
 		callableStatement.setString(RackConst.LOCK_MOVE, (rack.isLock_move()) ? "Y" : "N");
 		callableStatement.setString(RackConst.TYPE_RACK, rack.getType_raceAtStr());
-
-		//TODO
-		callableStatement.setInt(RackConst.REAL_LENGTH, rack.getLength());
-		callableStatement.setInt(RackConst.REAL_WIDTH, rack.getWidth());
-		callableStatement.setInt(RackConst.REAL_HEIGHT, rack.getHeight());
-		callableStatement.setInt(RackConst.X_OFFSET, 0);
-		callableStatement.setInt(RackConst.Y_OFFEST, 0);
+		callableStatement.setInt(RackConst.REAL_LENGTH, rack.getReal_length());
+		callableStatement.setInt(RackConst.REAL_WIDTH, rack.getReal_width());
+		callableStatement.setInt(RackConst.REAL_HEIGHT, rack.getReal_height());
+		callableStatement.setInt(RackConst.X_OFFSET, rack.getX_offset());
+		callableStatement.setInt(RackConst.Y_OFFSET, rack.getY_offset());
+		callableStatement.setInt(RackConst.Z_OFFSET, rack.getZ_offset());
 
 		callableStatement.execute();
 		time = System.currentTimeMillis() - time;
