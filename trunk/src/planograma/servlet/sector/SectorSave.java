@@ -108,18 +108,8 @@ public class SectorSave extends AbstractAction {
 		for (final Rack newRack : rackList) {
 			// запись была добавлена
 			newRack.setCode_sector(sector.getCode_sector());
-			if (newRack.getCode_rack_template() != null) {
-				// копирование параметров полезной области из шаблона в новый стеллаж
-				final RackTemplate rackTemplate = rackTemplateModel.select(userContext, newRack.getCode_rack_template());
-				newRack.setReal_length(rackTemplate.getReal_length());
-				newRack.setReal_width(rackTemplate.getReal_width());
-				newRack.setReal_height(rackTemplate.getReal_height());
-				newRack.setX_offset(rackTemplate.getX_offset());
-				newRack.setY_offset(rackTemplate.getY_offset());
-				newRack.setZ_offset(rackTemplate.getZ_offset());
-			}
 			rackModel.insert(userContext, newRack);
-			if (newRack.getCode_rack_template() != null) {
+			if (newRack.getCode_rack_template() != null && newRack.getCode_rack_template()!=0) {
 				// копируем полки с шаблонного стеллажа
 				for (final RackShelfTemplate shelfTemplate : rackShelfTemplateModel.list(userContext, newRack.getCode_rack_template())) {
 					final RackShelf shelf = new RackShelf(newRack.getCode_rack(), null,
