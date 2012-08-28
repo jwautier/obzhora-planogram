@@ -18,6 +18,12 @@
 	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
 	<script type="text/javascript" src="js/planogram.js"></script>
 	<script type="text/javascript" src="js/planogram2D.js"></script>
+	<script type="text/javascript" src="js/rackEdit/rackEdit_drawEditCanvas.js"></script>
+	<script type="text/javascript" src="js/rackEdit/rackEdit_drawPreviewCanvas.js"></script>
+	<script type="text/javascript" src="js/rackEdit/rackEdit_drawShelf.jsp"></script>
+	<script type="text/javascript" src="js/rackEdit/rackEdit_PreviewPanelListener.js"></script>
+	<script type="text/javascript" src="js/rackEdit/rackEdit_RackPanelListener.js"></script>
+	<script type="text/javascript" src="js/rackEdit/rackEdit_RackShelfPanelListener.js"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
 <body onload="loadComplete();" style="overflow-x:hidden;">
@@ -258,6 +264,7 @@
 		var code_rack = getCookie('code_rack');
 		postJson('<%=RackEdit.URL%>', {code_rack:code_rack}, function (data) {
 			window.rack = data.rack;
+			// разворот лицом со стороны загрузки
 			switch (window.rack.load_side)
 			{
 				case '<%=LoadSide.U%>':
@@ -271,7 +278,6 @@
 					window.rack.real_length=window.rack.real_height;
 					window.rack.real_height=temp;
 
-					// TODO x_offset
 					break;
 				case '<%=LoadSide.F%>':
 					var temp=window.rack.width;
@@ -282,14 +288,11 @@
 					window.rack.real_width=window.rack.real_length;
 					window.rack.real_length=temp;
 
-					// TODO x_offset
+					temp=window.rack.y_offset;
+					window.rack.y_offset=window.rack.z_offset;
+					window.rack.z_offset=temp;
 					break;
 			}
-			// определение максимальных габаритов
-			window.rack.min_x=Math.min(0, window.rack.x_offset);
-			window.rack.max_x=Math.max(window.rack.width, Math.max(0,window.rack.x_offset)+window.rack.real_width);
-			window.rack.min_y=Math.min(0, window.rack.y_offset);
-			window.rack.max_y=Math.max(window.rack.height, Math.max(0,window.rack.y_offset)+window.rack.real_height);
 
 			window.rackShelfList = data.rackShelfList;
 			loadComplete2();
@@ -297,21 +300,36 @@
 	}
 	function loadComplete2()
 	{
+		// инициализация окна редактирования
 		window.edit_canvas = document.getElementById("edit_canvas");
 		window.edit_context = edit_canvas.getContext("2d");
 		var edit_td = $('#edit_td');
 		window.edit_canvas.width = edit_td.width() - 6;
 		window.edit_canvas.height = edit_td.height() - 6;
-		window.edit_m = Math.max(window.rack.max_x / edit_canvas.width, window.rack.max_y / edit_canvas.height)
 
+		// инициализация окна навигации
 		window.preview_canvas = document.getElementById("preview_canvas");
 		window.preview_context = preview_canvas.getContext("2d");
 		var preview_td = $('#preview_td');
 		window.preview_canvas.width = preview_td.width();// - 4;
 		window.preview_canvas.height = preview_td.height();// - 4;
-		window.preview_m = Math.max(window.rack.max_x / preview_canvas.width,  window.rack.max_y / preview_canvas.height);
 
-		window.km = edit_m;
+		// смещение стеллажа
+		window.offset_rack_x=-Math.min(0, window.rack.x_offset);
+		window.offset_rack_y=-Math.min(0, window.rack.y_offset);
+		// смещение полезного обема
+		window.offset_real_rack_x=Math.max(0, window.rack.x_offset);
+		window.offset_real_rack_y=Math.max(0, window.rack.y_offset);
+		// определение максимальных габаритов
+		window.max_x=Math.max(window.offset_rack_x + window.rack.width, window.offset_real_rack_x+window.rack.real_width);
+		window.max_y=Math.max(window.offset_rack_y + window.rack.height, window.offset_real_rack_y+window.rack.real_height);
+
+		// масштаб в окне редактирования
+		window.edit_m = Math.max(window.max_x / edit_canvas.width, window.max_y / edit_canvas.height);
+		// масштаб в окне навигации
+		window.preview_m = Math.max(window.max_x / preview_canvas.width,  window.max_y / preview_canvas.height);
+		// камера
+		window.km = window.edit_m;
 		window.kx = 0;
 		window.ky = 0;
 
@@ -397,81 +415,7 @@
 		drawPreviewCanvas();
 	}
 </script>
-<%--прорисовка элементов--%>
-<script type="text/javascript">
-	// TODO
-	function drawEditCanvas() {
-		window.edit_context.clearRect(0, 0, window.edit_canvas.width, window.edit_canvas.height);
-		window.edit_context.lineWidth = 1;
-		window.edit_context.strokeStyle = "BLACK";
-		window.edit_context.strokeRect(
-				-window.kx / window.km,
-				window.edit_canvas.height + window.ky / window.km,
-				window.rack.width / window.km,
-				- window.rack.height / window.km);
-		for (var i = 0; i < window.rackShelfList.length; i++) {
-			drawShelf( window.rackShelfList[i], window.edit_canvas, window.edit_context, window.kx, window.ky, window.km);
-		}
-	}
-	function drawPreviewCanvas()
-	{
-		window.preview_context.clearRect(0, 0, window.preview_canvas.width, window.preview_canvas.height);
-		window.preview_context.lineWidth = 1;
-		window.preview_context.strokeStyle = "BLACK";
-		window.preview_context.strokeRect(0, window.preview_canvas.height,
-				window.rack.width / window.preview_m,
-				-window.rack.height / window.preview_m);
-		for (var i = 0; i < window.rackShelfList.length; i++) {
-			drawShelf(window.rackShelfList[i], window.preview_canvas, window.preview_context, 0, 0, window.preview_m);
-		}
-		window.preview_context.lineWidth = 1;
-		window.preview_context.strokeStyle = "BLUE";
-		window.preview_context.strokeRect(window.kx / window.preview_m,
-				window.preview_canvas.height - window.ky / window.preview_m,
-				window.edit_canvas.width * window.km / window.preview_m,
-				- window.edit_canvas.height * window.km / window.preview_m);
-	}
-	function drawShelf(shelf, canvas, context, kx, ky, m) {
-		context.lineWidth = 1;
-		if (window.shelf==shelf)
-		{
-			context.strokeStyle = "BLUE";
-		}
-		else
-		{
-			context.strokeStyle = "BLACK";
-		}
-		switch (shelf.type_shelf)
-		{
-				<%
-			 for (final TypeShelf typeShelf:TypeShelf.values())
-			 {
-				 out.print("case '");
-				 out.print(typeShelf.name());
-				 out.print("': context.fillStyle = '");
-				 out.print(typeShelf.getColor());
-				 out.println("'; break;");
-			 }
-			 %>
-		}
-		context.beginPath();
-		var x1 = (shelf.x1 - kx) / m;
-		var y1 = canvas.height - (shelf.y1 - ky) / m;
-		var x2 = (shelf.x2 - kx) / m;
-		var y2 = canvas.height - (shelf.y2 - ky) / m;
-		var x3 = (shelf.x3 - kx) / m;
-		var y3 = canvas.height - (shelf.y3 - ky) / m;
-		var x4 = (shelf.x4 - kx) / m;
-		var y4 = canvas.height - (shelf.y4 - ky) / m;
-		context.moveTo(x1, y1);
-		context.lineTo(x2, y2);
-		context.lineTo(x3, y3);
-		context.lineTo(x4, y4);
-		context.closePath();
-		context.stroke();
-		context.fill();
-	}
-</script>
+
 <%-- обработка событий меню --%>
 <script type="text/javascript">
 	function fRackSave()
@@ -483,11 +427,24 @@
 				window.rack.width=window.rack.height;
 				window.rack.height=window.rack.length;
 				window.rack.length=temp;
+
+				temp=window.rack.real_width;
+				window.rack.real_width=window.rack.real_height;
+				window.rack.real_height=window.rack.real_length;
+				window.rack.real_length=temp;
 				break;
 			case '<%=LoadSide.F%>':
 				var temp=window.rack.width;
 				window.rack.width=window.rack.length;
 				window.rack.length=temp;
+
+				temp=window.rack.real_width;
+				window.rack.real_width=window.rack.real_length;
+				window.rack.real_length=temp;
+
+				temp=window.rack.y_offset;
+				window.rack.y_offset=window.rack.z_offset;
+				window.rack.z_offset=temp;
 				break;
 		}
 		postJson('<%=RackSave.URL%>', {rack:window.rack, rackShelfList:window.rackShelfList}, function (data) {
@@ -531,6 +488,7 @@
 	}
 	function fPaste()
 	{
+		//TODO
 		if (window.copyObject != null) {
 			window.shelf = clone(window.copyObject);
 			window.shelf.code_rack = '';
@@ -597,8 +555,8 @@
 		// TODO
 	window.edit_canvas.onmousedown = function (e) {
 		var evnt = ie_event(e);
-		var sx = window.kx + evnt.offsetX * window.km;
-		var sy = window.ky + (window.edit_canvas.height - evnt.offsetY) * window.km;
+		var sx = window.kx - window.offset_rack_x +evnt.offsetX * window.km;
+		var sy = window.ky - window.offset_rack_y +(window.edit_canvas.height - evnt.offsetY) * window.km;
 
 		if (window.shelfAdd==true)
 		{
@@ -772,355 +730,6 @@
 			}
 		}
 	}
-	}
-</script>
-<%-- обработка событий окна навигации --%>
-<script type="text/javascript">
-	function previewCanvasMouseListener() {
-		window.preview_canvas.onmousedown = function (e) {
-			window.previewMove = true;
-			var evnt = ie_event(e);
-			x = evnt.clientX;
-			y = evnt.clientY;
-			window.kx = evnt.offsetX * window.preview_m - window.edit_canvas.width * window.km / 2;
-			window.ky = (window.preview_canvas.height-evnt.offsetY) * window.preview_m - window.edit_canvas.height * window.km / 2;
-			checkKxKy();
-			drawPreviewCanvas();
-		};
-
-		preview_canvas.onmouseup = function (e) {
-			if (window.previewMove) {
-				window.previewMove = false;
-				drawEditCanvas();
-			}
-		};
-
-		preview_canvas.onmouseover = function (e) {
-			if (window.previewMove) {
-				window.previewMove = false;
-				drawEditCanvas();
-			}
-		};
-
-		preview_canvas.onmousemove = function (e) {
-			if (window.previewMove) {
-				var evnt = ie_event(e);
-				window.kx = window.kx + (evnt.clientX - x) * window.preview_m;
-				window.ky = window.ky - (evnt.clientY - y) * window.preview_m;
-				checkKxKy();
-				x = evnt.clientX;
-				y = evnt.clientY;
-				drawPreviewCanvas();
-			}
-		};
-	}
-
-	function kMadd() {
-		window.km = window.km * 1.5;
-		if (window.km > window.edit_m)
-			window.km = window.edit_m;
-		checkKxKy();
-		drawEditCanvas();
-		drawPreviewCanvas();
-	}
-
-	function kMsub() {
-		window.km = window.km / 1.5;
-		if (window.km < 0.1)
-			window.km = 0.1;
-		checkKxKy();
-		drawEditCanvas();
-		drawPreviewCanvas();
-	}
-
-	function checkKxKy() {
-		if (window.kx > window.rack.width - window.edit_canvas.width * window.km)
-			window.kx = window.rack.width - window.edit_canvas.width * window.km;
-		if (window.kx < 0)
-			window.kx = 0;
-		if (window.ky > window.rack.height - window.edit_canvas.height * window.km)
-			window.ky = window.rack.height - window.edit_canvas.height * window.km;
-		if (window.ky < 0)
-			window.ky = 0;
-	}
-</script>
-<%-- обработка событий панели стеллажа --%>
-<script type="text/javascript">
-	function changeRackName(rackName) {
-		window.rack.name_rack = rackName.value;
-	}
-	function changeRackWidth(rackWidth) {
-		// TODO  RackRealWidth
-		// TODO  min_x max_x
-		var currentWidth = Number(rackWidth.value);
-		var maxWidth = 0;
-		for (var i = 0; i < window.rackShelfList.length; i++) {
-			if (maxWidth < window.rackShelfList[i].x1) {
-				maxWidth = window.rackShelfList[i].x1;
-			}
-			if (maxWidth < window.rackShelfList[i].x2) {
-				maxWidth = window.rackShelfList[i].x2;
-			}
-			if (maxWidth < window.rackShelfList[i].x3) {
-				maxWidth = window.rackShelfList[i].x3;
-			}
-			if (maxWidth < window.rackShelfList[i].x4) {
-				maxWidth = window.rackShelfList[i].x4;
-			}
-		}
-		if (currentWidth > maxWidth) {
-			window.rack.width = currentWidth;
-			window.edit_m = Math.max(window.rack.width / edit_canvas.width, window.rack.height / edit_canvas.height)
-			window.preview_m = Math.max(window.rack.width / preview_canvas.width, window.rack.height / preview_canvas.height);
-			window.km = window.edit_m
-			drawEditCanvas();
-			drawPreviewCanvas();
-		}
-		else {
-			if (currentWidth > 0) {
-				rackWidth.value = maxWidth;
-				window.rack.width = maxWidth;
-				window.edit_m = Math.max(window.rack.width / edit_canvas.width, window.rack.height / edit_canvas.height)
-				window.preview_m = Math.max(window.rack.width / preview_canvas.width, window.rack.height / preview_canvas.height);
-				window.km = window.edit_m
-				drawEditCanvas();
-				drawPreviewCanvas();
-			}
-			else
-				rackWidth.value = window.rack.width;
-		}
-	}
-	function changeRackHeight(rackHeight) {
-		// TODO  RackRealHeight
-		// TODO  min_y max_y
-		var currentHeight = Number(rackHeight.value);
-		var maxHeight = 0;
-		for (var i = 0; i < window.rackShelfList.length; i++) {
-			if (maxHeight < window.rackShelfList[i].y1) {
-				maxHeight = window.rackShelfList[i].y1;
-			}
-			if (maxHeight < window.rackShelfList[i].y2) {
-				maxHeight = window.rackShelfList[i].y2;
-			}
-			if (maxHeight < window.rackShelfList[i].y3) {
-				maxHeight = window.rackShelfList[i].y3;
-			}
-			if (maxHeight < window.rackShelfList[i].y4) {
-				maxHeight = window.rackShelfList[i].y4;
-			}
-		}
-		if (currentHeight > maxHeight) {
-			window.rack.height = currentHeight;
-			window.edit_m = Math.max(window.rack.width / edit_canvas.width, window.rack.height / edit_canvas.height)
-			window.preview_m = Math.max(window.rack.width / preview_canvas.width, window.rack.height / preview_canvas.height);
-			window.km = window.edit_m
-			drawEditCanvas();
-			drawPreviewCanvas();
-		}
-		else {
-			if (currentHeight > 0) {
-				rackHeight.value = maxHeight;
-				window.rack.height = maxHeight;
-				window.edit_m = Math.max(window.rack.width / edit_canvas.width, window.rack.height / edit_canvas.height)
-				window.preview_m = Math.max(window.rack.width / preview_canvas.width, window.rack.height / preview_canvas.height);
-				window.km = window.edit_m
-				drawEditCanvas();
-				drawPreviewCanvas();
-			}
-			else
-				rackHeight.value = window.rack.height;
-		}
-	}
-	function changeRackLength(rackLength) {
-		// TODO  RackRealLength
-		var currentLength = Number(rackLength.value);
-		var maxLength = 0;
-		for (var i = 0; i < window.rackShelfList.length; i++) {
-			if (maxLength < window.rackShelfList[i].shelf_length) {
-				maxLength = window.rackShelfList[i].shelf_length;
-			}
-		}
-		if (currentLength > maxLength) {
-			window.rack.length = currentLength;
-		}
-		else {
-			if (currentLength > 0) {
-				rackLength.value = maxLength;
-				window.rack.length = maxLength;
-			}
-			else
-				rackLength.value = window.rack.length;
-		}
-	}
-	function changeRackRealWidth(realWidth){
-		//TODO
-		// TODO  min_x max_x
-	}
-
-	function changeRackRealHeight(realHeight) {
-		// TODO
-		// TODO  min_y max_y
-	}
-
-	function changeRackRealLength(realLength) {
-		//TODO
-	}
-
-	function changeRackLoadSide(rackLoadSide) {
-		window.rack.load_side = rackLoadSide.value;
-	}
-</script>
-<%-- обработка событий панели полки --%>
-<script type="text/javascript">
-	function changeShelfX(shelfX) {
-		if (window.shelf != null) {
-			var x = Number(shelfX.value);
-			if (x != null && !isNaN(x) && x != Infinity) {
-				var oldx = window.shelf.x_coord;
-				window.shelf.x_coord = x;
-				rackShelfCalcCoordinates(window.shelf);
-				// не выходит за области сектора
-				if ((window.shelf.x_coord < oldx
-						&& (window.shelf.x1 < 0
-							|| window.shelf.x2 < 0
-							|| window.shelf.x3 < 0
-							|| window.shelf.x4 < 0))
-					|| (window.shelf.x_coord > oldx
-						&& (window.shelf.x1 > window.rack.width
-							|| window.shelf.x2 > window.rack.width
-							|| window.shelf.x3 > window.rack.width
-							|| window.shelf.x4 > window.rack.width))) {
-					window.shelf.x_coord = oldx;
-					rackShelfCalcCoordinates(window.shelf);
-				}
-				else {
-					drawEditCanvas();
-					drawPreviewCanvas();
-				}
-			}
-			shelfX.value = window.shelf.x_coord;
-		}
-	}
-	function changeShelfY(shelfY) {
-		if (window.shelf != null) {
-			var y = Number(shelfY.value);
-			if (y != null && !isNaN(y) && y != Infinity) {
-				var oldY = window.shelf.y_coord;
-				window.shelf.y_coord = y;
-				rackShelfCalcCoordinates(window.shelf);
-				// не выходит за области сектора
-				if ((window.shelf.y_coord < oldY
-						&& (window.shelf.y1 < 0
-						|| window.shelf.y2 < 0
-						|| window.shelf.y3 < 0
-						|| window.shelf.y4 < 0))
-						|| (window.shelf.y_coord > oldY
-						&& (window.shelf.y1 > window.rack.height
-						|| window.shelf.y2 > window.rack.height
-						|| window.shelf.y3 > window.rack.height
-						|| window.shelf.y4 > window.rack.height))) {
-					window.shelf.y_coord = oldY;
-					rackShelfCalcCoordinates(window.shelf);
-				}
-				else {
-					drawEditCanvas();
-					drawPreviewCanvas();
-				}
-			}
-			shelfY.value = window.shelf.y_coord;
-		}
-	}
-	function changeShelfAngle(shelfAngle) {
-		if (window.shelf != null) {
-			var angle = Number(shelfAngle.value);
-			if (angle >= 0 && angle <= 360) {
-				var oldAngle = window.shelf.angle;
-				window.shelf.angle = angle;
-				rackShelfCalcCoordinates(window.shelf);
-				if (shelfBeyondRack(window.shelf)) {
-					window.shelf.angle = oldAngle;
-					rackShelfCalcCoordinates(window.shelf);
-				}
-				else {
-					drawEditCanvas();
-					drawPreviewCanvas();
-				}
-			}
-			shelfAngle.value = window.shelf.angle;
-		}
-	}
-	function changeShelfWidth(shelfWidth) {
-		if (window.shelf != null) {
-			var value = Number(shelfWidth.value);
-			if (value != null && value>0 && value != Infinity) {
-				var oldValue = window.shelf.shelf_width;
-				window.shelf.shelf_width = value;
-				rackShelfCalcCoordinates(window.shelf);
-				// не выходит за области сектора
-				if (shelfBeyondRack(window.shelf)) {
-					window.shelf.shelf_width = oldValue;
-					rackShelfCalcCoordinates(window.shelf);
-				}
-				else {
-					drawEditCanvas();
-					drawPreviewCanvas();
-				}
-			}
-			shelfWidth.value = window.shelf.shelf_width;
-		}
-	}
-	function changeShelfHeight(shelfHeight) {
-		if (window.shelf != null) {
-			var value = Number(shelfHeight.value);
-			if (value != null && value>0 && value != Infinity) {
-				var oldValue = window.shelf.shelf_height;
-				window.shelf.shelf_height = value;
-				rackShelfCalcCoordinates(window.shelf);
-				// не выходит за области сектора
-				if (shelfBeyondRack(window.shelf)) {
-					window.shelf.shelf_height = oldValue;
-					rackShelfCalcCoordinates(window.shelf);
-				}
-				else {
-					drawEditCanvas();
-					drawPreviewCanvas();
-				}
-			}
-			shelfHeight.value = window.shelf.shelf_height;
-		}
-	}
-	function changeShelfLength(shelfLength) {
-		if (window.shelf != null) {
-			var value = Number(shelfLength.value);
-			// не выходит за области сектора
-			if (value > 0 && value <= window.rack.length) {
-				window.shelf.shelf_length = value;
-			}
-			else {
-				shelfLength.value = window.shelf.shelf_length;
-			}
-		}
-	}
-	function changeShelfType(shelfType) {
-	}
-
-	function shelfBeyondRack(shelf) {
-		return shelf.x1 < 0
-				|| shelf.x2 < 0
-				|| shelf.x3 < 0
-				|| shelf.x4 < 0
-				|| shelf.y1 < 0
-				|| shelf.y2 < 0
-				|| shelf.y3 < 0
-				|| shelf.y4 < 0
-				|| shelf.x1 > rack.width
-				|| shelf.x2 > rack.width
-				|| shelf.x3 > rack.width
-				|| shelf.x4 > rack.width
-				|| shelf.y1 > rack.height
-				|| shelf.y2 > rack.height
-				|| shelf.y3 > rack.height
-				|| shelf.y4 > rack.height;
 	}
 </script>
 <%-- обработка событий клавиатуры --%>
