@@ -335,7 +335,7 @@
 
 		window.shelfAdd = false;
 		window.editMove = 0;
-		window.previewMove = false;
+
 		x = 0;
 		y = 0;
 		window.shelf = null;

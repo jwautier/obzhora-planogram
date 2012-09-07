@@ -61,7 +61,7 @@ public class SectorRemove extends AbstractAction {
 		for (final Rack rack : rackModel.list(userContext, code_sector)) {
 			// удаление товаров со стеллажа
 			for (final RackWares rackWares : rackWaresModel.list(userContext, rack.getCode_rack())) {
-				rackWaresModel.delete(userContext, rackWares.getCode_wares());
+				rackWaresModel.delete(userContext, rackWares.getCode_wares_on_rack());
 			}
 			// удаление полок
 			for (final RackShelf rackShelf : rackShelfModel.list(userContext, rack.getCode_rack())) {

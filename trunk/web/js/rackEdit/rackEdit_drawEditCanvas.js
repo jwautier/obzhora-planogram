@@ -1,4 +1,4 @@
-// прорисовка элементов
+// прорисовка панели редактирования
 function drawEditCanvas() {
 	window.edit_context.clearRect(0, 0, window.edit_canvas.width, window.edit_canvas.height);
 	window.edit_context.lineWidth = 1;
