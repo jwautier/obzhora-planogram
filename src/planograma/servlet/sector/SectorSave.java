@@ -12,6 +12,7 @@ import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
 import planograma.model.*;
 import planograma.servlet.AbstractAction;
+import planograma.utils.JsonUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -19,7 +20,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -62,10 +65,15 @@ public class SectorSave extends AbstractAction {
 		final Sector sector = new Sector(sectorJson);
 		final JsonArray rackListJson = requestData.getAsJsonObject().getAsJsonArray("rackList");
 		final List<Rack> rackList = new ArrayList<Rack>(rackListJson.size());
+		final Map<Rack, Integer> copyFromCodeRackList = new HashMap<Rack, Integer>();
 		for (int i = 0; i < rackListJson.size(); i++) {
 			final JsonObject rackJson = rackListJson.get(i).getAsJsonObject();
 			final Rack rack = new Rack(rackJson);
 			rackList.add(rack);
+			final Integer copy_from_code_rack = JsonUtils.getInteger(rackJson, "copy_from_code_rack");
+			if (copy_from_code_rack != null && copy_from_code_rack != 0) {
+				copyFromCodeRackList.put(rack, copy_from_code_rack);
+			}
 		}
 		// TODO проверка выхода зя пределы зала
 		// TODO проверка пересечения стеллажей
@@ -94,7 +102,7 @@ public class SectorSave extends AbstractAction {
 					// запись была удалена
 					// удаление товаров со стеллажа
 					for (final RackWares rackWares : rackWaresModel.list(userContext, oldRack.getCode_rack())) {
-						rackWaresModel.delete(userContext, rackWares.getCode_wares());
+						rackWaresModel.delete(userContext, rackWares.getCode_wares_on_rack());
 					}
 					// удаление полок
 					for (final RackShelf rackShelf : rackShelfModel.list(userContext, oldRack.getCode_rack())) {
@@ -109,7 +117,26 @@ public class SectorSave extends AbstractAction {
 			// запись была добавлена
 			newRack.setCode_sector(sector.getCode_sector());
 			rackModel.insert(userContext, newRack);
-			if (newRack.getCode_rack_template() != null && newRack.getCode_rack_template()!=0) {
+			final Integer copy_from_code_rack = copyFromCodeRackList.get(newRack);
+			if (copy_from_code_rack != null) {
+				// копируем полки с ранее созданого стеллажа
+				final List<RackShelf> copyRackShelfList = rackShelfModel.list(userContext, copy_from_code_rack);
+				for (RackShelf rackShelf : copyRackShelfList) {
+					final RackShelf newRackShelf = new RackShelf(newRack.getCode_rack(), null, rackShelf.getX_coord(), rackShelf.getY_coord(),
+							rackShelf.getShelf_height(), rackShelf.getShelf_width(), rackShelf.getShelf_length(),
+							rackShelf.getAngle(), rackShelf.getType_shelf(), null, null, null, null);
+					rackShelfModel.insert(userContext, newRackShelf);
+				}
+				// копируем товары с ранее созданого стеллажа
+				final List<RackWares> copyRackWaresList = rackWaresModel.list(userContext, copy_from_code_rack);
+				for (RackWares rackWares : copyRackWaresList) {
+					final RackWares newRackWares = new RackWares(newRack.getCode_rack(), rackWares.getCode_wares(),
+							rackWares.getCode_unit(), null, rackWares.getType_wares_on_rack(), rackWares.getOrder_number_on_rack(),
+							rackWares.getPosition_x(), rackWares.getPosition_y(), rackWares.getWares_length(), rackWares.getWares_width(),
+							rackWares.getWares_height(), rackWares.getCount_length_on_shelf(), null, null, null, null, null, null, null, null);
+					rackWaresModel.insert(userContext, newRackWares);
+				}
+			} else if (newRack.getCode_rack_template() != null && newRack.getCode_rack_template() != 0) {
 				// копируем полки с шаблонного стеллажа
 				for (final RackShelfTemplate shelfTemplate : rackShelfTemplateModel.list(userContext, newRack.getCode_rack_template())) {
 					final RackShelf shelf = new RackShelf(newRack.getCode_rack(), null,

@@ -15,6 +15,18 @@
 	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
 	<script type="text/javascript" src="js/planogram.js"></script>
 	<script type="text/javascript" src="js/planogram2D.js"></script>
+	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_basket.js"></script>
+	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_drawEditCanvas.js"></script>
+	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_drawPreviewCanvas.js"></script>
+	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_drawWares.js"></script>
+	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fCopy.js"></script>
+	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fCut.js"></script>
+	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fDel.js"></script>
+	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fPaste.js"></script>
+	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_image.js"></script>
+	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_PreviewPanelListener.js"></script>
+	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_rackWaresCalcCoordinates.js"></script>
+	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_WaresPanelListener.js"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
 <body onload="loadComplete();">
@@ -97,6 +109,26 @@
 							</tr>
 							<tr>
 								<td>
+									<table id="rulerPanel" width="100%">
+										<colgroup>
+											<col width="70"/>
+										</colgroup>
+										<tr>
+											<td colspan="2">x1:<input id="mouse_x" type="text" size="3" disabled="disabled"/>y1:<input id="mouse_y" type="text" size="3" disabled="disabled"/>x2:<input id="mouse_x2" type="text" size="3" disabled="disabled"/>y2:<input id="mouse_y2" type="text" size="3" disabled="disabled"/></td>
+										</tr>
+										<tr>
+											<td colspan="2">dx:<input type="text" size="3" disabled="disabled"/>dy:<input type="text" size="3" disabled="disabled"/>&nbsp;&nbsp;&nbsp;l:<input type="text" size="3" disabled="disabled"/>&nbsp;<a href="#">Рулетка</a></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<hr/>
+								</td>
+							</tr>
+							<tr>
+								<td>
 									<table width="100%">
 										<colgroup>
 											<col width="70"/>
@@ -143,16 +175,10 @@
 											<td id="shelfAngle"></td>
 										</tr>
 										<tr>
-											<td align="right">ширина&nbsp;</td>
-											<td id="shelfWidth"></td>
-										</tr>
-										<tr>
-											<td align="right">высота&nbsp;</td>
-											<td id="shelfHeight"></td>
-										</tr>
-										<tr>
-											<td align="right">глубина&nbsp;</td>
-											<td id="shelfLength"></td>
+											<td align="right">габариты&nbsp;</td>
+											<td >
+												<span id="shelfWidth" title="ширина"></span>x<span id="shelfHeight" title="высота"></span>x<span id="shelfLength" title="глубина"></span>
+											</td>
 										</tr>
 										<tr>
 											<td align="right">тип&nbsp;</td>
@@ -164,15 +190,12 @@
 											<col width="70"/>
 										</colgroup>
 										<tr>
-											<td colspan="2">свойства товара:</td>
+											<td align="right">товар&nbsp;</td>
+											<td id="waresName"></td>
 										</tr>
 										<tr>
 											<td align="right">код&nbsp;</td>
 											<td id="waresCode"></td>
-										</tr>
-										<tr>
-											<td align="right">название&nbsp;</td>
-											<td id="waresName"></td>
 										</tr>
 										<tr>
 											<td align="right" title="Единица измерения">е.и.&nbsp;</td>
@@ -183,27 +206,20 @@
 											<td id="waresBarcode"></td>
 										</tr>
 										<tr>
-											<td align="right">x</td>
-											<td><input type="text" id="waresX" onchange="changeWaresX(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+											<td align="right">x&nbsp;</td>
+											<td>
+												<input type="text" id="waresX" onchange="changeWaresX(this)" onkeydown="numberFieldKeyDown(event, this)" size="5"/>
+												&nbsp;&nbsp;y&nbsp;<input type="text" id="waresY" onchange="changeWaresY(this)" onkeydown="numberFieldKeyDown(event, this)" size="5"/>
+											</td>
 										</tr>
 										<tr>
-											<td align="right">y</td>
-											<td><input type="text" id="waresY" onchange="changeWaresY(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+											<td align="right">габариты&nbsp;</td>
+											<td>
+												<span id="waresWidth" title="ширина"></span>x<span id="waresHeight" title="высота"></span>x<span id="waresLength" title="глубина"></span>
+											</td>
 										</tr>
 										<tr>
-											<td align="right">ширина&nbsp;</td>
-											<td id="waresWidth"></td>
-										</tr>
-										<tr>
-											<td align="right">высота&nbsp;</td>
-											<td id="waresHeight"></td>
-										</tr>
-										<tr>
-											<td align="right">глубина&nbsp;</td>
-											<td id="waresLength"></td>
-										</tr>
-										<tr>
-											<td align="right" title="количество товара в глубину стеллажа">кол-во</td>
+											<td align="right" title="количество товара в глубину стеллажа">кол-во&nbsp;</td>
 											<td><input type="text" id="waresCountInLength" onchange="changeWaresCountInLength(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
 										</tr>
 									</table>
@@ -275,11 +291,24 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 					window.rack.width=window.rack.length;
 					window.rack.length=window.rack.height;
 					window.rack.height=temp;
+
+					temp=window.rack.real_width;
+					window.rack.real_width=window.rack.real_length;
+					window.rack.real_length=window.rack.real_height;
+					window.rack.real_height=temp;
 					break;
 				case '<%=LoadSide.F%>':
 					var temp=window.rack.width;
 					window.rack.width=window.rack.length;
 					window.rack.length=temp;
+
+					temp=window.rack.real_width;
+					window.rack.real_width=window.rack.real_length;
+					window.rack.real_length=temp;
+
+					temp=window.rack.y_offset;
+					window.rack.y_offset=window.rack.z_offset;
+					window.rack.z_offset=temp;
 					break;
 			}
 			window.rackShelfList = data.rackShelfList;
@@ -295,16 +324,29 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 		var edit_td = $('#edit_td');
 		window.edit_canvas.width = edit_td.width() - 6;
 		window.edit_canvas.height = edit_td.height() - 6;
-		window.edit_m = Math.max(window.rack.width / edit_canvas.width, window.rack.height / edit_canvas.height)
 
 		window.preview_canvas = document.getElementById("preview_canvas");
 		window.preview_context = preview_canvas.getContext("2d");
 		var preview_td = $('#preview_td');
 		window.preview_canvas.width = preview_td.width();
 		window.preview_canvas.height = preview_td.height();
-		window.preview_m = Math.max(window.rack.width / preview_canvas.width,  window.rack.height / preview_canvas.height);
 
-		window.km = edit_m;
+		// смещение стеллажа
+		window.offset_rack_x=-Math.min(0, window.rack.x_offset);
+		window.offset_rack_y=-Math.min(0, window.rack.y_offset);
+		// смещение полезного обема
+		window.offset_real_rack_x=Math.max(0, window.rack.x_offset);
+		window.offset_real_rack_y=Math.max(0, window.rack.y_offset);
+		// определение максимальных габаритов
+		window.max_x=Math.max(window.offset_rack_x + window.rack.width, window.offset_real_rack_x+window.rack.real_width);
+		window.max_y=Math.max(window.offset_rack_y + window.rack.height, window.offset_real_rack_y+window.rack.real_height);
+
+		// масштаб в окне редактирования
+		window.edit_m = Math.max(window.max_x / edit_canvas.width, window.max_y / edit_canvas.height);
+		// масштаб в окне навигации
+		window.preview_m = Math.max(window.max_x / preview_canvas.width,  window.max_y / preview_canvas.height);
+		// камера
+		window.km = window.edit_m;
 		window.kx = 0;
 		window.ky = 0;
 
@@ -331,51 +373,6 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 		setRack(window.rack);
 		editCanvasMouseListener();
 		previewCanvasMouseListener();
-	}
-
-	var images=[];
-
-	function getImage(code_image)
-	{
-		if(images[code_image] === undefined)
-		{
-//			var loadComplite=0;
-			images[code_image]= new Image();
-//			images[code_image].onload  =function (){
-//				loadComplite=1;
-//			}
-			images[code_image].src = 'image/'+code_image;
-			// TODO загрузить, а лиш потом вернуть
-//			images[code_image].load('image/'+code_image);
-//			while (loadComplite==0);
-			return images[code_image];
-		}else
-		{
-			return images[code_image];
-		}
-	}
-
-	function rackWaresLoadImage()
-	{
-		var countImg=window.rackWaresList.length;
-		for (var i = 0; i < window.rackWaresList.length; i++) {
-			var code_image=window.rackWaresList[i].code_image;
-			if(code_image>0)
-			{
-				images[code_image] = new Image();
-				images[code_image].onload = function(){
-					countImg--;
-					if (countImg==0)
-					{
-						drawEditCanvas();
-						drawPreviewCanvas();
-					}
-				}
-				images[code_image].src = 'image/'+code_image;
-			}
-		}
-		drawEditCanvas();
-		drawPreviewCanvas();
 	}
 
 	function setRack(rack)
@@ -406,7 +403,13 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 			if (window.selectRackWaresList.length == 1) {
 				var rackWares = window.selectRackWaresList[0];
 				$('#waresCode').text(rackWares.code_wares);
-				$('#waresName').text(rackWares.name_wares);
+				if (rackWares.name_wares.length > 30) {
+					$('#waresName').text(rackWares.name_wares.substring(0, 29)+'...');
+				}
+				else {
+					$('#waresName').text(rackWares.name_wares);
+				}
+				$('#waresName').attr('title', rackWares.name_wares);
 				$('#waresUnit').text(rackWares.abr_unit);
 				$('#waresBarcode').text(rackWares.bar_code);
 				$('#waresX').val(rackWares.position_x);
@@ -454,41 +457,6 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 		}
 	}
 
-	/**
-	 * определить координаты каждого угла объекта
-	 * @param rackWares полка стеллажа
-	 */
-	function rackWaresCalcCoordinates(rackWares)
-	{
-		// поворот объекта
-		// TODO angle
-//		rackWares.cos = Math.cos(-rackWares.angle*Math.PI/180);
-//		rackWares.sin = Math.sin(-rackWares.angle*Math.PI/180);
-		rackWares.cos = 1;
-		rackWares.sin = 0;
-		// правый верхний угол
-		var x = rackWares.wares_width / 2;
-		var y = rackWares.wares_height / 2;
-		// относительно сцены
-		rackWares.p1 = new Point2D(rackWares.position_x + x * rackWares.cos - y * rackWares.sin,
-									rackWares.position_y + x * rackWares.sin + y * rackWares.cos);
-		// правый нижний угол
-		y = -y;
-		// относительно сцены
-		rackWares.p2 = new Point2D(rackWares.position_x + x * rackWares.cos - y * rackWares.sin,
-									rackWares.position_y + x * rackWares.sin + y * rackWares.cos);
-		// левый нижний угол
-		x = -x;
-		// относительно сцены
-		rackWares.p3 = new Point2D(rackWares.position_x + x * rackWares.cos - y * rackWares.sin,
-									rackWares.position_y + x * rackWares.sin + y * rackWares.cos);
-		// левый верхний угол
-		y = -y;
-		// относительно сцены
-		rackWares.p4 = new Point2D(rackWares.position_x + x * rackWares.cos - y * rackWares.sin,
-									rackWares.position_y + x * rackWares.sin + y * rackWares.cos);
-	}
-
 	function ie_event(e) {
 		if (e === undefined) {
 			return window.event;
@@ -504,94 +472,6 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 </script>
 <%--прорисовка элементов--%>
 <script type="text/javascript">
-	function drawEditCanvas() {
-		window.edit_context.clearRect(0, 0, window.edit_canvas.width, window.edit_canvas.height);
-		window.edit_context.lineWidth = 1;
-		window.edit_context.strokeStyle = "BLACK";
-		window.edit_context.strokeRect(
-				-window.kx / window.km,
-				window.edit_canvas.height + window.ky / window.km,
-				window.rack.width / window.km,
-				- window.rack.height / window.km);
-		for (var i = 0; i < window.rackShelfList.length; i++) {
-			drawShelf( window.rackShelfList[i], window.edit_canvas, window.edit_context, window.kx, window.ky, window.km);
-		}
-		for (var i = 0; i < window.rackWaresList.length; i++) {
-			drawWares(window.rackWaresList[i], window.edit_canvas, window.edit_context, window.kx, window.ky, window.km);
-		}
-		if (window.flagPaste==2)
-		{
-			for (var i = 0; i < window.copyObjectList.length; i++) {
-				drawWares(window.copyObjectList[i], window.edit_canvas, window.edit_context, window.kx, window.ky, window.km);
-			}
-		}
-		else if (window.m_select==1)
-		{
-			// select
-			window.edit_context.lineWidth = 1;
-			window.edit_context.strokeStyle = "rgba(128, 128, 128, 1)";
-			window.edit_context.strokeRect(
-					0.5+(window.m_x_begin - window.kx)/ window.km,
-					0.5+window.edit_canvas.height - (window.m_y_begin - window.ky) / window.km,
-					(window.m_x_end - window.m_x_begin) / window.km,
-					(window.m_y_begin - window.m_y_end) / window.km);
-			if (window.selectBasket!=null)
-			{
-				var m_x_begin2 = Math.round(Math.min(window.m_x_end, window.m_x_begin));
-				var m_x_end2 = Math.round(Math.max(window.m_x_end, window.m_x_begin));
-				var m_y_begin2 = Math.round(Math.min(window.m_y_end, window.m_y_begin));
-				var m_y_end2 = Math.round(Math.max(window.m_y_end, window.m_y_begin));
-				var m_x_d=window.selectBasket.width / window.km;
-				var m_y_d=-window.selectBasket.height / window.km;
-				var dx=window.selectBasket.width+window.d_wares_width;
-				if (dx%2!=0)
-					dx++;
-				var dy=window.selectBasket.height+window.d_wares_height;
-				if (dy%2!=0)
-					dy++;
-				for (var i=m_x_begin2; i<m_x_end2-dx; i=i+dx)
-				{
-					for (var j=m_y_begin2; j<m_y_end2-dy; j=j+dy)
-					{
-						if (window.selectBasket.code_image>0)
-						{
-							window.edit_context.drawImage(getImage(window.selectBasket.code_image),
-									0.5+(i - window.kx)/ window.km,
-									0.5+window.edit_canvas.height - (j - window.ky) / window.km,
-									m_x_d ,
-									m_y_d );
-						}
-						window.edit_context.strokeRect(
-								0.5+(i - window.kx)/ window.km,
-								0.5+window.edit_canvas.height - (j - window.ky) / window.km,
-								m_x_d ,
-								m_y_d );
-					}
-				}
-			}
-		}
-	}
-	function drawPreviewCanvas()
-	{
-		window.preview_context.clearRect(0, 0, window.preview_canvas.width, window.preview_canvas.height);
-		window.preview_context.lineWidth = 1;
-		window.preview_context.strokeStyle = "BLACK";
-		window.preview_context.strokeRect(0, window.preview_canvas.height,
-				window.rack.width / window.preview_m,
-				-window.rack.height / window.preview_m);
-		for (var i = 0; i < window.rackShelfList.length; i++) {
-			drawShelf(window.rackShelfList[i], window.preview_canvas, window.preview_context, 0, 0, window.preview_m);
-		}
-		for (var i = 0; i < window.rackWaresList.length; i++) {
-			drawWares(window.rackWaresList[i], window.preview_canvas, window.preview_context, 0, 0, window.preview_m);
-		}
-		window.preview_context.lineWidth = 1;
-		window.preview_context.strokeStyle = "BLUE";
-		window.preview_context.strokeRect(window.kx / window.preview_m,
-				window.preview_canvas.height - window.ky / window.preview_m,
-				window.edit_canvas.width * window.km / window.preview_m,
-				- window.edit_canvas.height * window.km / window.preview_m);
-	}
 	function drawShelf(shelf, canvas, context, kx, ky, m) {
 		context.lineWidth = 1;
 		if (window.shelf==shelf)
@@ -616,14 +496,14 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 			 %>
 		}
 		context.beginPath();
-		var x1 = (shelf.p1.x - kx) / m;
-		var y1 = canvas.height - (shelf.p1.y - ky) / m;
-		var x2 = (shelf.p2.x - kx) / m;
-		var y2 = canvas.height - (shelf.p2.y - ky) / m;
-		var x3 = (shelf.p3.x - kx) / m;
-		var y3 = canvas.height - (shelf.p3.y - ky) / m;
-		var x4 = (shelf.p4.x - kx) / m;
-		var y4 = canvas.height - (shelf.p4.y - ky) / m;
+		var x1 = (shelf.p1.x - kx+window.offset_rack_x) / m;
+		var y1 = canvas.height - (shelf.p1.y - ky+ window.offset_rack_y) / m;
+		var x2 = (shelf.p2.x - kx+window.offset_rack_x) / m;
+		var y2 = canvas.height - (shelf.p2.y - ky+ window.offset_rack_y) / m;
+		var x3 = (shelf.p3.x - kx+window.offset_rack_x) / m;
+		var y3 = canvas.height - (shelf.p3.y - ky+ window.offset_rack_y) / m;
+		var x4 = (shelf.p4.x - kx+window.offset_rack_x) / m;
+		var y4 = canvas.height - (shelf.p4.y - ky+ window.offset_rack_y) / m;
 		context.moveTo(x1, y1);
 		context.lineTo(x2, y2);
 		context.lineTo(x3, y3);
@@ -631,31 +511,6 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 		context.closePath();
 		context.stroke();
 		context.fill();
-	}
-
-	function drawWares(rackWares, canvas, context, kx, ky, m) {
-		var movx = (rackWares.position_x - kx) / m;
-		var movy = canvas.height - (rackWares.position_y - ky) / m;
-		context.translate(movx, movy);
-		// TODO angle
-//			context.rotate(45*Math.PI/180);
-		var x1 = -rackWares.wares_width / m / 2;
-		var y1 = -rackWares.wares_height / m / 2;
-		var w1 = rackWares.wares_width / m;
-		var h1 = rackWares.wares_height / m;
-		if (rackWares.code_image > 0) {
-			context.drawImage(getImage(rackWares.code_image), x1, y1, w1, h1);
-		}
-		context.lineWidth = 1;
-		if ($.inArray(rackWares, window.selectRackWaresList) >= 0) {
-			context.strokeStyle = "BLUE";
-		}
-		else {
-			context.strokeStyle = "BLACK";
-		}
-		context.strokeRect(x1, y1, w1, h1);
-//			context.rotate(-45*Math.PI/180);
-		context.translate(-movx, -movy);
 	}
 
 	function basketToHtml(basket)
@@ -755,64 +610,6 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 			$('#choiceWares').show();
 		})
 	}
-	function fCopy()
-	{
-		window.copyObjectList=[];
-		for (var i in window.selectRackWaresList)
-		{
-			window.copyObjectList[i]=clone(window.selectRackWaresList[i]);
-		}
-		if (window.copyObjectList.length>0)
-		{
-			$('#butPaste').removeClass('disabled');
-		}
-	}
-
-	function fCut()
-	{
-		window.copyObjectList=[];
-		for (var i in window.selectRackWaresList)
-		{
-			window.copyObjectList[i]=clone(window.selectRackWaresList[i]);
-			var selectRackWares=window.selectRackWaresList[i];
-			for (var j in window.rackWaresList)
-			{
-				if (selectRackWares==window.rackWaresList[j])
-				{
-					window.rackWaresList.splice(j,1);
-				}
-			}
-		}
-		window.selectRackWaresList=[];
-		fSelectRackWares();
-		drawEditCanvas();
-		drawPreviewCanvas();
-		if (window.copyObjectList.length>0)
-		{
-			$('#butPaste').removeClass('disabled');
-		}
-	}
-	function fPaste()
-	{
-		if (window.copyObjectList.length>0)
-		{
-			window.flagPaste=1;
-		}
-	}
-	function fDel() {
-		for (var i in window.selectRackWaresList) {
-			var selectRackWares = window.selectRackWaresList[i];
-			for (var j in window.rackWaresList) {
-				if (selectRackWares == window.rackWaresList[j]) {
-					window.rackWaresList.splice(j, 1);
-				}
-			}
-		}
-		window.selectRackWaresList = [];
-		fSelectRackWares();
-		drawEditCanvas();
-		drawPreviewCanvas();
-	}
 </script>
 
 <%--обработка событий редактора--%>
@@ -821,8 +618,9 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 
 		window.edit_canvas.onmousedown = function (e) {
 			var evnt = ie_event(e);
-			var sx = window.kx + evnt.offsetX * window.km;
-			var sy = window.ky + (window.edit_canvas.height - evnt.offsetY) * window.km;
+			var sx = window.kx - window.offset_rack_x + evnt.offsetX * window.km;
+			var sy = window.ky - window.offset_rack_y + (window.edit_canvas.height - evnt.offsetY) * window.km;
+			setRule(sx,sy);
 
 			var oldSelectRackWaresList = window.selectRackWaresList;
 
@@ -1028,6 +826,10 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 
 		window.edit_canvas.onmousemove = function (e) {
 			var evnt = ie_event(e);
+			var sx = window.kx - window.offset_rack_x + evnt.offsetX * window.km;
+			var sy = window.ky - window.offset_rack_y + (window.edit_canvas.height - evnt.offsetY) * window.km;
+			setRule(sx,sy);
+
 			if (window.flagPaste==2)
 			{
 				// перемещение товара
@@ -1076,8 +878,8 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 			else if (window.m_select==1)
 			{
 				// изменение области выделения
-				window.m_x_end=window.kx + evnt.offsetX * window.km;
-				window.m_y_end = window.ky + (window.edit_canvas.height - evnt.offsetY) * window.km;
+				window.m_x_end=window.kx - window.offset_rack_x + evnt.offsetX * window.km;
+				window.m_y_end = window.ky - window.offset_rack_y + (window.edit_canvas.height - evnt.offsetY) * window.km;
 				drawEditCanvas();
 			}
 		}
@@ -1091,186 +893,15 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 	}
 </script>
 
-<%-- обработка событий окна навигации --%>
+<%-- линейка --%>
 <script type="text/javascript">
-	function previewCanvasMouseListener() {
-
-		window.previewMove = false;
-
-		window.preview_canvas.onmousedown = function (e) {
-			window.previewMove = true;
-			var evnt = ie_event(e);
-			x = evnt.clientX;
-			y = evnt.clientY;
-			window.kx = evnt.offsetX * window.preview_m - window.edit_canvas.width * window.km / 2;
-			window.ky = (window.preview_canvas.height-evnt.offsetY) * window.preview_m - window.edit_canvas.height * window.km / 2;
-			checkKxKy();
-			drawPreviewCanvas();
-		};
-
-		preview_canvas.onmouseup = function (e) {
-			if (window.previewMove) {
-				window.previewMove = false;
-				drawEditCanvas();
-			}
-		};
-
-		preview_canvas.onmouseover = function (e) {
-			if (window.previewMove) {
-				window.previewMove = false;
-				drawEditCanvas();
-			}
-		};
-
-		preview_canvas.onmousemove = function (e) {
-			if (window.previewMove) {
-				var evnt = ie_event(e);
-				window.kx = window.kx + (evnt.clientX - x) * window.preview_m;
-				window.ky = window.ky - (evnt.clientY - y) * window.preview_m;
-				checkKxKy();
-				x = evnt.clientX;
-				y = evnt.clientY;
-				drawPreviewCanvas();
-			}
-		};
-	}
-
-	function kMadd() {
-		window.km = window.km * 1.5;
-		if (window.km > window.edit_m)
-			window.km = window.edit_m;
-		checkKxKy();
-		drawEditCanvas();
-		drawPreviewCanvas();
-		basketToHtml(window.basket);
-	}
-
-	function kMsub() {
-		window.km = window.km / 1.5;
-		if (window.km < 0.1)
-			window.km = 0.1;
-		checkKxKy();
-		drawEditCanvas();
-		drawPreviewCanvas();
-		basketToHtml(window.basket);
-	}
-
-	function checkKxKy() {
-		if (window.kx > window.rack.width - window.edit_canvas.width * window.km)
-			window.kx = window.rack.width - window.edit_canvas.width * window.km;
-		if (window.kx < 0)
-			window.kx = 0;
-		if (window.ky > window.rack.height - window.edit_canvas.height * window.km)
-			window.ky = window.rack.height - window.edit_canvas.height * window.km;
-		if (window.ky < 0)
-			window.ky = 0;
-	}
-</script>
-
-<%-- обработка событий панели товара --%>
-<script type="text/javascript">
-	function changeWaresX(waresX)
+	function setRule(x,y)
 	{
-		if (window.selectRackWaresList.length==1) {
-			var x = Number(waresX.value);
-			if (x != null && !isNaN(x) && x != Infinity) {
-//				var oldx = window.selectRackWaresList[0].position_x;
-				window.selectRackWaresList[0].position_x = x;
-				roundRackWares(window.selectRackWaresList[0]);
-				//TODO
-				// не выходит за области сектора
-//				if ((window.shelf.x_coord < oldx
-//						&& (window.shelf.x1 < 0
-//						|| window.shelf.x2 < 0
-//						|| window.shelf.x3 < 0
-//						|| window.shelf.x4 < 0))
-//						|| (window.shelf.x_coord > oldx
-//						&& (window.shelf.x1 > window.rack.width
-//						|| window.shelf.x2 > window.rack.width
-//						|| window.shelf.x3 > window.rack.width
-//						|| window.shelf.x4 > window.rack.width))) {
-//					window.shelf.x_coord = oldx;
-//					rackShelfCalcCoordinates(window.shelf);
-//				}
-//				else {
-					drawEditCanvas();
-					drawPreviewCanvas();
-//				}
-			}
-			waresX.value =window.selectRackWaresList[0].position_x;
-		}
-	}
-	function changeWaresY(waresY)
-	{
-		if (window.selectRackWaresList.length==1) {
-			var y = Number(waresY.value);
-			if (y != null && !isNaN(x) && y != Infinity) {
-//				var oldY = window.selectRackWaresList[0].position_y;
-				window.selectRackWaresList[0].position_y = y;
-				roundRackWares(window.selectRackWaresList[0]);
-				//TODO
-				// не выходит за области сектора
-//				if ((window.shelf.x_coord < oldY
-//						&& (window.shelf.x1 < 0
-//						|| window.shelf.x2 < 0
-//						|| window.shelf.x3 < 0
-//						|| window.shelf.x4 < 0))
-//						|| (window.shelf.x_coord > oldY
-//						&& (window.shelf.x1 > window.rack.width
-//						|| window.shelf.x2 > window.rack.width
-//						|| window.shelf.x3 > window.rack.width
-//						|| window.shelf.x4 > window.rack.width))) {
-//					window.shelf.position_y = oldY;
-//					rackShelfCalcCoordinates(window.shelf);
-//				}
-//				else {
-				drawEditCanvas();
-				drawPreviewCanvas();
-//				}
-			}
-			waresY.value =window.selectRackWaresList[0].position_y;
-		}
-	}
-	function changeWaresCountInLength(waresCountInLength) {
-		if (window.selectRackWaresList.length == 1) {
-			var value = Number(waresCountInLength.value);
-			var max = Math.floor(window.rack.length / window.selectRackWaresList[0].wares_length);
-			if (value > 0 && value <= max) {
-				window.selectRackWaresList[0].count_length_on_shelf = value;
-			}
-			waresCountInLength.value = window.selectRackWaresList[0].count_length_on_shelf;
-		}
+		$('#mouse_x').val(Math.round(x));
+		$('#mouse_y').val(Math.round(y));
 	}
 </script>
 
-<%-- обработка событий корзины --%>
-<script type="text/javascript">
-	 function basketWaresSelect(image)
-	 {
-		 var image=$(image);
-		 if (image.hasClass('basketSelect'))
-		 {
-			 image.removeClass('basketSelect');
-			 image.addClass('basket');
-			 window.selectBasket=null;
-		 }
-		 else
-		 {
-			 $('input.basketSelect').removeClass('basketSelect').addClass('basket');
-			 image.removeClass('basket');
-			 image.addClass('basketSelect');
-			 var code_wares=image.attr('id');
-			 window.selectBasket=window.basket[code_wares];
-		 }
-	 }
-
-	 function basketWaresDelete(code_wares)
-	 {
-		 delete window.basket[code_wares];
-		 basketToHtml(window.basket);
-	 }
-
-</script>
 <%-- обработка событий клавиатуры --%>
 <script type="text/javascript">
 	$(document).bind('keydown', function(e){

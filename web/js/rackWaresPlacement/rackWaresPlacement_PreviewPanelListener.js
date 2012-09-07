@@ -9,26 +9,26 @@ function previewCanvasMouseListener() {
 		x = evnt.clientX;
 		y = evnt.clientY;
 		window.kx = evnt.offsetX * window.preview_m - window.edit_canvas.width * window.km / 2;
-		window.ky = (window.preview_canvas.height - evnt.offsetY) * window.preview_m - window.edit_canvas.height * window.km / 2;
+		window.ky = (window.preview_canvas.height-evnt.offsetY) * window.preview_m - window.edit_canvas.height * window.km / 2;
 		checkKxKy();
 		drawPreviewCanvas();
 	};
 
-	window.preview_canvas.onmouseup = function (e) {
+	preview_canvas.onmouseup = function (e) {
 		if (window.previewMove) {
 			window.previewMove = false;
 			drawEditCanvas();
 		}
 	};
 
-	window.preview_canvas.onmouseover = function (e) {
+	preview_canvas.onmouseover = function (e) {
 		if (window.previewMove) {
 			window.previewMove = false;
 			drawEditCanvas();
 		}
 	};
 
-	window.preview_canvas.onmousemove = function (e) {
+	preview_canvas.onmousemove = function (e) {
 		if (window.previewMove) {
 			var evnt = ie_event(e);
 			window.kx = window.kx + (evnt.clientX - x) * window.preview_m;
@@ -48,6 +48,7 @@ function kMadd() {
 	checkKxKy();
 	drawEditCanvas();
 	drawPreviewCanvas();
+	basketToHtml(window.basket);
 }
 
 function kMsub() {
@@ -57,6 +58,7 @@ function kMsub() {
 	checkKxKy();
 	drawEditCanvas();
 	drawPreviewCanvas();
+	basketToHtml(window.basket);
 }
 
 function checkKxKy() {
