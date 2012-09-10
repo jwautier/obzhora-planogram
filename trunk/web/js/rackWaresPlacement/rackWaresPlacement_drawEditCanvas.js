@@ -71,4 +71,16 @@ function drawEditCanvas() {
 			}
 		}
 	}
+	if (window.ruler.state>=2)
+	{
+		// рисуем линейку
+		window.edit_context.lineWidth = 1;
+		window.edit_context.strokeStyle = "BLUE";
+		window.edit_context.beginPath();
+		window.edit_context.moveTo((window.ruler.ax-window.kx + window.offset_rack_x) / window.km,
+			window.edit_canvas.height + (-window.ruler.ay+window.ky - window.offset_rack_y) / window.km);
+		window.edit_context.lineTo((window.ruler.bx-window.kx + window.offset_rack_x) / window.km,
+			window.edit_canvas.height + (-window.ruler.by+window.ky - window.offset_rack_y) / window.km);
+		window.edit_context.stroke();
+	}
 }
