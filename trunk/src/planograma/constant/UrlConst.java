@@ -38,4 +38,7 @@ public interface UrlConst {
 	public static final String URL_IMAGE_LOAD = "image/";
 	public static final String URL_IMAGE_CLEAN_CACHE = "servlet/image/clean_cache";
 
+	public static final String URL_BUFFER_SET = "servlet/buffer/set";
+	public static final String URL_BUFFER_GET = "servlet/buffer/get";
+
 }

@@ -1,9 +1,13 @@
-<%@ page import="planograma.utils.JspUtils" %>
-<%@ page import="planograma.servlet.wares.WaresEdit" %>
-<%@ page import="planograma.data.*" %>
-<%@ page import="planograma.servlet.wares.WaresGroupTree" %>
-<%@ page import="planograma.servlet.wares.RackWaresPlacementSave" %>
 <%@ page import="planograma.constant.SecurityConst" %>
+<%@ page import="planograma.data.LoadSide" %>
+<%@ page import="planograma.data.TypeRackWares" %>
+<%@ page import="planograma.data.TypeShelf" %>
+<%@ page import="planograma.servlet.buffer.BufferGet" %>
+<%@ page import="planograma.servlet.buffer.BufferSet" %>
+<%@ page import="planograma.servlet.wares.RackWaresPlacementSave" %>
+<%@ page import="planograma.servlet.wares.WaresEdit" %>
+<%@ page import="planograma.servlet.wares.WaresGroupTree" %>
+<%@ page import="planograma.utils.JspUtils" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
 	final String access_rack_wares_placement=JspUtils.actionAccess(session, SecurityConst.ACCESS_RACK_WARES_PLACEMENT);
@@ -76,6 +80,12 @@
 							</tr>
 							<tr>
 								<td><a href="#" id="butPaste" onclick="return aOnClick(this, fPaste)" class="disabled"><%=JspUtils.toMenuTitle("Вставить")%></a></td>
+							</tr>
+							<tr>
+								<td><a href="#" id="butCopyBuffer" onclick="return aOnClick(this, fCopyBuffer)" class="disabled"><%=JspUtils.toMenuTitle("Копировать в буфер")%></a></td>
+							</tr>
+							<tr>
+								<td><a href="#" id="butPasteBuffer" onclick="return aOnClick(this, fPasteBuffer)"><%=JspUtils.toMenuTitle("Вставить из буфера")%></a></td>
 							</tr>
 							<tr>
 								<td height="100%"></td>
@@ -409,6 +419,7 @@ window.ruler={state:0, ax:0, ay:0, bx:0, by:0};
 			{
 				$('#butCopy').removeClass('disabled');
 				$('#butCut').removeClass('disabled');
+				$('#butCopyBuffer').removeClass('disabled');
 			}
 			if (window.selectRackWaresList.length == 1) {
 				var rackWares = window.selectRackWaresList[0];
@@ -437,6 +448,7 @@ window.ruler={state:0, ax:0, ay:0, bx:0, by:0};
 			$('#waresPanel').hide();
 			$('#butCopy').addClass('disabled');
 			$('#butCut').addClass('disabled');
+			$('#butCopyBuffer').addClass('disabled');
 		}
 	}
 
@@ -704,6 +716,7 @@ window.ruler={state:0, ax:0, ay:0, bx:0, by:0};
 							window.shelf = window.rackShelfList[i];
 							$('#butCopy').addClass('disabled');
 							$('#butCut').addClass('disabled');
+							$('#butCopyBuffer').addClass('disabled');
 						}
 					}
 					if (window.shelf == null) {
@@ -954,6 +967,30 @@ window.ruler={state:0, ax:0, ay:0, bx:0, by:0};
 			$('#ruler_dy').val(dy);
 			$('#ruler_l').val(Math.sqrt(dx*dx+dy*dy));
 		}
+	}
+</script>
+
+<%-- события веб буфера обмена --%>
+<script type="text/javascript">
+	function fCopyBuffer()
+	{
+		var copyObjectList=[];
+		for (var i in window.selectRackWaresList)
+		{
+			copyObjectList[i]=clone(window.selectRackWaresList[i]);
+		}
+		postJson('<%=BufferSet.URL%>', {copyObjectList:copyObjectList}, null);
+	}
+
+	function fPasteBuffer()
+	{
+		postJson('<%=BufferGet.URL%>', null, function (data){
+			window.copyObjectList=data.copyObjectList;
+			if (window.copyObjectList.length>0)
+			{
+				window.flagPaste=1;
+			}
+		});
 	}
 </script>
 
