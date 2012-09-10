@@ -23,6 +23,7 @@
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fCut.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fDel.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fPaste.js"></script>
+	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fRuler.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_image.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_PreviewPanelListener.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_rackWaresCalcCoordinates.js"></script>
@@ -63,6 +64,9 @@
 							<tr><td></td></tr>
 							<tr>
 								<td><a href="#" onclick="return aOnClick(this, fAddWares)" class="<%=access_rack_wares_placement%>"><%=JspUtils.toMenuTitle("Добавить товар")%></a></td>
+							</tr>
+							<tr>
+								<td><a href="#" id="butRuler" onclick="return aOnClick(this, fRuler)"><%=JspUtils.toMenuTitle("Рулетка")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="butCopy" onclick="return aOnClick(this, fCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать")%></a></td>
@@ -109,15 +113,15 @@
 							</tr>
 							<tr>
 								<td>
-									<table id="rulerPanel" width="100%">
+									<table id="rulerPanel" width="100%" style="display: none;">
 										<colgroup>
 											<col width="70"/>
 										</colgroup>
 										<tr>
-											<td colspan="2">x1:<input id="mouse_x" type="text" size="3" disabled="disabled"/>y1:<input id="mouse_y" type="text" size="3" disabled="disabled"/>x2:<input id="mouse_x2" type="text" size="3" disabled="disabled"/>y2:<input id="mouse_y2" type="text" size="3" disabled="disabled"/></td>
+											<td colspan="2">x1:<input id="ruler_ax" type="text" size="3" disabled="disabled"/>y1:<input id="ruler_ay" type="text" size="3" disabled="disabled"/>x2:<input id="ruler_bx" type="text" size="3" disabled="disabled"/>y2:<input id="ruler_by" type="text" size="3" disabled="disabled"/></td>
 										</tr>
 										<tr>
-											<td colspan="2">dx:<input type="text" size="3" disabled="disabled"/>dy:<input type="text" size="3" disabled="disabled"/>&nbsp;&nbsp;&nbsp;l:<input type="text" size="3" disabled="disabled"/>&nbsp;<a href="#">Рулетка</a></td>
+											<td colspan="2">dx:<input id="ruler_dx" type="text" size="3" disabled="disabled"/>dy:<input id="ruler_dy" type="text" size="3" disabled="disabled"/>&nbsp;&nbsp;&nbsp;l:<input id="ruler_l" type="text" size="3" disabled="disabled"/>&nbsp;<a href="#" onclick="window.ruler.state=0; drawEditCanvas(); $('#rulerPanel').hide();">Скрыть</a></td>
 										</tr>
 									</table>
 								</td>
@@ -279,6 +283,12 @@ window.d_wares_width = 1;
 window.d_wares_height = 1;
 
 var canRackWaresPlacement='<%=access_rack_wares_placement%>';
+/**
+* линейка
+ * state (0 не выбрана, 1 выбор первой точки, 2 выбор второй точки, 3 линейка задана)
+* @type {Object}
+ */
+window.ruler={state:0, ax:0, ay:0, bx:0, by:0};
 
 	function loadComplete() {
 		var code_rack = getCookie('code_rack');
@@ -620,13 +630,30 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 			var evnt = ie_event(e);
 			var sx = window.kx - window.offset_rack_x + evnt.offsetX * window.km;
 			var sy = window.ky - window.offset_rack_y + (window.edit_canvas.height - evnt.offsetY) * window.km;
-			setRule(sx,sy);
 
 			var oldSelectRackWaresList = window.selectRackWaresList;
 
 			var findRackWares = null;
 			window.shelf = null;
 			window.selectRackWaresList = [];
+			if (window.ruler.state==1)
+			{
+				window.ruler.ax=Math.round(sx);
+				window.ruler.ay=Math.round(sy);
+				window.ruler.bx=Math.round(sx);
+				window.ruler.by=Math.round(sy);
+				setRuler();
+				window.ruler.state=2;
+			}
+			else
+			if (window.ruler.state==2)
+			{
+				window.ruler.bx=Math.round(sx);
+				window.ruler.by=Math.round(sy);
+				setRuler();
+				window.ruler.state=3;
+			}
+			else
 			if (window.flagPaste == 1) {
 				// найти центр
 				var centerX = 0;
@@ -828,8 +855,24 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 			var evnt = ie_event(e);
 			var sx = window.kx - window.offset_rack_x + evnt.offsetX * window.km;
 			var sy = window.ky - window.offset_rack_y + (window.edit_canvas.height - evnt.offsetY) * window.km;
-			setRule(sx,sy);
 
+			if (window.ruler.state==1)
+			{
+				window.ruler.ax=Math.round(sx);
+				window.ruler.ay=Math.round(sy);
+				window.ruler.bx=Math.round(sx);
+				window.ruler.by=Math.round(sy);
+				setRuler();
+				drawEditCanvas();
+			}else
+			if (window.ruler.state==2)
+			{
+				window.ruler.bx=Math.round(sx);
+				window.ruler.by=Math.round(sy);
+				setRuler();
+				drawEditCanvas();
+			}
+			else
 			if (window.flagPaste==2)
 			{
 				// перемещение товара
@@ -895,10 +938,22 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 
 <%-- линейка --%>
 <script type="text/javascript">
-	function setRule(x,y)
+	function setRuler()
 	{
-		$('#mouse_x').val(Math.round(x));
-		$('#mouse_y').val(Math.round(y));
+		if (window.ruler.state==1){
+			$('#ruler_ax').val(window.ruler.ax);
+			$('#ruler_ay').val(window.ruler.ay);
+			$('#ruler_bx').val(window.ruler.bx);
+			$('#ruler_by').val(window.ruler.by);
+		}		if (window.ruler.state>=2){
+			$('#ruler_bx').val(window.ruler.bx);
+			$('#ruler_by').val(window.ruler.by);
+			var dx=Math.abs(window.ruler.bx-window.ruler.ax);
+			$('#ruler_dx').val(dx);
+			var dy=Math.abs(window.ruler.by-window.ruler.ay);
+			$('#ruler_dy').val(dy);
+			$('#ruler_l').val(Math.sqrt(dx*dx+dy*dy));
+		}
 	}
 </script>
 
