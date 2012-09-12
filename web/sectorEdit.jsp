@@ -21,6 +21,7 @@
 	<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
 	<script type="text/javascript" src="js/planogram.js"></script>
+	<script type="text/javascript" src="js/utils/ruler.js"></script>
 	<script type="text/javascript" src="js/draw/calcCoordinatesRack.js"></script>
 	<script type="text/javascript" src="js/draw/drawRack.jsp"></script>
 	<script type="text/javascript" src="js/draw/calcCoordinatesRackShelfTemplate.js"></script>
@@ -64,6 +65,9 @@
 								<td><a href="#" onclick="return aOnClick(this, fRackTemplateAdd)" class="<%=access_sector_edit%>"><%=JspUtils.toMenuTitle("Добавить стандартный стеллаж")%></a></td>
 							</tr>
 							<tr>
+								<td><a href="#" id="butRuler" onclick="return aOnClick(this, fRuler)"><%=JspUtils.toMenuTitle("Рулетка")%></a></td>
+							</tr>
+							<tr>
 								<td><a href="#" id="butPrint" onclick="return aOnClick(this)" target="pdf" class="disabled"><%=JspUtils.toMenuTitle("Печать стеллажа")%></a></td>
 							</tr>
 							<tr>
@@ -73,7 +77,7 @@
 								<td><a href="#" id="butRackWaresPlacement" onclick="return aOnClick(this, fRackWaresPlacement)" class="disabled"><%=JspUtils.toMenuTitle("Расстановка товара")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" id="butCopy" onclick="return aOnClick(this,fCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать")%></a></td>
+								<td><a href="#" id="butCopy" onclick="return aOnClick(this,fCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать с поварами")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="butCut" onclick="return aOnClick(this,fCut)" class="disabled"><%=JspUtils.toMenuTitle("Вырезать")%></a></td>
@@ -117,6 +121,26 @@
 							</tr>
 							<tr>
 								<td>
+									<table id="rulerPanel" width="100%" style="display: none;">
+										<tr>
+											<td>x1:<input id="ruler_ax" type="text" size="3" disabled="disabled"/>y1:<input id="ruler_ay" type="text" size="3" disabled="disabled"/></td>
+										</tr>
+										<tr>
+											<td>x2:<input id="ruler_bx" type="text" size="3" disabled="disabled"/>y2:<input id="ruler_by" type="text" size="3" disabled="disabled"/><a href="#" onclick="window.ruler.state=0; drawEditCanvas(); $('#rulerPanel').hide();">Скрыть</a></td>
+										</tr>
+										<tr>
+											<td>dx:<input id="ruler_dx" type="text" size="3" disabled="disabled"/>dy:<input id="ruler_dy" type="text" size="3" disabled="disabled"/>&nbsp;&nbsp;&nbsp;l:<input id="ruler_l" type="text" size="3" disabled="disabled"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<hr/>
+								</td>
+							</tr>
+							<tr>
+								<td>
 									<table>
 										<colgroup>
 											<col width="70"/>
@@ -130,14 +154,14 @@
 											</td>
 										</tr>
 										<tr>
-											<td align="right">длина</td>
-											<td><input type="text" id="sectorLength"
-													   onchange="changeSectorLength(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
-										</tr>
-										<tr>
 											<td align="right">ширина</td>
 											<td><input type="text" id="sectorWidth" onchange="changeSectorWidth(this)" onkeydown="numberFieldKeyDown(event, this)"/>
 											</td>
+										</tr>
+										<tr>
+											<td align="right">длина</td>
+											<td><input type="text" id="sectorLength"
+													   onchange="changeSectorLength(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
 										</tr>
 										<tr>
 											<td align="right">высота</td>
@@ -373,6 +397,18 @@ function drawEditCanvas() {
 			window.sector.width / window.km);
 	for (var i = 0; i < window.showcaseList.length; i++) {
 		drawRack(window.showcaseList[i], window.edit_context, window.kx, window.ky, window.km);
+	}
+	if (window.ruler.state>=2)
+	{
+		// рисуем линейку
+		window.edit_context.lineWidth = 1;
+		window.edit_context.strokeStyle = "BLUE";
+		window.edit_context.beginPath();
+		window.edit_context.moveTo((window.ruler.ax-window.kx) / window.km,
+				(window.ruler.ay-window.ky) / window.km);
+		window.edit_context.lineTo((window.ruler.bx-window.kx) / window.km,
+				(window.ruler.by-window.ky) / window.km);
+		window.edit_context.stroke();
 	}
 }
 
@@ -685,6 +721,18 @@ function roundRack(rack)
 			var sx = window.kx + evnt.offsetX * window.km;
 			var sy = window.ky + evnt.offsetY * window.km;
 
+			if (window.ruler.state==1)
+			{
+				rulerMoveA(sx,sy);
+				window.ruler.state=2;
+			}
+			else
+			if (window.ruler.state==2)
+			{
+				rulerMoveB(sx,sy);
+				window.ruler.state=3;
+			}
+			else
 			if (window.rackAdd==true)
 			{
 				if (sx>0 && sy>0 && sx<window.sector.length && sy<window.sector.width)
@@ -752,7 +800,8 @@ function roundRack(rack)
 					x = evnt.clientX;
 					y = evnt.clientY;
 					window.editMove = 1;
-					if (window.showcase.length >= 7 * window.km && window.showcase.width >= 7 * window.km) {
+					if (Math.max(window.showcase.x_offset+window.showcase.real_length, Math.max(-window.showcase.x_offset, 0) + window.showcase.length) >= 7 * window.km
+							&& Math.max(window.showcase.y_offset + window.showcase.real_width, Math.max(-window.showcase.y_offset, 0) + window.showcase.width) >= 7 * window.km) {
 						if (Math.abs(d1) < 3 * window.km) {
 							// восток
 							window.editMove += 2;
@@ -783,10 +832,24 @@ function roundRack(rack)
 		}
 
 		window.edit_canvas.onmousemove = function (e) {
+			var evnt = ie_event(e);
+			var sx = window.kx + evnt.offsetX * window.km;
+			var sy = window.ky + evnt.offsetY * window.km;
+			if (window.ruler.state==1)
+			{
+				rulerMoveA(sx,sy);
+				drawEditCanvas();
+			}else
+			if (window.ruler.state==2)
+			{
+				rulerMoveB(sx,sy);
+				drawEditCanvas();
+			}
+			else
 			if (window.editMove != 0 && window.showcase != null) {
-				var evnt = ie_event(e);
 				var dx = (evnt.clientX - x) * window.km;
 				var dy = (evnt.clientY - y) * window.km;
+
 				if (dx != 0 || dy != 0) {
 					// перемещение
 					if (window.editMove == 1 && window.showcase.lock_move!='Y') {
@@ -816,11 +879,13 @@ function roundRack(rack)
 							showcase.x_coord = showcase.x_coord + dxy * showcase.cos / 2;
 							showcase.y_coord = showcase.y_coord + dxy * showcase.sin / 2;
 							showcase.length = showcase.length + dxy;
+							showcase.real_length = showcase.real_length + dxy;
 						} else if (editMove & 8) {
 							// запад
 							showcase.x_coord = showcase.x_coord + dxy * showcase.cos / 2;
 							showcase.y_coord = showcase.y_coord + dxy * showcase.sin / 2;
 							showcase.length = showcase.length - dxy;
+							showcase.real_length = showcase.real_length - dxy;
 						}
 						if (showcase.length < 7 * km) {
 							showcase.length = 7 * km;
@@ -833,11 +898,13 @@ function roundRack(rack)
 							showcase.x_coord = showcase.x_coord - dxy * showcase.sin / 2;
 							showcase.y_coord = showcase.y_coord + dxy * showcase.cos / 2;
 							showcase.width = showcase.width - dxy;
+							showcase.real_width = showcase.real_width - dxy;
 						} else if (editMove & 16) {
 							// юг
 							showcase.x_coord = showcase.x_coord - dxy * showcase.sin / 2;
 							showcase.y_coord = showcase.y_coord + dxy * showcase.cos / 2;
 							showcase.width = showcase.width + dxy;
+							showcase.real_width = showcase.real_width + dxy;
 						}
 						if (showcase.width < 7 * km) {
 							showcase.width = 7 * km
@@ -1029,8 +1096,9 @@ function roundRack(rack)
 		var height = Number(sectorHeight.value);
 		var maxHeight = 0;
 		for (var i = 0; i < showcaseList.length; i++) {
-			if (maxHeight < showcaseList[i].height) {
-				maxHeight = showcaseList[i].height;
+			var rackMaxHeight=Math.max(showcaseList[i].height, showcaseList[i].z_offset+showcaseList[i].real_height);
+			if (maxHeight < rackMaxHeight) {
+				maxHeight = rackMaxHeight;
 			}
 		}
 		if (height > maxHeight) {
@@ -1168,12 +1236,14 @@ function roundRack(rack)
 			if (width > 0 && width != Infinity) {
 				var oldWidth = showcase.width;
 				showcase.width = width;
+				showcase.real_width = showcase.real_width + width-oldWidth;
 				calcCoordinatesRack(showcase);
 				if (showcase.x1 < 0 || showcase.x2 < 0 || showcase.x3 < 0 || showcase.x4 < 0 ||
 						showcase.x1 > sector.length || showcase.x2 > sector.length || showcase.x3 > sector.length || showcase.x4 > sector.length ||
 						showcase.y1 < 0 || showcase.y2 < 0 || showcase.y3 < 0 || showcase.y4 < 0 ||
 						showcase.y1 > sector.width || showcase.y2 > sector.width || showcase.y3 > sector.width || showcase.y4 > sector.width) {
 					showcase.width = oldWidth;
+					showcase.real_width = showcase.real_width - width + oldWidth;
 					calcCoordinatesRack(showcase);
 				}
 				else {
@@ -1192,12 +1262,14 @@ function roundRack(rack)
 			if (length > 0 && length != Infinity) {
 				var oldLength = showcase.length;
 				showcase.length = length;
+				showcase.real_length = showcase.real_length + length - oldLength;
 				calcCoordinatesRack(showcase);
 				if (showcase.x1 < 0 || showcase.x2 < 0 || showcase.x3 < 0 || showcase.x4 < 0 ||
 						showcase.x1 > sector.length || showcase.x2 > sector.length || showcase.x3 > sector.length || showcase.x4 > sector.length ||
 						showcase.y1 < 0 || showcase.y2 < 0 || showcase.y3 < 0 || showcase.y4 < 0 ||
 						showcase.y1 > sector.width || showcase.y2 > sector.width || showcase.y3 > sector.width || showcase.y4 > sector.width) {
 					showcase.length = oldLength;
+					showcase.real_length = showcase.real_length - length + oldLength;
 					calcCoordinatesRack(showcase);
 				}
 				else {
@@ -1213,7 +1285,8 @@ function roundRack(rack)
 		if (showcase != null) {
 			var height = Number(showcaseHeight.value);
 			// не выходит за области сектора
-			if (height > 0 && height <= sector.height) {
+			if (height > 0 && height <= sector.height && showcase.z_offset + showcase.real_height + height - showcase.height <= sector.height) {
+				showcase.real_height = showcase.real_height + height - showcase.height;
 				showcase.height = height;
 			}
 			else {

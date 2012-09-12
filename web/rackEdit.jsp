@@ -18,6 +18,7 @@
 	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
 	<script type="text/javascript" src="js/planogram.js"></script>
 	<script type="text/javascript" src="js/planogram2D.js"></script>
+	<script type="text/javascript" src="js/utils/ruler.js"></script>
 	<script type="text/javascript" src="js/rackEdit/rackEdit_drawEditCanvas.js"></script>
 	<script type="text/javascript" src="js/rackEdit/rackEdit_drawPreviewCanvas.js"></script>
 	<script type="text/javascript" src="js/rackEdit/rackEdit_drawShelf.jsp"></script>
@@ -62,6 +63,9 @@
 								<td><a href="#" onclick="return aOnClick(this, fRackShelfAdd)" class="<%=access_rack_edit%>"><%=JspUtils.toMenuTitle("Добавить полку")%></a></td>
 							</tr>
 							<tr>
+								<td><a href="#" id="butRuler" onclick="return aOnClick(this, fRuler)"><%=JspUtils.toMenuTitle("Рулетка")%></a></td>
+							</tr>
+							<tr>
 								<td><a href="#" id="butCopy" onclick="return aOnClick(this, fCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать")%></a></td>
 							</tr>
 							<tr>
@@ -95,6 +99,26 @@
 											<td onclick="kMsub()" class="scale">
 												+
 											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<hr/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<table id="rulerPanel" width="100%" style="display: none;">
+										<tr>
+											<td>x1:<input id="ruler_ax" type="text" size="3" disabled="disabled"/>y1:<input id="ruler_ay" type="text" size="3" disabled="disabled"/></td>
+										</tr>
+										<tr>
+											<td>x2:<input id="ruler_bx" type="text" size="3" disabled="disabled"/>y2:<input id="ruler_by" type="text" size="3" disabled="disabled"/>&nbsp;<a href="#" onclick="window.ruler.state=0; drawEditCanvas(); $('#rulerPanel').hide();">Скрыть</a></td>
+										</tr>
+										<tr>
+											<td>dx:<input id="ruler_dx" type="text" size="3" disabled="disabled"/>dy:<input id="ruler_dy" type="text" size="3" disabled="disabled"/>&nbsp;&nbsp;&nbsp;l:<input id="ruler_l" type="text" size="3" disabled="disabled"/></td>
 										</tr>
 									</table>
 								</td>
@@ -557,7 +581,18 @@
 		var evnt = ie_event(e);
 		var sx = window.kx - window.offset_rack_x +evnt.offsetX * window.km;
 		var sy = window.ky - window.offset_rack_y +(window.edit_canvas.height - evnt.offsetY) * window.km;
-
+		if (window.ruler.state==1)
+		{
+			rulerMoveA(sx,sy);
+			window.ruler.state=2;
+		}
+		else
+		if (window.ruler.state==2)
+		{
+			rulerMoveB(sx,sy);
+			window.ruler.state=3;
+		}
+		else
 		if (window.shelfAdd==true)
 		{
 			if (sx>0 && sy>0 && sx<window.rack.width && sy<window.rack.height){
@@ -642,8 +677,22 @@
 	}
 
 		window.edit_canvas.onmousemove = function (e) {
-		if (window.editMove != 0 && window.shelf != null) {
 			var evnt = ie_event(e);
+			var sx = window.kx - window.offset_rack_x +evnt.offsetX * window.km;
+			var sy = window.ky - window.offset_rack_y +(window.edit_canvas.height - evnt.offsetY) * window.km;
+			if (window.ruler.state==1)
+			{
+				rulerMoveA(sx,sy);
+				drawEditCanvas();
+			}else
+			if (window.ruler.state==2)
+			{
+				rulerMoveB(sx,sy);
+				drawEditCanvas();
+			}
+			else
+		if (window.editMove != 0 && window.shelf != null) {
+
 			var dx = (evnt.clientX - x) * window.km;
 			var dy = -(evnt.clientY - y) * window.km;
 			if (dx != 0 || dy != 0) {
