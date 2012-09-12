@@ -27,7 +27,7 @@
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fCut.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fDel.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fPaste.js"></script>
-	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fRuler.js"></script>
+	<script type="text/javascript" src="js/utils/ruler.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_image.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_PreviewPanelListener.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_rackWaresCalcCoordinates.js"></script>
@@ -124,14 +124,11 @@
 							<tr>
 								<td>
 									<table id="rulerPanel" width="100%" style="display: none;">
-										<colgroup>
-											<col width="70"/>
-										</colgroup>
 										<tr>
-											<td colspan="2">x1:<input id="ruler_ax" type="text" size="3" disabled="disabled"/>y1:<input id="ruler_ay" type="text" size="3" disabled="disabled"/>x2:<input id="ruler_bx" type="text" size="3" disabled="disabled"/>y2:<input id="ruler_by" type="text" size="3" disabled="disabled"/></td>
+											<td>x1:<input id="ruler_ax" type="text" size="3" disabled="disabled"/>y1:<input id="ruler_ay" type="text" size="3" disabled="disabled"/>x2:<input id="ruler_bx" type="text" size="3" disabled="disabled"/>y2:<input id="ruler_by" type="text" size="3" disabled="disabled"/></td>
 										</tr>
 										<tr>
-											<td colspan="2">dx:<input id="ruler_dx" type="text" size="3" disabled="disabled"/>dy:<input id="ruler_dy" type="text" size="3" disabled="disabled"/>&nbsp;&nbsp;&nbsp;l:<input id="ruler_l" type="text" size="3" disabled="disabled"/>&nbsp;<a href="#" onclick="window.ruler.state=0; drawEditCanvas(); $('#rulerPanel').hide();">Скрыть</a></td>
+											<td>dx:<input id="ruler_dx" type="text" size="3" disabled="disabled"/>dy:<input id="ruler_dy" type="text" size="3" disabled="disabled"/>&nbsp;&nbsp;&nbsp;l:<input id="ruler_l" type="text" size="3" disabled="disabled"/>&nbsp;<a href="#" onclick="window.ruler.state=0; drawEditCanvas(); $('#rulerPanel').hide();">Скрыть</a></td>
 										</tr>
 									</table>
 								</td>
@@ -298,7 +295,6 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
  * state (0 не выбрана, 1 выбор первой точки, 2 выбор второй точки, 3 линейка задана)
 * @type {Object}
  */
-window.ruler={state:0, ax:0, ay:0, bx:0, by:0};
 
 	function loadComplete() {
 		var code_rack = getCookie('code_rack');
@@ -650,19 +646,13 @@ window.ruler={state:0, ax:0, ay:0, bx:0, by:0};
 			window.selectRackWaresList = [];
 			if (window.ruler.state==1)
 			{
-				window.ruler.ax=Math.round(sx);
-				window.ruler.ay=Math.round(sy);
-				window.ruler.bx=Math.round(sx);
-				window.ruler.by=Math.round(sy);
-				setRuler();
+				rulerMoveA(sx,sy);
 				window.ruler.state=2;
 			}
 			else
 			if (window.ruler.state==2)
 			{
-				window.ruler.bx=Math.round(sx);
-				window.ruler.by=Math.round(sy);
-				setRuler();
+				rulerMoveB(sx,sy);
 				window.ruler.state=3;
 			}
 			else
@@ -871,18 +861,12 @@ window.ruler={state:0, ax:0, ay:0, bx:0, by:0};
 
 			if (window.ruler.state==1)
 			{
-				window.ruler.ax=Math.round(sx);
-				window.ruler.ay=Math.round(sy);
-				window.ruler.bx=Math.round(sx);
-				window.ruler.by=Math.round(sy);
-				setRuler();
+				rulerMoveA(sx,sy);
 				drawEditCanvas();
 			}else
 			if (window.ruler.state==2)
 			{
-				window.ruler.bx=Math.round(sx);
-				window.ruler.by=Math.round(sy);
-				setRuler();
+				rulerMoveB(sx,sy);
 				drawEditCanvas();
 			}
 			else
@@ -946,27 +930,6 @@ window.ruler={state:0, ax:0, ay:0, bx:0, by:0};
 		var f=Math.abs(x-rackWares.position_x)<rackWares.wares_width/2;
 		f=f && Math.abs(y-rackWares.position_y)<rackWares.wares_height/2;
 		return f;
-	}
-</script>
-
-<%-- линейка --%>
-<script type="text/javascript">
-	function setRuler()
-	{
-		if (window.ruler.state==1){
-			$('#ruler_ax').val(window.ruler.ax);
-			$('#ruler_ay').val(window.ruler.ay);
-			$('#ruler_bx').val(window.ruler.bx);
-			$('#ruler_by').val(window.ruler.by);
-		}		if (window.ruler.state>=2){
-			$('#ruler_bx').val(window.ruler.bx);
-			$('#ruler_by').val(window.ruler.by);
-			var dx=Math.abs(window.ruler.bx-window.ruler.ax);
-			$('#ruler_dx').val(dx);
-			var dy=Math.abs(window.ruler.by-window.ruler.ay);
-			$('#ruler_dy').val(dy);
-			$('#ruler_l').val(Math.sqrt(dx*dx+dy*dy));
-		}
 	}
 </script>
 

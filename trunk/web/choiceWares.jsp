@@ -108,7 +108,7 @@
 								</td>
 								<td>
 									<a href="#" title="Поиск" onclick="search1()"><img src="img/icon/iconSearch.png" alt="Поиск"/></a>
-									<a href="#" title="Поиск по иерархии" onclick="search2()"><img src="img/icon/iconSearch2.png" alt="Поиск по иерархии"/></a>
+									<a href="#" title="Поиск по всем группам" onclick="search2()"><img src="img/icon/iconSearch2.png" alt="Поиск по иерархии"/></a>
 								</td>
 							</tr>
 						</table>
