@@ -4,12 +4,16 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
+import planograma.PlanogramMessage;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
+import planograma.constant.VerificationConst;
 import planograma.constant.data.RackTemplateConst;
+import planograma.data.LoadSide;
 import planograma.data.RackShelfTemplate;
 import planograma.data.RackTemplate;
 import planograma.data.UserContext;
+import planograma.exception.EntityFieldException;
 import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
 import planograma.model.RackShelfTemplateModel;
@@ -62,6 +66,58 @@ public class RackTemplateSave extends AbstractAction {
 			final RackShelfTemplate item = new RackShelfTemplate(rackJson);
 			itemList.add(item);
 		}
+		List<EntityFieldException> fieldExceptionList=new ArrayList<EntityFieldException>();
+//		параметры высоты, ширины, глубины, полезная высота, полезная ширина, полезная глубина меньше 10мм(не сохраняется)
+		if (rackTemplate.getHeight() < VerificationConst.MIN_RACK_DIMENSIONS) {
+			if (rackTemplate.getLoad_side() == LoadSide.F) {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_HEIGHT_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.HEIGHT));
+			} else {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_LENGTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.LENGTH));
+			}
+		}
+		if (rackTemplate.getWidth() < VerificationConst.MIN_RACK_DIMENSIONS) {
+			if (rackTemplate.getLoad_side() == LoadSide.F) {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_LENGTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.LENGTH));
+			} else {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_HEIGHT_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.HEIGHT));
+			}
+		}
+		if (rackTemplate.getLength() < VerificationConst.MIN_RACK_DIMENSIONS) {
+			if (rackTemplate.getLoad_side() == LoadSide.F) {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_WIDTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.WIDTH));
+			} else {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_WIDTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.WIDTH));
+			}
+		}
+		//TODO
+		if (rackTemplate.getReal_height() < VerificationConst.MIN_RACK_DIMENSIONS) {
+			if (rackTemplate.getLoad_side() == LoadSide.F) {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_HEIGHT_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.REAL_HEIGHT));
+			} else {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_HEIGHT_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.REAL_HEIGHT));
+			}
+		}
+		if (rackTemplate.getReal_width() < VerificationConst.MIN_RACK_DIMENSIONS) {
+			if (rackTemplate.getLoad_side() == LoadSide.F) {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_WIDTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.REAL_WIDTH));
+			} else {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_WIDTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.REAL_WIDTH));
+			}
+		}
+		if (rackTemplate.getReal_length() < VerificationConst.MIN_RACK_DIMENSIONS) {
+			if (rackTemplate.getLoad_side() == LoadSide.F) {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_LENGTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.REAL_LENGTH));
+			} else {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_LENGTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.REAL_LENGTH));
+			}
+		}
+
+//		полки по высоте глубине и ширине должны быть больше 5мм(не сохраняется, выделяется одна из полок)
+//		полка не может выходить за пределы стеллажа(не сохраняется, выделяется одна из полок)
+
+		final JsonObject jsonObject=new JsonObject();
+		if (fieldExceptionList.isEmpty())
+		{
 		if (rackTemplate.getCode_rack_template() == null) {
 			// insert
 			rackTemplateModel.insert(userContext, rackTemplate);
@@ -94,8 +150,17 @@ public class RackTemplateSave extends AbstractAction {
 			rackShelfTemplateModel.insert(userContext, newItem);
 		}
 		commit(userContext);
-		final JsonObject jsonObject=new JsonObject();
-		jsonObject.addProperty(RackTemplateConst.CODE_RACK_TEMPLATE, rackTemplate.getCode_rack_template());
+			jsonObject.addProperty(RackTemplateConst.CODE_RACK_TEMPLATE, rackTemplate.getCode_rack_template());
+		}
+		else
+		{
+			JsonArray jsonArray=new JsonArray();
+			for (final EntityFieldException entityFieldException:fieldExceptionList)
+			{
+				jsonArray.add(entityFieldException.toJSON());
+			}
+			jsonObject.add("errorField", jsonArray);
+		}
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms");
 		return jsonObject;

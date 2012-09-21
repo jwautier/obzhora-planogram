@@ -105,11 +105,6 @@
 							</tr>
 							<tr>
 								<td>
-									<hr/>
-								</td>
-							</tr>
-							<tr>
-								<td>
 									<table id="rulerPanel" width="100%" style="display: none;">
 										<tr>
 											<td>x1:<input id="ruler_ax" type="text" size="3" disabled="disabled"/>y1:<input id="ruler_ay" type="text" size="3" disabled="disabled"/></td>
@@ -159,6 +154,8 @@
 														}
 													%>
 												</select>
+											</td>
+											<td>
 											</td>
 										</tr>
 										<tr>
@@ -379,6 +376,7 @@
 	function setRack(rack)
 	{
 		document.getElementById('rackName').value = window.rack.name_rack;
+		document.getElementById('rackLoadSide').value =window.rack.load_side;
 		document.getElementById('rackWidth').value =window.rack.width;
 		document.getElementById('rackRealWidth').value =window.rack.real_width;
 		document.getElementById('rackHeight').value =window.rack.height;
@@ -388,8 +386,6 @@
 		document.getElementById('rackX_offset').value =window.rack.x_offset;
 		document.getElementById('rackY_offset').value =window.rack.y_offset;
 		document.getElementById('rackZ_offset').value =window.rack.z_offset;
-		document.getElementById('rackLoadSide').value =window.rack.load_side;
-
 	}
 
 	function selectShelf(shelf) {

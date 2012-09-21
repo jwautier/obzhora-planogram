@@ -19,7 +19,11 @@ public enum StateRack {
 	/**
 	 * Неактивно
 	 */
-	NA;
+	NA,
+	/**
+	 * Стеллаж соответвтвует стеллажу в магазине
+	 */
+	PC;
 
 	private String desc;
 

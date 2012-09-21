@@ -19,7 +19,11 @@ public enum StateSector {
 	/**
 	 * Неактивно
 	 */
-	NA;
+	NA,
+	/**
+	 * Стеллажы соответствует положению в зале магазина
+	 */
+	PC;
 
 	private String desc;
 
