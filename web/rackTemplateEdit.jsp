@@ -17,6 +17,7 @@
 	<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
 	<script type="text/javascript" src="js/planogram.js"></script>
+	<script type="text/javascript" src="js/utils/ruler.js"></script>
 	<script type="text/javascript" src="js/draw/calcCoordinatesRackShelfTemplate.js"></script>
 	<script type="text/javascript" src="js/draw/drawRackShelfTemplate.jsp"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
@@ -53,6 +54,9 @@
 							<tr><td></td></tr>
 							<tr>
 								<td><a href="#" onclick="return aOnClick(this, fRackTemplateShelfAdd)" class="<%=access_rack_template_edit%>"><%=JspUtils.toMenuTitle("Добавить полку")%></a></td>
+							</tr>
+							<tr>
+								<td><a href="#" id="butRuler" onclick="return aOnClick(this, fRuler)"><%=JspUtils.toMenuTitle("Рулетка")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="butCopy" onclick="return aOnClick(this, fCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать")%></a></td>
@@ -94,34 +98,39 @@
 							</tr>
 							<tr>
 								<td>
+									<table id="rulerPanel" width="100%" style="display: none;">
+										<tr>
+											<td>x1:<input id="ruler_ax" type="text" size="3" disabled="disabled"/>y1:<input id="ruler_ay" type="text" size="3" disabled="disabled"/></td>
+										</tr>
+										<tr>
+											<td>x2:<input id="ruler_bx" type="text" size="3" disabled="disabled"/>y2:<input id="ruler_by" type="text" size="3" disabled="disabled"/>&nbsp;<a href="#" onclick="window.ruler.state=0; drawEditCanvas(); $('#rulerPanel').hide();">Скрыть</a></td>
+										</tr>
+										<tr>
+											<td>dx:<input id="ruler_dx" type="text" size="3" disabled="disabled"/>dy:<input id="ruler_dy" type="text" size="3" disabled="disabled"/>&nbsp;&nbsp;&nbsp;l:<input id="ruler_l" type="text" size="3" disabled="disabled"/></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<hr/>
+								</td>
+							</tr>
+							<tr>
+								<td>
 									<table>
 										<colgroup>
 											<col width="70"/>
 										</colgroup>
 										<tr>
-											<td colspan="2">свойства стеллажа:</td>
+											<td colspan="3">свойства стеллажа:</td>
 										</tr>
 										<tr>
 											<td align="right">название</td>
-											<td>
+											<td colspan="2">
 												<input type="text" id="rackTemplateName"
 													   onchange="changeRackTemplateName(this)"/>
 											</td>
-										</tr>
-										<tr>
-											<td align="right">ширина</td>
-											<td><input type="text" id="rackTemplateWidth"
-													   onchange="changeRackTemplateWidth(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
-										</tr>
-										<tr>
-											<td align="right">высота</td>
-											<td><input type="text" id="rackTemplateHeight"
-													   onchange="changeRackTemplateHeight(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
-										</tr>
-										<tr>
-											<td align="right">глубина</td>
-											<td><input type="text" id="rackTemplateLength"
-													   onchange="changeRackTemplateLength(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
 										</tr>
 										<tr>
 											<td align="right">загрузка</td>
@@ -139,6 +148,52 @@
 													%>
 												</select>
 											</td>
+											<td>
+											</td>
+										</tr>
+										<tr>
+											<td>объем</td>
+											<td>стеллажа</td>
+											<td>полезный</td>
+										</tr>
+										<tr>
+											<td align="right">ширина</td>
+											<td><input type="text" id="rackTemplateWidth" size="4"
+													   onchange="changeRackTemplateWidth(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+											<td><input type="text" id="rackTemplateRealWidth" size="4"
+													   onchange="changeRackTemplateRealWidth(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+										</tr>
+										<tr>
+											<td align="right">высота</td>
+											<td><input type="text" id="rackTemplateHeight" size="4"
+													   onchange="changeRackTemplateHeight(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+											<td><input type="text" id="rackTemplateRealHeight" size="4"
+													   onchange="changeRackTemplateRealHeight(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+										</tr>
+										<tr>
+											<td align="right">глубина</td>
+											<td><input type="text" id="rackTemplateLength" size="4"
+													   onchange="changeRackTemplateLength(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+											<td><input type="text" id="rackTemplateRealLength" size="4"
+													   onchange="changeRackTemplateRealLength(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+										</tr>
+										<tr>
+											<td align="right" title="Смещение полезного обема относительно нижнего левого дальнего угла стеллажа">смещение</td>
+											<td align="right">слева</td>
+											<td><input type="text" id="rackTemplateX_offset" size="4"
+													   onchange="changeRackTemplateX_offset(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+										</tr>
+										<tr>
+											<td></td>
+											<td align="right">снизу</td>
+											<td><input type="text" id="rackTemplateY_offset" size="4"
+													   onchange="changeRackTemplateY_offset(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+										</tr>
+										<tr>
+											<td></td>
+											<td align="right">сзади</td>
+											<td><input type="text" id="rackTemplateZ_offset" size="4"
+													   onchange="changeRackTemplateZ_offset(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
 										</tr>
 									</table>
 								</td>
@@ -233,11 +288,24 @@
 						window.rackTemplate.width=window.rackTemplate.length;
 						window.rackTemplate.length=window.rackTemplate.height;
 						window.rackTemplate.height=temp;
+
+						temp=window.rackTemplate.real_width;
+						window.rackTemplate.real_width=window.rackTemplate.real_length;
+						window.rackTemplate.real_length=window.rackTemplate.real_height;
+						window.rackTemplate.real_height=temp;
 						break;
 					case '<%=LoadSide.F%>':
 						var temp=window.rackTemplate.width;
 						window.rackTemplate.width=window.rackTemplate.length;
 						window.rackTemplate.length=temp;
+
+						temp=window.rackTemplate.real_width;
+						window.rackTemplate.real_width=window.rackTemplate.real_length;
+						window.rackTemplate.real_length=temp;
+
+						temp=window.rackTemplate.y_offset;
+						window.rackTemplate.y_offset=window.rackTemplate.z_offset;
+						window.rackTemplate.z_offset=temp;
 						break;
 				}
 				window.rackShelfTemplateList = data.rackShelfTemplateList;
@@ -258,15 +326,29 @@
 		var edit_td = $('#edit_td');
 		window.edit_canvas.width = edit_td.width() - 6;
 		window.edit_canvas.height = edit_td.height() - 6;
-		window.edit_m = Math.max(window.rackTemplate.width / edit_canvas.width, window.rackTemplate.height / edit_canvas.height)
+
 
 		window.preview_canvas = document.getElementById("preview_canvas");
 		window.preview_context = preview_canvas.getContext("2d");
 		var preview_td = $('#preview_td');
 		window.preview_canvas.width = preview_td.width();// - 4;
 		window.preview_canvas.height = preview_td.height();// - 4;
-		window.preview_m = Math.max(window.rackTemplate.width / preview_canvas.width,  window.rackTemplate.height / preview_canvas.height);
 
+		// смещение стеллажа
+		window.offset_rack_x=-Math.min(0, window.rackTemplate.x_offset);
+		window.offset_rack_y=-Math.min(0, window.rackTemplate.y_offset);
+		// смещение полезного обема
+		window.offset_real_rack_x=Math.max(0, window.rackTemplate.x_offset);
+		window.offset_real_rack_y=Math.max(0, window.rackTemplate.y_offset);
+		// определение максимальных габаритов
+		window.max_x=Math.max(window.offset_rack_x + window.rackTemplate.width, window.offset_real_rack_x+window.rackTemplate.real_width);
+		window.max_y=Math.max(window.offset_rack_y + window.rackTemplate.height, window.offset_real_rack_y+window.rackTemplate.real_height);
+
+		// масштаб в окне редактирования
+		window.edit_m = Math.max(window.max_x / edit_canvas.width, window.max_y / edit_canvas.height);
+		// масштаб в окне навигации
+		window.preview_m = Math.max(window.max_x / preview_canvas.width,  window.max_y / preview_canvas.height);
+		// камера
 		window.km = edit_m;
 		window.kx = 0;
 		window.ky = 0;
@@ -293,10 +375,17 @@
 	function setRackTemplate(rackTemplate)
 	{
 		document.getElementById('rackTemplateName').value = window.rackTemplate.name_rack_template;
+		document.getElementById('rackTemplateLoadSide').value =window.rackTemplate.load_side;
 		document.getElementById('rackTemplateWidth').value =window.rackTemplate.width;
 		document.getElementById('rackTemplateHeight').value =window.rackTemplate.height;
 		document.getElementById('rackTemplateLength').value =window.rackTemplate.length;
-		document.getElementById('rackTemplateLoadSide').value =window.rackTemplate.load_side;
+		document.getElementById('rackTemplateRealWidth').value =window.rackTemplate.real_width;
+		document.getElementById('rackTemplateRealHeight').value =window.rackTemplate.real_height;
+		document.getElementById('rackTemplateRealLength').value =window.rackTemplate.real_length;
+		document.getElementById('rackTemplateX_offset').value =window.rackTemplate.x_offset;
+		document.getElementById('rackTemplateY_offset').value =window.rackTemplate.y_offset;
+		document.getElementById('rackTemplateZ_offset').value =window.rackTemplate.z_offset;
+
 	}
 
 	function selectShelf(shelf) {
@@ -353,12 +442,30 @@
 		window.edit_context.lineWidth = 1;
 		window.edit_context.strokeStyle = "BLACK";
 		window.edit_context.strokeRect(
-				-window.kx / window.km,
-				window.edit_canvas.height + window.ky / window.km,
+				(-window.kx + window.offset_rack_x) / window.km,
+				window.edit_canvas.height + (window.ky - window.offset_rack_y) / window.km,
 				window.rackTemplate.width / window.km,
-				- window.rackTemplate.height / window.km);
+				-window.rackTemplate.height / window.km);
+		window.edit_context.strokeStyle = "GREEN";
+		window.edit_context.strokeRect(
+				(-window.kx + window.offset_real_rack_x) / window.km,
+				window.edit_canvas.height + (window.ky - window.offset_real_rack_y) / window.km,
+				window.rackTemplate.real_width / window.km,
+				-window.rackTemplate.real_height / window.km);
 		for (var i = 0; i < window.rackShelfTemplateList.length; i++) {
-			drawRackShelfTemplate( window.rackShelfTemplateList[i], window.edit_canvas, window.edit_context, window.kx, window.ky, window.km);
+			drawRackShelfTemplate( window.rackShelfTemplateList[i], window.edit_canvas, window.edit_context, window.kx - window.offset_rack_x, window.ky - window.offset_rack_y, window.km);
+		}
+		if (window.ruler.state>=2)
+		{
+			// рисуем линейку
+			window.edit_context.lineWidth = 1;
+			window.edit_context.strokeStyle = "BLUE";
+			window.edit_context.beginPath();
+			window.edit_context.moveTo((window.ruler.ax-window.kx + window.offset_rack_x) / window.km,
+					window.edit_canvas.height + (-window.ruler.ay+window.ky - window.offset_rack_y) / window.km);
+			window.edit_context.lineTo((window.ruler.bx-window.kx + window.offset_rack_x) / window.km,
+					window.edit_canvas.height + (-window.ruler.by+window.ky - window.offset_rack_y) / window.km);
+			window.edit_context.stroke();
 		}
 	}
 	function drawPreviewCanvas()
@@ -366,11 +473,19 @@
 		window.preview_context.clearRect(0, 0, window.preview_canvas.width, window.preview_canvas.height);
 		window.preview_context.lineWidth = 1;
 		window.preview_context.strokeStyle = "BLACK";
-		window.preview_context.strokeRect(0, window.preview_canvas.height,
+		window.preview_context.strokeRect(
+				window.offset_rack_x / window.preview_m,
+				window.preview_canvas.height - window.offset_rack_y / window.preview_m,
 				window.rackTemplate.width / window.preview_m,
 				-window.rackTemplate.height / window.preview_m);
+		window.preview_context.strokeStyle = "GREEN";
+		window.preview_context.strokeRect(
+				window.offset_real_rack_x / window.preview_m,
+				window.preview_canvas.height - window.offset_real_rack_y / window.preview_m,
+				window.rackTemplate.real_width / window.preview_m,
+				-window.rackTemplate.real_height / window.preview_m);
 		for (var i = 0; i < window.rackShelfTemplateList.length; i++) {
-			drawRackShelfTemplate(window.rackShelfTemplateList[i], window.preview_canvas, window.preview_context, 0, 0, window.preview_m);
+			drawRackShelfTemplate(window.rackShelfTemplateList[i], window.preview_canvas, window.preview_context, -window.offset_rack_x , -window.offset_rack_y, window.preview_m);
 		}
 		window.preview_context.lineWidth = 1;
 		window.preview_context.strokeStyle = "BLUE";
@@ -396,17 +511,90 @@
 					window.rackTemplate.width = window.rackTemplate.height;
 					window.rackTemplate.height = window.rackTemplate.length;
 					window.rackTemplate.length = temp;
+
+					temp=window.rackTemplate.real_width;
+					window.rackTemplate.real_width=window.rackTemplate.real_height;
+					window.rackTemplate.real_height=window.rackTemplate.real_length;
+					window.rackTemplate.real_length=temp;
 					break;
 				case '<%=LoadSide.F%>':
 					var temp = window.rackTemplate.width;
 					window.rackTemplate.width = window.rackTemplate.length;
 					window.rackTemplate.length = temp;
+
+					temp=window.rackTemplate.real_width;
+					window.rackTemplate.real_width=window.rackTemplate.real_length;
+					window.rackTemplate.real_length=temp;
+
+					temp=window.rackTemplate.y_offset;
+					window.rackTemplate.y_offset=window.rackTemplate.z_offset;
+					window.rackTemplate.z_offset=temp;
 					break;
 			}
 
 			postJson('<%=RackTemplateSave.URL%>', {rackTemplate:window.rackTemplate, rackShelfTemplateList:window.rackShelfTemplateList}, function (data) {
-				setCookie('<%=RackTemplateConst.CODE_RACK_TEMPLATE%>', data.code_rack_template);
-				loadComplete();
+				if (data.errorField!=null && data.errorField.length>0)
+				{
+					switch (window.rackTemplate.load_side)
+					{
+						case '<%=LoadSide.U%>':
+							var temp=window.rackTemplate.width;
+							window.rackTemplate.width=window.rackTemplate.length;
+							window.rackTemplate.length=window.rackTemplate.height;
+							window.rackTemplate.height=temp;
+
+							temp=window.rackTemplate.real_width;
+							window.rackTemplate.real_width=window.rackTemplate.real_length;
+							window.rackTemplate.real_length=window.rackTemplate.real_height;
+							window.rackTemplate.real_height=temp;
+							break;
+						case '<%=LoadSide.F%>':
+							var temp=window.rackTemplate.width;
+							window.rackTemplate.width=window.rackTemplate.length;
+							window.rackTemplate.length=temp;
+
+							temp=window.rackTemplate.real_width;
+							window.rackTemplate.real_width=window.rackTemplate.real_length;
+							window.rackTemplate.real_length=temp;
+
+							temp=window.rackTemplate.y_offset;
+							window.rackTemplate.y_offset=window.rackTemplate.z_offset;
+							window.rackTemplate.z_offset=temp;
+							break;
+					}
+					var setFocus=null;
+					var error_message="";
+					for (var i=0; i<data.errorField.length; i++){
+						error_message+=data.errorField[i].message+'\n';
+						if (setFocus==null)
+						{
+							if(data.errorField[i].fieldName!=null)
+							{
+								switch (data.errorField[i].fieldName)
+								{
+									case '<%=RackTemplateConst.HEIGHT%>':
+										setFocus=$('#rackTemplateHeight');
+										break;
+									case '<%=RackTemplateConst.WIDTH%>':
+										setFocus=$('#rackTemplateWidth');
+										break;
+									case '<%=RackTemplateConst.LENGTH%>':
+										setFocus=$('#rackTemplateLength');
+										break;
+								}
+							}
+						}
+					}
+					alert(error_message);
+					if (setFocus != null) {
+						setFocus.focus();
+					}
+				}
+				else
+				{
+					setCookie('<%=RackTemplateConst.CODE_RACK_TEMPLATE%>', data.code_rack_template);
+					loadComplete();
+				}
 			});
 		}
 	}
@@ -497,9 +685,20 @@
 		// TODO
 	window.edit_canvas.onmousedown = function (e) {
 		var evnt = ie_event(e);
-		var sx = window.kx + evnt.offsetX * window.km;
-		var sy = window.ky + (window.edit_canvas.height - evnt.offsetY) * window.km;
-
+		var sx = window.kx - window.offset_rack_x + evnt.offsetX * window.km;
+		var sy = window.ky - window.offset_rack_y + (window.edit_canvas.height - evnt.offsetY) * window.km;
+		if (window.ruler.state==1)
+		{
+			rulerMoveA(sx,sy);
+			window.ruler.state=2;
+		}
+		else
+		if (window.ruler.state==2)
+		{
+			rulerMoveB(sx,sy);
+			window.ruler.state=3;
+		}
+		else
 		if (window.shelfAdd==true)
 		{
 			if (sx>0 && sy>0 && sx<window.rackTemplate.width && sy<window.rackTemplate.height)
@@ -588,8 +787,22 @@
 	}
 
 		window.edit_canvas.onmousemove = function (e) {
-		if (window.editMove != 0 && window.shelf != null) {
 			var evnt = ie_event(e);
+			var sx = window.kx - window.offset_rack_x +evnt.offsetX * window.km;
+			var sy = window.ky - window.offset_rack_y +(window.edit_canvas.height - evnt.offsetY) * window.km;
+			if (window.ruler.state==1)
+			{
+				rulerMoveA(sx,sy);
+				drawEditCanvas();
+			}else
+			if (window.ruler.state==2)
+			{
+				rulerMoveB(sx,sy);
+				drawEditCanvas();
+			}
+			else
+		if (window.editMove != 0 && window.shelf != null) {
+
 			var dx = (evnt.clientX - x) * window.km;
 			var dy = -(evnt.clientY - y) * window.km;
 			if (dx != 0 || dy != 0) {
@@ -754,6 +967,7 @@
 		window.rackTemplate.name_rack_template = rackTemplateName.value;
 	}
 	function changeRackTemplateWidth(rackTemplateWidth) {
+		//TODO
 		var currentWidth = Number(rackTemplateWidth.value);
 		var maxWidth = 0;
 		for (var i = 0; i < window.rackShelfTemplateList.length; i++) {
@@ -792,7 +1006,9 @@
 				rackTemplateWidth.value = window.rackTemplate.width;
 		}
 	}
+
 	function changeRackTemplateHeight(rackTemplateHeight) {
+		//TODO
 		var currentHeight = Number(rackTemplateHeight.value);
 		var maxHeight = 0;
 		for (var i = 0; i < window.rackShelfTemplateList.length; i++) {
@@ -832,6 +1048,7 @@
 		}
 	}
 	function changeRackTemplateLength(rackTemplateLength) {
+		//TODO
 		var currentLength = Number(rackTemplateLength.value);
 		var maxLength = 0;
 		for (var i = 0; i < window.rackShelfTemplateList.length; i++) {
@@ -851,6 +1068,102 @@
 				rackTemplateLength.value = window.rackTemplate.length;
 		}
 	}
+
+	function changeRackTemplateRealWidth(realWidth) {
+		var currentWidth = Number(realWidth.value);
+		if (currentWidth > 0) {
+			window.rackTemplate.real_width = currentWidth;
+			window.max_x = Math.max(window.offset_rack_x + window.rackTemplate.width, window.offset_real_rack_x + window.rackTemplate.real_width);
+			window.edit_m = Math.max(window.max_x / edit_canvas.width, window.max_y / edit_canvas.height);
+			window.preview_m = Math.max(window.max_x / preview_canvas.width, window.max_y / preview_canvas.height);
+			window.km = window.edit_m
+			drawEditCanvas();
+			drawPreviewCanvas();
+		}
+		else {
+			realWidth.value = window.rackTemplate.real_width;
+		}
+	}
+
+	function changeRackTemplateRealHeight(realHeight) {
+		var currentHeight = Number(realHeight.value);
+		if (currentHeight > 0) {
+			window.rackTemplate.real_height = currentHeight;
+			window.max_y = Math.max(window.offset_rack_y + window.rackTemplate.height, window.offset_real_rack_y + window.rackTemplate.real_height);
+			window.edit_m = Math.max(window.max_x / edit_canvas.width, window.max_y / edit_canvas.height);
+			window.preview_m = Math.max(window.max_x / preview_canvas.width, window.max_y / preview_canvas.height);
+			window.km = window.edit_m
+			drawEditCanvas();
+			drawPreviewCanvas();
+		}
+		else {
+			realHeight.value = window.rackTemplate.real_height;
+		}
+	}
+
+	function changeRackTemplateRealLength(realLength) {
+		var currentLength = Number(realLength.value);
+		if (currentLength > 0) {
+			window.rackTemplate.real_length = currentLength;
+		}
+		else {
+			realLength.value = window.rackTemplate.real_length;
+		}
+	}
+
+	function changeRackTemplateX_offset(xOffset) {
+		if (!isNaN(xOffset.value)) {
+			window.rackTemplate.x_offset = Number(xOffset.value);
+			// смещение стеллажа
+			window.offset_rack_x = -Math.min(0, window.rackTemplate.x_offset);
+			// смещение полезного обема
+			window.offset_real_rack_x = Math.max(0, window.rackTemplate.x_offset);
+			// определение максимальных габаритов
+			window.max_x = Math.max(window.offset_rack_x + window.rackTemplate.width, window.offset_real_rack_x + window.rackTemplate.real_width);
+			// масштаб в окне редактирования
+			window.edit_m = Math.max(window.max_x / edit_canvas.width, window.max_y / edit_canvas.height);
+			// масштаб в окне навигации
+			window.preview_m = Math.max(window.max_x / preview_canvas.width, window.max_y / preview_canvas.height);
+			window.km = window.edit_m
+			drawEditCanvas();
+			drawPreviewCanvas();
+		}
+		else {
+			xOffset.value = window.rackTemplate.x_offset;
+		}
+	}
+
+	function changeRackTemplateY_offset(yOffset) {
+		if (!isNaN(yOffset.value)) {
+			window.rackTemplate.y_offset = Number(yOffset.value);
+			// смещение стеллажа
+			window.offset_rack_y = -Math.min(0, window.rackTemplate.y_offset);
+			// смещение полезного обема
+			window.offset_real_rack_y = Math.max(0, window.rackTemplate.y_offset);
+			// определение максимальных габаритов
+			window.max_y = Math.max(window.offset_rack_y + window.rackTemplate.height, window.offset_real_rack_y + window.rackTemplate.real_height);
+			// масштаб в окне редактирования
+			window.edit_m = Math.max(window.max_x / edit_canvas.width, window.max_y / edit_canvas.height);
+			// масштаб в окне навигации
+			window.preview_m = Math.max(window.max_x / preview_canvas.width, window.max_y / preview_canvas.height);
+			window.km = window.edit_m
+			drawEditCanvas();
+			drawPreviewCanvas();
+		}
+		else {
+			yOffset.value = window.rackTemplate.y_offset;
+		}
+	}
+
+	function changeTemplateRackZ_offset(zOffset) {
+		if (!isNaN(zOffset.value)) {
+			window.rackTemplate.z_offset = Number(zOffset.value);
+		}
+		else {
+			zOffset.value = window.rackTemplate.z_offset;
+		}
+	}
+
 	function changeRackTemplateLoadSide(rackTemplateLoadSide) {
 		window.rackTemplate.load_side = rackTemplateLoadSide.value;
 	}

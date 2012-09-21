@@ -64,7 +64,7 @@ public abstract class AbstractAction extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.setContentType("text/plain");
 			writer.write(e.getMessage());
-			e.printStackTrace();
+			LOG.error("Error doPost",e);
 		} catch (SQLException e) {
 			rollback(session);
 			int errorCode = e.getErrorCode();
@@ -81,19 +81,19 @@ public abstract class AbstractAction extends HttpServlet {
 				response.setContentType("text/plain");
 				writer.write(e.getMessage());
 			}
-			e.printStackTrace();
+			LOG.error("Error doPost",e);
 		} catch (NullPointerException e) {
 			rollback(session);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.setContentType("text/plain");
 			e.printStackTrace(new PrintWriter(writer));
-			e.printStackTrace();
+			LOG.error("Error doPost",e);
 		} catch (Exception e) {
 			rollback(session);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.setContentType("text/plain");
 			writer.write(e.getMessage());
-			e.printStackTrace();
+			LOG.error("Error doPost",e);
 		}
 	}
 
@@ -120,7 +120,7 @@ public abstract class AbstractAction extends HttpServlet {
 				try {
 					connection.rollback();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LOG.error("Error rollback",e);
 				}
 			}
 		}

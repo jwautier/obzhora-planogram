@@ -62,11 +62,24 @@
 							rackTemplate.width=rackTemplate.length;
 							rackTemplate.length=rackTemplate.height;
 							rackTemplate.height=temp;
+
+							temp=rackTemplate.real_width;
+							rackTemplate.real_width=rackTemplate.real_length;
+							rackTemplate.real_length=rackTemplate.real_height;
+							rackTemplate.real_height=temp;
 							break;
 						case '<%=LoadSide.F%>':
 							var temp=rackTemplate.width;
 							rackTemplate.width=rackTemplate.length;
 							rackTemplate.length=temp;
+
+							temp=rackTemplate.real_width;
+							rackTemplate.real_width=rackTemplate.real_length;
+							rackTemplate.real_length=temp;
+
+							temp=rackTemplate.y_offset;
+							rackTemplate.y_offset=rackTemplate.z_offset;
+							rackTemplate.z_offset=temp;
 							break;
 					}
 					selectRackTemplate2(rackTemplate, data.rackShelfTemplateList);
@@ -88,13 +101,39 @@
 		var choice_rack_template_preview_td = $('#choice_rack_template_preview_td');
 		var width=choice_rack_template_preview_td.width() - 4;
 		var height= choice_rack_template_preview_td.height() - 4;
-		var choice_rack_template_preview_m = Math.max(rackTemplate.width / width, rackTemplate.height / height);
-		choice_rack_template_preview_canvas.width = rackTemplate.width/choice_rack_template_preview_m;
-		choice_rack_template_preview_canvas.height = rackTemplate.height/choice_rack_template_preview_m;
+
+		// смещение стеллажа
+		var offset_rack_x=-Math.min(0, rackTemplate.x_offset);
+		var offset_rack_y=-Math.min(0, rackTemplate.y_offset);
+		// смещение полезного обема
+		var offset_real_rack_x=Math.max(0, rackTemplate.x_offset);
+		var offset_real_rack_y=Math.max(0, rackTemplate.y_offset);
+		// определение максимальных габаритов
+		var max_x=Math.max(offset_rack_x + rackTemplate.width, offset_real_rack_x+rackTemplate.real_width);
+		var max_y=Math.max(offset_rack_y + rackTemplate.height, offset_real_rack_y+rackTemplate.real_height);
+
+		// масштаб в окне навигации
+		var choice_rack_template_preview_m = Math.max(max_x / width,  max_y / height);
+		choice_rack_template_preview_canvas.width = max_x/choice_rack_template_preview_m;
+		choice_rack_template_preview_canvas.height = max_y/choice_rack_template_preview_m;
+
+		choice_rack_template_preview_context.lineWidth = 1;
+		choice_rack_template_preview_context.strokeStyle = "BLACK";
+		choice_rack_template_preview_context.strokeRect(
+				offset_rack_x / choice_rack_template_preview_m,
+				choice_rack_template_preview_canvas.height - offset_rack_y / choice_rack_template_preview_m,
+				rackTemplate.width / choice_rack_template_preview_m,
+				-rackTemplate.height / choice_rack_template_preview_m);
+		choice_rack_template_preview_context.strokeStyle = "GREEN";
+		choice_rack_template_preview_context.strokeRect(
+				offset_real_rack_x / choice_rack_template_preview_m,
+				choice_rack_template_preview_canvas.height - offset_real_rack_y / choice_rack_template_preview_m,
+				rackTemplate.real_width / choice_rack_template_preview_m,
+				-rackTemplate.real_height / choice_rack_template_preview_m);
 
 		for (var i = 0; i < rackShelfTemplateList.length; i++) {
 			calcCoordinatesRackShelfTemplate(rackShelfTemplateList[i]);
-			drawRackShelfTemplate(rackShelfTemplateList[i], choice_rack_template_preview_canvas, choice_rack_template_preview_context, 0, 0, choice_rack_template_preview_m);
+			drawRackShelfTemplate(rackShelfTemplateList[i], choice_rack_template_preview_canvas, choice_rack_template_preview_context, -offset_rack_x, -offset_rack_y, choice_rack_template_preview_m);
 		}
 
 		var title=rackTemplate.name_rack_template;
