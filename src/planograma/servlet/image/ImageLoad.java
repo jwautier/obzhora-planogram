@@ -17,7 +17,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.SQLException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -54,7 +53,7 @@ public class ImageLoad extends HttpServlet {
 			resp.setContentType("image/jpeg");
 			resp.setContentLength((int) size);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error("Error load image", e);
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 		time = System.currentTimeMillis() - time;

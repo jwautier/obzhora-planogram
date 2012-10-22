@@ -42,13 +42,6 @@ public class Point2D implements Cloneable{
 		x = x / m;
 	}
 
-	public boolean inside(final Rectangle2D rectangle2D){
-		return this.x >= rectangle2D.p1.x &&
-				this.x <= rectangle2D.p2.x &&
-				this.y >= rectangle2D.p1.y &&
-				this.y <= rectangle2D.p2.y;
-	}
-
 	@Override
 	public Point2D clone() {
 		return new Point2D(x,y);

@@ -34,6 +34,7 @@ public interface UrlConst {
 	public static final String URL_RACK_WARES_PLACEMENT_PRINT = "servlet/rackWaresPlacement/print/";
 	public static final String URL_RACK_WARES_PLACEMENT_EDIT = "servlet/rackWaresPlacement/edit";
 	public static final String URL_RACK_WARES_PLACEMENT_SAVE = "servlet/rackWaresPlacement/save";
+	public static final String URL_RACK_WARES_PLACEMENT_SET_BASKET = "servlet/rackWaresPlacement/setBasket";
 
 	public static final String URL_IMAGE_LOAD = "image/";
 	public static final String URL_IMAGE_CLEAN_CACHE = "servlet/image/clean_cache";

@@ -1,16 +1,19 @@
 <%@ page import="planograma.constant.SecurityConst" %>
 <%@ page import="planograma.data.LoadSide" %>
+<%@ page import="planograma.data.RackShelf" %>
 <%@ page import="planograma.data.TypeRackWares" %>
 <%@ page import="planograma.data.TypeShelf" %>
-<%@ page import="planograma.servlet.buffer.BufferGet" %>
-<%@ page import="planograma.servlet.buffer.BufferSet" %>
+<%@ page import="planograma.servlet.wares.buffer.BufferGet" %>
+<%@ page import="planograma.servlet.wares.buffer.BufferSet" %>
 <%@ page import="planograma.servlet.wares.RackWaresPlacementSave" %>
 <%@ page import="planograma.servlet.wares.WaresEdit" %>
 <%@ page import="planograma.servlet.wares.WaresGroupTree" %>
 <%@ page import="planograma.utils.JspUtils" %>
+<%@ page import="planograma.servlet.wares.basket.BasketSet" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
 	final String access_rack_wares_placement=JspUtils.actionAccess(session, SecurityConst.ACCESS_RACK_WARES_PLACEMENT);
+	final String access_rack_shelf_edit=JspUtils.actionAccess(session, SecurityConst.ACCESS_RACK_WARES_PLACEMENT_AND_RACK_SHELF_EDIT);
 %>
 <html>
 <head>
@@ -19,6 +22,9 @@
 	<script type="text/javascript" src="js/jquery.json-2.3.js"></script>
 	<script type="text/javascript" src="js/planogram.js"></script>
 	<script type="text/javascript" src="js/planogram2D.js"></script>
+	<script type="text/javascript" src="js/utils/ruler.js"></script>
+	<script type="text/javascript" src="js/common/RackShelfPanelListener.js"></script>
+	<script type="text/javascript" src="js/common/RackShelfRound.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_basket.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_drawEditCanvas.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_drawPreviewCanvas.js"></script>
@@ -27,7 +33,6 @@
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fCut.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fDel.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fPaste.js"></script>
-	<script type="text/javascript" src="js/utils/ruler.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_image.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_PreviewPanelListener.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_rackWaresCalcCoordinates.js"></script>
@@ -66,6 +71,9 @@
 								<td><a href="#" onclick="return aOnClick(this, fRackWaresPlacementReload)"><%=JspUtils.toMenuTitle("Перезагрузить")%></a></td>
 							</tr>
 							<tr><td></td></tr>
+							<tr>
+								<td><a href="#" onclick="return aOnClick(this, fRackShelfAdd)"><%=JspUtils.toMenuTitle("Добавить полку")%></a></td>
+							</tr>
 							<tr>
 								<td><a href="#" onclick="return aOnClick(this, fAddWares)" class="<%=access_rack_wares_placement%>"><%=JspUtils.toMenuTitle("Добавить товар")%></a></td>
 							</tr>
@@ -175,25 +183,44 @@
 										</tr>
 										<tr>
 											<td align="right">x&nbsp;</td>
-											<td id="shelfX"></td>
+											<td><input type="text" id="shelfX" onchange="changeShelfX(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
 										</tr>
 										<tr>
 											<td align="right">y&nbsp;</td>
-											<td id="shelfY"></td>
+											<td><input type="text" id="shelfY" onchange="changeShelfY(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
 										</tr>
 										<tr>
 											<td align="right">угол&nbsp;</td>
-											<td id="shelfAngle"></td>
+											<td><input type="text" id="shelfAngle" onchange="changeShelfAngle(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
 										</tr>
 										<tr>
-											<td align="right">габариты&nbsp;</td>
-											<td >
-												<span id="shelfWidth" title="ширина"></span>x<span id="shelfHeight" title="высота"></span>x<span id="shelfLength" title="глубина"></span>
+											<td align="right">ширина</td>
+											<td><input type="text" id="shelfWidth" onchange="changeShelfWidth(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+										</tr>
+										<tr>
+											<td align="right">высота</td>
+											<td><input type="text" id="shelfHeight" onchange="changeShelfHeight(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+										</tr>
+										<tr>
+											<td align="right">глубина</td>
+											<td><input type="text" id="shelfLength" onchange="changeShelfLength(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+										</tr>
+										<tr>
+											<td align="right">тип</td>
+											<td>
+												<select id="shelfType" onchange="changeShelfType(this)">
+													<%
+														for (final TypeShelf typeShelf:TypeShelf.values())
+														{
+															out.write("<option value=\"");
+															out.write(typeShelf.name());
+															out.write("\">");
+															out.write(typeShelf.getDesc());
+															out.write("</option>");
+														}
+													%>
+												</select>
 											</td>
-										</tr>
-										<tr>
-											<td align="right">тип&nbsp;</td>
-											<td id="shelfType"></td>
 										</tr>
 									</table>
 									<table id="waresPanel" style="display: none;">
@@ -259,11 +286,6 @@
 
 <script type="text/javascript">
 /**
- * товары в корзине
- * @type {Object}
- */
-window.basket = {};
-/**
  * выделеные товары
  * @type {Array}
  */
@@ -273,6 +295,12 @@ window.selectRackWaresList = [];
  * @type {*}
  */
 window.selectBasket = null;
+
+/**
+* скопированая полка
+* @type {*}
+ */
+window.copyShelf = null;
 /**
  * скопированые товары
  * @type {Array}
@@ -329,6 +357,8 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 			}
 			window.rackShelfList = data.rackShelfList;
 			window.rackWaresList = data.rackWaresList;
+			// товары в корзине
+			window.basket = data.basket;
 			loadComplete2();
 		});
 	}
@@ -366,6 +396,7 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 		window.kx = 0;
 		window.ky = 0;
 
+		window.shelfAdd = false;
 		window.editMove = 0;
 		window.flagPaste=0;
 
@@ -450,25 +481,13 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 
 	function selectShelf(shelf) {
 		if (shelf != null) {
-			$('#shelfX').text(shelf.x_coord);
-			$('#shelfY').text(shelf.y_coord);
-			$('#shelfAngle').text(shelf.angle);
-			$('#shelfWidth').text(shelf.shelf_width);
-			$('#shelfHeight').text(shelf.shelf_height);
-			$('#shelfLength').text( shelf.shelf_length);
-			switch (shelf.type_shelf)
-			{
-			<%
-				for (final TypeShelf typeShelf:TypeShelf.values())
-				{
-					out.print("case '");
-					out.print(typeShelf.name());
-					out.print("': $('#shelfType').text('");
-					out.print(typeShelf.getDesc());
-					out.println("');");
-				}
-			%>
-			}
+			$('#shelfX').val(shelf.x_coord);
+			$('#shelfY').val(shelf.y_coord);
+			$('#shelfAngle').val(shelf.angle);
+			$('#shelfWidth').val(shelf.shelf_width);
+			$('#shelfHeight').val(shelf.shelf_height);
+			$('#shelfLength').val( shelf.shelf_length);
+			$('#shelfType').val(shelf.type_shelf);
 			$('#shelfPanel').show();
 		} else {
 			$('#shelfPanel').hide();
@@ -533,6 +552,7 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 
 	function basketToHtml(basket)
 	{
+		postJson('<%=BasketSet.URL%>', basket, null);
 		var basketPanel=$('#basketPanel');
 		basketPanel.empty();
 		for (var i in basket)
@@ -571,7 +591,7 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 			for (var i in rackWaresOutside) {
 				window.rackWaresList.splice(window.rackWaresList.indexOf(rackWaresOutside[i]), 1);
 			}
-			// проверить пересечение товаров между собой и стеллажами
+			// проверить пересечение товаров между собой и полками
 			var rackWaresIntersects = [];
 			var map = new Array(window.rack.width*window.rack.height);
 			for (var i in window.rackShelfList) {
@@ -604,7 +624,7 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 				drawPreviewCanvas();
 			}
 			else {
-				postJson('<%=RackWaresPlacementSave.URL%>', {code_rack:window.rack.code_rack, rackWaresList:window.rackWaresList}, function (data) {
+				postJson('<%=RackWaresPlacementSave.URL%>', {code_rack:window.rack.code_rack, rackShelfList:window.rackShelfList, rackWaresList:window.rackWaresList}, function (data) {
 					loadComplete();
 				});
 			}
@@ -621,6 +641,12 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 	{
 		window.location.reload();
 	}
+
+	function fRackShelfAdd()
+	{
+		window.shelfAdd=true;
+	}
+
 	function fAddWares()
 	{
 		postJson('<%=WaresGroupTree.URL%>', null, function(data){
@@ -654,6 +680,26 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 			{
 				rulerMoveB(sx,sy);
 				window.ruler.state=3;
+			}
+			else
+			if (window.shelfAdd==true)
+			{
+				if (sx>0 && sy>0 && sx<window.rack.width && sy<window.rack.height){
+					window.shelfAdd=false;
+					window.shelf=<%=new RackShelf(null, null, 0, 0, 1,1, 1, 0, TypeShelf.DZ, null, null, null, null).toJsonObject()%>;
+					window.shelf.shelf_length=window.rack.length;
+					window.shelf.code_rack=window.rack.code_rack;
+					window.shelf.x_coord=sx;
+					window.shelf.y_coord=sy;
+					window.rackShelfList.push(window.shelf);
+					selectShelf(window.shelf);
+					rackShelfCalcCoordinates(window.shelf);
+					drawEditCanvas();
+					drawPreviewCanvas();
+					x = evnt.clientX;
+					y = evnt.clientY;
+					window.editMove=7;
+				}
 			}
 			else
 			if (window.flagPaste == 1) {
@@ -696,12 +742,20 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 				}
 				else {
 					// поиск полки под курсором
+					var d1 = null;
+					var d2 = null;
+					var d3 = null;
+					var d4 = null;
 					var pClick=new Point2D(sx, sy);
 					for (var i = window.rackShelfList.length - 1; window.shelf == null && i >= 0; i--) {
-						d1 = new Segment2D(window.rackShelfList[i].p1,window.rackShelfList[i].p2).distance(pClick);
-						d2 = new Segment2D(window.rackShelfList[i].p2,window.rackShelfList[i].p3).distance(pClick);
-						d3 = new Segment2D(window.rackShelfList[i].p3,window.rackShelfList[i].p4).distance(pClick);
-						d4 = new Segment2D(window.rackShelfList[i].p4,window.rackShelfList[i].p1).distance(pClick);
+						var p1=new Point2D(window.rackShelfList[i].x1,window.rackShelfList[i].y1);
+						var p2=new Point2D(window.rackShelfList[i].x2,window.rackShelfList[i].y2);
+						var p3=new Point2D(window.rackShelfList[i].x3,window.rackShelfList[i].y3);
+						var p4=new Point2D(window.rackShelfList[i].x4,window.rackShelfList[i].y4);
+						d1 = new Segment2D(p1,p2).distance(pClick);
+						d2 = new Segment2D(p2,p3).distance(pClick);
+						d3 = new Segment2D(p3,p4).distance(pClick);
+						d4 = new Segment2D(p4,p1).distance(pClick);
 						if ((d1 >= 0 && d2 >= 0 && d3 >= 0 && d4 >= 0) || (d1 <= 0 && d2 <= 0 && d3 <= 0 && d4 <= 0)) {
 							window.shelf = window.rackShelfList[i];
 							$('#butCopy').addClass('disabled');
@@ -709,7 +763,29 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 							$('#butCopyBuffer').addClass('disabled');
 						}
 					}
-					if (window.shelf == null) {
+					if (window.shelf != null)
+					{
+						x = evnt.clientX;
+						y = evnt.clientY;
+						window.editMove = 1;
+						if (window.shelf.shelf_width >= 7 * window.km && window.shelf.shelf_height >= 7 * window.km) {
+							if (Math.abs(d1) < 3 * window.km) {
+								// восток
+								window.editMove += 2;
+							} else if (Math.abs(d3) < 3 * window.km) {
+								// запад
+								window.editMove += 8;
+							}
+							if (Math.abs(d2) < 3 * window.km) {
+								// север
+								window.editMove += 4;
+							} else if (Math.abs(d4) < 3 * window.km) {
+								// юг
+								window.editMove += 16;
+							}
+						}
+					}
+					else{
 						// начало области выделения
 						window.m_select = 1;
 						window.m_x_begin = sx;
@@ -726,6 +802,10 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 		}
 
 		window.edit_canvas.onmouseup = function(e) {
+			if (window.shelf!=null)
+			{
+				roundShelf(window.shelf);
+			}
 			if (window.flagPaste==2)
 			{
 				window.selectRackWaresList=[];
@@ -739,7 +819,7 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 				}
 				window.flagPaste=0;
 			}
-			else if (window.editMove==1)
+			else if (window.editMove>0)
 			{
 				// установка товара
 				for (var i in window.selectRackWaresList)
@@ -852,7 +932,7 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 			drawEditCanvas();
 			drawPreviewCanvas();
 		}
-		window.edit_canvas.onmouseout = window.edit_canvas.onmouseup;
+		window.edit_canvas.onmouseout = window.edit_canvas.onmouseup
 
 		window.edit_canvas.onmousemove = function (e) {
 			var evnt = ie_event(e);
@@ -868,6 +948,94 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 			{
 				rulerMoveB(sx,sy);
 				drawEditCanvas();
+			}
+			else
+			if (window.editMove != 0 && window.shelf != null) {
+
+				var dx = (evnt.clientX - x) * window.km;
+				var dy = -(evnt.clientY - y) * window.km;
+				if (dx != 0 || dy != 0) {
+					// перемещение
+					if (window.editMove == 1) {
+						var oldx = window.shelf.x_coord;
+						var oldy = window.shelf.y_coord;
+						// перемещение
+						window.shelf.x_coord = window.shelf.x_coord + dx;
+						rackShelfCalcCoordinates(window.shelf);
+						if (shelfBeyondRack(window.shelf))
+						{
+							window.shelf.x_coord = oldx;
+						}
+						window.shelf.y_coord = window.shelf.y_coord + dy;
+						rackShelfCalcCoordinates(window.shelf);
+						if (shelfBeyondRack(window.shelf))
+						{
+							window.shelf.y_coord = oldy;
+							rackShelfCalcCoordinates(window.shelf);
+						}
+						document.getElementById('shelfX').value = window.shelf.x_coord;
+						document.getElementById('shelfY').value = window.shelf.y_coord;
+					} else {
+						var oldX = window.shelf.x_coord;
+						var oldY = window.shelf.y_coord;
+						var oldWidth=window.shelf.shelf_width;
+						var oldHeight = window.shelf.shelf_height;
+						var dxy=dx*window.shelf.cos + dy*window.shelf.sin;
+						if (editMove & 2) {
+							// восток
+							window.shelf.x_coord = window.shelf.x_coord + dxy * window.shelf.cos / 2;
+							window.shelf.y_coord = window.shelf.y_coord + dxy * window.shelf.sin / 2;
+							window.shelf.shelf_width = window.shelf.shelf_width+ dxy;
+						} else if (editMove & 8) {
+							// запад
+							window.shelf.x_coord = window.shelf.x_coord + dxy * window.shelf.cos / 2;
+							window.shelf.y_coord = window.shelf.y_coord + dxy * window.shelf.sin / 2;
+							window.shelf.shelf_width = window.shelf.shelf_width- dxy;
+						}
+						if (window.shelf.shelf_width< 8 * km) {
+							window.shelf.shelf_width = 8 * km;
+							window.shelf.x_coord = window.shelf.x_coord - dxy * window.shelf.cos / 2;
+							window.shelf.y_coord = window.shelf.y_coord - dxy * window.shelf.sin / 2;
+						}
+						dxy=dy*window.shelf.cos - dx*window.shelf.sin;
+						if (editMove & 4) {
+							// север
+							window.shelf.x_coord = window.shelf.x_coord - dxy * window.shelf.sin / 2;
+							window.shelf.y_coord = window.shelf.y_coord + dxy * window.shelf.cos / 2;
+							window.shelf.shelf_height = window.shelf.shelf_height - dxy;
+						} else if (editMove & 16) {
+							// юг
+							window.shelf.x_coord = window.shelf.x_coord - dxy * window.shelf.sin / 2;
+							window.shelf.y_coord = window.shelf.y_coord + dxy * window.shelf.cos / 2;
+							window.shelf.shelf_height = window.shelf.shelf_height + dxy;
+						}
+						if (window.shelf.shelf_height < 8 * km) {
+							window.shelf.shelf_height = 8 * km
+							window.shelf.x_coord = window.shelf.x_coord + dxy * window.shelf.sin / 2;
+							window.shelf.y_coord = window.shelf.y_coord - dxy * window.shelf.cos / 2;
+						}
+						rackShelfCalcCoordinates(window.shelf);
+						if (window.shelf.x1 < 0 || window.shelf.x2 < 0 || window.shelf.x3 < 0 || window.shelf.x4 < 0 ||
+								window.shelf.x1 > window.rack.width || window.shelf.x2 > window.rack.width || window.shelf.x3 > window.rack.width || window.shelf.x4 > window.rack.width ||
+								window.shelf.y1 < 0 || window.shelf.y2 < 0 || window.shelf.y3 < 0 || window.shelf.y4 < 0 ||
+								window.shelf.y1 > window.rack.height || window.shelf.y2 > window.rack.height || window.shelf.y3 > window.rack.height || window.shelf.y4 > window.rack.height) {
+							window.shelf.x_coord = oldX;
+							window.shelf.y_coord = oldY;
+							window.shelf.shelf_width = oldWidth;
+							window.shelf.shelf_height = oldHeight;
+							rackShelfCalcCoordinates(window.shelf);
+						} else {
+							document.getElementById('shelfX').value = window.shelf.x_coord;
+							document.getElementById('shelfY').value = window.shelf.y_coord;
+							document.getElementById('shelfWidth').value = window.shelf.shelf_width;
+							document.getElementById('shelfHeight').value = window.shelf.shelf_height;
+						}
+					}
+					drawEditCanvas();
+					drawPreviewCanvas();
+					x = evnt.clientX;
+					y = evnt.clientY;
+				}
 			}
 			else
 			if (window.flagPaste==2)

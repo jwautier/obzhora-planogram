@@ -190,7 +190,7 @@ public class RackWaresPlacemntPrint extends HttpServlet {
 			document.add(table);
 			document.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error("Error print rack",e);
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 		time = System.currentTimeMillis() - time;

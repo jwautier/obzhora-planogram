@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
+import planograma.constant.SessionConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.RackConst;
 import planograma.data.Rack;
@@ -71,6 +72,11 @@ public class WaresEdit extends AbstractAction {
 			rackWaresListJson.add(item.toJsonObject());
 		}
 		jsonObject.add("rackWaresList", rackWaresListJson);
+		// инициализация корзины
+		JsonObject basket= (JsonObject) session.getAttribute(SessionConst.SESSION_BASKET);
+		if (basket==null)
+			basket=new JsonObject();
+		jsonObject.add("basket", basket);
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms");
 		return jsonObject;

@@ -36,7 +36,6 @@ public class TestDBscheme {
 			checkTable(psColumns, SectorConst.TABLE_NAME,
 					SectorConst.CODE_SHOP,
 					SectorConst.CODE_SECTOR,
-					SectorConst.STATE_SECTOR,
 					SectorConst.NAME_SECTOR,
 					SectorConst.LENGTH,
 					SectorConst.WIDTH,
@@ -44,9 +43,17 @@ public class TestDBscheme {
 					SectorConst.USER_INSERT,
 					SectorConst.DATE_INSERT,
 					SectorConst.USER_UPDATE,
-					SectorConst.DATE_UPDATE,
-					SectorConst.USER_DRAFT,
-					SectorConst.DATE_DRAFT
+					SectorConst.DATE_UPDATE
+			);
+			checkTable(psColumns, SectorStateConst.TABLE_NAME,
+					SectorStateConst.CODE_SECTOR,
+					SectorStateConst.STATE_SECTOR,
+					SectorStateConst.USER_DRAFT,
+					SectorStateConst.DATE_DRAFT,
+					SectorStateConst.USER_ACTIVE,
+					SectorStateConst.DATE_ACTIVE,
+					SectorStateConst.USER_COMPLETE,
+					SectorStateConst.DATE_COMPLETE
 			);
 			checkTable(psColumns, RackConst.TABLE_NAME,
 					RackConst.CODE_SECTOR,
@@ -63,11 +70,8 @@ public class TestDBscheme {
 					RackConst.DATE_INSERT,
 					RackConst.USER_UPDATE,
 					RackConst.DATE_UPDATE,
-					RackConst.STATE_RACK,
 					RackConst.ANGLE,
 					RackConst.CODE_RACK_TEMPLATE,
-					RackConst.DATE_DRAFT,
-					RackConst.USER_DRAFT,
 					RackConst.LOCK_SIZE,
 					RackConst.LOCK_MOVE,
 					RackConst.TYPE_RACK,
@@ -77,6 +81,16 @@ public class TestDBscheme {
 					RackConst.X_OFFSET,
 					RackConst.Y_OFFSET,
 					RackConst.Z_OFFSET
+			);
+			checkTable(psColumns, RackStateConst.TABLE_NAME,
+					RackStateConst.CODE_RACK,
+					RackStateConst.STATE_RACK,
+					RackStateConst.DATE_DRAFT,
+					RackStateConst.USER_DRAFT,
+					RackStateConst.DATE_ACTIVE,
+					RackStateConst.USER_ACTIVE,
+					RackStateConst.DATE_COMPLETE,
+					RackStateConst.USER_COMPLETE
 			);
 			checkTable(psColumns, RackShelfConst.TABLE_NAME,
 					RackShelfConst.CODE_RACK,
@@ -156,12 +170,9 @@ public class TestDBscheme {
 					SectorHConst.LENGTH,
 					SectorHConst.WIDTH,
 					SectorHConst.HEIGHT,
-					SectorHConst.STATE_SECTOR,
 					SectorHConst.USER_INSERT,
 					SectorHConst.DATE_INSERT,
-					SectorHConst.TYPE_OPERATION,
-					SectorHConst.USER_DRAFT,
-					SectorHConst.DATE_DRAFT
+					SectorHConst.TYPE_OPERATION
 			);
 			checkTable(psColumns, RackHConst.TABLE_NAME,
 					RackHConst.CODE_SECTOR,
@@ -176,11 +187,8 @@ public class TestDBscheme {
 					RackHConst.LOAD_SIDE,
 					RackHConst.USER_INSERT,
 					RackHConst.DATE_INSERT,
-					RackHConst.STATE_RACK,
 					RackHConst.ANGLE,
 					RackHConst.CODE_RACK_TEMPLATE,
-					RackHConst.DATE_DRAFT,
-					RackHConst.USER_DRAFT,
 					RackHConst.LOCK_SIZE,
 					RackHConst.LOCK_MOVE,
 					RackHConst.TYPE_RACK,

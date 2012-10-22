@@ -1,9 +1,9 @@
-package planograma.servlet.buffer;
+package planograma.servlet.wares.basket;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
+import planograma.constant.SessionConst;
 import planograma.constant.UrlConst;
 import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
@@ -22,12 +22,12 @@ import java.sql.SQLException;
  * Time: 23:58
  * To change this template use File | Settings | File Templates.
  */
-@WebServlet("/" + UrlConst.URL_BUFFER_GET)
-public class BufferGet extends AbstractAction {
+@WebServlet("/" + UrlConst.URL_RACK_WARES_PLACEMENT_SET_BASKET)
+public class BasketSet extends AbstractAction {
 
-	public static final String URL = UrlConst.URL_BUFFER_GET;
+	public static final String URL = UrlConst.URL_RACK_WARES_PLACEMENT_SET_BASKET;
 
-	public static final Logger LOG = Logger.getLogger(BufferGet.class);
+	public static final Logger LOG = Logger.getLogger(BasketSet.class);
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -37,12 +37,10 @@ public class BufferGet extends AbstractAction {
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException, NotAccessException {
 		long time = System.currentTimeMillis();
-		final JsonArray copyObjectList= (JsonArray) session.getAttribute(BufferSet.NAME_COPY_OBJECT_LIST);
-		session.setAttribute(BufferSet.NAME_COPY_OBJECT_LIST, copyObjectList);
-		final JsonObject result=new JsonObject();
-		result.add(BufferSet.NAME_COPY_OBJECT_LIST, copyObjectList);
+		final JsonObject basket=requestData.getAsJsonObject();
+		session.setAttribute(SessionConst.SESSION_BASKET, basket);
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms");
-		return result;
+		return null;
 	}
 }

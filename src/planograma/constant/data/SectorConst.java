@@ -12,7 +12,6 @@ public interface SectorConst {
 
 	public static final String CODE_SHOP = ShopConst.CODE_SHOP;
 	public static final String CODE_SECTOR = "code_sector";
-	public static final String STATE_SECTOR = "state_sector";
 	public static final String NAME_SECTOR = "name_sector";
 	public static final String LENGTH = "length";
 	public static final String WIDTH = "width";
@@ -21,8 +20,4 @@ public interface SectorConst {
 	public static final String DATE_INSERT = "date_insert";
 	public static final String USER_UPDATE = "user_update";
 	public static final String DATE_UPDATE = "date_update";
-	public static final String USER_DRAFT = "user_draft";
-	public static final String DATE_DRAFT = "date_draft";
-
-	public static final int STATE_ALL_PART_STATE_STATE_SECTOR = -65;
 }

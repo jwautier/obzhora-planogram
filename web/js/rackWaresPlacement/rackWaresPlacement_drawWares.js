@@ -12,6 +12,14 @@ function drawWares(rackWares, canvas, context, kx, ky, m) {
 	if (rackWares.code_image > 0) {
 		context.drawImage(getImage(rackWares.code_image), x1, y1, w1, h1);
 	}
+	else
+	{
+		// написать на товарах артикул (если нет изображения)
+		context.fillStyle = "BLACK";
+		context.font = Math.min(2 * rackWares.wares_width/(rackWares.code_wares+'').length, rackWares.wares_height)/m+"px sans-serif";
+		context.textBaseline = "middle";
+		context.fillText(rackWares.code_wares, x1, 0, rackWares.wares_width / m);
+	}
 	context.lineWidth = 1;
 	if ($.inArray(rackWares, window.selectRackWaresList) >= 0) {
 		context.strokeStyle = "BLUE";

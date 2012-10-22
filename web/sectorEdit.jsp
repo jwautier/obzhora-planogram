@@ -68,6 +68,9 @@
 								<td><a href="#" id="butRuler" onclick="return aOnClick(this, fRuler)"><%=JspUtils.toMenuTitle("Рулетка")%></a></td>
 							</tr>
 							<tr>
+								<td><a href="#" id="butFind" onclick="return aOnClick(this, fFind)"><%=JspUtils.toMenuTitle("Найти")%></a></td>
+							</tr>
+							<tr>
 								<td><a href="#" id="butPrint" onclick="return aOnClick(this)" target="pdf" class="disabled"><%=JspUtils.toMenuTitle("Печать стеллажа")%></a></td>
 							</tr>
 							<tr>
@@ -321,7 +324,7 @@ function loadComplete()
 	}
 	else
 	{
-		window.sector=<%=new Sector(null, null, null, "Наименование", 12000, 6000, 3000, null, null,null, null,null,null).toJsonObject()%>;
+		window.sector=<%=new Sector(null, null, "Наименование", 12000, 6000, 3000, null, null, null, null).toJsonObject()%>;
 		window.sector.code_shop=code_shop;
 	<%--window.showcaseList = [<%=new Rack(null, null, "Наименование", "",100, 100, 100, null, 100, 100, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null).toJsonObject()%>];--%>
 		window.showcaseList = [];
@@ -598,7 +601,25 @@ function roundRack(rack)
 			rackTemplate.animate({opacity:'show'},500);
 		});
 	}
-	// TODO rackView
+
+	function fFind()
+	{
+		var barcode=window.prompt("Введите штрихкод стеллажа");
+		if (barcode!=null)
+		{
+			window.showcase=null;
+			for (var i = window.showcaseList.length-1; window.showcase == null && i >=0; i--) {
+				if (window.showcaseList[i].rack_barcode==barcode) {
+					window.showcase = window.showcaseList[i];
+					window.editMove = 1;
+				}
+			}
+			selectShowcase(window.showcase);
+			drawEditCanvas();
+			drawPreviewCanvas();
+		}
+	}
+
 	function fRackEdit()
 	{
 		if (window.showcase!=null)
@@ -738,7 +759,7 @@ function roundRack(rack)
 				if (sx>0 && sy>0 && sx<window.sector.length && sy<window.sector.width)
 				{
 				window.rackAdd=false;
-				window.showcase =<%=new Rack(null, null, null, "", "", 1, 1, 1000, 0, 0, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null, 1, 1, 1000, 0, 0, 0).toJsonObject()%>;
+				window.showcase =<%=new Rack(null, null, "", "", 1, 1, 1000, 0, 0, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, 1, 1, 1000, 0, 0, 0).toJsonObject()%>;
 				window.showcase.code_sector=window.sector.code_sector;
 				window.showcase.x_coord=sx;
 				window.showcase.y_coord=sy;

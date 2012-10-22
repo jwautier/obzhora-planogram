@@ -18,10 +18,7 @@ public interface SectorHConst {
 	public static final String LENGTH = SectorConst.LENGTH;
 	public static final String WIDTH = SectorConst.WIDTH;
 	public static final String HEIGHT = SectorConst.HEIGHT;
-	public static final String STATE_SECTOR = SectorConst.STATE_SECTOR;
 	public static final String USER_INSERT = "user_insert";
 	public static final String DATE_INSERT = "date_insert";
 	public static final String TYPE_OPERATION = "type_operation";
-	public static final String USER_DRAFT = "user_draft";
-	public static final String DATE_DRAFT = "date_draft";
 }

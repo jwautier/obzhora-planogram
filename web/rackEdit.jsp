@@ -19,12 +19,13 @@
 	<script type="text/javascript" src="js/planogram.js"></script>
 	<script type="text/javascript" src="js/planogram2D.js"></script>
 	<script type="text/javascript" src="js/utils/ruler.js"></script>
+	<script type="text/javascript" src="js/common/RackShelfRound.js"></script>
 	<script type="text/javascript" src="js/rackEdit/rackEdit_drawEditCanvas.js"></script>
 	<script type="text/javascript" src="js/rackEdit/rackEdit_drawPreviewCanvas.js"></script>
 	<script type="text/javascript" src="js/rackEdit/rackEdit_drawShelf.jsp"></script>
 	<script type="text/javascript" src="js/rackEdit/rackEdit_PreviewPanelListener.js"></script>
 	<script type="text/javascript" src="js/rackEdit/rackEdit_RackPanelListener.js"></script>
-	<script type="text/javascript" src="js/rackEdit/rackEdit_RackShelfPanelListener.js"></script>
+	<script type="text/javascript" src="js/common/RackShelfPanelListener.js"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
 <body onload="loadComplete();" style="overflow-x:hidden;">
@@ -130,10 +131,7 @@
 											<col width="70"/>
 										</colgroup>
 										<tr>
-											<td colspan="3">свойства стеллажа:</td>
-										</tr>
-										<tr>
-											<td align="right">название</td>
+											<td align="right">стеллаж</td>
 											<td colspan="2">
 												<input type="text" id="rackName"
 													   onchange="changeRackName(this)"/>
@@ -157,6 +155,10 @@
 											</td>
 											<td>
 											</td>
+										</tr>
+										<tr>
+											<td align="right">штрихкод</td>
+											<td colspan="2"><input type="text" id="rackBarcode" disabled="disabled"/></td>
 										</tr>
 										<tr>
 											<td>объем</td>
@@ -212,7 +214,7 @@
 							</tr>
 							<tr>
 								<td>
-									<table>
+									<table id="shelfPanel" style="display: none;">
 										<colgroup>
 											<col width="70"/>
 										</colgroup>
@@ -376,16 +378,17 @@
 	function setRack(rack)
 	{
 		document.getElementById('rackName').value = window.rack.name_rack;
-		document.getElementById('rackLoadSide').value =window.rack.load_side;
-		document.getElementById('rackWidth').value =window.rack.width;
-		document.getElementById('rackRealWidth').value =window.rack.real_width;
-		document.getElementById('rackHeight').value =window.rack.height;
-		document.getElementById('rackRealHeight').value =window.rack.real_height;
-		document.getElementById('rackLength').value =window.rack.length;
-		document.getElementById('rackRealLength').value =window.rack.real_length;
-		document.getElementById('rackX_offset').value =window.rack.x_offset;
-		document.getElementById('rackY_offset').value =window.rack.y_offset;
-		document.getElementById('rackZ_offset').value =window.rack.z_offset;
+		document.getElementById('rackLoadSide').value = window.rack.load_side;
+		document.getElementById('rackBarcode').value = window.rack.rack_barcode;
+		document.getElementById('rackWidth').value = window.rack.width;
+		document.getElementById('rackRealWidth').value = window.rack.real_width;
+		document.getElementById('rackHeight').value = window.rack.height;
+		document.getElementById('rackRealHeight').value = window.rack.real_height;
+		document.getElementById('rackLength').value = window.rack.length;
+		document.getElementById('rackRealLength').value = window.rack.real_length;
+		document.getElementById('rackX_offset').value = window.rack.x_offset;
+		document.getElementById('rackY_offset').value = window.rack.y_offset;
+		document.getElementById('rackZ_offset').value = window.rack.z_offset;
 	}
 
 	function selectShelf(shelf) {
@@ -402,16 +405,11 @@
 				$('#butCopy').removeClass('disabled');
 				$('#butCut').removeClass('disabled');
 			}
+			$('#shelfPanel').show();
 		} else {
-			document.getElementById('shelfX').value = '';
-			document.getElementById('shelfY').value = '';
-			document.getElementById('shelfAngle').value = '';
-			document.getElementById('shelfWidth').value = '';
-			document.getElementById('shelfHeight').value = '';
-			document.getElementById('shelfLength').value = '';
-			document.getElementById('shelfType').value = '';
 			$('#butCopy').addClass('disabled');
 			$('#butCut').addClass('disabled');
+			$('#shelfPanel').hide();
 		}
 	}
 
@@ -422,18 +420,6 @@
 		return e;
 	}
 
-	function roundShelf(shelf)
-	{
-		shelf.x_coord=Math.round(shelf.x_coord);
-		shelf.y_coord=Math.round(shelf.y_coord);
-		shelf.shelf_width=Math.round(shelf.shelf_width);
-		shelf.shelf_height=Math.round(shelf.shelf_height);
-		shelf.shelf_length=Math.round(shelf.shelf_length);
-		selectShelf(shelf);
-		rackShelfCalcCoordinates(shelf);
-		drawEditCanvas();
-		drawPreviewCanvas();
-	}
 </script>
 
 <%-- обработка событий меню --%>
@@ -598,7 +584,7 @@
 			window.shelf.code_rack=window.rack.code_rack;
 			window.shelf.x_coord=sx;
 			window.shelf.y_coord=sy;
-			rackShelfList.push(window.shelf);
+			window.rackShelfList.push(window.shelf);
 			selectShelf(window.shelf);
 			rackShelfCalcCoordinates(window.shelf);
 			drawEditCanvas();
@@ -610,6 +596,7 @@
 		}
 		else
 		{
+			// поиск полки под курсором
 			window.shelf = null;
 			var d1 = null;
 			var d2 = null;

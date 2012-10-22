@@ -23,8 +23,11 @@ function changeRackWidth(rackWidth) {
 	}
 	if (currentWidth > maxWidth) {
 		window.rack.width = currentWidth;
-		window.edit_m = Math.max(window.rack.width / edit_canvas.width, window.rack.height / edit_canvas.height)
-		window.preview_m = Math.max(window.rack.width / preview_canvas.width, window.rack.height / preview_canvas.height);
+		window.max_x=Math.max(window.offset_rack_x + window.rack.width, window.offset_real_rack_x+window.rack.real_width);
+		// масштаб в окне редактирования
+		window.edit_m = Math.max(window.max_x / edit_canvas.width, window.max_y / edit_canvas.height);
+		// масштаб в окне навигации
+		window.preview_m = Math.max(window.max_x / preview_canvas.width,  window.max_y / preview_canvas.height);
 		window.km = window.edit_m
 		drawEditCanvas();
 		drawPreviewCanvas();
@@ -33,8 +36,11 @@ function changeRackWidth(rackWidth) {
 		if (currentWidth > 0) {
 			rackWidth.value = maxWidth;
 			window.rack.width = maxWidth;
-			window.edit_m = Math.max(window.rack.width / edit_canvas.width, window.rack.height / edit_canvas.height)
-			window.preview_m = Math.max(window.rack.width / preview_canvas.width, window.rack.height / preview_canvas.height);
+			window.max_x=Math.max(window.offset_rack_x + window.rack.width, window.offset_real_rack_x+window.rack.real_width);
+			// масштаб в окне редактирования
+			window.edit_m = Math.max(window.max_x / edit_canvas.width, window.max_y / edit_canvas.height);
+			// масштаб в окне навигации
+			window.preview_m = Math.max(window.max_x / preview_canvas.width,  window.max_y / preview_canvas.height);
 			window.km = window.edit_m
 			drawEditCanvas();
 			drawPreviewCanvas();
@@ -64,8 +70,11 @@ function changeRackHeight(rackHeight) {
 	}
 	if (currentHeight > maxHeight) {
 		window.rack.height = currentHeight;
-		window.edit_m = Math.max(window.rack.width / edit_canvas.width, window.rack.height / edit_canvas.height)
-		window.preview_m = Math.max(window.rack.width / preview_canvas.width, window.rack.height / preview_canvas.height);
+		window.max_y=Math.max(window.offset_rack_y + window.rack.height, window.offset_real_rack_y+window.rack.real_height);
+		// масштаб в окне редактирования
+		window.edit_m = Math.max(window.max_x / edit_canvas.width, window.max_y / edit_canvas.height);
+		// масштаб в окне навигации
+		window.preview_m = Math.max(window.max_x / preview_canvas.width,  window.max_y / preview_canvas.height);
 		window.km = window.edit_m
 		drawEditCanvas();
 		drawPreviewCanvas();
@@ -74,8 +83,11 @@ function changeRackHeight(rackHeight) {
 		if (currentHeight > 0) {
 			rackHeight.value = maxHeight;
 			window.rack.height = maxHeight;
-			window.edit_m = Math.max(window.rack.width / edit_canvas.width, window.rack.height / edit_canvas.height)
-			window.preview_m = Math.max(window.rack.width / preview_canvas.width, window.rack.height / preview_canvas.height);
+			window.max_y=Math.max(window.offset_rack_y + window.rack.height, window.offset_real_rack_y+window.rack.real_height);
+			// масштаб в окне редактирования
+			window.edit_m = Math.max(window.max_x / edit_canvas.width, window.max_y / edit_canvas.height);
+			// масштаб в окне навигации
+			window.preview_m = Math.max(window.max_x / preview_canvas.width,  window.max_y / preview_canvas.height);
 			window.km = window.edit_m
 			drawEditCanvas();
 			drawPreviewCanvas();

@@ -9,4 +9,6 @@ package planograma.constant;
  */
 public interface SessionConst {
 	public static final String SESSION_USER = "user";
+	public static final String SESSION_BASKET = "basket";
+	public static final String SESSION_COPY_WARES_LIST="copyWaresList";
 }

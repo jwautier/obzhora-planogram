@@ -6,6 +6,12 @@ package planograma.constant;
  * Time: 8:05
  */
 public interface VerificationConst {
-	// минимальные габариты стеллажа
-	public static final int MIN_RACK_DIMENSIONS =10;
+	/**
+	 * минимальные габариты стеллажа
+	 */
+	public static final int MIN_RACK_DIMENSIONS = 10;
+	/**
+	 * минимальные габариты полки стеллажа
+	 */
+	public static final int MIN_RACK_SHELF_DIMENSIONS = 5;
 }

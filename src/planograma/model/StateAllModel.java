@@ -51,20 +51,20 @@ public class StateAllModel {
 		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_INIT);
-		ps.setInt(1, RackConst.STATE_ALL_PART_STATE_STATE_RACK);		// -63 STATE_RACK
-		ps.setInt(2, RackConst.STATE_ALL_PART_STATE_LOAD_SIDE);			// -64 LOAD_SIDE
-		ps.setInt(3, SectorConst.STATE_ALL_PART_STATE_STATE_SECTOR);	// -65 STATE_SECTOR
-		ps.setInt(4, RackShelfConst.STATE_ALL_PART_STATE_TYPE_SHELF);	// -67 TYPE_SHELF
-		ps.setInt(5, RackConst.STATE_ALL_PART_STATE_TYPE_RACK);			// -68 TYPE_RACK
+		ps.setInt(1, RackStateConst.STATE_ALL_PART_STATE_STATE_RACK);		// -63 STATE_RACK
+		ps.setInt(2, RackConst.STATE_ALL_PART_STATE_LOAD_SIDE);				// -64 LOAD_SIDE
+		ps.setInt(3, SectorStateConst.STATE_ALL_PART_STATE_STATE_SECTOR);	// -65 STATE_SECTOR
+		ps.setInt(4, RackShelfConst.STATE_ALL_PART_STATE_TYPE_SHELF);		// -67 TYPE_SHELF
+		ps.setInt(5, RackConst.STATE_ALL_PART_STATE_TYPE_RACK);				// -68 TYPE_RACK
 		final ResultSet resultSet = ps.executeQuery();
 		while (resultSet.next()) {
 			final StateAll item = new StateAll(resultSet);
 			switch (item.getPart_state()) {
-				case SectorConst.STATE_ALL_PART_STATE_STATE_SECTOR:
+				case SectorStateConst.STATE_ALL_PART_STATE_STATE_SECTOR:
 					final StateSector stateSector = StateSector.valueOf(item.getAbr_state());
 					stateSector.setDesc(item.getState());
 					break;
-				case RackConst.STATE_ALL_PART_STATE_STATE_RACK:
+				case RackStateConst.STATE_ALL_PART_STATE_STATE_RACK:
 					final StateRack stateRack = StateRack.valueOf(item.getAbr_state());
 					stateRack.setDesc(item.getState());
 					break;
