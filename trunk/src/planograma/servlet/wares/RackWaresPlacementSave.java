@@ -62,18 +62,28 @@ public class RackWaresPlacementSave extends AbstractAction {
 		final UserContext userContext = getUserContext(session);
 		checkAccess(userContext, SecurityConst.ACCESS_RACK_WARES_PLACEMENT);
 		final int code_rack = requestData.getAsJsonObject().getAsJsonPrimitive(RackConst.CODE_RACK).getAsInt();
+		final JsonArray shelfListJson = requestData.getAsJsonObject().getAsJsonArray("rackShelfList");
 		final JsonArray rackWaresListJson = requestData.getAsJsonObject().getAsJsonArray("rackWaresList");
+
+		// наполнение враперов полок
+		final List<RackShelf2D> rackShelf2DList = new ArrayList<RackShelf2D>(shelfListJson.size());
+		for (int i = 0; i < shelfListJson.size(); i++) {
+			final JsonObject rackShelfJson = shelfListJson.get(i).getAsJsonObject();
+			final RackShelf rackShelf = new RackShelf(rackShelfJson);
+			// расчет координат полки
+			final RackShelf2D rackShelf2D = new RackShelf2D(rackShelf);
+			rackShelf2DList.add(rackShelf2D);
+		}
+		// наполнение враперов товаров
 		final List<RackWares2D> rackWares2DList = new ArrayList<RackWares2D>(rackWaresListJson.size());
 		for (int i = 0; i < rackWaresListJson.size(); i++) {
 			final JsonObject itemJson = rackWaresListJson.get(i).getAsJsonObject();
-			final RackWares2D item = new RackWares2D(new RackWares(itemJson));
+			final RackWares rackWares = new RackWares(itemJson);
+			// расчет координат товара
+			final RackWares2D item = new RackWares2D(rackWares);
 			rackWares2DList.add(item);
 		}
-		final List<RackShelf> rackShelfList = rackShelfModel.list(userContext, code_rack);
-		final List<RackShelf2D> rackShelf2DList = new ArrayList<RackShelf2D>(rackShelfList.size());
-		for (final RackShelf rackShelf : rackShelfList) {
-			rackShelf2DList.add(new RackShelf2D(rackShelf));
-		}
+
 		// проставить номера
 		final List<GroupRackWares> groups = split(rackShelf2DList, rackWares2DList);
 		for (int i = 0; i < groups.size(); i++) {
@@ -83,8 +93,36 @@ public class RackWaresPlacementSave extends AbstractAction {
 			}
 		}
 
-		List<RackWares> oldItemList = rackWaresModel.list(userContext, code_rack);
-		for (final RackWares oldItem : oldItemList) {
+		// обновление полок
+		List<RackShelf> oldShelfList = rackShelfModel.list(userContext, code_rack);
+		for (final RackShelf oldItem : oldShelfList) {
+			RackShelf findItem = null;
+//				поиск среди сохраненых рание
+			for (int i = 0; findItem == null && i < rackShelf2DList.size(); i++) {
+				final RackShelf currentItem = rackShelf2DList.get(i).getRackShelf();
+				if (oldItem.getCode_shelf().equals(currentItem.getCode_shelf())) {
+					findItem = currentItem;
+//						запись была обновлена
+					rackShelfModel.update(userContext, findItem);
+					rackShelf2DList.remove(i);
+					i--;
+				}
+			}
+			if (findItem == null) {
+//					запись была удалена
+				rackShelfModel.delete(userContext, oldItem.getCode_shelf());
+			}
+		}
+		for (int i = 0; i < rackShelf2DList.size(); i++) {
+			final RackShelf newItem = rackShelf2DList.get(i).getRackShelf();
+			//	запись была добавлена
+			newItem.setCode_rack(code_rack);
+			rackShelfModel.insert(userContext, newItem);
+		}
+
+		// обновление товаров
+		List<RackWares> oldWaresList = rackWaresModel.list(userContext, code_rack);
+		for (final RackWares oldItem : oldWaresList) {
 			RackWares findItem = null;
 //				поиск среди сохраненых рание
 			for (int i = 0; findItem == null && i < rackWares2DList.size(); i++) {
@@ -107,6 +145,7 @@ public class RackWaresPlacementSave extends AbstractAction {
 			newItem.getRackWares().setCode_rack(code_rack);
 			rackWaresModel.insert(userContext, newItem.getRackWares());
 		}
+
 		commit(userContext);
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms");

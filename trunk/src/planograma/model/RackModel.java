@@ -22,7 +22,6 @@ public class RackModel {
 
 	private static final String Q_SELECT_FROM = "select" +
 			" " + RackConst.CODE_RACK + "," +
-			" " + RackConst.STATE_RACK + "," +
 			" " + RackConst.NAME_RACK + "," +
 			" " + RackConst.RACK_BARCODE + "," +
 			" " + RackConst.LENGTH + "," +
@@ -41,8 +40,6 @@ public class RackModel {
 			" " + RackConst.DATE_INSERT + "," +
 			" " + RackConst.USER_UPDATE + "," +
 			" " + RackConst.DATE_UPDATE + "," +
-			" " + RackConst.USER_DRAFT + "," +
-			" " + RackConst.DATE_DRAFT + "," +
 			" " + RackConst.REAL_LENGTH + "," +
 			" " + RackConst.REAL_WIDTH + "," +
 			" " + RackConst.REAL_HEIGHT + "," +
@@ -178,21 +175,6 @@ public class RackModel {
 		callableStatement.setInt(RackConst.Y_OFFSET, rack.getY_offset());
 		callableStatement.setInt(RackConst.Z_OFFSET, rack.getZ_offset());
 
-		callableStatement.execute();
-		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms");
-	}
-
-	public static final String Q_CHANGESTATE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.CHANGESTATERACK(" +
-			":" + RackConst.CODE_RACK + ", " +
-			":" + RackConst.STATE_RACK + ")}";
-
-	public void changestate(final UserContext userContext, final int code_rack, final String state_rack) throws SQLException {
-		long time = System.currentTimeMillis();
-		final Connection connection = userContext.getConnection();
-		final CallableStatement callableStatement = connection.prepareCall(Q_CHANGESTATE);
-		callableStatement.setInt(RackConst.CODE_RACK, code_rack);
-		callableStatement.setString(RackConst.STATE_RACK, state_rack);
 		callableStatement.execute();
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms");

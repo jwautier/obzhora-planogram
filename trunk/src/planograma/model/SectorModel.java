@@ -21,10 +21,9 @@ public class SectorModel {
 
 	public static final Logger LOG = Logger.getLogger(SectorModel.class);
 
-	public static final String Q_LIST = "select" +
+	private static final String Q_SELECT_FROM = "select" +
 			" " + SectorConst.CODE_SHOP + "," +
 			" " + SectorConst.CODE_SECTOR + "," +
-			" " + SectorConst.STATE_SECTOR + "," +
 			" " + SectorConst.NAME_SECTOR + "," +
 			" " + SectorConst.LENGTH + "," +
 			" " + SectorConst.WIDTH + "," +
@@ -32,10 +31,10 @@ public class SectorModel {
 			" " + SectorConst.USER_INSERT + "," +
 			" " + SectorConst.DATE_INSERT + "," +
 			" " + SectorConst.USER_UPDATE + "," +
-			" " + SectorConst.DATE_UPDATE + "," +
-			" " + SectorConst.USER_DRAFT + "," +
-			" " + SectorConst.DATE_DRAFT + " " +
-			"from " + SectorConst.TABLE_NAME + " " +
+			" " + SectorConst.DATE_UPDATE + " " +
+			"from " + SectorConst.TABLE_NAME + " ";
+
+	private static final String Q_LIST =  Q_SELECT_FROM +
 			"where " + SectorConst.CODE_SHOP + "=? " +
 			"order by " + SectorConst.NAME_SECTOR;
 
@@ -55,21 +54,7 @@ public class SectorModel {
 		return list;
 	}
 
-	public static final String Q_SELECT = "select" +
-			" " + SectorConst.CODE_SHOP + "," +
-			" " + SectorConst.CODE_SECTOR + "," +
-			" " + SectorConst.STATE_SECTOR + "," +
-			" " + SectorConst.NAME_SECTOR + "," +
-			" " + SectorConst.LENGTH + "," +
-			" " + SectorConst.WIDTH + "," +
-			" " + SectorConst.HEIGHT + "," +
-			" " + SectorConst.USER_INSERT + "," +
-			" " + SectorConst.DATE_INSERT + "," +
-			" " + SectorConst.USER_UPDATE + "," +
-			" " + SectorConst.DATE_UPDATE + "," +
-			" " + SectorConst.USER_DRAFT + "," +
-			" " + SectorConst.DATE_DRAFT + " " +
-			"from " + SectorConst.TABLE_NAME + " " +
+	private static final String Q_SELECT = Q_SELECT_FROM +
 			"where " + SectorConst.CODE_SECTOR + " = ?";
 
 	public Sector select(final UserContext userContext, final int code_sector) throws SQLException {
@@ -87,7 +72,7 @@ public class SectorModel {
 		return sector;
 	}
 
-	public static final String Q_INSERT_UPDATE = "{call :new_code_sector := EUGENE_SAZ.SEV_PKG_PLANOGRAMS.IUSECTOR(" +
+	private static final String Q_INSERT_UPDATE = "{call :new_code_sector := EUGENE_SAZ.SEV_PKG_PLANOGRAMS.IUSECTOR(" +
 			":mode, " +
 			":" + SectorConst.CODE_SECTOR + ", " +
 			":" + SectorConst.CODE_SHOP + ", " +
@@ -128,21 +113,6 @@ public class SectorModel {
 		callableStatement.setInt(SectorConst.LENGTH, sector.getLength());
 		callableStatement.setInt(SectorConst.WIDTH, sector.getWidth());
 		callableStatement.setInt(SectorConst.HEIGHT, sector.getHeight());
-		callableStatement.execute();
-		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms");
-	}
-
-	public static final String Q_CHANGESTATE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.CHANGESTATESECTOR(" +
-			":" + SectorConst.CODE_SECTOR + ", " +
-			":" + SectorConst.STATE_SECTOR + ")}";
-
-	public void changestate(final UserContext userContext, final int code_sector, final String state_sector) throws SQLException {
-		long time = System.currentTimeMillis();
-		final Connection connection = userContext.getConnection();
-		final CallableStatement callableStatement = connection.prepareCall(Q_CHANGESTATE);
-		callableStatement.setInt(SectorConst.CODE_SECTOR, code_sector);
-		callableStatement.setString(SectorConst.STATE_SECTOR, state_sector);
 		callableStatement.execute();
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms");

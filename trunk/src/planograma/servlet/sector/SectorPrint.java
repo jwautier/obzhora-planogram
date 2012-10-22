@@ -171,7 +171,7 @@ public class SectorPrint extends HttpServlet {
 			document.add(table);
 			document.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error("Error print sector",e);
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 		time = System.currentTimeMillis() - time;

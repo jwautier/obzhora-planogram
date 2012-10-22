@@ -7,6 +7,7 @@
 <%@ page import="planograma.data.LoadSide" %>
 <%@ page import="planograma.data.TypeShelf" %>
 <%@ page import="planograma.constant.SecurityConst" %>
+<%@ page import="planograma.constant.data.RackShelfTemplateConst" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
 	final String access_rack_template_edit=JspUtils.actionAccess(session, SecurityConst.ACCESS_RACK_TEMPLATE_EDIT);
@@ -533,55 +534,83 @@
 			}
 
 			postJson('<%=RackTemplateSave.URL%>', {rackTemplate:window.rackTemplate, rackShelfTemplateList:window.rackShelfTemplateList}, function (data) {
-				if (data.errorField!=null && data.errorField.length>0)
-				{
-					switch (window.rackTemplate.load_side)
-					{
+				if (data.errorField!=null && data.errorField.length>0) {
+					switch (window.rackTemplate.load_side) {
 						case '<%=LoadSide.U%>':
-							var temp=window.rackTemplate.width;
-							window.rackTemplate.width=window.rackTemplate.length;
-							window.rackTemplate.length=window.rackTemplate.height;
-							window.rackTemplate.height=temp;
+							var temp = window.rackTemplate.width;
+							window.rackTemplate.width = window.rackTemplate.length;
+							window.rackTemplate.length = window.rackTemplate.height;
+							window.rackTemplate.height = temp;
 
-							temp=window.rackTemplate.real_width;
-							window.rackTemplate.real_width=window.rackTemplate.real_length;
-							window.rackTemplate.real_length=window.rackTemplate.real_height;
-							window.rackTemplate.real_height=temp;
+							temp = window.rackTemplate.real_width;
+							window.rackTemplate.real_width = window.rackTemplate.real_length;
+							window.rackTemplate.real_length = window.rackTemplate.real_height;
+							window.rackTemplate.real_height = temp;
 							break;
 						case '<%=LoadSide.F%>':
-							var temp=window.rackTemplate.width;
-							window.rackTemplate.width=window.rackTemplate.length;
-							window.rackTemplate.length=temp;
+							var temp = window.rackTemplate.width;
+							window.rackTemplate.width = window.rackTemplate.length;
+							window.rackTemplate.length = temp;
 
-							temp=window.rackTemplate.real_width;
-							window.rackTemplate.real_width=window.rackTemplate.real_length;
-							window.rackTemplate.real_length=temp;
+							temp = window.rackTemplate.real_width;
+							window.rackTemplate.real_width = window.rackTemplate.real_length;
+							window.rackTemplate.real_length = temp;
 
-							temp=window.rackTemplate.y_offset;
-							window.rackTemplate.y_offset=window.rackTemplate.z_offset;
-							window.rackTemplate.z_offset=temp;
+							temp = window.rackTemplate.y_offset;
+							window.rackTemplate.y_offset = window.rackTemplate.z_offset;
+							window.rackTemplate.z_offset = temp;
 							break;
 					}
-					var setFocus=null;
-					var error_message="";
-					for (var i=0; i<data.errorField.length; i++){
-						error_message+=data.errorField[i].message+'\n';
-						if (setFocus==null)
-						{
-							if(data.errorField[i].fieldName!=null)
-							{
-								switch (data.errorField[i].fieldName)
-								{
-									case '<%=RackTemplateConst.HEIGHT%>':
-										setFocus=$('#rackTemplateHeight');
-										break;
-									case '<%=RackTemplateConst.WIDTH%>':
-										setFocus=$('#rackTemplateWidth');
-										break;
-									case '<%=RackTemplateConst.LENGTH%>':
-										setFocus=$('#rackTemplateLength');
-										break;
-								}
+					var setFocus = null;
+					var error_message = "";
+					for (var i = 0; i < data.errorField.length; i++) {
+						error_message += data.errorField[i].message + '\n';
+						if (setFocus == null) {
+							switch (data.errorField[i].entityClass) {
+								case '<%=RackTemplate.class.getName()%>':
+									if (data.errorField[i].fieldName != null) {
+										switch (data.errorField[i].fieldName) {
+											case '<%=RackTemplateConst.HEIGHT%>':
+												setFocus = $('#rackTemplateHeight');
+												break;
+											case '<%=RackTemplateConst.WIDTH%>':
+												setFocus = $('#rackTemplateWidth');
+												break;
+											case '<%=RackTemplateConst.LENGTH%>':
+												setFocus = $('#rackTemplateLength');
+												break;
+											case '<%=RackTemplateConst.REAL_HEIGHT%>':
+												setFocus = $('#rackTemplateRealHeight');
+												break;
+											case '<%=RackTemplateConst.REAL_WIDTH%>':
+												setFocus = $('#rackTemplateRealWidth');
+												break;
+											case '<%=RackTemplateConst.REAL_LENGTH%>':
+												setFocus = $('#rackTemplateRealLength');
+												break;
+										}
+									}
+									break;
+								case '<%=RackShelfTemplate.class.getName()%>':
+									window.shelf = window.rackShelfTemplateList[data.errorField[i].entityIndex];
+									selectShelf(window.shelf);
+									if (data.errorField[i].fieldName != null) {
+										switch (data.errorField[i].fieldName) {
+											case '<%=RackShelfTemplateConst.SHELF_WIDTH%>':
+												setFocus = $('#shelfWidth');
+												break;
+											case '<%=RackShelfTemplateConst.SHELF_HEIGHT%>':
+												setFocus = $('#shelfHeight');
+												break;
+											case '<%=RackShelfTemplateConst.SHELF_LENGTH%>':
+												setFocus = $('#shelfLength');
+												break;
+											case 'outside':
+												setFocus = $('#shelfWidth');
+												break;
+										}
+									}
+									break;
 							}
 						}
 					}
@@ -986,8 +1015,11 @@
 		}
 		if (currentWidth > maxWidth) {
 			window.rackTemplate.width = currentWidth;
-			window.edit_m = Math.max(window.rackTemplate.width / edit_canvas.width, window.rackTemplate.height / edit_canvas.height)
-			window.preview_m = Math.max(window.rackTemplate.width / preview_canvas.width, window.rackTemplate.height / preview_canvas.height);
+			window.max_x=Math.max(window.offset_rack_x + window.rackTemplate.width, window.offset_real_rack_x+window.rackTemplate.real_width);
+			// масштаб в окне редактирования
+			window.edit_m = Math.max(window.max_x / edit_canvas.width, window.max_y / edit_canvas.height);
+			// масштаб в окне навигации
+			window.preview_m = Math.max(window.max_x / preview_canvas.width,  window.max_y / preview_canvas.height);
 			window.km = window.edit_m
 			drawEditCanvas();
 			drawPreviewCanvas();
@@ -996,8 +1028,11 @@
 			if (currentWidth > 0) {
 				rackTemplateWidth.value = maxWidth;
 				window.rackTemplate.width = maxWidth;
-				window.edit_m = Math.max(window.rackTemplate.width / edit_canvas.width, window.rackTemplate.height / edit_canvas.height)
-				window.preview_m = Math.max(window.rackTemplate.width / preview_canvas.width, window.rackTemplate.height / preview_canvas.height);
+				window.max_x=Math.max(window.offset_rack_x + window.rackTemplate.width, window.offset_real_rack_x+window.rackTemplate.real_width);
+				// масштаб в окне редактирования
+				window.edit_m = Math.max(window.max_x / edit_canvas.width, window.max_y / edit_canvas.height);
+				// масштаб в окне навигации
+				window.preview_m = Math.max(window.max_x / preview_canvas.width,  window.max_y / preview_canvas.height);
 				window.km = window.edit_m
 				drawEditCanvas();
 				drawPreviewCanvas();
@@ -1027,8 +1062,11 @@
 		}
 		if (currentHeight > maxHeight) {
 			window.rackTemplate.height = currentHeight;
-			window.edit_m = Math.max(window.rackTemplate.width / edit_canvas.width, window.rackTemplate.height / edit_canvas.height)
-			window.preview_m = Math.max(window.rackTemplate.width / preview_canvas.width, window.rackTemplate.height / preview_canvas.height);
+			window.max_y=Math.max(window.offset_rack_y + window.rackTemplate.height, window.offset_real_rack_y+window.rackTemplate.real_height);
+			// масштаб в окне редактирования
+			window.edit_m = Math.max(window.max_x / edit_canvas.width, window.max_y / edit_canvas.height);
+			// масштаб в окне навигации
+			window.preview_m = Math.max(window.max_x / preview_canvas.width,  window.max_y / preview_canvas.height);
 			window.km = window.edit_m
 			drawEditCanvas();
 			drawPreviewCanvas();
@@ -1037,8 +1075,11 @@
 			if (currentHeight > 0) {
 				rackTemplateHeight.value = maxHeight;
 				window.rackTemplate.height = maxHeight;
-				window.edit_m = Math.max(window.rackTemplate.width / edit_canvas.width, window.rackTemplate.height / edit_canvas.height)
-				window.preview_m = Math.max(window.rackTemplate.width / preview_canvas.width, window.rackTemplate.height / preview_canvas.height);
+				window.max_y=Math.max(window.offset_rack_y + window.rackTemplate.height, window.offset_real_rack_y+window.rackTemplate.real_height);
+				// масштаб в окне редактирования
+				window.edit_m = Math.max(window.max_x / edit_canvas.width, window.max_y / edit_canvas.height);
+				// масштаб в окне навигации
+				window.preview_m = Math.max(window.max_x / preview_canvas.width,  window.max_y / preview_canvas.height);
 				window.km = window.edit_m
 				drawEditCanvas();
 				drawPreviewCanvas();
@@ -1155,7 +1196,7 @@
 		}
 	}
 
-	function changeTemplateRackZ_offset(zOffset) {
+	function changeRackTemplateZ_offset(zOffset) {
 		if (!isNaN(zOffset.value)) {
 			window.rackTemplate.z_offset = Number(zOffset.value);
 		}

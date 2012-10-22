@@ -24,7 +24,6 @@ public class SectorHModel {
 	public static final String Q_SELECT = "select" +
 			" " + SectorHConst.CODE_SHOP + "," +
 			" " + SectorHConst.CODE_SECTOR + "," +
-			" " + SectorHConst.STATE_SECTOR + "," +
 			" " + SectorHConst.NAME_SECTOR + "," +
 			" " + SectorHConst.LENGTH + "," +
 			" " + SectorHConst.WIDTH + "," +
@@ -33,8 +32,6 @@ public class SectorHModel {
 			" " + SectorHConst.DATE_INSERT + "," +
 			" " + SectorHConst.USER_INSERT + " "+SectorConst.USER_UPDATE+"," +
 			" " + SectorHConst.DATE_INSERT + " "+SectorConst.DATE_UPDATE+"," +
-			" " + SectorHConst.USER_DRAFT + "," +
-			" " + SectorHConst.DATE_DRAFT + "," +
 			" " + SectorHConst.TYPE_OPERATION + " " +
 			"from " + SectorHConst.TABLE_NAME + " " +
 			"where " + SectorHConst.CODE_SECTOR + " = ?" +

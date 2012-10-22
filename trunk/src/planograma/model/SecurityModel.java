@@ -34,7 +34,7 @@ public class SecurityModel {
 				result = uid > 0;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOG.error("Error canAccess for code_object:"+code_object, e);
 		}
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms (code_object:"+code_object+")");

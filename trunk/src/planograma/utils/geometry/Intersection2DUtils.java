@@ -5,10 +5,16 @@ package planograma.utils.geometry;
  * User: Admin
  * Date: 18.06.12
  * Time: 3:15
- * To change this template use File | Settings | File Templates.
+ * Утилитный класс определяющий пересечение обектов
  */
 public class Intersection2DUtils {
 
+	/**
+	 * Пересечение двух отрезков
+	 * @param a отчезок
+	 * @param b отчезок
+	 * @return точка пересечения
+	 */
 	public static Point2D intersection(final Segment2D a, final Segment2D b) {
 		float x21 = a.p2.x - a.p1.x;
 		float y21 = a.p2.y - a.p1.y;
@@ -35,9 +41,9 @@ public class Intersection2DUtils {
 	}
 
 	/**
-	 * Пересечение
-	 * @param a
-	 * @param b
+	 * Пересечение двух прямоугольников (угол поворота = 0)
+	 * @param a прямоугольник (угол поворота = 0)
+	 * @param b прямоугольник (угол поворота = 0)
 	 * @return a∩b
 	 */
 	public static Rectangle2D intersection(Rectangle2D a, Rectangle2D b) {

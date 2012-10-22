@@ -25,10 +25,6 @@ public class Rack implements IJsonObject {
 	 */
 	private Integer code_rack;
 	/**
-	 * Состояние стеллажа
-	 */
-	private StateRack state_rack;
-	/**
 	 * Название
 	 */
 	private String name_rack;
@@ -97,14 +93,6 @@ public class Rack implements IJsonObject {
 	 */
 	private Date date_update;
 	/**
-	 * пользователь изъявший для редактирования
-	 */
-	private Integer user_draft;
-	/**
-	 * дата изъятия для редактирования
-	 */
-	private Date date_draft;
-	/**
 	 * Доступная длина, мм
 	 */
 	private Integer real_length;
@@ -129,10 +117,9 @@ public class Rack implements IJsonObject {
 	 */
 	private Integer z_offset;
 
-	public Rack(Integer code_sector, Integer code_rack, StateRack state_rack, String name_rack, String rack_barcode, Integer length, Integer width, Integer height, Integer x_coord, Integer y_coord, Integer angle, LoadSide load_side, Integer code_rack_template, boolean lock_size, boolean lock_move, TypeRack type_race, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer user_draft, Date date_draft, Integer real_length, Integer real_width, Integer real_height, Integer x_offset, Integer y_offset, Integer z_offset) {
+	public Rack(Integer code_sector, Integer code_rack, String name_rack, String rack_barcode, Integer length, Integer width, Integer height, Integer x_coord, Integer y_coord, Integer angle, LoadSide load_side, Integer code_rack_template, boolean lock_size, boolean lock_move, TypeRack type_race, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer real_length, Integer real_width, Integer real_height, Integer x_offset, Integer y_offset, Integer z_offset) {
 		this.code_sector = code_sector;
 		this.code_rack = code_rack;
-		this.state_rack = state_rack;
 		this.name_rack = name_rack;
 		this.rack_barcode = rack_barcode;
 		this.length = length;
@@ -150,8 +137,6 @@ public class Rack implements IJsonObject {
 		this.date_insert = date_insert;
 		this.user_update = user_update;
 		this.date_update = date_update;
-		this.user_draft = user_draft;
-		this.date_draft = date_draft;
 		this.real_length = real_length;
 		this.real_width = real_width;
 		this.real_height = real_height;
@@ -174,22 +159,6 @@ public class Rack implements IJsonObject {
 
 	public void setCode_rack(Integer code_rack) {
 		this.code_rack = code_rack;
-	}
-
-	public StateRack getState_rack() {
-		return state_rack;
-	}
-
-	public String getState_rackAtStr() {
-		return (state_rack != null) ? state_rack.name() : null;
-	}
-
-	public void setState_rack(StateRack state_rack) {
-		this.state_rack = state_rack;
-	}
-
-	public void setState_rack(String state_rack) {
-		this.state_rack = (state_rack != null) ? StateRack.valueOf(state_rack) : null;
 	}
 
 	public String getName_rack() {
@@ -360,22 +329,6 @@ public class Rack implements IJsonObject {
 		this.date_update = date_update;
 	}
 
-	public Integer getUser_draft() {
-		return user_draft;
-	}
-
-	public void setUser_draft(Integer user_draft) {
-		this.user_draft = user_draft;
-	}
-
-	public Date getDate_draft() {
-		return date_draft;
-	}
-
-	public void setDate_draft(Date date_draft) {
-		this.date_draft = date_draft;
-	}
-
 	public Integer getReal_length() {
 		return real_length;
 	}
@@ -419,7 +372,6 @@ public class Rack implements IJsonObject {
 	public Rack(final ResultSet resultSet) throws SQLException {
 		code_sector = resultSet.getInt(RackConst.CODE_SECTOR);
 		code_rack = resultSet.getInt(RackConst.CODE_RACK);
-		setState_rack(resultSet.getString(RackConst.STATE_RACK));
 		name_rack = resultSet.getString(RackConst.NAME_RACK);
 		rack_barcode = resultSet.getString(RackConst.RACK_BARCODE);
 		length = resultSet.getInt(RackConst.LENGTH);
@@ -437,8 +389,6 @@ public class Rack implements IJsonObject {
 		date_insert = resultSet.getTimestamp(RackConst.DATE_INSERT);
 		user_update = resultSet.getInt(RackConst.USER_UPDATE);
 		date_update = resultSet.getTimestamp(RackConst.DATE_UPDATE);
-		user_draft = resultSet.getInt(RackConst.USER_DRAFT);
-		date_draft = resultSet.getTimestamp(RackConst.DATE_DRAFT);
 		real_length = resultSet.getInt(RackConst.REAL_LENGTH);
 		real_width = resultSet.getInt(RackConst.REAL_WIDTH);
 		real_height = resultSet.getInt(RackConst.REAL_HEIGHT);
@@ -450,7 +400,6 @@ public class Rack implements IJsonObject {
 	public Rack(final JsonObject rackJson) {
 		code_sector = JsonUtils.getInteger(rackJson, RackConst.CODE_SECTOR);
 		code_rack = JsonUtils.getInteger(rackJson, RackConst.CODE_RACK);
-		setState_rack(JsonUtils.getString(rackJson, RackConst.STATE_RACK));
 		name_rack = JsonUtils.getString(rackJson, RackConst.NAME_RACK);
 		rack_barcode = JsonUtils.getString(rackJson, RackConst.RACK_BARCODE);
 		length = JsonUtils.getInteger(rackJson, RackConst.LENGTH);
@@ -468,8 +417,6 @@ public class Rack implements IJsonObject {
 		date_insert = JsonUtils.getDate(rackJson, RackConst.DATE_INSERT);
 		user_update = JsonUtils.getInteger(rackJson, RackConst.USER_UPDATE);
 		date_update = JsonUtils.getDate(rackJson, RackConst.DATE_UPDATE);
-		user_draft = JsonUtils.getInteger(rackJson, RackConst.USER_DRAFT);
-		date_draft = JsonUtils.getDate(rackJson, RackConst.DATE_DRAFT);
 		real_length = JsonUtils.getInteger(rackJson, RackConst.REAL_LENGTH);
 		real_width = JsonUtils.getInteger(rackJson, RackConst.REAL_WIDTH);
 		real_height = JsonUtils.getInteger(rackJson, RackConst.REAL_HEIGHT);
@@ -483,7 +430,6 @@ public class Rack implements IJsonObject {
 		final JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty(RackConst.CODE_SECTOR, code_sector);
 		jsonObject.addProperty(RackConst.CODE_RACK, code_rack);
-		jsonObject.addProperty(RackConst.STATE_RACK, getState_rackAtStr());
 		jsonObject.addProperty(RackConst.NAME_RACK, name_rack);
 		jsonObject.addProperty(RackConst.RACK_BARCODE, rack_barcode);
 		jsonObject.addProperty(RackConst.LENGTH, length);
@@ -501,8 +447,6 @@ public class Rack implements IJsonObject {
 		JsonUtils.set(jsonObject, RackConst.DATE_INSERT, date_insert);
 		jsonObject.addProperty(RackConst.USER_UPDATE, user_update);
 		JsonUtils.set(jsonObject, RackConst.DATE_UPDATE, date_update);
-		jsonObject.addProperty(RackConst.USER_DRAFT, user_draft);
-		JsonUtils.set(jsonObject, RackConst.DATE_DRAFT, date_draft);
 		jsonObject.addProperty(RackConst.REAL_LENGTH, real_length);
 		jsonObject.addProperty(RackConst.REAL_WIDTH, real_width);
 		jsonObject.addProperty(RackConst.REAL_HEIGHT, real_height);

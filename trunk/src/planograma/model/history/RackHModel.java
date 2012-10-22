@@ -25,7 +25,6 @@ public class RackHModel {
 
 	private static final String Q_SELECT_FROM = "select" +
 			" " + RackHConst.CODE_RACK + "," +
-			" " + RackHConst.STATE_RACK + "," +
 			" " + RackHConst.NAME_RACK + "," +
 			" " + RackHConst.RACK_BARCODE + "," +
 			" " + RackHConst.LENGTH + "," +
@@ -44,8 +43,6 @@ public class RackHModel {
 			" " + RackHConst.DATE_INSERT + "," +
 			" " + RackHConst.USER_INSERT + " " + RackConst.USER_UPDATE + "," +
 			" " + RackHConst.DATE_INSERT + " " + RackConst.DATE_UPDATE + "," +
-			" " + RackHConst.USER_DRAFT + "," +
-			" " + RackHConst.DATE_DRAFT + "," +
 			" " + RackHConst.TYPE_OPERATION + "," +
 			" " + RackHConst.REAL_LENGTH + "," +
 			" " + RackHConst.REAL_WIDTH + "," +

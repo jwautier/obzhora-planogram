@@ -29,6 +29,23 @@ public class PlanogramMessage {
 		return getMessage("RACK_REAL_LENGTH_TOO_LITTLE");
 	}
 
+	public static String RACK_SHELF_HEIGHT_TOO_LITTLE() {
+		return getMessage("RACK_SHELF_HEIGHT_TOO_LITTLE");
+	}
+
+	public static String RACK_SHELF_WIDTH_TOO_LITTLE() {
+		return getMessage("RACK_SHELF_WIDTH_TOO_LITTLE");
+	}
+
+	public static String RACK_SHELF_LENGTH_TOO_LITTLE() {
+		return getMessage("RACK_SHELF_LENGTH_TOO_LITTLE");
+	}
+
+	public static String RACK_SHELF_OUTSIDE_RACK()
+	{
+		return getMessage("RACK_SHELF_OUTSIDE_RACK");
+	}
+
 	private static String getMessage(final String name) {
 		final ResourceBundle resourceBundle = ResourceBundle.getBundle(PlanogramMessage.class.getSimpleName());
 		final String result = resourceBundle.getString(name);
