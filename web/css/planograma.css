@@ -123,6 +123,15 @@ td.scale:hover{
 	height: 100%;
 	background-color: white;
 }
+#basketPanel{
+	height:250px;
+	overflow-y: auto;
+}
+#basketPanelTable{
+	display: none;
+	height:250px;
+	overflow-y: auto;
+}
 #choiceWares{
 	display: none;
 	position: absolute;

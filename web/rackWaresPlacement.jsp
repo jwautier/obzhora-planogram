@@ -98,6 +98,11 @@
 							<tr>
 								<td height="100%"></td>
 							</tr>
+							<tr>
+								<td>
+									вид корзины:<a href="#" onclick="fRackWaresPlacementBasketTable()">Список</a> <a href="#" onclick="fRackWaresPlacementBasketTile()">Плитка</a>
+								</td>
+							</tr>
 						</table>
 					</td>
 					<td id="edit_td" width="100%">
@@ -272,7 +277,9 @@
 				<%--корзина--%>
 				<tr>
 					<td colspan="3" style="height:250px; border-top: 1px solid black;">
-						<div id="basketPanel" style="height:250px; overflow-y: auto;">
+						<div id="basketPanel">
+						</div>
+						<div id="basketPanelTable">
 						</div>
 					</td>
 				</tr>
@@ -567,6 +574,18 @@ var canRackShelfEdit='<%=access_rack_shelf_edit%>';
 		postJson('<%=BasketSet.URL%>', basket, null);
 		var basketPanel=$('#basketPanel');
 		basketPanel.empty();
+
+		var basketPanelTable=$('#basketPanelTable');
+		basketPanelTable.empty();
+		btHtml='<table border="1">'+
+				'<tr>' +
+				'<th></th>' +
+				'<th>Код</th>' +
+				'<th>Название</th>' +
+				'<th>Е.И.</th>' +
+				'<th>Штрихкод</th>' +
+				'<th>Габариты</th>' +
+				'</tr>';
 		for (var i in basket)
 		{
 			var w=basket[i];
@@ -581,7 +600,17 @@ var canRackShelfEdit='<%=access_rack_shelf_edit%>';
 			wHtml=wHtml+' class="basket"';
 			wHtml=wHtml+' onclick="basketWaresSelect(this)">';
 			basketPanel.append(wHtml);
+			btHtml+='<tr>' +
+					'<td><input type="radio" name="code_wares" value="'+w.code_wares+'" onclick="basketWaresSelect(this)"></td>'+
+					'<td>&nbsp;'+w.code_wares+'&nbsp;</td>'+
+					'<td>&nbsp;'+w.name_wares+'&nbsp;</td>'+
+					'<td>&nbsp;'+w.abr_unit+'&nbsp;</td>'+
+					'<td>&nbsp;'+w.bar_code+'&nbsp;</td>'+
+					'<td>&nbsp;'+w.width + 'x' + w.height + 'x' + w.length+'&nbsp;</td>'+
+					'</tr>';
 		}
+		btHtml+='</table>'
+		basketPanelTable.append(btHtml);
 	}
 </script>
 <%-- обработка событий меню --%>
@@ -1116,6 +1145,18 @@ var canRackShelfEdit='<%=access_rack_shelf_edit%>';
 
 <%-- события веб буфера обмена --%>
 <script type="text/javascript">
+
+	function fRackWaresPlacementBasketTable()
+	{
+		$('#basketPanel').hide();
+		$('#basketPanelTable').show();
+	}
+	function fRackWaresPlacementBasketTile()
+	{
+		$('#basketPanelTable').hide();
+		$('#basketPanel').show();
+	}
+
 	function fCopyBuffer()
 	{
 		var copyObjectList=[];
