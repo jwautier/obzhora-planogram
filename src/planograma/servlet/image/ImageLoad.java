@@ -30,7 +30,7 @@ public class ImageLoad extends HttpServlet {
 
 	public static final String URL = UrlConst.URL_IMAGE_LOAD;
 
-	public static final Logger LOG = Logger.getLogger(ImageLoad.class);
+	private static final Logger LOG = Logger.getLogger(ImageLoad.class);
 
 	private ImageModel imageModel;
 
@@ -44,13 +44,15 @@ public class ImageLoad extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse resp) throws IOException {
 		long time = System.currentTimeMillis();
 		try {
+			resp.setDateHeader("Expires", System.currentTimeMillis() + 31*24*60*60*1000);
+			resp.setDateHeader("Last-Modified", 30L*12*31*24*60*60*1000);
+			resp.setContentType("image/jpeg");
 			int code_image = Integer.parseInt(request.getPathInfo().substring(1));
 			final HttpSession session = request.getSession(false);
 			final UserContext userContext = (UserContext) session.getAttribute(SessionConst.SESSION_USER);
 			final InputStream inputStream = imageModel.select(userContext, code_image);
 			final OutputStream outputStream = resp.getOutputStream();
 			final long size = FileUtils.copy(inputStream, outputStream);
-			resp.setContentType("image/jpeg");
 			resp.setContentLength((int) size);
 		} catch (Exception e) {
 			LOG.error("Error load image", e);

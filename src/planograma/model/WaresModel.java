@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class WaresModel {
 
-	public static final Logger LOG = Logger.getLogger(WaresModel.class);
+	private static final Logger LOG = Logger.getLogger(WaresModel.class);
 
 	private static final String Q_SELECT_FROM_WHERE =
 			"select" +
@@ -54,7 +54,7 @@ public class WaresModel {
 			" and w." + WaresConst.CODE_GROUP + " = ? " +
 			Q_ORDER_BY;
 
-	public List<WaresWrapper> list(final UserContext userContext, final Integer code_group) throws SQLException {
+	public List<WaresWrapper> list(final UserContext userContext, final int code_group) throws SQLException {
 		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
@@ -66,12 +66,34 @@ public class WaresModel {
 			list.add(item);
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_group:"+code_group+")");
+		LOG.debug(time + " ms (code_group:" + code_group + ")");
+		return list;
+	}
+
+	private static final String Q_LIST_FOR_GROUP_AND_SHOP = Q_SELECT_FROM_WHERE +
+			" and w." + WaresConst.CODE_GROUP + " = ? " +
+			" and eugene_saz.sev_po.GetMAXQtyShopAM (?, w." + WaresConst.CODE_WARES + ")>0 " +
+			Q_ORDER_BY;
+
+	public List<WaresWrapper> listForGroupAndShop(final UserContext userContext, final int code_shop, final int code_group) throws SQLException {
+		long time = System.currentTimeMillis();
+		final Connection connection = userContext.getConnection();
+		final PreparedStatement ps = connection.prepareStatement(Q_LIST_FOR_GROUP_AND_SHOP);
+		ps.setInt(1, code_group);
+		ps.setInt(2, code_shop);
+		final ResultSet resultSet = ps.executeQuery();
+		final List<WaresWrapper> list = new ArrayList<WaresWrapper>();
+		while (resultSet.next()) {
+			final WaresWrapper item = new WaresWrapper(resultSet);
+			list.add(item);
+		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_shop:" + code_shop + ", code_group:" + code_group + ")");
 		return list;
 	}
 
 	public List<WaresWrapper> search(final UserContext userContext, final String text, final String field,
-									 final int code_group) throws SQLException {
+									 final int code_shop, final int code_group) throws SQLException {
 		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 
@@ -84,6 +106,9 @@ public class WaresModel {
 		} else if (AdditionUnitConst.BAR_CODE.equals(field)) {
 			query += " and u." + AdditionUnitConst.BAR_CODE + " like ? ";
 		}
+		if (code_shop != 0) {
+			query += " and eugene_saz.sev_po.GetMAXQtyShopAM (?, w." + WaresConst.CODE_WARES + ")>0";
+		}
 		if (code_group != 0) {
 			query += " and w." + WaresConst.CODE_GROUP + " = ? ";
 		}
@@ -94,13 +119,18 @@ public class WaresModel {
 		if (WaresConst.CODE_WARES.equals(field)) {
 			ps.setInt(1, Integer.valueOf(text));
 		} else if (WaresConst.NAME_WARES.equals(field)) {
-			ps.setString(1, "%"+text+"%");
+			// TODO %
+			ps.setString(1, "%" + text + "%");
 		} else if (AdditionUnitConst.BAR_CODE.equals(field)) {
-			ps.setString(1, "%"+text+"%");
+			// TODO %
+			ps.setString(1, "%" + text + "%");
 		}
 
+		if (code_shop != 0) {
+			ps.setInt(2, code_shop);
+		}
 		if (code_group != 0) {
-			ps.setInt(2, code_group);
+			ps.setInt((code_shop != 0) ? 3 : 2, code_group);
 		}
 
 		final ResultSet resultSet = ps.executeQuery();
@@ -110,7 +140,7 @@ public class WaresModel {
 			list.add(item);
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (text:"+text+"; field:"+field+"; code_group:"+code_group+")");
+		LOG.debug(time + " ms (text:" + text + "; field:" + field + "; code_group:" + code_group + ")");
 		return list;
 	}
 

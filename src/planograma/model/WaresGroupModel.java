@@ -23,9 +23,9 @@ import java.util.List;
  */
 public class WaresGroupModel {
 
-	public static final Logger LOG = Logger.getLogger(WaresGroupModel.class);
+	private static final Logger LOG = Logger.getLogger(WaresGroupModel.class);
 
-	public static final String Q_TREE = "SELECT" +
+	private static final String Q_TREE = "SELECT" +
 			" " + WaresGroupConst.CODE_GROUP_WARES + "," +
 			" " + WaresGroupConst.CODE_PARENT_GROUP_WARES + "," +
 			" " + WaresGroupConst.NAME + " " +

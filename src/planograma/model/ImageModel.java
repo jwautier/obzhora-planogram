@@ -20,10 +20,10 @@ import java.sql.SQLException;
  */
 public class ImageModel {
 
-	public static final Logger LOG = Logger.getLogger(ImageModel.class);
+	private static final Logger LOG = Logger.getLogger(ImageModel.class);
 
 	private final File tempDir;
-	public static final String Q_SELECT = "select" +
+	private static final String Q_SELECT = "select" +
 			" " + ImageConst.IMAGE_THUMBNAIL + " " +
 			"from " + ImageConst.TABLE_NAME + " " +
 			"where " + ImageConst.CODE_IMAGE + " = ?";

@@ -32,7 +32,7 @@ public class RackEdit extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_RACK_EDIT;
 
-	public static final Logger LOG = Logger.getLogger(RackEdit.class);
+	private static final Logger LOG = Logger.getLogger(RackEdit.class);
 
 	private RackModel rackModel;
 	private RackShelfModel rackShelfModel;

@@ -44,7 +44,7 @@ public class RackTemplateSave extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_RACK_TEMPLATE_SAVE;
 
-	public static final Logger LOG = Logger.getLogger(RackTemplateSave.class);
+	private static final Logger LOG = Logger.getLogger(RackTemplateSave.class);
 
 	private RackTemplateModel rackTemplateModel;
 	private RackShelfTemplateModel rackShelfTemplateModel;

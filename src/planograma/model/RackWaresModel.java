@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class RackWaresModel {
 
-	public static final Logger LOG = Logger.getLogger(RackWaresModel.class);
+	private static final Logger LOG = Logger.getLogger(RackWaresModel.class);
 
 	private static final String Q_SELECT_FROM = "select " +
 			" rw." + RackWaresConst.CODE_RACK + "," +
@@ -47,7 +47,7 @@ public class RackWaresModel {
 			" join " + AdditionUnitConst.TABLE_NAME + " au on au." + AdditionUnitConst.CODE_WARES + " = rw." + RackWaresConst.CODE_WARES + " and au." + AdditionUnitConst.CODE_UNIT + " = rw." + RackWaresConst.CODE_UNIT + " " +
 			" left join " + WaresImageConst.TABLE_NAME + " wi on wi." + WaresImageConst.CODE_WARES + " = rw." + RackWaresConst.CODE_WARES + " ";
 
-	public static final String Q_LIST = Q_SELECT_FROM +
+	private static final String Q_LIST = Q_SELECT_FROM +
 			"where " + RackWaresConst.CODE_RACK + " = ? " +
 			"order by " + RackWaresConst.ORDER_NUMBER_ON_RACK;
 
@@ -67,7 +67,7 @@ public class RackWaresModel {
 		return list;
 	}
 
-	public static final String Q_SELECT = Q_SELECT_FROM +
+	private static final String Q_SELECT = Q_SELECT_FROM +
 			"where " + RackWaresConst.CODE_WARES_ON_RACK + " = ?";
 
 	public RackWares select(final UserContext userContext, final int code_rack_wares) throws SQLException {
@@ -85,7 +85,7 @@ public class RackWaresModel {
 		return item;
 	}
 
-	public static final String Q_INSERT_UPDATE = "{call :new_code_wares_on_rack := EUGENE_SAZ.SEV_PKG_PLANOGRAMS.IUWaresRack(" +
+	private static final String Q_INSERT_UPDATE = "{call :new_code_wares_on_rack := EUGENE_SAZ.SEV_PKG_PLANOGRAMS.IUWaresRack(" +
 			":mode, " +
 			":" + RackWaresConst.CODE_RACK + ", " +
 			":" + RackWaresConst.CODE_WARES + ", " +
@@ -99,7 +99,6 @@ public class RackWaresModel {
 			":" + RackWaresConst.WARES_WIDTH + ", " +
 			":" + RackWaresConst.WARES_HEIGHT + ", " +
 			":" + RackWaresConst.COUNT_LENGTH_ON_SHELF + ")}";
-
 
 	public int insert(final UserContext userContext, final RackWares rackWares) throws SQLException {
 		long time = System.currentTimeMillis();

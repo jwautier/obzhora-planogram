@@ -19,7 +19,7 @@ import java.util.List;
 
 public class SectorModel {
 
-	public static final Logger LOG = Logger.getLogger(SectorModel.class);
+	private static final Logger LOG = Logger.getLogger(SectorModel.class);
 
 	private static final String Q_SELECT_FROM = "select" +
 			" " + SectorConst.CODE_SHOP + "," +

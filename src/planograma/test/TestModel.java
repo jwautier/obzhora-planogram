@@ -22,7 +22,7 @@ import java.util.List;
  * Time: 20:10
  * To change this template use File | Settings | File Templates.
  */
-public class TestQuery {
+public class TestModel {
 	public static void main(String args[]) throws SQLException {
 
 		UserContext userContext = null;

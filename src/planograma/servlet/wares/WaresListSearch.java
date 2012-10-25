@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
 import planograma.constant.UrlConst;
+import planograma.constant.data.ShopConst;
 import planograma.constant.data.WaresConst;
 import planograma.constant.data.WaresGroupConst;
 import planograma.data.wrapper.WaresWrapper;
@@ -31,7 +32,7 @@ public class WaresListSearch extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_WARES_LIST_SEARCH;
 
-	public static final Logger LOG = Logger.getLogger(WaresListSearch.class);
+	private static final Logger LOG = Logger.getLogger(WaresListSearch.class);
 
 	private WaresModel waresModel;
 
@@ -59,10 +60,19 @@ public class WaresListSearch extends AbstractAction {
 			code_group = requestObject.get(WaresGroupConst.CODE_GROUP_WARES).getAsInt();
 		else
 			code_group = 0;
+		final int code_shop;
+		if (requestObject.has(ShopConst.CODE_SHOP))
+		{
+			code_shop = requestObject.get(ShopConst.CODE_SHOP).getAsInt();
+		}
+		else
+		{
+			code_shop = 0;
+		}
 
 		final JsonObject jsonObject = new JsonObject();
 		final JsonArray jsonArray = new JsonArray();
-		final List<WaresWrapper> list = waresModel.search(getUserContext(session), searchText, searchBy, code_group);
+		final List<WaresWrapper> list = waresModel.search(getUserContext(session), searchText, searchBy, code_shop, code_group);
 		for (final WaresWrapper item : list) {
 			jsonArray.add(item.toJsonObject());
 		}

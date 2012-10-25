@@ -20,9 +20,9 @@ import java.util.List;
  */
 public class StateAllModel {
 
-	public static final Logger LOG = Logger.getLogger(StateAllModel.class);
+	private static final Logger LOG = Logger.getLogger(StateAllModel.class);
 
-	public static final String Q_LIST = "select * " +
+	private static final String Q_LIST = "select * " +
 			"from " + StateAllConst.TABLE_NAME + " " +
 			"where " + StateAllConst.PART_STATE + " = ?";
 
@@ -42,7 +42,7 @@ public class StateAllModel {
 		return list;
 	}
 
-	public static final String Q_INIT = "select * " +
+	private static final String Q_INIT = "select * " +
 			"from " + StateAllConst.TABLE_NAME + " " +
 			"where " + StateAllConst.PART_STATE + " in (?,?,?,?,?) " +
 			"order by " + StateAllConst.PART_STATE;

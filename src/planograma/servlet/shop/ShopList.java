@@ -29,7 +29,7 @@ public class ShopList extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_SHOP_LIST;
 
-	public static final Logger LOG = Logger.getLogger(ShopList.class);
+	private static final Logger LOG = Logger.getLogger(ShopList.class);
 
 	private ShopModel shopModel;
 

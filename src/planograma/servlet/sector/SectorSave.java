@@ -36,7 +36,7 @@ public class SectorSave extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_SECTOR_SAVE;
 
-	public static final Logger LOG = Logger.getLogger(SectorSave.class);
+	private static final Logger LOG = Logger.getLogger(SectorSave.class);
 
 	private SectorModel sectorModel;
 	private RackModel rackModel;

@@ -32,7 +32,7 @@ public class RackTemplateRemove extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_RACK_TEMPLATE_REMOVE;
 
-	public static final Logger LOG = Logger.getLogger(RackTemplateRemove.class);
+	private static final Logger LOG = Logger.getLogger(RackTemplateRemove.class);
 
 	private RackTemplateModel rackTemplateModel;
 	private RackShelfTemplateModel rackShelfTemplateModel;

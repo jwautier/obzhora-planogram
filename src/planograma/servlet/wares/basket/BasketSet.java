@@ -27,7 +27,7 @@ public class BasketSet extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_RACK_WARES_PLACEMENT_SET_BASKET;
 
-	public static final Logger LOG = Logger.getLogger(BasketSet.class);
+	private static final Logger LOG = Logger.getLogger(BasketSet.class);
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {

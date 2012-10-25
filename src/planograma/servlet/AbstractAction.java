@@ -34,7 +34,7 @@ import java.sql.SQLException;
 public abstract class AbstractAction extends HttpServlet {
 	public static final String REQUEST_DATA = "data";
 
-	public static final Logger LOG = Logger.getLogger(AbstractAction.class);
+	private static final Logger LOG = Logger.getLogger(AbstractAction.class);
 
 	protected Gson gson;
 	private SecurityModel securityModel;

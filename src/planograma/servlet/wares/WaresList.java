@@ -5,9 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
 import planograma.constant.UrlConst;
-import planograma.constant.data.WaresConst;
+import planograma.constant.data.ShopConst;
 import planograma.constant.data.WaresGroupConst;
-import planograma.data.WaresGroup;
 import planograma.data.wrapper.WaresWrapper;
 import planograma.exception.UnauthorizedException;
 import planograma.model.WaresModel;
@@ -32,7 +31,7 @@ public class WaresList extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_WARES_LIST;
 
-	public static final Logger LOG = Logger.getLogger(WaresList.class);
+	private static final Logger LOG = Logger.getLogger(WaresList.class);
 
 	private WaresModel waresModel;
 
@@ -45,13 +44,22 @@ public class WaresList extends AbstractAction {
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
 		long time = System.currentTimeMillis();
-		final int code_group = requestData.getAsJsonObject().get(WaresGroupConst.CODE_GROUP_WARES).getAsInt();
+		final JsonObject requestJsonObject = requestData.getAsJsonObject();
+		final int code_group = requestJsonObject.get(WaresGroupConst.CODE_GROUP_WARES).getAsInt();
+		final List<WaresWrapper> list;
+		if (requestJsonObject.has(ShopConst.CODE_SHOP)) {
+			final int code_shop = requestJsonObject.get(ShopConst.CODE_SHOP).getAsInt();
+			list = waresModel.listForGroupAndShop(getUserContext(session), code_shop, code_group);
+		} else {
+			list = waresModel.list(getUserContext(session), code_group);
+		}
 
 		final JsonObject jsonObject = new JsonObject();
 		final JsonArray jsonArray = new JsonArray();
-		final List<WaresWrapper> list = waresModel.list(getUserContext(session), code_group);
-		for (final WaresWrapper item : list) {
-			jsonArray.add(item.toJsonObject());
+		if (list != null) {
+			for (final WaresWrapper item : list) {
+				jsonArray.add(item.toJsonObject());
+			}
 		}
 		jsonObject.add("waresList", jsonArray);
 		time = System.currentTimeMillis() - time;

@@ -17,9 +17,9 @@ import java.sql.SQLException;
  */
 public class SecurityModel {
 
-	public static final Logger LOG = Logger.getLogger(SecurityModel.class);
+	private static final Logger LOG = Logger.getLogger(SecurityModel.class);
 
-	public static final String Q_CAN_ACCESS = "select ADM.CAN_I_GET_THIS_OBJECT(?) intRES from dual";
+	private static final String Q_CAN_ACCESS = "select ADM.CAN_I_GET_THIS_OBJECT(?) intRES from dual";
 
 	public boolean canAccess(final UserContext userContext, final int code_object) {
 		long time = System.currentTimeMillis();

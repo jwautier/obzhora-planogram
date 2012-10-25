@@ -36,7 +36,7 @@ public class RackSave extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_RACK_SAVE;
 
-	public static final Logger LOG = Logger.getLogger(RackSave.class);
+	private static final Logger LOG = Logger.getLogger(RackSave.class);
 
 	private RackModel rackModel;
 	private RackShelfModel rackShelfModel;

@@ -1,5 +1,6 @@
 function fDel() {
-	if (window.shelf != null) {
+	if (canRackShelfEdit != 'disabled' && window.shelf != null) {
+		// удаление полки
 		for (var i = 0; i < window.rackShelfList.length; i++) {
 			if (window.rackShelfList[i] == window.shelf) {
 				window.rackShelfList.splice(i, 1);
@@ -7,10 +8,8 @@ function fDel() {
 			}
 		}
 		window.shelf = null;
-		selectShelf(window.shelf);
-	}
-	else {
-
+	} else {
+		// удаление товаров
 		for (var i in window.selectRackWaresList) {
 			var selectRackWares = window.selectRackWaresList[i];
 			for (var j in window.rackWaresList) {
@@ -20,9 +19,8 @@ function fDel() {
 			}
 		}
 		window.selectRackWaresList = [];
-		fSelectRackWares();
 	}
-
+	fRackWaresPlacementSelect();
 	drawEditCanvas();
 	drawPreviewCanvas();
 }

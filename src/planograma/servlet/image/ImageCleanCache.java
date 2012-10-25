@@ -1,6 +1,5 @@
 package planograma.servlet.image;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
@@ -17,7 +16,6 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,7 +28,7 @@ import java.util.List;
 public class ImageCleanCache extends AbstractAction {
 	public static final String URL = UrlConst.URL_IMAGE_CLEAN_CACHE;
 
-	public static final Logger LOG = Logger.getLogger(ImageCleanCache.class);
+	private static final Logger LOG = Logger.getLogger(ImageCleanCache.class);
 
 	private ImageModel imageModel;
 

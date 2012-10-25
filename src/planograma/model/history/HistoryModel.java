@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class HistoryModel {
 
-	public static final Logger LOG = Logger.getLogger(HistoryModel.class);
+	private static final Logger LOG = Logger.getLogger(HistoryModel.class);
 
 	private final String Q_HISTORYMARK =
 			" (select " + SectorHConst.DATE_INSERT + " from " + SectorHConst.TABLE_NAME + ") " +

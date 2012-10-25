@@ -29,7 +29,7 @@ public class WaresGroupTree extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_WARES_GROUP_TREE;
 
-	public static final Logger LOG = Logger.getLogger(WaresGroupTree.class);
+	private static final Logger LOG = Logger.getLogger(WaresGroupTree.class);
 
 	private WaresGroupModel waresGroupModel;
 

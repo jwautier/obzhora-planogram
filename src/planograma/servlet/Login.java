@@ -8,7 +8,6 @@ import planograma.constant.SessionConst;
 import planograma.constant.UrlConst;
 import planograma.data.UserContext;
 import planograma.exception.InvalidLoginOrPassword;
-import planograma.exception.NotAccessException;
 import planograma.model.StateAllModel;
 
 import javax.servlet.ServletConfig;
@@ -28,7 +27,7 @@ public class Login extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_LOGIN;
 
-	public static final Logger LOG = Logger.getLogger(Login.class);
+	private static final Logger LOG = Logger.getLogger(Login.class);
 
 	private StateAllModel stateAllModel;
 

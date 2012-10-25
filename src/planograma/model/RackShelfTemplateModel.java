@@ -18,9 +18,9 @@ import java.util.List;
  */
 public class RackShelfTemplateModel {
 
-	public static final Logger LOG = Logger.getLogger(RackShelfTemplateModel.class);
+	private static final Logger LOG = Logger.getLogger(RackShelfTemplateModel.class);
 
-	public static final String Q_LIST = "select " +
+	private static final String Q_SELECT_FROM = "select " +
 			" " + RackShelfTemplateConst.CODE_RACK_TEMPLATE + "," +
 			" " + RackShelfTemplateConst.CODE_SHELF_TEMPLATE + "," +
 			" " + RackShelfTemplateConst.X_COORD + "," +
@@ -34,7 +34,9 @@ public class RackShelfTemplateModel {
 			" " + RackShelfTemplateConst.DATE_INSERT + "," +
 			" " + RackShelfTemplateConst.USER_UPDATE + "," +
 			" " + RackShelfTemplateConst.DATE_UPDATE + " " +
-			"from " + RackShelfTemplateConst.TABLE_NAME + " " +
+			"from ";
+
+	private static final String Q_LIST = Q_SELECT_FROM + RackShelfTemplateConst.TABLE_NAME + " " +
 			"where " + RackShelfTemplateConst.CODE_RACK_TEMPLATE + "=? ";
 
 	public List<RackShelfTemplate> list(final UserContext userContext, final int code_rack_template) throws SQLException {
@@ -53,21 +55,7 @@ public class RackShelfTemplateModel {
 		return list;
 	}
 
-	public static final String Q_SELECT = "select" +
-			" " + RackShelfTemplateConst.CODE_RACK_TEMPLATE + "," +
-			" " + RackShelfTemplateConst.CODE_SHELF_TEMPLATE + "," +
-			" " + RackShelfTemplateConst.X_COORD + "," +
-			" " + RackShelfTemplateConst.Y_COORD + "," +
-			" " + RackShelfTemplateConst.SHELF_HEIGHT + "," +
-			" " + RackShelfTemplateConst.SHELF_WIDTH + "," +
-			" " + RackShelfTemplateConst.SHELF_LENGTH + "," +
-			" " + RackShelfTemplateConst.ANGLE + "," +
-			" " + RackShelfTemplateConst.TYPE_SHELF + "," +
-			" " + RackShelfTemplateConst.USER_INSERT + "," +
-			" " + RackShelfTemplateConst.DATE_INSERT + "," +
-			" " + RackShelfTemplateConst.USER_UPDATE + "," +
-			" " + RackShelfTemplateConst.DATE_UPDATE + " " +
-			"from " + RackShelfTemplateConst.TABLE_NAME + " " +
+	private static final String Q_SELECT = Q_SELECT_FROM + RackShelfTemplateConst.TABLE_NAME + " " +
 			"where " + RackShelfTemplateConst.CODE_SHELF_TEMPLATE + " = ?";
 
 	public RackShelfTemplate select(final UserContext userContext, final int code_shelf_template) throws SQLException {
@@ -85,7 +73,7 @@ public class RackShelfTemplateModel {
 		return rackShelfTemplate;
 	}
 
-	public static final String Q_INSERT_UPDATE = "{call :new_code_shelf_template := EUGENE_SAZ.SEV_PKG_PLANOGRAMS.IUShelfTemplate(" +
+	private static final String Q_INSERT_UPDATE = "{call :new_code_shelf_template := EUGENE_SAZ.SEV_PKG_PLANOGRAMS.IUShelfTemplate(" +
 			":mode, " +
 			":" + RackShelfTemplateConst.CODE_RACK_TEMPLATE + ", " +
 			":" + RackShelfTemplateConst.CODE_SHELF_TEMPLATE + ", " +

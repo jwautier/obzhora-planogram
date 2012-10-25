@@ -35,7 +35,7 @@ public class WaresEdit extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_RACK_WARES_PLACEMENT_EDIT;
 
-	public static final Logger LOG = Logger.getLogger(WaresEdit.class);
+	private static final Logger LOG = Logger.getLogger(WaresEdit.class);
 
 	private RackModel rackModel;
 	private RackShelfModel rackShelfModel;

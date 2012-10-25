@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class RackTemplateModel {
 
-	public static final Logger LOG = Logger.getLogger(RackTemplateModel.class);
+	private static final Logger LOG = Logger.getLogger(RackTemplateModel.class);
 
 	private static final String Q_SELECT_FROM = "select" +
 			" " + RackTemplateConst.CODE_RACK_TEMPLATE + "," +
@@ -42,7 +42,7 @@ public class RackTemplateModel {
 			" " + RackTemplateConst.Z_OFFSET + " " +
 			"from " + RackTemplateConst.TABLE_NAME + " ";
 
-	public static final String Q_LIST = Q_SELECT_FROM +
+	private static final String Q_LIST = Q_SELECT_FROM +
 			"order by " + RackTemplateConst.NAME_RACK_TEMPLATE;
 
 	public List<RackTemplate> list(final UserContext userContext) throws SQLException {
@@ -60,7 +60,7 @@ public class RackTemplateModel {
 		return list;
 	}
 
-	public static final String Q_SELECT = Q_SELECT_FROM +
+	private static final String Q_SELECT = Q_SELECT_FROM +
 			"where " + RackTemplateConst.CODE_RACK_TEMPLATE + " = ?";
 
 	public RackTemplate select(final UserContext userContext, final int code_rack_template) throws SQLException {
@@ -78,7 +78,7 @@ public class RackTemplateModel {
 		return rackTemplate;
 	}
 
-	public static final String Q_INSERT_UPDATE = "{call :new_code_rack_template := EUGENE_SAZ.SEV_PKG_PLANOGRAMS.IURackTemplate(" +
+	private static final String Q_INSERT_UPDATE = "{call :new_code_rack_template := EUGENE_SAZ.SEV_PKG_PLANOGRAMS.IURackTemplate(" +
 			":mode, " +
 			":" + RackTemplateConst.CODE_RACK_TEMPLATE + ", " +
 			":" + RackTemplateConst.NAME_RACK_TEMPLATE + ", " +
@@ -145,7 +145,7 @@ public class RackTemplateModel {
 		LOG.debug(time + " ms");
 	}
 
-	public static final String Q_CHANGESTATE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.CHANGESTATERACK(" +
+	private static final String Q_CHANGESTATE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.CHANGESTATERACK(" +
 			":" + RackTemplateConst.CODE_RACK_TEMPLATE + ", " +
 			":" + RackTemplateConst.STATE_RACK_TEMPLATE + ")}";
 
