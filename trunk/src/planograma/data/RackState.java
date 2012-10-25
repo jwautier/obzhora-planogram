@@ -135,23 +135,23 @@ public class RackState implements IJsonObject {
 	public RackState(final ResultSet resultSet) throws SQLException {
 		code_rack = resultSet.getInt(RackStateConst.CODE_RACK);
 		setState_rack(resultSet.getString(RackStateConst.STATE_RACK));
-		user_draft = resultSet.getInt(RackStateConst.USER_DRAFT);
 		date_draft = resultSet.getTimestamp(RackStateConst.DATE_DRAFT);
-		user_active = resultSet.getInt(RackStateConst.USER_ACTIVE);
+		user_draft = resultSet.getInt(RackStateConst.USER_DRAFT);
 		date_active = resultSet.getTimestamp(RackStateConst.DATE_ACTIVE);
-		user_complete = resultSet.getInt(RackStateConst.USER_COMPLETE);
+		user_active = resultSet.getInt(RackStateConst.USER_ACTIVE);
 		date_complete = resultSet.getTimestamp(RackStateConst.DATE_COMPLETE);
+		user_complete = resultSet.getInt(RackStateConst.USER_COMPLETE);
 	}
 
 	public RackState(final JsonObject rackJson) {
 		code_rack = JsonUtils.getInteger(rackJson, RackStateConst.CODE_RACK);
 		setState_rack(JsonUtils.getString(rackJson, RackStateConst.STATE_RACK));
-		user_draft = JsonUtils.getInteger(rackJson, RackStateConst.USER_DRAFT);
 		date_draft = JsonUtils.getDate(rackJson, RackStateConst.DATE_DRAFT);
-		user_active = JsonUtils.getInteger(rackJson, RackStateConst.USER_ACTIVE);
+		user_draft = JsonUtils.getInteger(rackJson, RackStateConst.USER_DRAFT);
 		date_active = JsonUtils.getDate(rackJson, RackStateConst.DATE_ACTIVE);
-		user_complete = JsonUtils.getInteger(rackJson, RackStateConst.USER_COMPLETE);
+		user_active = JsonUtils.getInteger(rackJson, RackStateConst.USER_ACTIVE);
 		date_complete = JsonUtils.getDate(rackJson, RackStateConst.DATE_COMPLETE);
+		user_complete = JsonUtils.getInteger(rackJson, RackStateConst.USER_COMPLETE);
 	}
 
 	@Override
@@ -159,12 +159,12 @@ public class RackState implements IJsonObject {
 		final JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty(RackStateConst.CODE_RACK, code_rack);
 		jsonObject.addProperty(RackStateConst.STATE_RACK, getState_rackAtStr());
-		jsonObject.addProperty(RackStateConst.USER_DRAFT, user_draft);
 		JsonUtils.set(jsonObject, RackStateConst.DATE_DRAFT, date_draft);
-		jsonObject.addProperty(RackStateConst.USER_ACTIVE, user_active);
+		jsonObject.addProperty(RackStateConst.USER_DRAFT, user_draft);
 		JsonUtils.set(jsonObject, RackStateConst.DATE_ACTIVE, date_active);
-		jsonObject.addProperty(RackStateConst.USER_COMPLETE, user_complete);
+		jsonObject.addProperty(RackStateConst.USER_ACTIVE, user_active);
 		JsonUtils.set(jsonObject, RackStateConst.DATE_COMPLETE, date_complete);
+		jsonObject.addProperty(RackStateConst.USER_COMPLETE, user_complete);
 		return jsonObject;
 	}
 }

@@ -16,6 +16,7 @@ import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
 import planograma.model.RackShelfModel;
 import planograma.model.RackWaresModel;
+import planograma.model.SecurityModel;
 import planograma.servlet.AbstractAction;
 import planograma.servlet.wares.rackWaresPlacementSaveHelp.GroupRackWares;
 import planograma.servlet.wares.rackWaresPlacementSaveHelp.GroupRackWaresComparator;
@@ -44,14 +45,16 @@ public class RackWaresPlacementSave extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_RACK_WARES_PLACEMENT_SAVE;
 
-	public static final Logger LOG = Logger.getLogger(RackWaresPlacementSave.class);
+	private static final Logger LOG = Logger.getLogger(RackWaresPlacementSave.class);
 
+	private SecurityModel securityModel;
 	private RackShelfModel rackShelfModel;
 	private RackWaresModel rackWaresModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
+		securityModel = SecurityModel.getInstance();
 		rackShelfModel = RackShelfModel.getInstance();
 		rackWaresModel = RackWaresModel.getInstance();
 	}
@@ -62,18 +65,34 @@ public class RackWaresPlacementSave extends AbstractAction {
 		final UserContext userContext = getUserContext(session);
 		checkAccess(userContext, SecurityConst.ACCESS_RACK_WARES_PLACEMENT);
 		final int code_rack = requestData.getAsJsonObject().getAsJsonPrimitive(RackConst.CODE_RACK).getAsInt();
-		final JsonArray shelfListJson = requestData.getAsJsonObject().getAsJsonArray("rackShelfList");
+		final boolean canAccessEditRackShelf = securityModel.canAccess(userContext, SecurityConst.ACCESS_RACK_WARES_PLACEMENT_AND_RACK_SHELF_EDIT);
+
+
 		final JsonArray rackWaresListJson = requestData.getAsJsonObject().getAsJsonArray("rackWaresList");
 
-		// наполнение враперов полок
-		final List<RackShelf2D> rackShelf2DList = new ArrayList<RackShelf2D>(shelfListJson.size());
-		for (int i = 0; i < shelfListJson.size(); i++) {
-			final JsonObject rackShelfJson = shelfListJson.get(i).getAsJsonObject();
-			final RackShelf rackShelf = new RackShelf(rackShelfJson);
-			// расчет координат полки
-			final RackShelf2D rackShelf2D = new RackShelf2D(rackShelf);
-			rackShelf2DList.add(rackShelf2D);
+		final List<RackShelf2D> rackShelf2DList;
+		if (canAccessEditRackShelf) {
+			final JsonArray shelfListJson = requestData.getAsJsonObject().getAsJsonArray("rackShelfList");
+			// наполнение враперов полок
+			rackShelf2DList = new ArrayList<RackShelf2D>(shelfListJson.size());
+			for (int i = 0; i < shelfListJson.size(); i++) {
+				final JsonObject rackShelfJson = shelfListJson.get(i).getAsJsonObject();
+				final RackShelf rackShelf = new RackShelf(rackShelfJson);
+				// расчет координат полки
+				final RackShelf2D rackShelf2D = new RackShelf2D(rackShelf);
+				rackShelf2DList.add(rackShelf2D);
+			}
+		} else {
+			final List<RackShelf> oldRackShelfList = rackShelfModel.list(userContext, code_rack);
+			rackShelf2DList = new ArrayList<RackShelf2D>(oldRackShelfList.size());
+			for (int i = 0; i < oldRackShelfList.size(); i++) {
+				final RackShelf rackShelf = oldRackShelfList.get(i);
+				// расчет координат полки
+				final RackShelf2D rackShelf2D = new RackShelf2D(rackShelf);
+				rackShelf2DList.add(rackShelf2D);
+			}
 		}
+
 		// наполнение враперов товаров
 		final List<RackWares2D> rackWares2DList = new ArrayList<RackWares2D>(rackWaresListJson.size());
 		for (int i = 0; i < rackWaresListJson.size(); i++) {
@@ -93,31 +112,33 @@ public class RackWaresPlacementSave extends AbstractAction {
 			}
 		}
 
-		// обновление полок
-		List<RackShelf> oldShelfList = rackShelfModel.list(userContext, code_rack);
-		for (final RackShelf oldItem : oldShelfList) {
-			RackShelf findItem = null;
-//				поиск среди сохраненых рание
-			for (int i = 0; findItem == null && i < rackShelf2DList.size(); i++) {
-				final RackShelf currentItem = rackShelf2DList.get(i).getRackShelf();
-				if (oldItem.getCode_shelf().equals(currentItem.getCode_shelf())) {
-					findItem = currentItem;
-//						запись была обновлена
-					rackShelfModel.update(userContext, findItem);
-					rackShelf2DList.remove(i);
-					i--;
+		if (canAccessEditRackShelf) {
+			// обновление полок
+			List<RackShelf> oldShelfList = rackShelfModel.list(userContext, code_rack);
+			for (final RackShelf oldItem : oldShelfList) {
+				RackShelf findItem = null;
+				// поиск среди сохраненых рание
+				for (int i = 0; findItem == null && i < rackShelf2DList.size(); i++) {
+					final RackShelf currentItem = rackShelf2DList.get(i).getRackShelf();
+					if (oldItem.getCode_shelf().equals(currentItem.getCode_shelf())) {
+						findItem = currentItem;
+						// запись была обновлена
+						rackShelfModel.update(userContext, findItem);
+						rackShelf2DList.remove(i);
+						i--;
+					}
+				}
+				if (findItem == null) {
+					// запись была удалена
+					rackShelfModel.delete(userContext, oldItem.getCode_shelf());
 				}
 			}
-			if (findItem == null) {
-//					запись была удалена
-				rackShelfModel.delete(userContext, oldItem.getCode_shelf());
+			for (int i = 0; i < rackShelf2DList.size(); i++) {
+				final RackShelf newItem = rackShelf2DList.get(i).getRackShelf();
+				//	запись была добавлена
+				newItem.setCode_rack(code_rack);
+				rackShelfModel.insert(userContext, newItem);
 			}
-		}
-		for (int i = 0; i < rackShelf2DList.size(); i++) {
-			final RackShelf newItem = rackShelf2DList.get(i).getRackShelf();
-			//	запись была добавлена
-			newItem.setCode_rack(code_rack);
-			rackShelfModel.insert(userContext, newItem);
 		}
 
 		// обновление товаров

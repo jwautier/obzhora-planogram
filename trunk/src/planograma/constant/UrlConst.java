@@ -16,6 +16,7 @@ public interface UrlConst {
 	public static final String URL_SECTOR_LIST = "servlet/sector/list";
 	public static final String URL_SECTOR_REMOVE = "servlet/sector/remove";
 	public static final String URL_SECTOR_PRINT = "servlet/sector/print/";
+	public static final String URL_SECTOR_PRINT_WITH_EDITOR = "servlet/sector/print_with_editor/";
 
 	public static final String URL_SECTOR_EDIT = "servlet/sector/edit";
 	public static final String URL_SECTOR_SAVE = "servlet/sector/save";

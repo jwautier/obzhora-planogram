@@ -22,7 +22,7 @@ public class Logout extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_LOGOUT;
 
-	public static final Logger LOG = Logger.getLogger(Logout.class);
+	private static final Logger LOG = Logger.getLogger(Logout.class);
 
 	@Override
 	protected JsonObject execute(final HttpSession session, final JsonElement requestData) throws UnauthorizedException {

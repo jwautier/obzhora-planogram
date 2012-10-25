@@ -21,9 +21,9 @@ import java.util.List;
  */
 public class RackWaresHModel {
 
-	public static final Logger LOG = Logger.getLogger(RackWaresHModel.class);
+	private static final Logger LOG = Logger.getLogger(RackWaresHModel.class);
 
-	public static final String Q_LIST = "select " +
+	private static final String Q_LIST = "select " +
 			" rw." + RackWaresHConst.CODE_RACK + "," +
 			" rw." + RackWaresHConst.CODE_WARES + "," +
 			" rw." + RackWaresHConst.CODE_UNIT + "," +

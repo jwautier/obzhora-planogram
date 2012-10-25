@@ -3,7 +3,6 @@
 <%@ page import="planograma.servlet.sector.SectorRemove" %>
 <%@ page import="planograma.servlet.shop.ShopList" %>
 <%@ page import="planograma.constant.SecurityConst" %>
-<%@ page import="planograma.servlet.sector.SectorPrint" %>
 <%@ page import="planograma.servlet.sector.SectorEdit" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
@@ -50,7 +49,7 @@
 								<td><a href="#" id="sectorAdd" onclick="return aOnClick(this, fSectorAdd)" class="disabled"><%=JspUtils.toMenuTitle("Добавить зал")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" id="sectorPrint" onclick="return aOnClick(this)" target="pdf" class="disabled"><%=JspUtils.toMenuTitle("Печать зала")%></a></td>
+								<td><a href="#" id="sectorPrint" onclick="return aOnClick(this, fSectorPrint)" class="disabled"><%=JspUtils.toMenuTitle("Печать зала")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="sectorViewHistory" onclick="return aOnClick(this, fSectorViewHistory)" class="disabled"><%=JspUtils.toMenuTitle("Просмотр истории зала")%></a></td>
@@ -94,6 +93,9 @@
 		</td>
 	</tr>
 </table>
+
+<jsp:include page="choiceSectorPrint.jsp"/>
+
 </body>
 <script type="text/javascript">
 
@@ -109,7 +111,8 @@
 				{
 					$('#sectorAdd').removeClass('disabled');
 				}
-				$('#sectorPrint').addClass('disabled').attr('href', '#');
+				$('#sectorPrint').addClass('disabled');
+				choiceSectorPrintSetCodeSector(null);
 				$('#sectorEdit').addClass('disabled');
 				$('#sectorActive').addClass('disabled');
 				$('#sectorNotActive').addClass('disabled');
@@ -144,7 +147,8 @@
 			var option = sectorList.find('option[value=' + code_sector + ']');
 			if (option.length==1) {
 				option.attr('selected', 'selected');
-				$('#sectorPrint').removeClass('disabled').attr('href','<%=SectorPrint.URL%>'+code_sector);
+				$('#sectorPrint').removeClass('disabled');
+				choiceSectorPrintSetCodeSector(code_sector);
 				$('#sectorEdit').removeClass('disabled');
 				$('#sectorActive').removeClass('disabled');
 				$('#sectorNotActive').removeClass('disabled');
@@ -197,6 +201,10 @@
 			setCookie('code_sector', '');
 			document.location='sectorEdit.jsp';
 		}
+	}
+	function fSectorPrint()
+	{
+		choiceSectorPrintShow();
 	}
 	function fSectorViewHistory()
 	{

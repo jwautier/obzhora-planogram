@@ -19,9 +19,9 @@ import java.util.Date;
  */
 public class SectorHModel {
 
-	public static final Logger LOG = Logger.getLogger(SectorHModel.class);
+	private static final Logger LOG = Logger.getLogger(SectorHModel.class);
 
-	public static final String Q_SELECT = "select" +
+	private static final String Q_SELECT = "select" +
 			" " + SectorHConst.CODE_SHOP + "," +
 			" " + SectorHConst.CODE_SECTOR + "," +
 			" " + SectorHConst.NAME_SECTOR + "," +

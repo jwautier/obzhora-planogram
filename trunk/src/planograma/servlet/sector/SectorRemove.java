@@ -36,7 +36,7 @@ public class SectorRemove extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_SECTOR_REMOVE;
 
-	public static final Logger LOG = Logger.getLogger(SectorRemove.class);
+	private static final Logger LOG = Logger.getLogger(SectorRemove.class);
 
 	private SectorModel sectorModel;
 	private RackModel rackModel;

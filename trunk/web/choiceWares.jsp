@@ -110,6 +110,14 @@
 									<a href="#" title="Поиск" onclick="search1()"><img src="img/icon/iconSearch.png" alt="Поиск"/></a>
 									<a href="#" title="Поиск по всем группам" onclick="search2()"><img src="img/icon/iconSearch2.png" alt="Поиск по иерархии"/></a>
 								</td>
+								<td>
+									&nbsp;&nbsp;&nbsp;
+								</td>
+								<td>
+									<label for="forShop" title="с учетом асортиментной матрицы">
+										с учетом АМ<input id="forShop" type="checkbox">
+									</label>
+								</td>
 							</tr>
 						</table>
 					</td>
@@ -212,9 +220,14 @@
 		$('#treeview p.selectNode').removeClass('selectNode');
 		var p=$(obj).parent();
 		p.addClass('selectNode');
-		var code_group_wares= p.attr('id');
+		var code_group_wares = p.attr('id');
 
-		postJson('<%=WaresList.URL%>', {code_group_wares:code_group_wares}, function(data){
+		var data = {code_group_wares:code_group_wares};
+		if ($('#forShop').prop("checked")) {
+			var code_shop = getCookie('code_shop');
+			data.code_shop = code_shop;
+		}
+		postJson('<%=WaresList.URL%>', data, function(data){
 			listWaresToHtml(data.waresList);
 		})
 	}
@@ -224,7 +237,12 @@
 		if (searchText != null && searchText.length > 0) {
 			var searchBy = $('#searchBy').val();
 			var code_group_wares = $('#treeview p.selectNode').attr('id')
-			postJson('<%=WaresListSearch.URL%>', {searchText:searchText, searchBy:searchBy, code_group_wares:code_group_wares},
+			var data = {searchText:searchText, searchBy:searchBy, code_group_wares:code_group_wares};
+			if ($('#forShop').prop("checked")) {
+				var code_shop = getCookie('code_shop');
+				data.code_shop = code_shop;
+			}
+			postJson('<%=WaresListSearch.URL%>', data,
 					function (data) {
 						listWaresToHtml(data.waresList);
 					});
@@ -234,7 +252,12 @@
 		var searchText = $('#searchText').val();
 		if (searchText != null && searchText.length > 0) {
 			var searchBy = $('#searchBy').val();
-			postJson('<%=WaresListSearch.URL%>', {searchText:searchText, searchBy:searchBy, code_group_wares:0},
+			var data = {searchText:searchText, searchBy:searchBy};
+			if ($('#forShop').prop("checked")) {
+				var code_shop = getCookie('code_shop');
+				data.code_shop = code_shop;
+			}
+			postJson('<%=WaresListSearch.URL%>', {searchText:searchText, searchBy:searchBy},
 					function (data) {
 						listWaresToHtml(data.waresList);
 					});

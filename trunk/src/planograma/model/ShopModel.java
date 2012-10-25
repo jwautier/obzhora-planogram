@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class ShopModel {
 
-	public static final Logger LOG = Logger.getLogger(ShopModel.class);
+	private static final Logger LOG = Logger.getLogger(ShopModel.class);
 
 	private static final String Q_LIST = "select" +
 			" " + ShopConst.CODE_SHOP + "," +

@@ -1,5 +1,5 @@
 function fPaste() {
-	if (window.copyShelf != null) {
+	if (canRackShelfEdit!='disabled' && window.copyShelf != null) {
 		window.shelf = clone(window.copyShelf);
 		window.shelf.code_rack = '';
 		// копия в право
@@ -29,10 +29,9 @@ function fPaste() {
 				}
 			}
 		}
-
 		window.rackShelfList.push(window.shelf);
 		window.copyShelf = window.shelf;
-		selectShelf(window.shelf);
+		fRackWaresPlacementSelect();
 		drawEditCanvas();
 		drawPreviewCanvas();
 	}

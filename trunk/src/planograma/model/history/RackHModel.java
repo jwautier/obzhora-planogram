@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class RackHModel {
 
-	public static final Logger LOG = Logger.getLogger(RackHModel.class);
+	private static final Logger LOG = Logger.getLogger(RackHModel.class);
 
 	private static final String Q_SELECT_FROM = "select" +
 			" " + RackHConst.CODE_RACK + "," +
@@ -52,7 +52,7 @@ public class RackHModel {
 			" " + RackHConst.Z_OFFEST + " " +
 			"from " + RackHConst.TABLE_NAME + " ";
 
-	public static final String Q_LIST = Q_SELECT_FROM +
+	private static final String Q_LIST = Q_SELECT_FROM +
 			"where " +
 			" " + RackHConst.TYPE_OPERATION + "<> 'D'" +
 			" and " +
@@ -82,7 +82,7 @@ public class RackHModel {
 		return list;
 	}
 
-	public static final String Q_SELECT = Q_SELECT_FROM +
+	private static final String Q_SELECT = Q_SELECT_FROM +
 			"where " + RackHConst.CODE_RACK + " = ?" +
 			" and " + RackHConst.DATE_INSERT + " <= ?" +
 			"order by " + RackHConst.DATE_INSERT + " desc";

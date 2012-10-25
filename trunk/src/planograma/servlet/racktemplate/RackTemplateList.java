@@ -29,7 +29,7 @@ public class RackTemplateList extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_RACK_TEMPLATE_LIST;
 
-	public static final Logger LOG = Logger.getLogger(RackTemplateList.class);
+	private static final Logger LOG = Logger.getLogger(RackTemplateList.class);
 
 	private RackTemplateModel rackTemplateModel;
 

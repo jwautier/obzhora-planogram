@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class RackModel {
 
-	public static final Logger LOG = Logger.getLogger(RackModel.class);
+	private static final Logger LOG = Logger.getLogger(RackModel.class);
 
 	private static final String Q_SELECT_FROM = "select" +
 			" " + RackConst.CODE_RACK + "," +
@@ -48,7 +48,7 @@ public class RackModel {
 			" " + RackConst.Z_OFFSET + " " +
 			"from " + RackConst.TABLE_NAME + " ";
 
-	public static final String Q_LIST = Q_SELECT_FROM +
+	private static final String Q_LIST = Q_SELECT_FROM +
 			"where " + RackConst.CODE_SECTOR + "=? " +
 			"order by " + RackConst.NAME_RACK;
 
@@ -68,7 +68,7 @@ public class RackModel {
 		return list;
 	}
 
-	public static final String Q_SELECT = Q_SELECT_FROM +
+	private static final String Q_SELECT = Q_SELECT_FROM +
 			"where " + RackConst.CODE_RACK + " = ?";
 
 	public Rack select(final UserContext userContext, final int code_rack) throws SQLException {
@@ -86,7 +86,7 @@ public class RackModel {
 		return rack;
 	}
 
-	public static final String Q_INSERT_UPDATE = "{call :new_code_rack := EUGENE_SAZ.SEV_PKG_PLANOGRAMS.IURACK(" +
+	private static final String Q_INSERT_UPDATE = "{call :new_code_rack := EUGENE_SAZ.SEV_PKG_PLANOGRAMS.IURACK(" +
 			":mode, " +
 			":" + RackConst.CODE_SECTOR + ", " +
 			":" + RackConst.CODE_RACK + ", " +

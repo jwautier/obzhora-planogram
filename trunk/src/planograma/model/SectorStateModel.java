@@ -15,7 +15,7 @@ import java.sql.SQLException;
  */
 public class SectorStateModel {
 
-	public static final Logger LOG = Logger.getLogger(SectorModel.class);
+	private static final Logger LOG = Logger.getLogger(SectorModel.class);
 
 	private static final String Q_CHANGESTATE = "{call EUGENE_SAZ.SEV_PKG_PLANOGRAMS.CHANGESTATESECTOR(" +
 			":" + SectorStateConst.CODE_SECTOR + ", " +

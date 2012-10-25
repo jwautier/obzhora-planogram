@@ -1,4 +1,4 @@
-package planograma.servlet.sector;
+package planograma.servlet.sector.print;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
@@ -7,9 +7,7 @@ import planograma.constant.SessionConst;
 import planograma.constant.UrlConst;
 import planograma.data.*;
 import planograma.data.geometry.Rack2D;
-import planograma.model.RackModel;
-import planograma.model.SectorModel;
-import planograma.model.ShopModel;
+import planograma.model.*;
 import planograma.utils.FormattingUtils;
 import planograma.utils.geometry.Point2D;
 
@@ -31,11 +29,11 @@ import java.util.List;
  * Time: 3:50
  * To change this template use File | Settings | File Templates.
  */
-@WebServlet("/" + UrlConst.URL_SECTOR_PRINT + "*")
-public class SectorPrint extends HttpServlet {
-	public static final String URL = UrlConst.URL_SECTOR_PRINT;
+@WebServlet("/" + UrlConst.URL_SECTOR_PRINT_WITH_EDITOR + "*")
+public class SectorPrintWithEditor extends HttpServlet {
+	public static final String URL = UrlConst.URL_SECTOR_PRINT_WITH_EDITOR;
 
-	public static final Logger LOG = Logger.getLogger(SectorPrint.class);
+	private static final Logger LOG = Logger.getLogger(SectorPrintWithEditor.class);
 
 	private static final float marginLeft = 28;
 	private static final float marginRight = 28;
@@ -46,6 +44,10 @@ public class SectorPrint extends HttpServlet {
 	private ShopModel shopModel;
 	private SectorModel sectorModel;
 	private RackModel rackModel;
+	private UserModel userModel;
+	private RackStateModel rackStateModel;
+
+	private static final int countColumns = 6;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -53,6 +55,8 @@ public class SectorPrint extends HttpServlet {
 		shopModel = ShopModel.getInstance();
 		sectorModel = SectorModel.getInstance();
 		rackModel = RackModel.getInstance();
+		userModel = UserModel.getInstance();
+		rackStateModel = RackStateModel.getInstance();
 	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse resp) throws IOException {
@@ -85,32 +89,24 @@ public class SectorPrint extends HttpServlet {
 			final PdfContentByte cb = writer.getDirectContent();
 			final float m = Math.max(sector.getLength() / (pageSize.getWidth() - marginLeft - marginRight), sector.getWidth() / (pageSize.getHeight() - marginTop - marginTitle - marginBottom));
 
-			final String title=shop.getName_shop() + " (" + sector.getName_sector() + ") от "+ FormattingUtils.datetime2String(sector.getDate_update());
+			final String title = shop.getName_shop() + " (" + sector.getName_sector() + ") от " + FormattingUtils.datetime2String(sector.getDate_update());
 			Paragraph p = new Paragraph(title, font);
 			p.setAlignment(Element.ALIGN_CENTER);
 			document.add(p);
 
 			drawSector(cb, sector, m, pageSize);
 
-			for (int index=0; index<rackList.size(); index++) {
-				final Rack2D rack2D=rackList.get(index);
-				drawRack2D(cb, rack2D, index+1, m, pageSize, baseFont);
+			for (int index = 0; index < rackList.size(); index++) {
+				final Rack2D rack2D = rackList.get(index);
+				drawRack2D(cb, rack2D, index + 1, m, pageSize, baseFont);
 			}
 			document.setPageSize(PageSize.A4);
 			document.newPage();
 
-			final PdfPTable table = new PdfPTable(8);
+			final PdfPTable table = new PdfPTable(countColumns);
 			table.setWidthPercentage(100);
 
-			int widths[] = new int[8];
-			widths[0] = 5;
-			widths[1] = 31;
-			widths[2] = 22;
-			widths[3] = 9;
-			widths[4] = 9;
-			widths[5] = 9;
-			widths[6] = 8;
-			widths[7] = 7;
+			int widths[] = {5, 31, 17, 17, 19, 11};
 			table.setWidths(widths);
 			PdfPCell cell;
 			cell = new PdfPCell(new Paragraph("№", font));
@@ -125,53 +121,49 @@ public class SectorPrint extends HttpServlet {
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			table.addCell(cell);
-			cell = new PdfPCell(new Paragraph("Сторона загрузки", font));
+			cell = new PdfPCell(new Paragraph("Дата редактирования", font));
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			table.addCell(cell);
-			cell = new PdfPCell(new Paragraph("Тип", font));
+			cell = new PdfPCell(new Paragraph("Редактор", font));
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			table.addCell(cell);
-			cell = new PdfPCell(new Paragraph("Ширина", font));
+			cell = new PdfPCell(new Paragraph("Состояние", font));
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			table.addCell(cell);
-			cell = new PdfPCell(new Paragraph("Высота", font));
-			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			table.addCell(cell);
-			cell = new PdfPCell(new Paragraph("Длина", font));
-			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			table.addCell(cell);
-			for (int index=0; index<rackList.size(); index++) {
-				final Rack2D rack2D=rackList.get(index);
+			for (int index = 0; index < rackList.size(); index++) {
+				final Rack2D rack2D = rackList.get(index);
 				if (rack2D.getRack().getType_race() != TypeRack.DZ) {
-					table.addCell(new PdfPCell(new Paragraph(String.valueOf(index+1), font)));
+					// №
+					table.addCell(new PdfPCell(new Paragraph(String.valueOf(index + 1), font)));
+					// Наименование
 					table.addCell(new PdfPCell(new Paragraph(rack2D.getRack().getName_rack(), font)));
-
+					// Штрихкод
 					try {
 						BarcodeEAN codeEAN = new BarcodeEAN();
 						codeEAN.setCode(rack2D.getRack().getRack_barcode());
-						cell=new PdfPCell(codeEAN.createImageWithBarcode(cb, null, null));
+						cell = new PdfPCell(codeEAN.createImageWithBarcode(cb, null, null));
 						cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 						table.addCell(cell);
 					} catch (Exception e) {
 						table.addCell(new PdfPCell(new Paragraph(rack2D.getRack().getRack_barcode(), font)));
 					}
-
-					table.addCell(new PdfPCell(new Paragraph(rack2D.getRack().getLoad_side().getDesc(), font)));
-					table.addCell(new PdfPCell(new Paragraph(rack2D.getRack().getType_race().getDesc(), font)));
-					table.addCell(new PdfPCell(new Paragraph(String.valueOf(rack2D.getRack().getWidth()), font)));
-					table.addCell(new PdfPCell(new Paragraph(String.valueOf(rack2D.getRack().getHeight()), font)));
-					table.addCell(new PdfPCell(new Paragraph(String.valueOf(rack2D.getRack().getLength()), font)));
+					// Дата редактирования
+					table.addCell(new PdfPCell(new Paragraph(FormattingUtils.datetime2String(rack2D.getRack().getDate_update()), font)));
+					// Редактор
+					final String fullName = userModel.getFullName(userContext, rack2D.getRack().getUser_update());
+					table.addCell(new PdfPCell(new Paragraph(fullName, font)));
+					// Состояние
+					final RackState rackState = rackStateModel.select(userContext, rack2D.getRack().getCode_rack());
+					table.addCell(new PdfPCell(new Paragraph(rackState.getState_rack().getDesc(), font)));
 				}
 			}
 			document.add(table);
 			document.close();
 		} catch (Exception e) {
-			LOG.error("Error print sector",e);
+			LOG.error("Error print sector", e);
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 		time = System.currentTimeMillis() - time;

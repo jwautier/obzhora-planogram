@@ -30,7 +30,7 @@ public class SectorList extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_SECTOR_LIST;
 
-	public static final Logger LOG = Logger.getLogger(SectorList.class);
+	private static final Logger LOG = Logger.getLogger(SectorList.class);
 
 	private SectorModel sectorModel;
 

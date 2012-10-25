@@ -32,7 +32,7 @@ public class SectorEdit extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_SECTOR_EDIT;
 
-	public static final Logger LOG = Logger.getLogger(SectorEdit.class);
+	private static final Logger LOG = Logger.getLogger(SectorEdit.class);
 
 	private SectorModel sectorModel;
 	private RackModel rackModel;

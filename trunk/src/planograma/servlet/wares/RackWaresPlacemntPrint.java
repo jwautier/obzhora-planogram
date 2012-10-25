@@ -35,7 +35,7 @@ import java.util.List;
 public class RackWaresPlacemntPrint extends HttpServlet {
 	public static final String URL = UrlConst.URL_RACK_WARES_PLACEMENT_PRINT;
 
-	public static final Logger LOG = Logger.getLogger(RackWaresPlacemntPrint.class);
+	private static final Logger LOG = Logger.getLogger(RackWaresPlacemntPrint.class);
 
 	private static final float marginLeft = 28;
 	private static final float marginRight = 28;
@@ -190,7 +190,7 @@ public class RackWaresPlacemntPrint extends HttpServlet {
 			document.add(table);
 			document.close();
 		} catch (Exception e) {
-			LOG.error("Error print rack",e);
+			LOG.error("Error print rack", e);
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 		time = System.currentTimeMillis() - time;
@@ -250,13 +250,16 @@ public class RackWaresPlacemntPrint extends HttpServlet {
 		cb.closePathStroke();
 
 		cb.beginText();
-		float minSize = Math.min(rackWares2D.getRackWares().getWares_width(), rackWares2D.getRackWares().getWares_length()) / m;
 		final String indexStr = String.valueOf(rackWares2D.getRackWares().getOrder_number_on_rack());
-		float wM = minSize / baseFont.getWidthPoint(indexStr, Font.DEFAULTSIZE);
+		float w = rackWares2D.getRackWares().getWares_width() / m - 1;
+		float h = rackWares2D.getRackWares().getWares_height() / m - 1;
+		float mW = w / baseFont.getWidthPoint(indexStr, Font.DEFAULTSIZE);
+		float mH = h / Font.DEFAULTSIZE;
+		float mFontSsize = Math.min(mW, mH);
 		float x = marginLeft + rackWares2D.getRackWares().getPosition_x() / m;
 		float y = y0 + rackWares2D.getRackWares().getPosition_y() / m;
-		cb.moveText(x - minSize / 2, y - minSize / 3F);
-		cb.setFontAndSize(baseFont, Font.DEFAULTSIZE * wM);
+		cb.moveText(x + 0.5f - w / 2, y - 0.5f - h / 3F);
+		cb.setFontAndSize(baseFont, Font.DEFAULTSIZE * mFontSsize);
 		cb.showText(indexStr);
 		cb.endText();
 
@@ -276,7 +279,7 @@ public class RackWaresPlacemntPrint extends HttpServlet {
 		try {
 			BarcodeEAN codeEAN = new BarcodeEAN();
 			codeEAN.setCode(oldRackWares.getRackWares().getBar_code());
-			PdfPCell cell=new PdfPCell(codeEAN.createImageWithBarcode(cb, null, null));
+			PdfPCell cell = new PdfPCell(codeEAN.createImageWithBarcode(cb, null, null));
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(cell);
 		} catch (Exception e) {

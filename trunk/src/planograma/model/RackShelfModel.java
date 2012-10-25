@@ -18,9 +18,9 @@ import java.util.List;
  */
 public class RackShelfModel {
 
-	public static final Logger LOG = Logger.getLogger(RackShelfModel.class);
+	private static final Logger LOG = Logger.getLogger(RackShelfModel.class);
 
-	public static final String Q_LIST = "select " +
+	private static final String Q_SELECT_FROM = "select " +
 			" " + RackShelfConst.CODE_RACK + "," +
 			" " + RackShelfConst.CODE_SHELF + "," +
 			" " + RackShelfConst.X_COORD + "," +
@@ -34,7 +34,9 @@ public class RackShelfModel {
 			" " + RackShelfConst.DATE_INSERT + "," +
 			" " + RackShelfConst.USER_UPDATE + "," +
 			" " + RackShelfConst.DATE_UPDATE + " " +
-			"from " + RackShelfConst.TABLE_NAME + " " +
+			"from ";
+
+	private static final String Q_LIST = Q_SELECT_FROM + RackShelfConst.TABLE_NAME + " " +
 			"where " + RackShelfConst.CODE_RACK + "=? ";
 
 	public List<RackShelf> list(final UserContext userContext, final int code_rack) throws SQLException {
@@ -53,21 +55,7 @@ public class RackShelfModel {
 		return list;
 	}
 
-	public static final String Q_SELECT = "select" +
-			" " + RackShelfConst.CODE_RACK + "," +
-			" " + RackShelfConst.CODE_SHELF + "," +
-			" " + RackShelfConst.X_COORD + "," +
-			" " + RackShelfConst.Y_COORD + "," +
-			" " + RackShelfConst.SHELF_HEIGHT + "," +
-			" " + RackShelfConst.SHELF_WIDTH + "," +
-			" " + RackShelfConst.SHELF_LENGTH + "," +
-			" " + RackShelfConst.ANGLE + "," +
-			" " + RackShelfConst.TYPE_SHELF + "," +
-			" " + RackShelfConst.USER_INSERT + "," +
-			" " + RackShelfConst.DATE_INSERT + "," +
-			" " + RackShelfConst.USER_UPDATE + "," +
-			" " + RackShelfConst.DATE_UPDATE + " " +
-			"from " + RackShelfConst.TABLE_NAME + " " +
+	private static final String Q_SELECT = Q_SELECT_FROM + RackShelfConst.TABLE_NAME + " " +
 			"where " + RackShelfConst.CODE_SHELF + " = ?";
 
 	public RackShelf select(final UserContext userContext, final int code_shelf) throws SQLException {
@@ -85,7 +73,7 @@ public class RackShelfModel {
 		return rackShelf;
 	}
 
-	public static final String Q_INSERT_UPDATE = "{call :new_code_shelf := EUGENE_SAZ.SEV_PKG_PLANOGRAMS.IUShelf(" +
+	private static final String Q_INSERT_UPDATE = "{call :new_code_shelf := EUGENE_SAZ.SEV_PKG_PLANOGRAMS.IUShelf(" +
 			":mode, " +
 			":" + RackShelfConst.CODE_RACK + ", " +
 			":" + RackShelfConst.CODE_SHELF + ", " +

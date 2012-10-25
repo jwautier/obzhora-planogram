@@ -21,9 +21,9 @@ import java.util.List;
  */
 public class RackShelfHModel {
 
-	public static final Logger LOG = Logger.getLogger(RackShelfHModel.class);
+	private static final Logger LOG = Logger.getLogger(RackShelfHModel.class);
 
-	public static final String Q_LIST = "select " +
+	private static final String Q_LIST = "select " +
 			" " + RackShelfHConst.CODE_RACK + "," +
 			" " + RackShelfHConst.CODE_SHELF + "," +
 			" " + RackShelfHConst.X_COORD + "," +

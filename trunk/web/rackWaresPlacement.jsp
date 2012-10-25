@@ -72,7 +72,7 @@
 							</tr>
 							<tr><td></td></tr>
 							<tr>
-								<td><a href="#" onclick="return aOnClick(this, fRackShelfAdd)"><%=JspUtils.toMenuTitle("Добавить полку")%></a></td>
+								<td><a href="#" onclick="return aOnClick(this, fRackShelfAdd)" class="<%=access_rack_shelf_edit%>"><%=JspUtils.toMenuTitle("Добавить полку")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" onclick="return aOnClick(this, fAddWares)" class="<%=access_rack_wares_placement%>"><%=JspUtils.toMenuTitle("Добавить товар")%></a></td>
@@ -183,32 +183,32 @@
 										</tr>
 										<tr>
 											<td align="right">x&nbsp;</td>
-											<td><input type="text" id="shelfX" onchange="changeShelfX(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+											<td><input type="text" id="shelfX" onchange="changeShelfX(this)" onkeydown="numberFieldKeyDown(event, this)" disabled="<%=access_rack_shelf_edit%>"/></td>
 										</tr>
 										<tr>
 											<td align="right">y&nbsp;</td>
-											<td><input type="text" id="shelfY" onchange="changeShelfY(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+											<td><input type="text" id="shelfY" onchange="changeShelfY(this)" onkeydown="numberFieldKeyDown(event, this)" disabled="<%=access_rack_shelf_edit%>"/></td>
 										</tr>
 										<tr>
 											<td align="right">угол&nbsp;</td>
-											<td><input type="text" id="shelfAngle" onchange="changeShelfAngle(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+											<td><input type="text" id="shelfAngle" onchange="changeShelfAngle(this)" onkeydown="numberFieldKeyDown(event, this)" disabled="<%=access_rack_shelf_edit%>"/></td>
 										</tr>
 										<tr>
 											<td align="right">ширина</td>
-											<td><input type="text" id="shelfWidth" onchange="changeShelfWidth(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+											<td><input type="text" id="shelfWidth" onchange="changeShelfWidth(this)" onkeydown="numberFieldKeyDown(event, this)" disabled="<%=access_rack_shelf_edit%>"/></td>
 										</tr>
 										<tr>
 											<td align="right">высота</td>
-											<td><input type="text" id="shelfHeight" onchange="changeShelfHeight(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+											<td><input type="text" id="shelfHeight" onchange="changeShelfHeight(this)" onkeydown="numberFieldKeyDown(event, this)" disabled="<%=access_rack_shelf_edit%>"/></td>
 										</tr>
 										<tr>
 											<td align="right">глубина</td>
-											<td><input type="text" id="shelfLength" onchange="changeShelfLength(this)" onkeydown="numberFieldKeyDown(event, this)"/></td>
+											<td><input type="text" id="shelfLength" onchange="changeShelfLength(this)" onkeydown="numberFieldKeyDown(event, this)" disabled="<%=access_rack_shelf_edit%>"/></td>
 										</tr>
 										<tr>
 											<td align="right">тип</td>
 											<td>
-												<select id="shelfType" onchange="changeShelfType(this)">
+												<select id="shelfType" onchange="changeShelfType(this)" disabled="<%=access_rack_shelf_edit%>">
 													<%
 														for (final TypeShelf typeShelf:TypeShelf.values())
 														{
@@ -318,6 +318,7 @@ window.d_wares_width = 1;
 window.d_wares_height = 1;
 
 var canRackWaresPlacement='<%=access_rack_wares_placement%>';
+var canRackShelfEdit='<%=access_rack_shelf_edit%>';
 /**
 * линейка
  * state (0 не выбрана, 1 выбор первой точки, 2 выбор второй точки, 3 линейка задана)
@@ -440,7 +441,7 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 		}
 	}
 
-	function fSelectRackWares() {
+	function fRackWaresPlacementSelect() {
 		if (window.selectRackWaresList.length > 0) {
 			if (canRackWaresPlacement!='disabled')
 			{
@@ -466,6 +467,7 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 				$('#waresHeight').text(rackWares.wares_height);
 				$('#waresLength').text(rackWares.wares_length);
 				$('#waresCountInLength').val(rackWares.count_length_on_shelf);
+				$('#shelfPanel').hide();
 				$('#waresPanel').show();
 			} else {
 				$('#waresPanel').hide();
@@ -473,25 +475,35 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 		}
 		else {
 			$('#waresPanel').hide();
-			$('#butCopy').addClass('disabled');
-			$('#butCut').addClass('disabled');
-			$('#butCopyBuffer').addClass('disabled');
+			if (window.shelf != null) {
+				if (canRackShelfEdit!='disabled')
+				{
+					$('#butCopy').removeClass('disabled');
+					$('#butCut').removeClass('disabled');
+					$('#butCopyBuffer').removeClass('disabled');
+				}
+				$('#shelfX').val(shelf.x_coord);
+				$('#shelfY').val(shelf.y_coord);
+				$('#shelfAngle').val(shelf.angle);
+				$('#shelfWidth').val(shelf.shelf_width);
+				$('#shelfHeight').val(shelf.shelf_height);
+				$('#shelfLength').val( shelf.shelf_length);
+				$('#shelfType').val(shelf.type_shelf);
+				$('#shelfPanel').show();
+			} else {
+				$('#shelfPanel').hide();
+				$('#butCopy').addClass('disabled');
+				$('#butCut').addClass('disabled');
+				$('#butCopyBuffer').addClass('disabled');
+			}
 		}
+
+		if (window.copyObjectList.length > 0 || window.copyShelf!=null)
+			$('#butPaste').removeClass('disabled');
 	}
 
 	function selectShelf(shelf) {
-		if (shelf != null) {
-			$('#shelfX').val(shelf.x_coord);
-			$('#shelfY').val(shelf.y_coord);
-			$('#shelfAngle').val(shelf.angle);
-			$('#shelfWidth').val(shelf.shelf_width);
-			$('#shelfHeight').val(shelf.shelf_height);
-			$('#shelfLength').val( shelf.shelf_length);
-			$('#shelfType').val(shelf.type_shelf);
-			$('#shelfPanel').show();
-		} else {
-			$('#shelfPanel').hide();
-		}
+		fRackWaresPlacementSelect();
 	}
 
 	function ie_event(e) {
@@ -619,12 +631,17 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 			if (rackWaresIntersects.length > 0) {
 				alert("Сохранение отменено.\n Существуют товары которые пересекаются.\n Переместите их или удалите.");
 				window.selectRackWaresList = rackWaresIntersects;
-				fSelectRackWares();
+				fRackWaresPlacementSelect();
 				drawEditCanvas();
 				drawPreviewCanvas();
 			}
 			else {
-				postJson('<%=RackWaresPlacementSave.URL%>', {code_rack:window.rack.code_rack, rackShelfList:window.rackShelfList, rackWaresList:window.rackWaresList}, function (data) {
+				var data= {code_rack:window.rack.code_rack, rackWaresList:window.rackWaresList};
+				if (canRackShelfEdit!='disabled'){
+					data.rackShelfList= window.rackShelfList;
+				}
+				postJson('<%=RackWaresPlacementSave.URL%>', data,
+					function (data) {
 					loadComplete();
 				});
 			}
@@ -632,7 +649,7 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 		else {
 			alert("Сохранение отменено");
 			window.selectRackWaresList = rackWaresOutside;
-			fSelectRackWares();
+			fRackWaresPlacementSelect();
 			drawEditCanvas();
 			drawPreviewCanvas();
 		}
@@ -682,7 +699,7 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 				window.ruler.state=3;
 			}
 			else
-			if (window.shelfAdd==true)
+			if (canRackShelfEdit!='disabled' && window.shelfAdd==true)
 			{
 				if (sx>0 && sy>0 && sx<window.rack.width && sy<window.rack.height){
 					window.shelfAdd=false;
@@ -758,9 +775,6 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 						d4 = new Segment2D(p4,p1).distance(pClick);
 						if ((d1 >= 0 && d2 >= 0 && d3 >= 0 && d4 >= 0) || (d1 <= 0 && d2 <= 0 && d3 <= 0 && d4 <= 0)) {
 							window.shelf = window.rackShelfList[i];
-							$('#butCopy').addClass('disabled');
-							$('#butCut').addClass('disabled');
-							$('#butCopyBuffer').addClass('disabled');
 						}
 					}
 					if (window.shelf != null)
@@ -768,7 +782,7 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 						x = evnt.clientX;
 						y = evnt.clientY;
 						window.editMove = 1;
-						if (window.shelf.shelf_width >= 7 * window.km && window.shelf.shelf_height >= 7 * window.km) {
+						if (window.shelf.shelf_width >= 7 * window.km && window.shelf.shelf_height >= 7 * window.km && canRackShelfEdit!='disabled') {
 							if (Math.abs(d1) < 3 * window.km) {
 								// восток
 								window.editMove += 2;
@@ -795,14 +809,13 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 					}
 				}
 			}
-			fSelectRackWares();
-			selectShelf(window.shelf);
+			fRackWaresPlacementSelect();
 			drawEditCanvas();
 			drawPreviewCanvas();
 		}
 
 		window.edit_canvas.onmouseup = function(e) {
-			if (window.shelf!=null)
+			if (window.shelf!=null && canRackShelfEdit!='disabled')
 			{
 				roundShelf(window.shelf);
 			}
@@ -928,7 +941,7 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 				}
 				window.m_select=0;
 			}
-			fSelectRackWares();
+			fRackWaresPlacementSelect();
 			drawEditCanvas();
 			drawPreviewCanvas();
 		}
@@ -950,7 +963,7 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 				drawEditCanvas();
 			}
 			else
-			if (window.editMove != 0 && window.shelf != null) {
+			if (window.editMove != 0 && window.shelf != null && canRackShelfEdit!='disabled') {
 
 				var dx = (evnt.clientX - x) * window.km;
 				var dy = -(evnt.clientY - y) * window.km;
@@ -1113,13 +1126,16 @@ var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 		postJson('<%=BufferSet.URL%>', {copyObjectList:copyObjectList}, null);
 	}
 
-	function fPasteBuffer()
-	{
-		postJson('<%=BufferGet.URL%>', null, function (data){
-			window.copyObjectList=data.copyObjectList;
-			if (window.copyObjectList.length>0)
-			{
-				window.flagPaste=1;
+	function fPasteBuffer() {
+		postJson('<%=BufferGet.URL%>', null, function (data) {
+			if (data.copyObjectList != null) {
+				window.copyObjectList = data.copyObjectList;
+			} else {
+				window.copyObjectList = [];
+				alert("Буфер обмена пуст")
+			}
+			if (window.copyObjectList.length > 0) {
+				window.flagPaste = 1;
 			}
 		});
 	}
