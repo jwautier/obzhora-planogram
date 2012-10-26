@@ -29,6 +29,10 @@ function Point2D(x, y) {
 		}
 		return (flagMinus||flagPlus);
 	}
+	this.distance = function(p)
+	{
+		return Math.sqrt((x- p.x)*(x- p.x)+(y- p.y)*(y- p.y));
+	}
 }
 function Segment2D(p1, p2) {
 	this.p1 = p1;
