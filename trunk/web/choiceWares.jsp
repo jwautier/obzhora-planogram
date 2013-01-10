@@ -97,6 +97,9 @@
 						<table>
 							<tr>
 								<td>
+									<input type="checkbox" id="selectAll" title="Выделить всё" onchange="if (this.checked) {$('input:checkbox[name=code_wares]').attr('checked','checked')}else{$('input:checkbox[name=code_wares]').removeAttr('checked')}">
+								</td>
+								<td>
 									<input type="text" id="searchText"/>
 								</td>
 								<td>
@@ -220,7 +223,7 @@
 		$('#treeview p.selectNode').removeClass('selectNode');
 		var p=$(obj).parent();
 		p.addClass('selectNode');
-		var code_group_wares = p.attr('id');
+		var code_group_wares= p.attr('id');
 
 		var data = {code_group_wares:code_group_wares};
 		if ($('#forShop').prop("checked")) {
