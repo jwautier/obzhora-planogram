@@ -7,6 +7,10 @@ package planograma.constant;
  */
 public interface VerificationConst {
 	/**
+	 * Минимальные габариты зала
+	 */
+	public static final int MIN_SECTOR_DIMENSIONS = 1000;
+	/**
 	 * минимальные габариты стеллажа
 	 */
 	public static final int MIN_RACK_DIMENSIONS = 10;

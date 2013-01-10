@@ -37,6 +37,7 @@
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_PreviewPanelListener.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_rackWaresCalcCoordinates.js"></script>
 	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_WaresPanelListener.js"></script>
+	<script type="text/javascript" src="js/rackWaresPlacement/rackWaresPlacement_fAddBasket.js"></script>
 	<link rel="stylesheet" href="css/planograma.css"/>
 </head>
 <body onload="loadComplete();">
@@ -94,6 +95,9 @@
 							</tr>
 							<tr>
 								<td><a href="#" id="butPasteBuffer" onclick="return aOnClick(this, fPasteBuffer)"><%=JspUtils.toMenuTitle("Вставить из буфера")%></a></td>
+							</tr>
+							<tr>
+								<td><a href="#" id="butAddBasket" onclick="return aOnClick(this, fAddBasket)"><%=JspUtils.toMenuTitle("Вернуть в корзину")%></a></td>
 							</tr>
 							<tr>
 								<td height="100%"></td>
@@ -212,7 +216,7 @@
 										</tr>
 										<tr>
 											<td align="right">тип</td>
-											<td>
+											<td >
 												<select id="shelfType" onchange="changeShelfType(this)" disabled="<%=access_rack_shelf_edit%>">
 													<%
 														for (final TypeShelf typeShelf:TypeShelf.values())
@@ -499,11 +503,11 @@ var canRackShelfEdit='<%=access_rack_shelf_edit%>';
 				$('#shelfPanel').show();
 			} else {
 				$('#shelfPanel').hide();
-				$('#butCopy').addClass('disabled');
-				$('#butCut').addClass('disabled');
-				$('#butCopyBuffer').addClass('disabled');
-			}
+			$('#butCopy').addClass('disabled');
+			$('#butCut').addClass('disabled');
+			$('#butCopyBuffer').addClass('disabled');
 		}
+	}
 
 		if (window.copyObjectList.length > 0 || window.copyShelf!=null)
 			$('#butPaste').removeClass('disabled');
@@ -511,7 +515,7 @@ var canRackShelfEdit='<%=access_rack_shelf_edit%>';
 
 	function selectShelf(shelf) {
 		fRackWaresPlacementSelect();
-	}
+				}
 
 	function ie_event(e) {
 		if (e === undefined) {
@@ -665,13 +669,74 @@ var canRackShelfEdit='<%=access_rack_shelf_edit%>';
 				drawPreviewCanvas();
 			}
 			else {
-				var data= {code_rack:window.rack.code_rack, rackWaresList:window.rackWaresList};
-				if (canRackShelfEdit!='disabled'){
-					data.rackShelfList= window.rackShelfList;
+				var data = {code_rack: window.rack.code_rack, rackWaresList: window.rackWaresList};
+				if (canRackShelfEdit != 'disabled') {
+					data.rackShelfList = window.rackShelfList;
 				}
 				postJson('<%=RackWaresPlacementSave.URL%>', data,
-					function (data) {
+						function (data) {
+							if (data.errorField != null && data.errorField.length > 0) {
+								// есть ошибки
+								var setFocus = null;
+								var error_message = "";
+								for (var i = 0; i < data.errorField.length; i++) {
+									error_message += data.errorField[i].message + '\n';
+									/*if (setFocus == null) {
+									 switch (data.errorField[i].entityClass) {
+									 case '<=RackTemplate.class.getName()%>':
+									 if (data.errorField[i].fieldName != null) {
+									 switch (data.errorField[i].fieldName) {
+									 case '<=RackTemplateConst.HEIGHT%>':
+									 setFocus = $('#rackTemplateHeight');
+									 break;
+									 case '<=RackTemplateConst.WIDTH%>':
+									 setFocus = $('#rackTemplateWidth');
+									 break;
+									 case '<=RackTemplateConst.LENGTH%>':
+									 setFocus = $('#rackTemplateLength');
+									 break;
+									 case '<=RackTemplateConst.REAL_HEIGHT%>':
+									 setFocus = $('#rackTemplateRealHeight');
+									 break;
+									 case '<=RackTemplateConst.REAL_WIDTH%>':
+									 setFocus = $('#rackTemplateRealWidth');
+									 break;
+									 case '<=RackTemplateConst.REAL_LENGTH%>':
+									 setFocus = $('#rackTemplateRealLength');
+									 break;
+									 }
+									 }
+									 break;
+									 case '<=RackShelfTemplate.class.getName()%>':
+									 window.shelf = window.rackShelfTemplateList[data.errorField[i].entityIndex];
+									 selectShelf(window.shelf);
+									 if (data.errorField[i].fieldName != null) {
+									 switch (data.errorField[i].fieldName) {
+									 case '<=RackShelfTemplateConst.SHELF_WIDTH%>':
+									 setFocus = $('#shelfWidth');
+									 break;
+									 case '<=RackShelfTemplateConst.SHELF_HEIGHT%>':
+									 setFocus = $('#shelfHeight');
+									 break;
+									 case '<=RackShelfTemplateConst.SHELF_LENGTH%>':
+									 setFocus = $('#shelfLength');
+									 break;
+									 case 'outside':
+									 setFocus = $('#shelfWidth');
+									 break;
+									 }
+									 }
+									 break;
+									 }
+									 }*/
+								}
+								alert(error_message);
+								if (setFocus != null) {
+									setFocus.focus();
+								}
+							} else {
 					loadComplete();
+							}
 				});
 			}
 		}
@@ -846,6 +911,7 @@ var canRackShelfEdit='<%=access_rack_shelf_edit%>';
 		window.edit_canvas.onmouseup = function(e) {
 			if (window.shelf!=null && canRackShelfEdit!='disabled')
 			{
+				adhesionShelf(window.shelf)
 				roundShelf(window.shelf);
 			}
 			if (window.flagPaste==2)
@@ -1167,16 +1233,17 @@ var canRackShelfEdit='<%=access_rack_shelf_edit%>';
 		postJson('<%=BufferSet.URL%>', {copyObjectList:copyObjectList}, null);
 	}
 
-	function fPasteBuffer() {
-		postJson('<%=BufferGet.URL%>', null, function (data) {
+	function fPasteBuffer()
+	{
+		postJson('<%=BufferGet.URL%>', null, function (data){
 			if (data.copyObjectList != null) {
-				window.copyObjectList = data.copyObjectList;
+			window.copyObjectList=data.copyObjectList;
 			} else {
 				window.copyObjectList = [];
 				alert("Буфер обмена пуст")
 			}
 			if (window.copyObjectList.length > 0) {
-				window.flagPaste = 1;
+				window.flagPaste=1;
 			}
 		});
 	}

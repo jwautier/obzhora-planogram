@@ -380,15 +380,15 @@
 		document.getElementById('rackName').value = window.rack.name_rack;
 		document.getElementById('rackLoadSide').value = window.rack.load_side;
 		document.getElementById('rackBarcode').value = window.rack.rack_barcode;
-		document.getElementById('rackWidth').value = window.rack.width;
-		document.getElementById('rackRealWidth').value = window.rack.real_width;
-		document.getElementById('rackHeight').value = window.rack.height;
-		document.getElementById('rackRealHeight').value = window.rack.real_height;
-		document.getElementById('rackLength').value = window.rack.length;
-		document.getElementById('rackRealLength').value = window.rack.real_length;
-		document.getElementById('rackX_offset').value = window.rack.x_offset;
-		document.getElementById('rackY_offset').value = window.rack.y_offset;
-		document.getElementById('rackZ_offset').value = window.rack.z_offset;
+		document.getElementById('rackWidth').value =window.rack.width;
+		document.getElementById('rackRealWidth').value =window.rack.real_width;
+		document.getElementById('rackHeight').value =window.rack.height;
+		document.getElementById('rackRealHeight').value =window.rack.real_height;
+		document.getElementById('rackLength').value =window.rack.length;
+		document.getElementById('rackRealLength').value =window.rack.real_length;
+		document.getElementById('rackX_offset').value =window.rack.x_offset;
+		document.getElementById('rackY_offset').value =window.rack.y_offset;
+		document.getElementById('rackZ_offset').value =window.rack.z_offset;
 	}
 
 	function selectShelf(shelf) {

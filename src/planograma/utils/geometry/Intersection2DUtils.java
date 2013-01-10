@@ -56,4 +56,14 @@ public class Intersection2DUtils {
 		else
 			return null;
 	}
+
+	public static boolean isIntersection(ConvexQuadrilateral2D a, ConvexQuadrilateral2D b)
+	{
+		boolean intersect=false;
+		if (a.getMaxX()>=b.getMinX() && a.getMinX()<=b.getMaxX() &&
+			a.getMaxY()>=b.getMinY() && a.getMinY()<=b.getMaxY()){
+			// четырехугольники возможно пересекаются необходима детализация
+		}
+		return intersect;
+	}
 }

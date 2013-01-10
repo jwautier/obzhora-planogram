@@ -15,14 +15,12 @@ import planograma.data.RackShelfTemplate;
 import planograma.data.RackTemplate;
 import planograma.data.UserContext;
 import planograma.data.geometry.RackShelfTemplate2D;
-import planograma.data.geometry.RackTemplate2D;
 import planograma.exception.EntityFieldException;
 import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
 import planograma.model.RackShelfTemplateModel;
 import planograma.model.RackTemplateModel;
 import planograma.servlet.AbstractAction;
-import planograma.utils.geometry.Inside2DUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -118,8 +116,8 @@ public class RackTemplateSave extends AbstractAction {
 		}
 
 		// полки по высоте глубине и ширине должны быть больше 5мм(не сохраняется, выделяется одна из полок)
-		for (int i=0; i<itemList.size(); i++) {
-			final RackShelfTemplate newItem=itemList.get(i);
+		for (int i = 0; i < itemList.size(); i++) {
+			final RackShelfTemplate newItem = itemList.get(i);
 			if (newItem.getShelf_width() < VerificationConst.MIN_RACK_SHELF_DIMENSIONS) {
 				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_SHELF_WIDTH_TOO_LITTLE(), RackShelfTemplate.class, i, newItem.getCode_shelf_template(), RackShelfTemplateConst.SHELF_WIDTH));
 			}
@@ -131,19 +129,31 @@ public class RackTemplateSave extends AbstractAction {
 			}
 		}
 		// полка не может выходить за пределы стеллажа(не сохраняется, выделяется одна из полок)
-		final RackTemplate2D rackTemplate2D =new RackTemplate2D(rackTemplate);
-		for (int i=0; i<itemList.size(); i++) {
-			final RackShelfTemplate2D shelf2D=new RackShelfTemplate2D(itemList.get(i));
-			if (!Inside2DUtils.inside(shelf2D,rackTemplate2D))
-			{
-				// TODO ширина полки относительно стороны загрузки
-//				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_SHELF_OUTSIDE_RACK(), RackShelfTemplate.class, i, shelf2D.getRackShelfTemplate().getCode_shelf_template(), "outside"));
+		float dx;
+		float dy;
+		float dz;
+		// относительно стороны загрузки
+		if (rackTemplate.getLoad_side() == LoadSide.F) {
+			dx = rackTemplate.getLength();
+			dy = rackTemplate.getHeight();
+			dz = rackTemplate.getWidth();
+		} else {
+			dx = rackTemplate.getLength();
+			dy = rackTemplate.getWidth();
+			dz = rackTemplate.getHeight();
+		}
+		for (int i = 0; i < itemList.size(); i++) {
+			final RackShelfTemplate rackShelfTemplate = itemList.get(i);
+			final RackShelfTemplate2D shelf2D = new RackShelfTemplate2D(rackShelfTemplate);
+			if (shelf2D.getMinX() < 0 ||
+					shelf2D.getMaxX() > dx ||
+					shelf2D.getMinY() < 0 ||
+					shelf2D.getMaxY() > dy ||
+					rackShelfTemplate.getShelf_length() < 0 ||
+					rackShelfTemplate.getShelf_length() > dz) {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_SHELF_OUTSIDE_RACK(), RackShelfTemplate.class, i, shelf2D.getRackShelfTemplate().getCode_shelf_template(), "outside"));
 			}
 		}
-
-
-//		полки по высоте глубине и ширине должны быть больше 5мм(не сохраняется, выделяется одна из полок)
-//		полка не может выходить за пределы стеллажа(не сохраняется, выделяется одна из полок)
 
 		final JsonObject jsonObject = new JsonObject();
 		if (fieldExceptionList.isEmpty()) {
