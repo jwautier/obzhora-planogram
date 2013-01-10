@@ -59,6 +59,11 @@ public class PlanogramMessage {
 		return getMessage("RACK_OVERFLOW_WARES");
 	}
 
+	public static String RACK_INTERSECT()
+	{
+		return getMessage("RACK_INTERSECT");
+	}
+
 	public static String RACK_SHELF_HEIGHT_TOO_LITTLE() {
 		return getMessage("RACK_SHELF_HEIGHT_TOO_LITTLE");
 	}

@@ -1,5 +1,5 @@
 <%@ page import="planograma.data.TypeShelf" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="application/javascript;charset=UTF-8" language="java" %>
 // прорисовка элементов
 // TODO
 <%--<script type="text/javascript">--%>

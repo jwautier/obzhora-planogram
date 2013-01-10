@@ -105,10 +105,9 @@
 		if (code_shop != null && code_shop != '') {
 			var shopList = $('#shopList');
 			var option = shopList.find('option[value=' + code_shop + ']');
-			if (option.length==1) {
+			if (option.length == 1) {
 				option.attr('selected', 'selected');
-				if (canSectorEdit!='disabled')
-				{
+				if (canSectorEdit != 'disabled') {
 					$('#sectorAdd').removeClass('disabled');
 				}
 				$('#sectorPrint').addClass('disabled');
@@ -119,16 +118,23 @@
 				$('#sectorRemove').addClass('disabled');
 				$('#preview_canvas').hide();
 				setCookie('code_shop', code_shop);
-				postJson('<%=SectorList.URL%>', {code_shop:code_shop}, function (data) {
+				postJson('<%=SectorList.URL%>', {code_shop: code_shop}, function (data) {
+					var code_sector = getCookie('code_sector');
+					var sectorIsSelect = false;
 					var sectorList = $('#sectorList');
 					sectorList.empty();
 					for (var i in data.sectorList) {
 						var item = data.sectorList[i];
 						sectorList.append('<option value="' + item.code_sector + '">' + item.name_sector + '</option>')
+
+						if (item.code_sector == code_sector) {
+							selectSector(code_sector);
+							sectorIsSelect = true;
+						}
 					}
-					var code_sector = getCookie('code_sector');
-					if (code_sector != null && code_sector.length>0) {
-						selectSector(code_sector);
+
+					if (sectorIsSelect == false && data.sectorList.length == 1) {
+						selectSector(data.sectorList[0].code_sector);
 					}
 				});
 			}

@@ -417,12 +417,21 @@ public class Rack implements IJsonObject {
 		date_insert = JsonUtils.getDate(rackJson, RackConst.DATE_INSERT);
 		user_update = JsonUtils.getInteger(rackJson, RackConst.USER_UPDATE);
 		date_update = JsonUtils.getDate(rackJson, RackConst.DATE_UPDATE);
-		real_length = JsonUtils.getInteger(rackJson, RackConst.REAL_LENGTH);
-		real_width = JsonUtils.getInteger(rackJson, RackConst.REAL_WIDTH);
-		real_height = JsonUtils.getInteger(rackJson, RackConst.REAL_HEIGHT);
-		x_offset = JsonUtils.getInteger(rackJson, RackConst.X_OFFSET);
-		y_offset = JsonUtils.getInteger(rackJson, RackConst.Y_OFFSET);
-		z_offset = JsonUtils.getInteger(rackJson, RackConst.Z_OFFSET);
+		if (type_race == TypeRack.R) {
+			real_length = JsonUtils.getInteger(rackJson, RackConst.REAL_LENGTH);
+			real_width = JsonUtils.getInteger(rackJson, RackConst.REAL_WIDTH);
+			real_height = JsonUtils.getInteger(rackJson, RackConst.REAL_HEIGHT);
+			x_offset = JsonUtils.getInteger(rackJson, RackConst.X_OFFSET);
+			y_offset = JsonUtils.getInteger(rackJson, RackConst.Y_OFFSET);
+			z_offset = JsonUtils.getInteger(rackJson, RackConst.Z_OFFSET);
+		} else {
+			real_length = length;
+			real_width = width;
+			real_height = height;
+			x_offset = 0;
+			y_offset = 0;
+			z_offset = 0;
+		}
 	}
 
 	@Override

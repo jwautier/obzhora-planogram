@@ -1,5 +1,5 @@
 <%@ page import="planograma.data.TypeShelf" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="application/javascript;charset=UTF-8" language="java" %>
 <%--<script type="text/javascript">--%>
 	function drawRackShelfTemplate(shelfTemplate, canvas, context, kx, ky, m) {
 		context.lineWidth = 1;

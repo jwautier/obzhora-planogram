@@ -70,7 +70,7 @@ public class SectorSave extends AbstractAction {
 		final Sector sector = new Sector(sectorJson);
 		final JsonArray rackListJson = requestData.getAsJsonObject().getAsJsonArray("rackList");
 		final List<Rack> rackList = new ArrayList<Rack>(rackListJson.size());
-		final List<Rack2D> rack2DList =new ArrayList<Rack2D>(rackListJson.size());
+		final List<Rack2D> rack2DList = new ArrayList<Rack2D>(rackListJson.size());
 		final Map<Rack, Integer> copyFromCodeRackList = new HashMap<Rack, Integer>();
 		for (int i = 0; i < rackListJson.size(); i++) {
 			final JsonObject rackJson = rackListJson.get(i).getAsJsonObject();
@@ -94,7 +94,7 @@ public class SectorSave extends AbstractAction {
 			final Rack2D rack2D = rack2DList.get(i);
 
 			// Проверка параметров стеллажа: высота, ширина, глубина, полезная высота, полезная ширина, полезная глубина больше 10мм
-			RackMinDimensionsValidation.validate(fieldExceptionList, rack);
+			RackMinDimensionsValidation.validate(fieldExceptionList, rack, i);
 			// стеллаж не может выходить за пределы зала
 			if (rack2D.getMinX() < 0 ||
 					rack2D.getMaxX() > sector.getLength() ||
@@ -122,8 +122,8 @@ public class SectorSave extends AbstractAction {
 				final List<RackShelf> rackShelfList = rackShelfModel.list(userContext, rack.getCode_rack());
 				//	стеллаж не может стать меньше чем расположеные на нем полки (не сохраняется, выделяется один из стеллажей)
 				if (rackShelfList != null) {
-					for (int j = 0; j < rackShelfList.size(); i++) {
-						final RackShelf rackShelf = rackShelfList.get(i);
+					for (int j = 0; j < rackShelfList.size(); j++) {
+						final RackShelf rackShelf = rackShelfList.get(j);
 						final RackShelf2D shelf2D = new RackShelf2D(rackShelf);
 						if (shelf2D.getMinX() < 0 ||
 								shelf2D.getMaxX() > dx ||
@@ -149,8 +149,8 @@ public class SectorSave extends AbstractAction {
 				//	полезная зона не может стать меньше чем расположеные на нем товары(не сохраняется)
 				final List<RackWares> rackWaresList = rackWaresModel.list(userContext, rack.getCode_rack());
 				if (rackWaresList != null) {
-					for (int j = 0; j < rackWaresList.size(); i++) {
-						final RackWares rackWares = rackWaresList.get(i);
+					for (int j = 0; j < rackWaresList.size(); j++) {
+						final RackWares rackWares = rackWaresList.get(j);
 						final RackWares2D rackWares2D = new RackWares2D(rackWares);
 						if (rackWares2D.getMinX() < 0 ||
 								rackWares2D.getMaxX() > dx ||
@@ -164,89 +164,95 @@ public class SectorSave extends AbstractAction {
 				}
 			}
 		}
-		// TODO
 		//	стеллажи не могут пересекаться(не сохраняется, выделяется один из стеллажей)
-		for (int i = 0; i < rack2DList.size(); i++){
-			for (int j=i+1; j<rack2DList.size(); j++){
-				final Rack2D a=rack2DList.get(i);
-				final Rack2D b=rack2DList.get(j);
-				Intersection2DUtils.intersection(a,b);
+		for (int i = 0; i < rack2DList.size(); i++) {
+			final Rack2D a = rack2DList.get(i);
+			for (int j = i + 1; j < rack2DList.size(); j++) {
+				final Rack2D b = rack2DList.get(j);
+				if (a.getRack().getType_race() != TypeRack.DZ &&
+						b.getRack().getType_race() != TypeRack.DZ) {
+					// пересечение мертвых зон разрешается
+					if (Intersection2DUtils.isIntersection(a, b)) {
+						if (a.getRack().getType_race()==TypeRack.R)
+						fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_INTERSECT(), Rack.class, i, a.getRack().getCode_rack(), "rack_intersect"));
+					}
+				}
 			}
 		}
 
 		final JsonObject jsonObject = new JsonObject();
 		if (fieldExceptionList.isEmpty()) {
-		if (sector.getCode_sector() == null) {
-			// insert
-			sectorModel.insert(userContext, sector);
-		} else {
-			// update
-			sectorModel.update(userContext, sector);
-			List<Rack> oldRackList = rackModel.list(userContext, sector.getCode_sector());
-			for (final Rack oldRack : oldRackList) {
-				Rack findRack = null;
-				// поиск среди сохраненых рание
-				for (int i = 0; findRack == null && i < rackList.size(); i++) {
-					final Rack currentRack = rackList.get(i);
-					if (oldRack.getCode_rack().equals(currentRack.getCode_rack())) {
-						findRack = currentRack;
-						// запись была обновлена
-						rackModel.update(userContext, findRack);
-						rackList.remove(i);
-						i--;
+			if (sector.getCode_sector() == null) {
+				// insert
+				sectorModel.insert(userContext, sector);
+			} else {
+				// update
+				sectorModel.update(userContext, sector);
+				List<Rack> oldRackList = rackModel.list(userContext, sector.getCode_sector());
+				for (final Rack oldRack : oldRackList) {
+					Rack findRack = null;
+					// поиск среди сохраненых рание
+					for (int i = 0; findRack == null && i < rackList.size(); i++) {
+						final Rack currentRack = rackList.get(i);
+						if (oldRack.getCode_rack().equals(currentRack.getCode_rack())) {
+							findRack = currentRack;
+							// запись была обновлена
+							rackModel.update(userContext, findRack);
+							rackList.remove(i);
+							i--;
+						}
 					}
-				}
-				if (findRack == null) {
-					// запись была удалена
-					// удаление товаров со стеллажа
-					for (final RackWares rackWares : rackWaresModel.list(userContext, oldRack.getCode_rack())) {
-						rackWaresModel.delete(userContext, rackWares.getCode_wares_on_rack());
+					if (findRack == null) {
+						// запись была удалена
+						// удаление товаров со стеллажа
+						for (final RackWares rackWares : rackWaresModel.list(userContext, oldRack.getCode_rack())) {
+							rackWaresModel.delete(userContext, rackWares.getCode_wares_on_rack());
+						}
+						// удаление полок
+						for (final RackShelf rackShelf : rackShelfModel.list(userContext, oldRack.getCode_rack())) {
+							rackShelfModel.delete(userContext, rackShelf.getCode_shelf());
+						}
+						// удаление стеллажа
+						rackModel.delete(userContext, oldRack.getCode_rack());
 					}
-					// удаление полок
-					for (final RackShelf rackShelf : rackShelfModel.list(userContext, oldRack.getCode_rack())) {
-						rackShelfModel.delete(userContext, rackShelf.getCode_shelf());
-					}
-					// удаление стеллажа
-					rackModel.delete(userContext, oldRack.getCode_rack());
 				}
 			}
-		}
-		for (final Rack newRack : rackList) {
-			// запись была добавлена
-			newRack.setCode_sector(sector.getCode_sector());
-			rackModel.insert(userContext, newRack);
-			final Integer copy_from_code_rack = copyFromCodeRackList.get(newRack);
-			if (copy_from_code_rack != null) {
-				// копируем полки с ранее созданого стеллажа
-				final List<RackShelf> copyRackShelfList = rackShelfModel.list(userContext, copy_from_code_rack);
-				for (RackShelf rackShelf : copyRackShelfList) {
-					final RackShelf newRackShelf = new RackShelf(newRack.getCode_rack(), null, rackShelf.getX_coord(), rackShelf.getY_coord(),
-							rackShelf.getShelf_height(), rackShelf.getShelf_width(), rackShelf.getShelf_length(),
-							rackShelf.getAngle(), rackShelf.getType_shelf(), null, null, null, null);
-					rackShelfModel.insert(userContext, newRackShelf);
-				}
-				// копируем товары с ранее созданого стеллажа
-				final List<RackWares> copyRackWaresList = rackWaresModel.list(userContext, copy_from_code_rack);
-				for (RackWares rackWares : copyRackWaresList) {
-					final RackWares newRackWares = new RackWares(newRack.getCode_rack(), rackWares.getCode_wares(),
-							rackWares.getCode_unit(), null, rackWares.getType_wares_on_rack(), rackWares.getOrder_number_on_rack(),
-							rackWares.getPosition_x(), rackWares.getPosition_y(), rackWares.getWares_length(), rackWares.getWares_width(),
-							rackWares.getWares_height(), rackWares.getCount_length_on_shelf(), null, null, null, null, null, null, null, null);
-					rackWaresModel.insert(userContext, newRackWares);
-				}
-			} else if (newRack.getCode_rack_template() != null && newRack.getCode_rack_template() != 0) {
-				// копируем полки с шаблонного стеллажа
-				for (final RackShelfTemplate shelfTemplate : rackShelfTemplateModel.list(userContext, newRack.getCode_rack_template())) {
-					final RackShelf shelf = new RackShelf(newRack.getCode_rack(), null,
-							shelfTemplate.getX_coord(), shelfTemplate.getY_coord(),
-							shelfTemplate.getShelf_height(), shelfTemplate.getShelf_width(), shelfTemplate.getShelf_length(),
-							shelfTemplate.getAngle(), shelfTemplate.getType_shelf(), null, null, null, null);
-					rackShelfModel.insert(userContext, shelf);
+			for (final Rack newRack : rackList) {
+				// запись была добавлена
+				newRack.setCode_sector(sector.getCode_sector());
+				rackModel.insert(userContext, newRack);
+				final Integer copy_from_code_rack = copyFromCodeRackList.get(newRack);
+				if (copy_from_code_rack != null) {
+					// копируем полки с ранее созданого стеллажа
+					final List<RackShelf> copyRackShelfList = rackShelfModel.list(userContext, copy_from_code_rack);
+					for (RackShelf rackShelf : copyRackShelfList) {
+						final RackShelf newRackShelf = new RackShelf(newRack.getCode_rack(), null, rackShelf.getX_coord(), rackShelf.getY_coord(),
+								rackShelf.getShelf_height(), rackShelf.getShelf_width(), rackShelf.getShelf_length(),
+								rackShelf.getAngle(), rackShelf.getType_shelf(), null, null, null, null);
+						rackShelfModel.insert(userContext, newRackShelf);
+					}
+					// копируем товары с ранее созданого стеллажа
+					final List<RackWares> copyRackWaresList = rackWaresModel.list(userContext, copy_from_code_rack);
+					for (RackWares rackWares : copyRackWaresList) {
+						final RackWares newRackWares = new RackWares(newRack.getCode_rack(), rackWares.getCode_wares(),
+								rackWares.getCode_unit(), null, rackWares.getType_wares_on_rack(), rackWares.getOrder_number_on_rack(),
+								rackWares.getPosition_x(), rackWares.getPosition_y(), rackWares.getWares_length(), rackWares.getWares_width(),
+								rackWares.getWares_height(), rackWares.getCount_length_on_shelf(), null, null, null, null, null, null, null, null);
+						rackWaresModel.insert(userContext, newRackWares);
+					}
+				} else if (newRack.getCode_rack_template() != null && newRack.getCode_rack_template() != 0) {
+					// копируем полки с шаблонного стеллажа
+					for (final RackShelfTemplate shelfTemplate : rackShelfTemplateModel.list(userContext, newRack.getCode_rack_template())) {
+						final RackShelf shelf = new RackShelf(newRack.getCode_rack(), null,
+								shelfTemplate.getX_coord(), shelfTemplate.getY_coord(),
+								shelfTemplate.getShelf_height(), shelfTemplate.getShelf_width(), shelfTemplate.getShelf_length(),
+								shelfTemplate.getAngle(), shelfTemplate.getType_shelf(), null, null, null, null);
+						rackShelfModel.insert(userContext, shelf);
+					}
 				}
 			}
-		}
-		commit(userContext);
-		jsonObject.addProperty(SectorConst.CODE_SECTOR, sector.getCode_sector());
+			commit(userContext);
+			jsonObject.addProperty(SectorConst.CODE_SECTOR, sector.getCode_sector());
 		} else {
 			JsonArray jsonArray = new JsonArray();
 			for (final EntityFieldException entityFieldException : fieldExceptionList) {
