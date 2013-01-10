@@ -1,14 +1,15 @@
-<%@ page import="planograma.utils.JspUtils" %>
-<%@ page import="planograma.data.Sector" %>
-<%@ page import="planograma.data.Rack" %>
-<%@ page import="planograma.servlet.sector.SectorSave" %>
-<%@ page import="planograma.servlet.sector.SectorEdit" %>
+<%@ page import="planograma.constant.SecurityConst" %>
+<%@ page import="planograma.constant.data.RackConst" %>
 <%@ page import="planograma.constant.data.SectorConst" %>
 <%@ page import="planograma.data.LoadSide" %>
-<%@ page import="planograma.servlet.racktemplate.RackTemplateList" %>
+<%@ page import="planograma.data.Rack" %>
+<%@ page import="planograma.data.Sector" %>
 <%@ page import="planograma.data.TypeRack" %>
-<%@ page import="planograma.constant.SecurityConst" %>
+<%@ page import="planograma.servlet.racktemplate.RackTemplateList" %>
+<%@ page import="planograma.servlet.sector.SectorEdit" %>
+<%@ page import="planograma.servlet.sector.SectorSave" %>
 <%@ page import="planograma.servlet.wares.RackWaresPlacemntPrint" %>
+<%@ page import="planograma.utils.JspUtils" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
 	final String access_sector_edit=JspUtils.actionAccess(session, SecurityConst.ACCESS_SECTOR_EDIT);
@@ -516,6 +517,9 @@ function roundRack(rack)
 		rack.width=Math.round(rack.width);
 		rack.height=Math.round(rack.height);
 		rack.length=Math.round(rack.length);
+		rack.real_width=Math.round(rack.real_width);
+		rack.real_height=Math.round(rack.real_height);
+		rack.real_length=Math.round(rack.real_length);
 		selectShowcase(rack);
 		calcCoordinatesRack(rack);
 		drawEditCanvas();
@@ -526,12 +530,10 @@ function roundRack(rack)
 </script>
 <%-- обработка событий меню --%>
 <script type="text/javascript">
-	function fSectorSave()
-	{
-		var noneError=true;
-		if (window.sector.name_sector==null || window.sector.name_sector.length==0)
-		{
-			noneError=false;
+	function fSectorSave() {
+		var noneError = true;
+		if (window.sector.name_sector == null || window.sector.name_sector.length == 0) {
+			noneError = false;
 			selectShowcase(null);
 			drawEditCanvas();
 			drawPreviewCanvas();
@@ -549,57 +551,62 @@ function roundRack(rack)
 				alert('отсутствует наименование');
 			}
 		}
-		if (noneError)
-		{
-		postJson('<%=SectorSave.URL%>', {sector:window.sector, rackList:window.showcaseList}, function (data) {
+		if (noneError) {
+			postJson('<%=SectorSave.URL%>', {sector: window.sector, rackList: window.showcaseList}, function (data) {
 
 				if (data.errorField != null && data.errorField.length > 0) {
 					var setFocus = null;
 					var error_message = "";
-					for (var i = 0; i < data.errorField.length; i++) {
+					// TODO отображать все ошибки
+					for (var i = 0; setFocus==null && i < data.errorField.length; i++) {
 						error_message += data.errorField[i].message + '\n';
 						if (setFocus == null) {
 							switch (data.errorField[i].entityClass) {
-								case '<%=RackTemplate.class.getName()%>':
+								case '<%=Sector.class.getName()%>':
 									if (data.errorField[i].fieldName != null) {
 										switch (data.errorField[i].fieldName) {
-											case '<%=RackTemplateConst.HEIGHT%>':
-												setFocus = $('#rackTemplateHeight');
+											case '<%=SectorConst.WIDTH%>':
+												setFocus = $('#sectorWidth');
 												break;
-											case '<%=RackTemplateConst.WIDTH%>':
-												setFocus = $('#rackTemplateWidth');
+											case '<%=SectorConst.HEIGHT%>':
+												setFocus = $('#sectorHeight');
 												break;
-											case '<%=RackTemplateConst.LENGTH%>':
-												setFocus = $('#rackTemplateLength');
-												break;
-											case '<%=RackTemplateConst.REAL_HEIGHT%>':
-												setFocus = $('#rackTemplateRealHeight');
-												break;
-											case '<%=RackTemplateConst.REAL_WIDTH%>':
-												setFocus = $('#rackTemplateRealWidth');
-												break;
-											case '<%=RackTemplateConst.REAL_LENGTH%>':
-												setFocus = $('#rackTemplateRealLength');
+											case '<%=SectorConst.LENGTH%>':
+												setFocus = $('#sectorLength');
 												break;
 										}
 									}
 									break;
-								case '<%=RackShelfTemplate.class.getName()%>':
-									window.shelf = window.rackShelfTemplateList[data.errorField[i].entityIndex];
-									selectShelf(window.shelf);
+								case '<%=Rack.class.getName()%>':
+									window.showcase = window.showcaseList[data.errorField[i].entityIndex];
+									selectShowcase(window.showcase);
+									drawEditCanvas();
+									drawPreviewCanvas();
 									if (data.errorField[i].fieldName != null) {
 										switch (data.errorField[i].fieldName) {
-											case '<%=RackShelfTemplateConst.SHELF_WIDTH%>':
-												setFocus = $('#shelfWidth');
+											case '<%=RackConst.HEIGHT%>':
+												setFocus = $('#showcaseHeight');
 												break;
-											case '<%=RackShelfTemplateConst.SHELF_HEIGHT%>':
-												setFocus = $('#shelfHeight');
+											case '<%=RackConst.WIDTH%>':
+												setFocus = $('#showcaseWidth');
 												break;
-											case '<%=RackShelfTemplateConst.SHELF_LENGTH%>':
-												setFocus = $('#shelfLength');
+											case '<%=RackConst.LENGTH%>':
+												setFocus = $('#showcaseLength');
+												break;
+											case '<%=RackConst.REAL_HEIGHT%>':
+												setFocus = $('#showcaseHeight');
+												break;
+											case '<%=RackConst.REAL_WIDTH%>':
+												setFocus = $('#showcaseWidth');
+												break;
+											case '<%=RackConst.REAL_LENGTH%>':
+												setFocus = $('#showcaseLength');
 												break;
 											case 'outside':
-												setFocus = $('#shelfWidth');
+											case 'rack_overflow_shelf':
+											case 'rack_overflow_wares':
+											case 'rack_intersect':
+												setFocus = $('#showcaseWidth');
 												break;
 										}
 									}
@@ -613,18 +620,18 @@ function roundRack(rack)
 					}
 				}
 				else {
-			setCookie('<%=SectorConst.CODE_SECTOR%>', data.code_sector);
-			postJson('<%=SectorEdit.URL%>', {code_sector: data.code_sector}, function (data) {
-				window.sector=data.sector;
-				setSectorProperty(sector);
-				window.showcaseList = data.rackList;
-				for (var i = 0; i < window.showcaseList.length; i++) {
-					calcCoordinatesRack(window.showcaseList[i]);
+					setCookie('<%=SectorConst.CODE_SECTOR%>', data.code_sector);
+					postJson('<%=SectorEdit.URL%>', {code_sector: data.code_sector}, function (data) {
+						window.sector = data.sector;
+						setSectorProperty(sector);
+						window.showcaseList = data.rackList;
+						for (var i = 0; i < window.showcaseList.length; i++) {
+							calcCoordinatesRack(window.showcaseList[i]);
+						}
+						drawEditCanvas();
+						drawPreviewCanvas();
+					});
 				}
-				drawEditCanvas();
-				drawPreviewCanvas();
-			});
-	}
 			});
 		}
 	}
@@ -745,27 +752,27 @@ function roundRack(rack)
 			window.showcase.code_rack = '';
 			window.showcase.name_rack = window.showcase.name_rack;
 			// копия в право
-			window.showcase.x_coord = window.copyObject.x_coord + window.copyObject.length;
+			window.showcase.x_coord = window.copyObject.x_coord + window.copyObject.length+1;
 			calcCoordinatesRack(window.showcase);
 			if (rackBeyondSector(window.showcase)) {
 				// в право нельзя копия в низ
 				window.showcase.x_coord = window.copyObject.x_coord;
-				window.showcase.y_coord = window.copyObject.y_coord + window.copyObject.width;
+				window.showcase.y_coord = window.copyObject.y_coord + window.copyObject.width+1;
 				calcCoordinatesRack(window.showcase);
 				if (rackBeyondSector(window.showcase)) {
 					// в низ нельзя копия в лево
-					window.showcase.x_coord = window.copyObject.x_coord - window.copyObject.length;
+					window.showcase.x_coord = window.copyObject.x_coord - window.copyObject.length-1;
 					window.showcase.y_coord = window.copyObject.y_coord;
 					calcCoordinatesRack(window.showcase);
 					if (rackBeyondSector(window.showcase)) {
 						// в лево нельзя копия в верх
 						window.showcase.x_coord = window.copyObject.x_coord;
-						window.showcase.y_coord = window.copyObject.y_coord - window.copyObject.width;
+						window.showcase.y_coord = window.copyObject.y_coord - window.copyObject.width-1;
 						calcCoordinatesRack(window.showcase);
 						if (rackBeyondSector(window.showcase)) {
 							// в верх нельзя копия на месте
-							window.showcase.x_coord = window.copyObject.x_coord;
-							window.showcase.y_coord = window.copyObject.y_coord;
+							window.showcase.x_coord = window.copyObject.x_coord+5;
+							window.showcase.y_coord = window.copyObject.y_coord+5;
 							calcCoordinatesRack(window.showcase);
 						}
 					}
@@ -957,24 +964,37 @@ function roundRack(rack)
 						var oldY = showcase.y_coord;
 						var oldLength = showcase.length;
 						var oldWidth=showcase.width;
+						var oldRealLength = showcase.real_length;
+						var oldRealWidth=showcase.real_width;
 						var dxy=dx*showcase.cos + dy*showcase.sin;
 						if (editMove & 2) {
 							// восток
 							showcase.x_coord = showcase.x_coord + dxy * showcase.cos / 2;
 							showcase.y_coord = showcase.y_coord + dxy * showcase.sin / 2;
 							showcase.length = showcase.length + dxy;
-							showcase.real_length = showcase.real_length + dxy;
+							if (showcase.code_rack>0){
+								showcase.real_length = showcase.real_length + dxy;
+							} else {
+								showcase.real_length = showcase.length;
+							}
 						} else if (editMove & 8) {
 							// запад
 							showcase.x_coord = showcase.x_coord + dxy * showcase.cos / 2;
 							showcase.y_coord = showcase.y_coord + dxy * showcase.sin / 2;
 							showcase.length = showcase.length - dxy;
-							showcase.real_length = showcase.real_length - dxy;
+							if (showcase.code_rack>0){
+								showcase.real_length = showcase.real_length - dxy;
+							} else {
+								showcase.real_length = showcase.length;
+							}
 						}
 						if (showcase.length < 7 * km) {
 							showcase.length = 7 * km;
 							showcase.x_coord = showcase.x_coord - dxy * showcase.cos / 2;
 							showcase.y_coord = showcase.y_coord - dxy * showcase.sin / 2;
+						}
+						if (showcase.real_length < 7 * km) {
+							showcase.real_length = showcase.length;
 						}
 						dxy=dy*showcase.cos - dx*showcase.sin;
 						if (editMove & 4) {
@@ -982,18 +1002,29 @@ function roundRack(rack)
 							showcase.x_coord = showcase.x_coord - dxy * showcase.sin / 2;
 							showcase.y_coord = showcase.y_coord + dxy * showcase.cos / 2;
 							showcase.width = showcase.width - dxy;
-							showcase.real_width = showcase.real_width - dxy;
+							if (showcase.code_rack>0){
+								showcase.real_width = showcase.real_width - dxy;
+							} else {
+								showcase.real_width = showcase.width;
+							}
 						} else if (editMove & 16) {
 							// юг
 							showcase.x_coord = showcase.x_coord - dxy * showcase.sin / 2;
 							showcase.y_coord = showcase.y_coord + dxy * showcase.cos / 2;
 							showcase.width = showcase.width + dxy;
-							showcase.real_width = showcase.real_width + dxy;
+							if (showcase.code_rack>0){
+								showcase.real_width = showcase.real_width + dxy;
+							} else {
+								showcase.real_width = showcase.width;
+							}
 						}
 						if (showcase.width < 7 * km) {
-							showcase.width = 7 * km
+							showcase.width = 7 * km;
 							showcase.x_coord = showcase.x_coord + dxy * showcase.sin / 2;
 							showcase.y_coord = showcase.y_coord - dxy * showcase.cos / 2;
+						}
+						if (showcase.real_width < 7 * km) {
+							showcase.real_width = showcase.width;
 						}
 						calcCoordinatesRack(showcase);
 						if (showcase.x1 < 0 || showcase.x2 < 0 || showcase.x3 < 0 || showcase.x4 < 0 ||
@@ -1004,6 +1035,8 @@ function roundRack(rack)
 							showcase.y_coord = oldY;
 							showcase.length = oldLength;
 							showcase.width = oldWidth;
+							showcase.real_length = oldRealLength;
+							showcase.real_width = oldRealWidth;
 							calcCoordinatesRack(showcase);
 						} else {
 							document.getElementById('showcaseX').value = showcase.x_coord;
@@ -1346,14 +1379,23 @@ function roundRack(rack)
 			if (length > 0 && length != Infinity) {
 				var oldLength = showcase.length;
 				showcase.length = length;
-				showcase.real_length = showcase.real_length + length - oldLength;
+				if (showcase.code_rack>0){
+					showcase.real_length = showcase.real_length + length - oldLength;
+				}else{
+					showcase.real_length = showcase.length;
+				}
+
 				calcCoordinatesRack(showcase);
 				if (showcase.x1 < 0 || showcase.x2 < 0 || showcase.x3 < 0 || showcase.x4 < 0 ||
 						showcase.x1 > sector.length || showcase.x2 > sector.length || showcase.x3 > sector.length || showcase.x4 > sector.length ||
 						showcase.y1 < 0 || showcase.y2 < 0 || showcase.y3 < 0 || showcase.y4 < 0 ||
 						showcase.y1 > sector.width || showcase.y2 > sector.width || showcase.y3 > sector.width || showcase.y4 > sector.width) {
 					showcase.length = oldLength;
-					showcase.real_length = showcase.real_length - length + oldLength;
+					if (showcase.code_rack>0){
+						showcase.real_length = showcase.real_length - length + oldLength;
+					}else{
+						showcase.real_length = showcase.length;
+					}
 					calcCoordinatesRack(showcase);
 				}
 				else {

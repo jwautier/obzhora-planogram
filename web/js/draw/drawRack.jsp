@@ -1,6 +1,6 @@
 <%@ page import="planograma.data.LoadSide" %>
 <%@ page import="planograma.data.TypeRack" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="application/javascript;charset=UTF-8" language="java" %>
 <%--<script type="text/javascript">--%>
 	function drawRack(rack, context, kx, ky, m) {
 

@@ -5,6 +5,7 @@ import planograma.constant.VerificationConst;
 import planograma.constant.data.RackConst;
 import planograma.data.LoadSide;
 import planograma.data.Rack;
+import planograma.data.TypeRack;
 import planograma.exception.EntityFieldException;
 
 import java.util.List;
@@ -18,10 +19,11 @@ import java.util.List;
 public class RackMinDimensionsValidation {
 	/**
 	 * Проверка параметров стеллажа: высота, ширина, глубина, полезная высота, полезная ширина, полезная глубина больше 10мм
+	 *
 	 * @param fieldExceptionList список ошибок
-	 * @param rack стеллаж
+	 * @param rack               стеллаж
 	 */
-	public static void validate(final List<EntityFieldException> fieldExceptionList, final Rack rack) {
+	public static void validate(final List<EntityFieldException> fieldExceptionList, final Rack rack, final int index) {
 		final float w = rack.getLength();
 		final float rw = rack.getReal_length();
 		final float h;
@@ -41,23 +43,24 @@ public class RackMinDimensionsValidation {
 		}
 
 		if (h < VerificationConst.MIN_RACK_DIMENSIONS) {
-			fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_HEIGHT_TOO_LITTLE(), Rack.class, 0, rack.getCode_rack_template(), RackConst.HEIGHT));
+			fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_HEIGHT_TOO_LITTLE(), Rack.class, index, rack.getCode_rack_template(), RackConst.HEIGHT));
 		}
 		if (l < VerificationConst.MIN_RACK_DIMENSIONS) {
-			fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_LENGTH_TOO_LITTLE(), Rack.class, 0, rack.getCode_rack_template(), RackConst.LENGTH));
+			fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_LENGTH_TOO_LITTLE(), Rack.class, index, rack.getCode_rack_template(), RackConst.LENGTH));
 		}
 		if (w < VerificationConst.MIN_RACK_DIMENSIONS) {
-			fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_WIDTH_TOO_LITTLE(), Rack.class, 0, rack.getCode_rack_template(), RackConst.WIDTH));
+			fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_WIDTH_TOO_LITTLE(), Rack.class, index, rack.getCode_rack_template(), RackConst.WIDTH));
 		}
-		if (rh < VerificationConst.MIN_RACK_DIMENSIONS) {
-			fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_HEIGHT_TOO_LITTLE(), Rack.class, 0, rack.getCode_rack_template(), RackConst.REAL_HEIGHT));
+		if (rack.getType_race() == TypeRack.R) {
+			if (rh < VerificationConst.MIN_RACK_DIMENSIONS) {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_HEIGHT_TOO_LITTLE(), Rack.class, index, rack.getCode_rack_template(), RackConst.REAL_HEIGHT));
+			}
+			if (rl < VerificationConst.MIN_RACK_DIMENSIONS) {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_LENGTH_TOO_LITTLE(), Rack.class, index, rack.getCode_rack_template(), RackConst.REAL_LENGTH));
+			}
+			if (rw < VerificationConst.MIN_RACK_DIMENSIONS) {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_WIDTH_TOO_LITTLE(), Rack.class, index, rack.getCode_rack_template(), RackConst.REAL_WIDTH));
+			}
 		}
-		if (rl < VerificationConst.MIN_RACK_DIMENSIONS) {
-			fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_LENGTH_TOO_LITTLE(), Rack.class, 0, rack.getCode_rack_template(), RackConst.REAL_LENGTH));
-		}
-		if (rw < VerificationConst.MIN_RACK_DIMENSIONS) {
-			fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_WIDTH_TOO_LITTLE(), Rack.class, 0, rack.getCode_rack_template(), RackConst.REAL_WIDTH));
-		}
-
 	}
 }
