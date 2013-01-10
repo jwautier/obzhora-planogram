@@ -4,15 +4,22 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
+import planograma.PlanogramMessage;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.SectorConst;
 import planograma.data.*;
+import planograma.data.geometry.Rack2D;
+import planograma.data.geometry.RackShelf2D;
+import planograma.data.geometry.RackWares2D;
+import planograma.exception.EntityFieldException;
 import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
 import planograma.model.*;
 import planograma.servlet.AbstractAction;
+import planograma.servlet.rack.RackMinDimensionsValidation;
 import planograma.utils.JsonUtils;
+import planograma.utils.geometry.Intersection2DUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -42,7 +49,6 @@ public class SectorSave extends AbstractAction {
 	private RackModel rackModel;
 	private RackShelfModel rackShelfModel;
 	private RackWaresModel rackWaresModel;
-	private RackTemplateModel rackTemplateModel;
 	private RackShelfTemplateModel rackShelfTemplateModel;
 
 	@Override
@@ -52,7 +58,6 @@ public class SectorSave extends AbstractAction {
 		rackModel = RackModel.getInstance();
 		rackShelfModel = RackShelfModel.getInstance();
 		rackWaresModel = RackWaresModel.getInstance();
-		rackTemplateModel = RackTemplateModel.getInstance();
 		rackShelfTemplateModel = RackShelfTemplateModel.getInstance();
 	}
 
@@ -65,19 +70,112 @@ public class SectorSave extends AbstractAction {
 		final Sector sector = new Sector(sectorJson);
 		final JsonArray rackListJson = requestData.getAsJsonObject().getAsJsonArray("rackList");
 		final List<Rack> rackList = new ArrayList<Rack>(rackListJson.size());
+		final List<Rack2D> rack2DList =new ArrayList<Rack2D>(rackListJson.size());
 		final Map<Rack, Integer> copyFromCodeRackList = new HashMap<Rack, Integer>();
 		for (int i = 0; i < rackListJson.size(); i++) {
 			final JsonObject rackJson = rackListJson.get(i).getAsJsonObject();
 			final Rack rack = new Rack(rackJson);
 			rackList.add(rack);
+			final Rack2D rack2D = new Rack2D(rack);
+			rack2DList.add(rack2D);
 			final Integer copy_from_code_rack = JsonUtils.getInteger(rackJson, "copy_from_code_rack");
 			if (copy_from_code_rack != null && copy_from_code_rack != 0) {
 				copyFromCodeRackList.put(rack, copy_from_code_rack);
 			}
 		}
-		// TODO проверка выхода зя пределы зала
-		// TODO проверка пересечения стеллажей
 
+		//	ПРОВЕРКИ
+		List<EntityFieldException> fieldExceptionList = new ArrayList<EntityFieldException>();
+		// Проверка параметров зала: высоты, ширины, длина должны быть больше 1000мм(не сохраняется)
+		SectorMinDimensionsValidation.validate(fieldExceptionList, sector);
+		// проверка стеллажей
+		for (int i = 0; i < rackList.size(); i++) {
+			final Rack rack = rackList.get(i);
+			final Rack2D rack2D = rack2DList.get(i);
+
+			// Проверка параметров стеллажа: высота, ширина, глубина, полезная высота, полезная ширина, полезная глубина больше 10мм
+			RackMinDimensionsValidation.validate(fieldExceptionList, rack);
+			// стеллаж не может выходить за пределы зала
+			if (rack2D.getMinX() < 0 ||
+					rack2D.getMaxX() > sector.getLength() ||
+					rack2D.getMinY() < 0 ||
+					rack2D.getMaxY() > sector.getWidth() ||
+					rack.getHeight() < 0 ||
+					rack.getHeight() > sector.getHeight()) {
+				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_OUTSIDE_SECTOR(), Rack.class, i, rack.getCode_rack(), "outside"));
+			}
+
+			if (rack.getCode_rack() != null) {
+				float dx;
+				float dy;
+				float dz;
+				// относительно стороны загрузки
+				if (rack.getLoad_side() == LoadSide.F) {
+					dx = rack.getLength();
+					dy = rack.getHeight();
+					dz = rack.getWidth();
+				} else {
+					dx = rack.getLength();
+					dy = rack.getWidth();
+					dz = rack.getHeight();
+				}
+				final List<RackShelf> rackShelfList = rackShelfModel.list(userContext, rack.getCode_rack());
+				//	стеллаж не может стать меньше чем расположеные на нем полки (не сохраняется, выделяется один из стеллажей)
+				if (rackShelfList != null) {
+					for (int j = 0; j < rackShelfList.size(); i++) {
+						final RackShelf rackShelf = rackShelfList.get(i);
+						final RackShelf2D shelf2D = new RackShelf2D(rackShelf);
+						if (shelf2D.getMinX() < 0 ||
+								shelf2D.getMaxX() > dx ||
+								shelf2D.getMinY() < 0 ||
+								shelf2D.getMaxY() > dy ||
+								rackShelf.getShelf_length() < 0 ||
+								rackShelf.getShelf_length() > dz) {
+							fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_OVERFLOW_SHELF(), Rack.class, i, rack.getCode_rack(), "rack_overflow_shelf"));
+						}
+					}
+				}
+
+				// относительно стороны загрузки
+				if (rack.getLoad_side() == LoadSide.F) {
+					dx = rack.getReal_length();
+					dy = rack.getReal_height();
+					dz = rack.getReal_width();
+				} else {
+					dx = rack.getReal_length();
+					dy = rack.getReal_width();
+					dz = rack.getReal_height();
+				}
+				//	полезная зона не может стать меньше чем расположеные на нем товары(не сохраняется)
+				final List<RackWares> rackWaresList = rackWaresModel.list(userContext, rack.getCode_rack());
+				if (rackWaresList != null) {
+					for (int j = 0; j < rackWaresList.size(); i++) {
+						final RackWares rackWares = rackWaresList.get(i);
+						final RackWares2D rackWares2D = new RackWares2D(rackWares);
+						if (rackWares2D.getMinX() < 0 ||
+								rackWares2D.getMaxX() > dx ||
+								rackWares2D.getMinY() < 0 ||
+								rackWares2D.getMaxY() > dy ||
+								rackWares.getWares_length() * rackWares.getCount_length_on_shelf() < 0 ||
+								rackWares.getWares_length() * rackWares.getCount_length_on_shelf() > dz) {
+							fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_OVERFLOW_WARES(), Rack.class, i, rack.getCode_rack(), "rack_overflow_wares"));
+						}
+					}
+				}
+			}
+		}
+		// TODO
+		//	стеллажи не могут пересекаться(не сохраняется, выделяется один из стеллажей)
+		for (int i = 0; i < rack2DList.size(); i++){
+			for (int j=i+1; j<rack2DList.size(); j++){
+				final Rack2D a=rack2DList.get(i);
+				final Rack2D b=rack2DList.get(j);
+				Intersection2DUtils.intersection(a,b);
+			}
+		}
+
+		final JsonObject jsonObject = new JsonObject();
+		if (fieldExceptionList.isEmpty()) {
 		if (sector.getCode_sector() == null) {
 			// insert
 			sectorModel.insert(userContext, sector);
@@ -148,8 +246,14 @@ public class SectorSave extends AbstractAction {
 			}
 		}
 		commit(userContext);
-		final JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty(SectorConst.CODE_SECTOR, sector.getCode_sector());
+		} else {
+			JsonArray jsonArray = new JsonArray();
+			for (final EntityFieldException entityFieldException : fieldExceptionList) {
+				jsonArray.add(entityFieldException.toJSON());
+			}
+			jsonObject.add("errorField", jsonArray);
+		}
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms");
 		return jsonObject;

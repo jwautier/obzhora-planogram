@@ -80,7 +80,7 @@
 								<td><a href="#" id="butRackWaresPlacement" onclick="return aOnClick(this, fRackWaresPlacement)" class="disabled"><%=JspUtils.toMenuTitle("Расстановка товара")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" id="butCopy" onclick="return aOnClick(this,fCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать с поварами")%></a></td>
+								<td><a href="#" id="butCopy" onclick="return aOnClick(this,fCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать с товарами")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="butCut" onclick="return aOnClick(this,fCut)" class="disabled"><%=JspUtils.toMenuTitle("Вырезать")%></a></td>
@@ -552,6 +552,67 @@ function roundRack(rack)
 		if (noneError)
 		{
 		postJson('<%=SectorSave.URL%>', {sector:window.sector, rackList:window.showcaseList}, function (data) {
+
+				if (data.errorField != null && data.errorField.length > 0) {
+					var setFocus = null;
+					var error_message = "";
+					for (var i = 0; i < data.errorField.length; i++) {
+						error_message += data.errorField[i].message + '\n';
+						if (setFocus == null) {
+							switch (data.errorField[i].entityClass) {
+								case '<%=RackTemplate.class.getName()%>':
+									if (data.errorField[i].fieldName != null) {
+										switch (data.errorField[i].fieldName) {
+											case '<%=RackTemplateConst.HEIGHT%>':
+												setFocus = $('#rackTemplateHeight');
+												break;
+											case '<%=RackTemplateConst.WIDTH%>':
+												setFocus = $('#rackTemplateWidth');
+												break;
+											case '<%=RackTemplateConst.LENGTH%>':
+												setFocus = $('#rackTemplateLength');
+												break;
+											case '<%=RackTemplateConst.REAL_HEIGHT%>':
+												setFocus = $('#rackTemplateRealHeight');
+												break;
+											case '<%=RackTemplateConst.REAL_WIDTH%>':
+												setFocus = $('#rackTemplateRealWidth');
+												break;
+											case '<%=RackTemplateConst.REAL_LENGTH%>':
+												setFocus = $('#rackTemplateRealLength');
+												break;
+										}
+									}
+									break;
+								case '<%=RackShelfTemplate.class.getName()%>':
+									window.shelf = window.rackShelfTemplateList[data.errorField[i].entityIndex];
+									selectShelf(window.shelf);
+									if (data.errorField[i].fieldName != null) {
+										switch (data.errorField[i].fieldName) {
+											case '<%=RackShelfTemplateConst.SHELF_WIDTH%>':
+												setFocus = $('#shelfWidth');
+												break;
+											case '<%=RackShelfTemplateConst.SHELF_HEIGHT%>':
+												setFocus = $('#shelfHeight');
+												break;
+											case '<%=RackShelfTemplateConst.SHELF_LENGTH%>':
+												setFocus = $('#shelfLength');
+												break;
+											case 'outside':
+												setFocus = $('#shelfWidth');
+												break;
+										}
+									}
+									break;
+							}
+						}
+					}
+					alert(error_message);
+					if (setFocus != null) {
+						setFocus.focus();
+					}
+				}
+				else {
 			setCookie('<%=SectorConst.CODE_SECTOR%>', data.code_sector);
 			postJson('<%=SectorEdit.URL%>', {code_sector: data.code_sector}, function (data) {
 				window.sector=data.sector;
@@ -563,7 +624,9 @@ function roundRack(rack)
 				drawEditCanvas();
 				drawPreviewCanvas();
 			});
-		});      }
+	}
+			});
+		}
 	}
 
 	function fSectorReload()

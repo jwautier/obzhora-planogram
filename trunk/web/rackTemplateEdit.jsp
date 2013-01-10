@@ -446,7 +446,7 @@
 				(-window.kx + window.offset_rack_x) / window.km,
 				window.edit_canvas.height + (window.ky - window.offset_rack_y) / window.km,
 				window.rackTemplate.width / window.km,
-				-window.rackTemplate.height / window.km);
+				- window.rackTemplate.height / window.km);
 		window.edit_context.strokeStyle = "GREEN";
 		window.edit_context.strokeRect(
 				(-window.kx + window.offset_real_rack_x) / window.km,
@@ -467,7 +467,7 @@
 			window.edit_context.lineTo((window.ruler.bx-window.kx + window.offset_rack_x) / window.km,
 					window.edit_canvas.height + (-window.ruler.by+window.ky - window.offset_rack_y) / window.km);
 			window.edit_context.stroke();
-		}
+	}
 	}
 	function drawPreviewCanvas()
 	{
@@ -621,8 +621,8 @@
 				}
 				else
 				{
-					setCookie('<%=RackTemplateConst.CODE_RACK_TEMPLATE%>', data.code_rack_template);
-					loadComplete();
+				setCookie('<%=RackTemplateConst.CODE_RACK_TEMPLATE%>', data.code_rack_template);
+				loadComplete();
 				}
 			});
 		}

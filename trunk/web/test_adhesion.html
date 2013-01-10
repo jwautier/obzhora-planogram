@@ -197,17 +197,26 @@ window.edit_canvas.onmousemove = function (e) {
 }
 
 function adhesion(obj) {
-	for (var i = 0; i < window.oList.length; i++) {
+	var move = {f:false};
+
+	var bp1 = new Point2D(obj.x1, obj.y1);
+	var bp2 = new Point2D(obj.x2, obj.y2);
+	var bp3 = new Point2D(obj.x3, obj.y3);
+	var bp4 = new Point2D(obj.x4, obj.y4);
+
+	var bxMin = Math.min(obj.x1, obj.x2, obj.x3, obj.x4);
+	var byMin = Math.min(obj.y1, obj.y2, obj.y3, obj.y4);
+	var bxMax = Math.max(obj.x1, obj.x2, obj.x3, obj.x4);
+	var byMax = Math.max(obj.y1, obj.y2, obj.y3, obj.y4);
+
+	adhesionBorder(bxMin, bxMax, byMin, byMax, obj, move);
+
+	for (var i = 0; !move.f && i < window.oList.length; i++) {
 		if (window.oList[i] != obj) {
 			var axMin = Math.min(window.oList[i].x1, window.oList[i].x2, window.oList[i].x3, window.oList[i].x4);
 			var ayMin = Math.min(window.oList[i].y1, window.oList[i].y2, window.oList[i].y3, window.oList[i].y4);
 			var axMax = Math.max(window.oList[i].x1, window.oList[i].x2, window.oList[i].x3, window.oList[i].x4);
 			var ayMax = Math.max(window.oList[i].y1, window.oList[i].y2, window.oList[i].y3, window.oList[i].y4);
-
-			var bxMin = Math.min(obj.x1, obj.x2, obj.x3, obj.x4);
-			var byMin = Math.min(obj.y1, obj.y2, obj.y3, obj.y4);
-			var bxMax = Math.max(obj.x1, obj.x2, obj.x3, obj.x4);
-			var byMax = Math.max(obj.y1, obj.y2, obj.y3, obj.y4);
 
 			var intersectionX = (axMin <= bxMin && axMax >= bxMin)
 					|| (axMin <= bxMax && axMax >= bxMax)
@@ -223,12 +232,6 @@ function adhesion(obj) {
 			var ap3 = new Point2D(window.oList[i].x3, window.oList[i].y3);
 			var ap4 = new Point2D(window.oList[i].x4, window.oList[i].y4);
 
-			var bp1 = new Point2D(obj.x1, obj.y1);
-			var bp2 = new Point2D(obj.x2, obj.y2);
-			var bp3 = new Point2D(obj.x3, obj.y3);
-			var bp4 = new Point2D(obj.x4, obj.y4);
-
-			var move = {f:false};
 			adhesionPoint(ap1, bp1, obj, move, intersectionX, intersectionY);
 			adhesionPoint(ap1, bp2, obj, move, intersectionX, intersectionY);
 			adhesionPoint(ap1, bp3, obj, move, intersectionX, intersectionY);
@@ -262,9 +265,28 @@ function adhesion(obj) {
 			adhesionSegment(new Segment2D(ap2, ap3), bp4, obj, move, intersectionX, intersectionY);
 			adhesionSegment(new Segment2D(ap3, ap4), bp4, obj, move, intersectionX, intersectionY);
 			adhesionSegment(new Segment2D(ap4, ap1), bp4, obj, move, intersectionX, intersectionY);
-			if (move.f)
-				calcCoordinates(obj);
+
 		}
+	}
+
+	if (move.f)
+		calcCoordinates(obj);
+}
+
+function adhesionBorder(bxMin, bxMax, byMin, byMax, obj, move) {
+	if (bxMin < 10 * window.edit_m) {
+		obj.x += window.defaultD - bxMin;
+		move.f = true;
+	} else if (bxMax > window.table.s - 10 * window.edit_m) {
+		obj.x += window.table.s - bxMax - window.defaultD;
+		move.f = true;
+	}
+	if (byMin < 10 * window.edit_m) {
+		obj.y += window.defaultD - byMin;
+		move.f = true;
+	} else if (byMax > window.table.s - 10 * window.edit_m) {
+		obj.y += window.table.s - byMax - window.defaultD;
+		move.f = true;
 	}
 }
 
