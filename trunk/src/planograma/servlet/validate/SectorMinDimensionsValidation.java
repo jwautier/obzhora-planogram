@@ -1,4 +1,4 @@
-package planograma.servlet.sector;
+package planograma.servlet.validate;
 
 import planograma.PlanogramMessage;
 import planograma.constant.VerificationConst;

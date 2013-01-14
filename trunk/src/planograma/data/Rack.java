@@ -15,7 +15,7 @@ import java.util.Date;
  * Time: 9:39
  * стеллаж
  */
-public class Rack implements IJsonObject {
+public class Rack extends AbstractRack {
 	/**
 	 * Код Этажа
 	 */
@@ -33,17 +33,9 @@ public class Rack implements IJsonObject {
 	 */
 	private String rack_barcode;
 	/**
-	 * Длина, мм
+	 * Код шаблонна стеллажа
 	 */
-	private Integer length;
-	/**
-	 * Ширина, мм
-	 */
-	private Integer width;
-	/**
-	 * Высота, мм
-	 */
-	private Integer height;
+	private Integer code_rack_template;
 	/**
 	 * Положение на этаже по длине
 	 */
@@ -57,14 +49,6 @@ public class Rack implements IJsonObject {
 	 */
 	private Integer angle;
 	/**
-	 * Сторона загрузки
-	 */
-	private LoadSide load_side;
-	/**
-	 * Код шаблонна стеллажа
-	 */
-	private Integer code_rack_template;
-	/**
 	 * Запрет изменения размера стеллажа
 	 */
 	private boolean lock_size;
@@ -76,73 +60,20 @@ public class Rack implements IJsonObject {
 	 * Тип стеллажа (Стеллаж, касса...)
 	 */
 	private TypeRack type_race;
-	/**
-	 * Автор
-	 */
-	private Integer user_insert;
-	/**
-	 * Дата создания
-	 */
-	private Date date_insert;
-	/**
-	 * Редактор
-	 */
-	private Integer user_update;
-	/**
-	 * Дата изменения
-	 */
-	private Date date_update;
-	/**
-	 * Доступная длина, мм
-	 */
-	private Integer real_length;
-	/**
-	 * Доступная ширина, мм
-	 */
-	private Integer real_width;
-	/**
-	 * Доступная высота, мм
-	 */
-	private Integer real_height;
-	/**
-	 * Смещение доступной области относительно левой стороны обекта (со стороны загрузки)
-	 */
-	private Integer x_offset;
-	/**
-	 * Смещение доступной области относительно низа обекта (со стороны загрузки)
-	 */
-	private Integer y_offset;
-	/**
-	 * Смещение доступной области относительно дальней стенки (со стороны загрузки)
-	 */
-	private Integer z_offset;
 
 	public Rack(Integer code_sector, Integer code_rack, String name_rack, String rack_barcode, Integer length, Integer width, Integer height, Integer x_coord, Integer y_coord, Integer angle, LoadSide load_side, Integer code_rack_template, boolean lock_size, boolean lock_move, TypeRack type_race, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer real_length, Integer real_width, Integer real_height, Integer x_offset, Integer y_offset, Integer z_offset) {
+		super(length, width, height, load_side, user_insert, date_insert, user_update, date_update, real_length, real_width, real_height, x_offset, y_offset, z_offset);
 		this.code_sector = code_sector;
 		this.code_rack = code_rack;
 		this.name_rack = name_rack;
 		this.rack_barcode = rack_barcode;
-		this.length = length;
-		this.width = width;
-		this.height = height;
 		this.x_coord = x_coord;
 		this.y_coord = y_coord;
 		this.angle = angle;
-		this.load_side = load_side;
 		this.code_rack_template = code_rack_template;
 		this.lock_size = lock_size;
 		this.lock_move = lock_move;
 		this.type_race = type_race;
-		this.user_insert = user_insert;
-		this.date_insert = date_insert;
-		this.user_update = user_update;
-		this.date_update = date_update;
-		this.real_length = real_length;
-		this.real_width = real_width;
-		this.real_height = real_height;
-		this.x_offset = x_offset;
-		this.y_offset = y_offset;
-		this.z_offset = z_offset;
 	}
 
 	public Integer getCode_sector() {
@@ -177,30 +108,6 @@ public class Rack implements IJsonObject {
 		this.rack_barcode = rack_barcode;
 	}
 
-	public Integer getLength() {
-		return length;
-	}
-
-	public void setLength(Integer length) {
-		this.length = length;
-	}
-
-	public Integer getWidth() {
-		return width;
-	}
-
-	public void setWidth(Integer width) {
-		this.width = width;
-	}
-
-	public Integer getHeight() {
-		return height;
-	}
-
-	public void setHeight(Integer height) {
-		this.height = height;
-	}
-
 	public Integer getX_coord() {
 		return x_coord;
 	}
@@ -217,36 +124,12 @@ public class Rack implements IJsonObject {
 		this.y_coord = y_coord;
 	}
 
-	public Integer getZ_offset() {
-		return z_offset;
-	}
-
-	public void setZ_offset(Integer z_offset) {
-		this.z_offset = z_offset;
-	}
-
 	public Integer getAngle() {
 		return angle;
 	}
 
 	public void setAngle(Integer angle) {
 		this.angle = angle;
-	}
-
-	public LoadSide getLoad_side() {
-		return load_side;
-	}
-
-	public String getLoad_sideAtStr() {
-		return (load_side != null) ? load_side.name() : null;
-	}
-
-	public void setLoad_side(LoadSide load_side) {
-		this.load_side = load_side;
-	}
-
-	public void setLoad_side(String load_side) {
-		this.load_side = (load_side != null) ? LoadSide.valueOf(load_side) : null;
 	}
 
 	public Integer getCode_rack_template() {
@@ -297,171 +180,58 @@ public class Rack implements IJsonObject {
 		this.type_race = (type_race != null) ? TypeRack.valueOf(type_race) : null;
 	}
 
-	public Integer getUser_insert() {
-		return user_insert;
-	}
-
-	public void setUser_insert(Integer user_insert) {
-		this.user_insert = user_insert;
-	}
-
-	public Date getDate_insert() {
-		return date_insert;
-	}
-
-	public void setDate_insert(Date date_insert) {
-		this.date_insert = date_insert;
-	}
-
-	public Integer getUser_update() {
-		return user_update;
-	}
-
-	public void setUser_update(Integer user_update) {
-		this.user_update = user_update;
-	}
-
-	public Date getDate_update() {
-		return date_update;
-	}
-
-	public void setDate_update(Date date_update) {
-		this.date_update = date_update;
-	}
-
-	public Integer getReal_length() {
-		return real_length;
-	}
-
-	public void setReal_length(Integer real_length) {
-		this.real_length = real_length;
-	}
-
-	public Integer getReal_width() {
-		return real_width;
-	}
-
-	public void setReal_width(Integer real_width) {
-		this.real_width = real_width;
-	}
-
-	public Integer getReal_height() {
-		return real_height;
-	}
-
-	public void setReal_height(Integer real_height) {
-		this.real_height = real_height;
-	}
-
-	public Integer getX_offset() {
-		return x_offset;
-	}
-
-	public void setX_offset(Integer x_offset) {
-		this.x_offset = x_offset;
-	}
-
-	public Integer getY_offset() {
-		return y_offset;
-	}
-
-	public void setY_offset(Integer y_offset) {
-		this.y_offset = y_offset;
-	}
-
 	public Rack(final ResultSet resultSet) throws SQLException {
+		super(resultSet);
 		code_sector = resultSet.getInt(RackConst.CODE_SECTOR);
 		code_rack = resultSet.getInt(RackConst.CODE_RACK);
 		name_rack = resultSet.getString(RackConst.NAME_RACK);
 		rack_barcode = resultSet.getString(RackConst.RACK_BARCODE);
-		length = resultSet.getInt(RackConst.LENGTH);
-		width = resultSet.getInt(RackConst.WIDTH);
-		height = resultSet.getInt(RackConst.HEIGHT);
 		x_coord = resultSet.getInt(RackConst.X_COORD);
 		y_coord = resultSet.getInt(RackConst.Y_COORD);
 		angle = resultSet.getInt(RackConst.ANGLE);
-		setLoad_side(resultSet.getString(RackConst.LOAD_SIDE));
 		code_rack_template = resultSet.getInt(RackConst.CODE_RACK_TEMPLATE);
 		setLock_size(resultSet.getString(RackConst.LOCK_SIZE));
 		setLock_move(resultSet.getString(RackConst.LOCK_MOVE));
 		setType_race(resultSet.getString(RackConst.TYPE_RACK));
-		user_insert = resultSet.getInt(RackConst.USER_INSERT);
-		date_insert = resultSet.getTimestamp(RackConst.DATE_INSERT);
-		user_update = resultSet.getInt(RackConst.USER_UPDATE);
-		date_update = resultSet.getTimestamp(RackConst.DATE_UPDATE);
-		real_length = resultSet.getInt(RackConst.REAL_LENGTH);
-		real_width = resultSet.getInt(RackConst.REAL_WIDTH);
-		real_height = resultSet.getInt(RackConst.REAL_HEIGHT);
-		x_offset = resultSet.getInt(RackConst.X_OFFSET);
-		y_offset = resultSet.getInt(RackConst.Y_OFFSET);
-		z_offset = resultSet.getInt(RackConst.Z_OFFSET);
 	}
 
 	public Rack(final JsonObject rackJson) {
+		super(rackJson);
 		code_sector = JsonUtils.getInteger(rackJson, RackConst.CODE_SECTOR);
 		code_rack = JsonUtils.getInteger(rackJson, RackConst.CODE_RACK);
 		name_rack = JsonUtils.getString(rackJson, RackConst.NAME_RACK);
 		rack_barcode = JsonUtils.getString(rackJson, RackConst.RACK_BARCODE);
-		length = JsonUtils.getInteger(rackJson, RackConst.LENGTH);
-		width = JsonUtils.getInteger(rackJson, RackConst.WIDTH);
-		height = JsonUtils.getInteger(rackJson, RackConst.HEIGHT);
 		x_coord = JsonUtils.getInteger(rackJson, RackConst.X_COORD);
 		y_coord = JsonUtils.getInteger(rackJson, RackConst.Y_COORD);
 		angle = JsonUtils.getInteger(rackJson, RackConst.ANGLE);
-		setLoad_side(JsonUtils.getString(rackJson, RackConst.LOAD_SIDE));
 		code_rack_template = JsonUtils.getInteger(rackJson, RackConst.CODE_RACK_TEMPLATE);
 		lock_size = JsonUtils.getBoolean(rackJson, RackConst.LOCK_SIZE);
 		lock_move = JsonUtils.getBoolean(rackJson, RackConst.LOCK_MOVE);
 		setType_race(JsonUtils.getString(rackJson, RackConst.TYPE_RACK));
-		user_insert = JsonUtils.getInteger(rackJson, RackConst.USER_INSERT);
-		date_insert = JsonUtils.getDate(rackJson, RackConst.DATE_INSERT);
-		user_update = JsonUtils.getInteger(rackJson, RackConst.USER_UPDATE);
-		date_update = JsonUtils.getDate(rackJson, RackConst.DATE_UPDATE);
-		if (type_race == TypeRack.R) {
-			real_length = JsonUtils.getInteger(rackJson, RackConst.REAL_LENGTH);
-			real_width = JsonUtils.getInteger(rackJson, RackConst.REAL_WIDTH);
-			real_height = JsonUtils.getInteger(rackJson, RackConst.REAL_HEIGHT);
-			x_offset = JsonUtils.getInteger(rackJson, RackConst.X_OFFSET);
-			y_offset = JsonUtils.getInteger(rackJson, RackConst.Y_OFFSET);
-			z_offset = JsonUtils.getInteger(rackJson, RackConst.Z_OFFSET);
-		} else {
-			real_length = length;
-			real_width = width;
-			real_height = height;
-			x_offset = 0;
-			y_offset = 0;
-			z_offset = 0;
+		if (type_race != TypeRack.R) {
+			setReal_length(getLength());
+			setReal_width(getWidth());
+			setReal_height(getHeight());
+			setX_offset(0);
+			setY_offset(0);
+			setZ_offset(0);
 		}
 	}
 
 	@Override
 	public JsonObject toJsonObject() {
-		final JsonObject jsonObject = new JsonObject();
+		final JsonObject jsonObject = super.toJsonObject();
 		jsonObject.addProperty(RackConst.CODE_SECTOR, code_sector);
 		jsonObject.addProperty(RackConst.CODE_RACK, code_rack);
 		jsonObject.addProperty(RackConst.NAME_RACK, name_rack);
 		jsonObject.addProperty(RackConst.RACK_BARCODE, rack_barcode);
-		jsonObject.addProperty(RackConst.LENGTH, length);
-		jsonObject.addProperty(RackConst.WIDTH, width);
-		jsonObject.addProperty(RackConst.HEIGHT, height);
 		jsonObject.addProperty(RackConst.X_COORD, x_coord);
 		jsonObject.addProperty(RackConst.Y_COORD, y_coord);
 		jsonObject.addProperty(RackConst.ANGLE, angle);
-		jsonObject.addProperty(RackConst.LOAD_SIDE, getLoad_sideAtStr());
 		jsonObject.addProperty(RackConst.CODE_RACK_TEMPLATE, code_rack_template);
 		jsonObject.addProperty(RackConst.LOCK_SIZE, (lock_size) ? "Y" : "N");
 		jsonObject.addProperty(RackConst.LOCK_MOVE, (lock_move) ? "Y" : "N");
 		jsonObject.addProperty(RackConst.TYPE_RACK, getType_raceAtStr());
-		jsonObject.addProperty(RackConst.USER_INSERT, user_insert);
-		JsonUtils.set(jsonObject, RackConst.DATE_INSERT, date_insert);
-		jsonObject.addProperty(RackConst.USER_UPDATE, user_update);
-		JsonUtils.set(jsonObject, RackConst.DATE_UPDATE, date_update);
-		jsonObject.addProperty(RackConst.REAL_LENGTH, real_length);
-		jsonObject.addProperty(RackConst.REAL_WIDTH, real_width);
-		jsonObject.addProperty(RackConst.REAL_HEIGHT, real_height);
-		jsonObject.addProperty(RackConst.X_OFFSET, x_offset);
-		jsonObject.addProperty(RackConst.Y_OFFSET, y_offset);
-		jsonObject.addProperty(RackConst.Z_OFFSET, z_offset);
 		return jsonObject;
 	}
 }

@@ -70,11 +70,11 @@ public class RackWaresPlacementSave extends AbstractAction {
 
 		final JsonArray rackWaresListJson = requestData.getAsJsonObject().getAsJsonArray("rackWaresList");
 
-		final List<RackShelf2D> rackShelf2DList;
+		final List<RackShelf2D<RackShelf>> rackShelf2DList;
 		if (canAccessEditRackShelf) {
 			final JsonArray shelfListJson = requestData.getAsJsonObject().getAsJsonArray("rackShelfList");
 			// наполнение враперов полок
-			rackShelf2DList = new ArrayList<RackShelf2D>(shelfListJson.size());
+			rackShelf2DList = new ArrayList<RackShelf2D<RackShelf>>(shelfListJson.size());
 			for (int i = 0; i < shelfListJson.size(); i++) {
 				final JsonObject rackShelfJson = shelfListJson.get(i).getAsJsonObject();
 				final RackShelf rackShelf = new RackShelf(rackShelfJson);
@@ -84,7 +84,7 @@ public class RackWaresPlacementSave extends AbstractAction {
 			}
 		} else {
 			final List<RackShelf> oldRackShelfList = rackShelfModel.list(userContext, code_rack);
-			rackShelf2DList = new ArrayList<RackShelf2D>(oldRackShelfList.size());
+			rackShelf2DList = new ArrayList<RackShelf2D<RackShelf>>(oldRackShelfList.size());
 			for (int i = 0; i < oldRackShelfList.size(); i++) {
 				final RackShelf rackShelf = oldRackShelfList.get(i);
 				// расчет координат полки
@@ -173,7 +173,7 @@ public class RackWaresPlacementSave extends AbstractAction {
 		return null;
 	}
 
-	private List<GroupRackWares> split(final List<RackShelf2D> rackShelf2DList, final List<RackWares2D> rackWares2DList) {
+	private List<GroupRackWares> split(final List<RackShelf2D<RackShelf>> rackShelf2DList, final List<RackWares2D> rackWares2DList) {
 		final List<GroupRackWares> groups = new ArrayList();
 		// обединение одинаковых товаров в группы
 		float minWidth = Integer.MAX_VALUE;

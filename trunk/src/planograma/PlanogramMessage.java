@@ -80,6 +80,10 @@ public class PlanogramMessage {
 		return getMessage("RACK_SHELF_OUTSIDE_RACK");
 	}
 
+	public static String RACK_SHELF_INTERSECT_WARES() {
+		return getMessage("RACK_SHELF_INTERSECT_WARES");
+	}
+
 	private static String getMessage(final String name) {
 		final ResourceBundle resourceBundle = ResourceBundle.getBundle(PlanogramMessage.class.getSimpleName());
 		final String result = resourceBundle.getString(name);

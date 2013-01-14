@@ -911,7 +911,7 @@ var canRackShelfEdit='<%=access_rack_shelf_edit%>';
 		window.edit_canvas.onmouseup = function(e) {
 			if (window.shelf!=null && canRackShelfEdit!='disabled')
 			{
-				adhesionShelf(window.shelf)
+				// adhesionShelf(window.shelf);
 				roundShelf(window.shelf);
 			}
 			if (window.flagPaste==2)

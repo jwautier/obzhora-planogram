@@ -4,22 +4,18 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
-import planograma.PlanogramMessage;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.SectorConst;
 import planograma.data.*;
 import planograma.data.geometry.Rack2D;
-import planograma.data.geometry.RackShelf2D;
-import planograma.data.geometry.RackWares2D;
 import planograma.exception.EntityFieldException;
 import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
 import planograma.model.*;
 import planograma.servlet.AbstractAction;
-import planograma.servlet.rack.RackMinDimensionsValidation;
+import planograma.servlet.validate.*;
 import planograma.utils.JsonUtils;
-import planograma.utils.geometry.Intersection2DUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -96,89 +92,19 @@ public class SectorSave extends AbstractAction {
 			// Проверка параметров стеллажа: высота, ширина, глубина, полезная высота, полезная ширина, полезная глубина больше 10мм
 			RackMinDimensionsValidation.validate(fieldExceptionList, rack, i);
 			// стеллаж не может выходить за пределы зала
-			if (rack2D.getMinX() < 0 ||
-					rack2D.getMaxX() > sector.getLength() ||
-					rack2D.getMinY() < 0 ||
-					rack2D.getMaxY() > sector.getWidth() ||
-					rack.getHeight() < 0 ||
-					rack.getHeight() > sector.getHeight()) {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_OUTSIDE_SECTOR(), Rack.class, i, rack.getCode_rack(), "outside"));
-			}
+			RackOutsideSectorValidation.validate(fieldExceptionList, sector, rack2D, i);
 
 			if (rack.getCode_rack() != null) {
-				float dx;
-				float dy;
-				float dz;
-				// относительно стороны загрузки
-				if (rack.getLoad_side() == LoadSide.F) {
-					dx = rack.getLength();
-					dy = rack.getHeight();
-					dz = rack.getWidth();
-				} else {
-					dx = rack.getLength();
-					dy = rack.getWidth();
-					dz = rack.getHeight();
-				}
+				// стеллаж не может стать меньше чем расположеные на нем полки
 				final List<RackShelf> rackShelfList = rackShelfModel.list(userContext, rack.getCode_rack());
-				//	стеллаж не может стать меньше чем расположеные на нем полки (не сохраняется, выделяется один из стеллажей)
-				if (rackShelfList != null) {
-					for (int j = 0; j < rackShelfList.size(); j++) {
-						final RackShelf rackShelf = rackShelfList.get(j);
-						final RackShelf2D shelf2D = new RackShelf2D(rackShelf);
-						if (shelf2D.getMinX() < 0 ||
-								shelf2D.getMaxX() > dx ||
-								shelf2D.getMinY() < 0 ||
-								shelf2D.getMaxY() > dy ||
-								rackShelf.getShelf_length() < 0 ||
-								rackShelf.getShelf_length() > dz) {
-							fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_OVERFLOW_SHELF(), Rack.class, i, rack.getCode_rack(), "rack_overflow_shelf"));
-						}
-					}
-				}
-
-				// относительно стороны загрузки
-				if (rack.getLoad_side() == LoadSide.F) {
-					dx = rack.getReal_length();
-					dy = rack.getReal_height();
-					dz = rack.getReal_width();
-				} else {
-					dx = rack.getReal_length();
-					dy = rack.getReal_width();
-					dz = rack.getReal_height();
-				}
-				//	полезная зона не может стать меньше чем расположеные на нем товары(не сохраняется)
-				final List<RackWares> rackWaresList = rackWaresModel.list(userContext, rack.getCode_rack());
-				if (rackWaresList != null) {
-					for (int j = 0; j < rackWaresList.size(); j++) {
-						final RackWares rackWares = rackWaresList.get(j);
-						final RackWares2D rackWares2D = new RackWares2D(rackWares);
-						if (rackWares2D.getMinX() < 0 ||
-								rackWares2D.getMaxX() > dx ||
-								rackWares2D.getMinY() < 0 ||
-								rackWares2D.getMaxY() > dy ||
-								rackWares.getWares_length() * rackWares.getCount_length_on_shelf() < 0 ||
-								rackWares.getWares_length() * rackWares.getCount_length_on_shelf() > dz) {
-							fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_OVERFLOW_WARES(), Rack.class, i, rack.getCode_rack(), "rack_overflow_wares"));
-						}
-					}
-				}
+				RackOverflowShelfValidation.validate(fieldExceptionList, rack, i, rackShelfList);
+				// полезная зона стеллажа не может стать меньше чем расположеные на нем товары
+				final List<RackWares> rackWaresList=rackWaresModel.list(userContext, rack.getCode_rack());
+				RackOverflowWaresValidation.validate(fieldExceptionList, rack, i, rackWaresList);
 			}
 		}
 		//	стеллажи не могут пересекаться(не сохраняется, выделяется один из стеллажей)
-		for (int i = 0; i < rack2DList.size(); i++) {
-			final Rack2D a = rack2DList.get(i);
-			for (int j = i + 1; j < rack2DList.size(); j++) {
-				final Rack2D b = rack2DList.get(j);
-				if (a.getRack().getType_race() != TypeRack.DZ &&
-						b.getRack().getType_race() != TypeRack.DZ) {
-					// пересечение мертвых зон разрешается
-					if (Intersection2DUtils.isIntersection(a, b)) {
-						if (a.getRack().getType_race()==TypeRack.R)
-						fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_INTERSECT(), Rack.class, i, a.getRack().getCode_rack(), "rack_intersect"));
-					}
-				}
-			}
-		}
+		RackIntersectValidation.validate(fieldExceptionList, rack2DList);
 
 		final JsonObject jsonObject = new JsonObject();
 		if (fieldExceptionList.isEmpty()) {

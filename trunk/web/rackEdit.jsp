@@ -7,6 +7,7 @@
 <%@ page import="planograma.data.LoadSide" %>
 <%@ page import="planograma.data.TypeShelf" %>
 <%@ page import="planograma.constant.SecurityConst" %>
+<%@ page import="planograma.constant.data.RackShelfConst" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
 	final String access_rack_edit=JspUtils.actionAccess(session, SecurityConst.ACCESS_RACK_EDIT);
@@ -453,9 +454,103 @@
 				window.rack.z_offset=temp;
 				break;
 		}
+
 		postJson('<%=RackSave.URL%>', {rack:window.rack, rackShelfList:window.rackShelfList}, function (data) {
-			setCookie('<%=RackConst.CODE_RACK%>', data.code_rack);
-			loadComplete();
+			if (data.errorField!=null && data.errorField.length>0) {
+				switch (window.rack.load_side) {
+					case '<%=LoadSide.U%>':
+						var temp = window.rack.width;
+						window.rack.width = window.rack.length;
+						window.rack.length = window.rack.height;
+						window.rack.height = temp;
+
+						temp = window.rack.real_width;
+						window.rack.real_width = window.rack.real_length;
+						window.rack.real_length = window.rack.real_height;
+						window.rack.real_height = temp;
+						break;
+					case '<%=LoadSide.F%>':
+						var temp = window.rack.width;
+						window.rack.width = window.rack.length;
+						window.rack.length = temp;
+
+						temp = window.rack.real_width;
+						window.rack.real_width = window.rack.real_length;
+						window.rack.real_length = temp;
+
+						temp = window.rack.y_offset;
+						window.rack.y_offset = window.rack.z_offset;
+						window.rack.z_offset = temp;
+						break;
+				}
+				var setFocus = null;
+				var error_message = "";
+				for (var i = 0;  setFocus == null && i < data.errorField.length; i++) {
+					error_message += data.errorField[i].message + '\n';
+					if (setFocus == null) {
+						switch (data.errorField[i].entityClass) {
+							case '<%=Rack.class.getName()%>':
+								if (data.errorField[i].fieldName != null) {
+									switch (data.errorField[i].fieldName) {
+										case '<%=RackConst.HEIGHT%>':
+											setFocus = $('#rackHeight');
+											break;
+										case '<%=RackConst.WIDTH%>':
+											setFocus = $('#rackWidth');
+											break;
+										case '<%=RackConst.LENGTH%>':
+											setFocus = $('#rackLength');
+											break;
+										case '<%=RackConst.REAL_HEIGHT%>':
+											setFocus = $('#rackRealHeight');
+											break;
+										case '<%=RackConst.REAL_WIDTH%>':
+											setFocus = $('#rackRealWidth');
+											break;
+										case '<%=RackConst.REAL_LENGTH%>':
+											setFocus = $('#rackRealLength');
+											break;
+										case 'rack_intersect':
+										case 'rack_overflow_wares':
+											setFocus = $('#rackWidth');
+											break;
+									}
+								}
+								break;
+							case '<%=RackShelf.class.getName()%>':
+								window.shelf = window.rackShelfTemplateList[data.errorField[i].entityIndex];
+								selectShelf(window.shelf);
+								if (data.errorField[i].fieldName != null) {
+									switch (data.errorField[i].fieldName) {
+										case '<%=RackShelfConst.SHELF_WIDTH%>':
+											setFocus = $('#shelfWidth');
+											break;
+										case '<%=RackShelfConst.SHELF_HEIGHT%>':
+											setFocus = $('#shelfHeight');
+											break;
+										case '<%=RackShelfConst.SHELF_LENGTH%>':
+											setFocus = $('#shelfLength');
+											break;
+										case 'outside':
+										case 'shelf_intersect_wares':
+											setFocus = $('#shelfWidth');
+											break;
+									}
+								}
+								break;
+						}
+					}
+				}
+				alert(error_message);
+				if (setFocus != null) {
+					setFocus.focus();
+				}
+			}
+			else
+			{
+				setCookie('<%=RackConst.CODE_RACK%>', data.code_rack);
+				loadComplete();
+			}
 		});
 	}
 	function fRackReload()

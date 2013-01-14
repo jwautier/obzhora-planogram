@@ -4,23 +4,22 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
-import planograma.PlanogramMessage;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
-import planograma.constant.VerificationConst;
-import planograma.constant.data.RackShelfTemplateConst;
 import planograma.constant.data.RackTemplateConst;
-import planograma.data.LoadSide;
 import planograma.data.RackShelfTemplate;
 import planograma.data.RackTemplate;
 import planograma.data.UserContext;
-import planograma.data.geometry.RackShelfTemplate2D;
+import planograma.data.geometry.RackShelf2D;
 import planograma.exception.EntityFieldException;
 import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
 import planograma.model.RackShelfTemplateModel;
 import planograma.model.RackTemplateModel;
 import planograma.servlet.AbstractAction;
+import planograma.servlet.validate.RackMinDimensionsValidation;
+import planograma.servlet.validate.RackShelfOutsideRackValidation;
+import planograma.servlet.validate.RackShelfMinDimensionsValidation;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -62,98 +61,27 @@ public class RackTemplateSave extends AbstractAction {
 		final JsonObject rackTemplateJson = requestData.getAsJsonObject().getAsJsonObject("rackTemplate");
 		final RackTemplate rackTemplate = new RackTemplate(rackTemplateJson);
 		final JsonArray shelfListJson = requestData.getAsJsonObject().getAsJsonArray("rackShelfTemplateList");
-		final List<RackShelfTemplate> itemList = new ArrayList<RackShelfTemplate>(shelfListJson.size());
+		final List<RackShelf2D<RackShelfTemplate>> itemList = new ArrayList<RackShelf2D<RackShelfTemplate>>(shelfListJson.size());
 		for (int i = 0; i < shelfListJson.size(); i++) {
 			final JsonObject rackJson = shelfListJson.get(i).getAsJsonObject();
-			final RackShelfTemplate item = new RackShelfTemplate(rackJson);
-			itemList.add(item);
+			final RackShelfTemplate shelf = new RackShelfTemplate(rackJson);
+			final RackShelf2D<RackShelfTemplate> shelf2D = new RackShelf2D(shelf);
+			itemList.add(shelf2D);
 		}
 
 		//	ПРОВЕРКИ
 		List<EntityFieldException> fieldExceptionList = new ArrayList<EntityFieldException>();
-		//	параметры высоты, ширины, глубины, полезная высота, полезная ширина, полезная глубина меньше 10мм(не сохраняется)
-		if (rackTemplate.getHeight() < VerificationConst.MIN_RACK_DIMENSIONS) {
-			if (rackTemplate.getLoad_side() == LoadSide.F) {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_HEIGHT_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.HEIGHT));
-			} else {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_LENGTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.LENGTH));
-			}
-		}
-		if (rackTemplate.getWidth() < VerificationConst.MIN_RACK_DIMENSIONS) {
-			if (rackTemplate.getLoad_side() == LoadSide.F) {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_LENGTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.LENGTH));
-			} else {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_HEIGHT_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.HEIGHT));
-			}
-		}
-		if (rackTemplate.getLength() < VerificationConst.MIN_RACK_DIMENSIONS) {
-			if (rackTemplate.getLoad_side() == LoadSide.F) {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_WIDTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.WIDTH));
-			} else {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_WIDTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.WIDTH));
-			}
-		}
-		if (rackTemplate.getReal_height() < VerificationConst.MIN_RACK_DIMENSIONS) {
-			if (rackTemplate.getLoad_side() == LoadSide.F) {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_HEIGHT_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.REAL_HEIGHT));
-			} else {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_LENGTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.REAL_LENGTH));
-			}
-		}
-		if (rackTemplate.getReal_width() < VerificationConst.MIN_RACK_DIMENSIONS) {
-			if (rackTemplate.getLoad_side() == LoadSide.F) {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_LENGTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.REAL_LENGTH));
-			} else {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_HEIGHT_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.REAL_HEIGHT));
-			}
-		}
-		if (rackTemplate.getReal_length() < VerificationConst.MIN_RACK_DIMENSIONS) {
-			if (rackTemplate.getLoad_side() == LoadSide.F) {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_WIDTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.REAL_WIDTH));
-			} else {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_REAL_WIDTH_TOO_LITTLE(), RackTemplate.class, 0, rackTemplate.getCode_rack_template(), RackTemplateConst.REAL_WIDTH));
-			}
-		}
+		//	Проверка параметров шаблонного стеллажа: высота, ширина, глубина, полезная высота, полезная ширина, полезная глубина больше 10мм
+		RackMinDimensionsValidation.validate(fieldExceptionList, rackTemplate, 0);
 
-		// полки по высоте глубине и ширине должны быть больше 5мм(не сохраняется, выделяется одна из полок)
 		for (int i = 0; i < itemList.size(); i++) {
-			final RackShelfTemplate newItem = itemList.get(i);
-			if (newItem.getShelf_width() < VerificationConst.MIN_RACK_SHELF_DIMENSIONS) {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_SHELF_WIDTH_TOO_LITTLE(), RackShelfTemplate.class, i, newItem.getCode_shelf_template(), RackShelfTemplateConst.SHELF_WIDTH));
-			}
-			if (newItem.getShelf_height() < VerificationConst.MIN_RACK_SHELF_DIMENSIONS) {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_SHELF_HEIGHT_TOO_LITTLE(), RackShelfTemplate.class, i, newItem.getCode_shelf_template(), RackShelfTemplateConst.SHELF_HEIGHT));
-			}
-			if (newItem.getShelf_length() < VerificationConst.MIN_RACK_SHELF_DIMENSIONS) {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_SHELF_LENGTH_TOO_LITTLE(), RackShelfTemplate.class, i, newItem.getCode_shelf_template(), RackShelfTemplateConst.SHELF_LENGTH));
-			}
+			final RackShelf2D<RackShelfTemplate> shelf2D = itemList.get(i);
+			final RackShelfTemplate newItem = shelf2D.getRackShelf();
+			// Проверка параметров полки шаблонного стеллажа: высота, ширина глубина должны быть больше 5мм
+			RackShelfMinDimensionsValidation.validate(fieldExceptionList, newItem, i);
 		}
-		// полка не может выходить за пределы стеллажа(не сохраняется, выделяется одна из полок)
-		float dx;
-		float dy;
-		float dz;
-		// относительно стороны загрузки
-		if (rackTemplate.getLoad_side() == LoadSide.F) {
-			dx = rackTemplate.getLength();
-			dy = rackTemplate.getHeight();
-			dz = rackTemplate.getWidth();
-		} else {
-			dx = rackTemplate.getLength();
-			dy = rackTemplate.getWidth();
-			dz = rackTemplate.getHeight();
-		}
-		for (int i = 0; i < itemList.size(); i++) {
-			final RackShelfTemplate rackShelfTemplate = itemList.get(i);
-			final RackShelfTemplate2D shelf2D = new RackShelfTemplate2D(rackShelfTemplate);
-			if (shelf2D.getMinX() < 0 ||
-					shelf2D.getMaxX() > dx ||
-					shelf2D.getMinY() < 0 ||
-					shelf2D.getMaxY() > dy ||
-					rackShelfTemplate.getShelf_length() < 0 ||
-					rackShelfTemplate.getShelf_length() > dz) {
-				fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_SHELF_OUTSIDE_RACK(), RackShelfTemplate.class, i, shelf2D.getRackShelfTemplate().getCode_shelf_template(), "outside"));
-			}
-		}
+		// Проверка: полка не может выходить за пределы стеллажа
+		RackShelfOutsideRackValidation.validate(fieldExceptionList, rackTemplate, itemList);
 
 		final JsonObject jsonObject = new JsonObject();
 		if (fieldExceptionList.isEmpty()) {
@@ -168,7 +96,7 @@ public class RackTemplateSave extends AbstractAction {
 					RackShelfTemplate findItem = null;
 //				поиск среди сохраненых рание
 					for (int i = 0; findItem == null && i < itemList.size(); i++) {
-						final RackShelfTemplate currentItem = itemList.get(i);
+						final RackShelfTemplate currentItem = itemList.get(i).getRackShelf();
 						if (oldItem.getCode_shelf_template().equals(currentItem.getCode_shelf_template())) {
 							findItem = currentItem;
 //						запись была обновлена
@@ -183,10 +111,11 @@ public class RackTemplateSave extends AbstractAction {
 					}
 				}
 			}
-			for (final RackShelfTemplate newItem : itemList) {
+			for (final RackShelf2D<RackShelfTemplate> newItem : itemList) {
 //			запись была добавлена
-				newItem.setCode_rack_template(rackTemplate.getCode_rack_template());
-				rackShelfTemplateModel.insert(userContext, newItem);
+				final RackShelfTemplate shelf = newItem.getRackShelf();
+				shelf.setCode_rack_template(rackTemplate.getCode_rack_template());
+				rackShelfTemplateModel.insert(userContext, shelf);
 			}
 			commit(userContext);
 			jsonObject.addProperty(RackTemplateConst.CODE_RACK_TEMPLATE, rackTemplate.getCode_rack_template());
