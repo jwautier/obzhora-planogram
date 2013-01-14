@@ -72,7 +72,7 @@ public class TestModel {
 		testStateAllModel(userContext, RackTemplateConst.TABLE_NAME, RackTemplateConst.STATE_RACK_TEMPLATE, RackTemplateConst.STATE_ALL_PART_STATE_STATE_RACK_TEMPLATE);
 		testStateAllModel(userContext, RackTemplateConst.TABLE_NAME, RackTemplateConst.LOAD_SIDE, RackTemplateConst.STATE_ALL_PART_STATE_LOAD_SIDE);
 		testStateAllModel(userContext, RackShelfConst.TABLE_NAME, RackShelfConst.TYPE_SHELF, RackShelfConst.STATE_ALL_PART_STATE_TYPE_SHELF);
-		testStateAllModel(userContext, RackShelfTemplateConst.TABLE_NAME, RackShelfTemplateConst.TYPE_SHELF, RackShelfTemplateConst.STATE_ALL_PART_STATE_STATE_TYPE_SHELF);
+		testStateAllModel(userContext, RackShelfTemplateConst.TABLE_NAME, RackShelfTemplateConst.TYPE_SHELF, RackShelfTemplateConst.STATE_ALL_PART_STATE_TYPE_SHELF);
 	}
 
 	private static void testStateAllModel(final UserContext userContext, final String tableName, final String columnName, final int starteAllPartState) throws SQLException {

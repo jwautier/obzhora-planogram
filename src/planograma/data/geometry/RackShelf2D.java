@@ -1,9 +1,8 @@
 package planograma.data.geometry;
 
-import planograma.data.RackShelf;
+import planograma.data.AbstractRackShelf;
 import planograma.utils.geometry.ConvexQuadrilateral2D;
 import planograma.utils.geometry.Point2D;
-import planograma.utils.geometry.Rectangle2D;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,10 +11,10 @@ import planograma.utils.geometry.Rectangle2D;
  * Time: 5:06
  * To change this template use File | Settings | File Templates.
  */
-public class RackShelf2D extends ConvexQuadrilateral2D {
-	private final RackShelf rackShelf;
+public class RackShelf2D<E extends AbstractRackShelf> extends ConvexQuadrilateral2D  {
+	private final E rackShelf;
 
-	public RackShelf2D(RackShelf rackShelf) {
+	public RackShelf2D(E rackShelf) {
 		this.rackShelf = rackShelf;
 		// поворот объекта
 		final float cos = (float) Math.cos(Math.toRadians(rackShelf.getAngle()));
@@ -39,7 +38,7 @@ public class RackShelf2D extends ConvexQuadrilateral2D {
 		p4 = new Point2D(rackShelf.getX_coord() + x * cos - y * sin, rackShelf.getY_coord() + x * sin + y * cos);
 	}
 
-	public RackShelf getRackShelf() {
+	public E getRackShelf() {
 		return rackShelf;
 	}
 }
