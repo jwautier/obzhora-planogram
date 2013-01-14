@@ -2,7 +2,7 @@ package planograma.servlet.validate;
 
 import planograma.PlanogramMessage;
 import planograma.constant.VerificationConst;
-import planograma.constant.data.RackShelfTemplateConst;
+import planograma.constant.data.AbstractRackShelfConst;
 import planograma.data.AbstractRackShelf;
 import planograma.data.RackShelf;
 import planograma.data.RackShelfTemplate;
@@ -31,13 +31,13 @@ public class RackShelfMinDimensionsValidation {
 			code = ((RackShelfTemplate) rackShelf).getCode_shelf_template();
 
 		if (rackShelf.getShelf_width() < VerificationConst.MIN_RACK_SHELF_DIMENSIONS) {
-			fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_SHELF_WIDTH_TOO_LITTLE(), rackShelf.getClass(), index, code, RackShelfTemplateConst.SHELF_WIDTH));
+			fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_SHELF_WIDTH_TOO_LITTLE(), rackShelf.getClass(), index, code, AbstractRackShelfConst.SHELF_WIDTH));
 		}
 		if (rackShelf.getShelf_height() < VerificationConst.MIN_RACK_SHELF_DIMENSIONS) {
-			fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_SHELF_HEIGHT_TOO_LITTLE(), rackShelf.getClass(), index, code, RackShelfTemplateConst.SHELF_HEIGHT));
+			fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_SHELF_HEIGHT_TOO_LITTLE(), rackShelf.getClass(), index, code, AbstractRackShelfConst.SHELF_HEIGHT));
 		}
 		if (rackShelf.getShelf_length() < VerificationConst.MIN_RACK_SHELF_DIMENSIONS) {
-			fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_SHELF_LENGTH_TOO_LITTLE(), rackShelf.getClass(), index, code, RackShelfTemplateConst.SHELF_LENGTH));
+			fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_SHELF_LENGTH_TOO_LITTLE(), rackShelf.getClass(), index, code, AbstractRackShelfConst.SHELF_LENGTH));
 		}
 	}
 }

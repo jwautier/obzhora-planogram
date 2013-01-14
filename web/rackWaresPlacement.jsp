@@ -638,7 +638,7 @@ var canRackShelfEdit='<%=access_rack_shelf_edit%>';
 			}
 			// проверить пересечение товаров между собой и полками
 			var rackWaresIntersects = [];
-			var map = new Array(window.rack.width*window.rack.height);
+			var map = new Array(window.rack.width * window.rack.height);
 			for (var i in window.rackShelfList) {
 				var rackShelf = window.rackShelfList[i];
 				drawQuadrangle(map, window.rack.width, window.rack.height,
@@ -679,65 +679,56 @@ var canRackShelfEdit='<%=access_rack_shelf_edit%>';
 								// есть ошибки
 								var setFocus = null;
 								var error_message = "";
-								for (var i = 0; i < data.errorField.length; i++) {
+								for (var i = 0; setFocus == null && i < data.errorField.length; i++) {
 									error_message += data.errorField[i].message + '\n';
-									/*if (setFocus == null) {
-									 switch (data.errorField[i].entityClass) {
-									 case '<=RackTemplate.class.getName()%>':
-									 if (data.errorField[i].fieldName != null) {
-									 switch (data.errorField[i].fieldName) {
-									 case '<=RackTemplateConst.HEIGHT%>':
-									 setFocus = $('#rackTemplateHeight');
-									 break;
-									 case '<=RackTemplateConst.WIDTH%>':
-									 setFocus = $('#rackTemplateWidth');
-									 break;
-									 case '<=RackTemplateConst.LENGTH%>':
-									 setFocus = $('#rackTemplateLength');
-									 break;
-									 case '<=RackTemplateConst.REAL_HEIGHT%>':
-									 setFocus = $('#rackTemplateRealHeight');
-									 break;
-									 case '<=RackTemplateConst.REAL_WIDTH%>':
-									 setFocus = $('#rackTemplateRealWidth');
-									 break;
-									 case '<=RackTemplateConst.REAL_LENGTH%>':
-									 setFocus = $('#rackTemplateRealLength');
-									 break;
-									 }
-									 }
-									 break;
-									 case '<=RackShelfTemplate.class.getName()%>':
-									 window.shelf = window.rackShelfTemplateList[data.errorField[i].entityIndex];
-									 selectShelf(window.shelf);
-									 if (data.errorField[i].fieldName != null) {
-									 switch (data.errorField[i].fieldName) {
-									 case '<=RackShelfTemplateConst.SHELF_WIDTH%>':
-									 setFocus = $('#shelfWidth');
-									 break;
-									 case '<=RackShelfTemplateConst.SHELF_HEIGHT%>':
-									 setFocus = $('#shelfHeight');
-									 break;
-									 case '<=RackShelfTemplateConst.SHELF_LENGTH%>':
-									 setFocus = $('#shelfLength');
-									 break;
-									 case 'outside':
-									 setFocus = $('#shelfWidth');
-									 break;
-									 }
-									 }
-									 break;
-									 }
-									 }*/
+									if (setFocus == null) {
+										switch (data.errorField[i].entityClass) {
+											case '<=RackShelf.class.getName()%>':
+												window.shelf = window.rackShelfList[data.errorField[i].entityIndex];
+												selectShelf(window.shelf);
+												switch (data.errorField[i].fieldName) {
+													case '<=RackShelfConst.SHELF_WIDTH%>':
+														setFocus = $('#shelfWidth');
+														break;
+													case '<=RackShelfConst.SHELF_HEIGHT%>':
+														setFocus = $('#shelfHeight');
+														break;
+													case '<=RackShelfConst.SHELF_LENGTH%>':
+														setFocus = $('#shelfLength');
+														break;
+													case 'outside':
+														setFocus = $('#shelfWidth');
+														break;
+												}
+												break;
+											case '<=RackWares.class.getName()%>':
+												window.selectRackWaresList.push( window.rackWaresList[data.errorField[i].entityIndex]);
+												fRackWaresPlacementSelect();
+												drawEditCanvas();
+												drawPreviewCanvas();
+												switch (data.errorField[i].fieldName) {
+													case 'wares_outside_rack':
+														setFocus = $('#shelfWidth');
+														break;
+													case 'wares_intersect_shelf':
+														setFocus = $('#shelfWidth');
+														break;
+													case 'wares_intersect_shelf':
+														setFocus = $('#shelfWidth');
+														break;
+												}
+												break;
+										}
+									}
 								}
 								alert(error_message);
 								if (setFocus != null) {
 									setFocus.focus();
 								}
 							} else {
-					loadComplete();
+								loadComplete();
 							}
-				});
+						});
 			}
 		}
 		else {
