@@ -28,7 +28,6 @@ public class RackShelfIntersectWaresValidation {
 			final RackShelf2D<RackShelf> a = rackShelf2DList.get(i);
 			for (int j = 0; j < rackWares2DList.size(); j++) {
 				final RackWares2D b = rackWares2DList.get(j);
-				// пересечение мертвых зон разрешается
 				if (Intersection2DUtils.isIntersection(a, b)) {
 					fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_SHELF_INTERSECT_WARES(), RackShelf.class, i, a.getRackShelf().getCode_shelf(), "shelf_intersect_wares"));
 				}

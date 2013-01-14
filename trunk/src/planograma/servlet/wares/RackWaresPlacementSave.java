@@ -7,17 +7,24 @@ import org.apache.log4j.Logger;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.RackConst;
+import planograma.data.Rack;
 import planograma.data.RackShelf;
 import planograma.data.RackWares;
 import planograma.data.UserContext;
 import planograma.data.geometry.RackShelf2D;
 import planograma.data.geometry.RackWares2D;
+import planograma.exception.EntityFieldException;
 import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
+import planograma.model.RackModel;
 import planograma.model.RackShelfModel;
 import planograma.model.RackWaresModel;
 import planograma.model.SecurityModel;
 import planograma.servlet.AbstractAction;
+import planograma.servlet.validate.RackShelfMinDimensionsValidation;
+import planograma.servlet.validate.RackShelfOutsideRackValidation;
+import planograma.servlet.validate.RackWaresIntersectValidation;
+import planograma.servlet.validate.RackWaresOutsideRackValidation;
 import planograma.servlet.wares.rackWaresPlacementSaveHelp.GroupRackWares;
 import planograma.servlet.wares.rackWaresPlacementSaveHelp.GroupRackWaresComparator;
 import planograma.utils.geometry.Intersection2DUtils;
@@ -48,12 +55,14 @@ public class RackWaresPlacementSave extends AbstractAction {
 	private static final Logger LOG = Logger.getLogger(RackWaresPlacementSave.class);
 
 	private SecurityModel securityModel;
+	private RackModel rackModel;
 	private RackShelfModel rackShelfModel;
 	private RackWaresModel rackWaresModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
+		rackModel = RackModel.getInstance();
 		securityModel = SecurityModel.getInstance();
 		rackShelfModel = RackShelfModel.getInstance();
 		rackWaresModel = RackWaresModel.getInstance();
@@ -103,74 +112,103 @@ public class RackWaresPlacementSave extends AbstractAction {
 			rackWares2DList.add(item);
 		}
 
-		// проставить номера
-		final List<GroupRackWares> groups = split(rackShelf2DList, rackWares2DList);
-		for (int i = 0; i < groups.size(); i++) {
-			final GroupRackWares group = groups.get(i);
-			for (final RackWares2D rackWares2D : group.getWaresInGroup()) {
-				rackWares2D.getRackWares().setOrder_number_on_rack(i + 1);
-			}
-		}
-
+		// ПРОВЕРКИ
+		final List<EntityFieldException> fieldExceptionList = new ArrayList<EntityFieldException>();
+		final Rack rack = rackModel.select(userContext, code_rack);
 		if (canAccessEditRackShelf) {
-			// обновление полок
-			List<RackShelf> oldShelfList = rackShelfModel.list(userContext, code_rack);
-			for (final RackShelf oldItem : oldShelfList) {
-				RackShelf findItem = null;
-				// поиск среди сохраненых рание
-				for (int i = 0; findItem == null && i < rackShelf2DList.size(); i++) {
-					final RackShelf currentItem = rackShelf2DList.get(i).getRackShelf();
-					if (oldItem.getCode_shelf().equals(currentItem.getCode_shelf())) {
+			for (int i = 0; i < rackShelf2DList.size(); i++) {
+				final RackShelf2D rackShelf2D = rackShelf2DList.get(i);
+				// Проверка параметров полки стеллажа: высота, ширина, глубина должны быть больше 5мм
+				RackShelfMinDimensionsValidation.validate(fieldExceptionList, rackShelf2D.getRackShelf(), i);
+			}
+			// Проверка: полка не может выходить за пределы стеллажа
+			RackShelfOutsideRackValidation.validate(fieldExceptionList, rack, rackShelf2DList);
+		}
+		// товар не должен выходить за полезную зону стеллажа
+		RackWaresOutsideRackValidation.validate(fieldExceptionList, rack, rackWares2DList);
+		// товары не могут пересекаться с полками(не сохраняется, выделяются товары)
+		RackWaresIntersectValidation.validate(fieldExceptionList, rackShelf2DList, rackWares2DList);
+		// товары не могут пересекаться между собой(не сохраняется, выделяются товары)
+		RackWaresIntersectValidation.validate(fieldExceptionList, rackWares2DList);
+
+
+		final JsonObject jsonObject = new JsonObject();
+		if (fieldExceptionList.isEmpty()) {
+			// проставить номера
+			final List<GroupRackWares> groups = split(rackShelf2DList, rackWares2DList);
+			for (int i = 0; i < groups.size(); i++) {
+				final GroupRackWares group = groups.get(i);
+				for (final RackWares2D rackWares2D : group.getWaresInGroup()) {
+					rackWares2D.getRackWares().setOrder_number_on_rack(i + 1);
+				}
+			}
+
+			if (canAccessEditRackShelf) {
+				// обновление полок
+				List<RackShelf> oldShelfList = rackShelfModel.list(userContext, code_rack);
+				for (final RackShelf oldItem : oldShelfList) {
+					RackShelf findItem = null;
+					// поиск среди сохраненых рание
+					for (int i = 0; findItem == null && i < rackShelf2DList.size(); i++) {
+						final RackShelf currentItem = rackShelf2DList.get(i).getRackShelf();
+						if (oldItem.getCode_shelf().equals(currentItem.getCode_shelf())) {
+							findItem = currentItem;
+							// запись была обновлена
+							rackShelfModel.update(userContext, findItem);
+							rackShelf2DList.remove(i);
+							i--;
+						}
+					}
+					if (findItem == null) {
+						// запись была удалена
+						rackShelfModel.delete(userContext, oldItem.getCode_shelf());
+					}
+				}
+				for (int i = 0; i < rackShelf2DList.size(); i++) {
+					final RackShelf newItem = rackShelf2DList.get(i).getRackShelf();
+					//	запись была добавлена
+					newItem.setCode_rack(code_rack);
+					rackShelfModel.insert(userContext, newItem);
+				}
+			}
+
+			// обновление товаров
+			List<RackWares> oldWaresList = rackWaresModel.list(userContext, code_rack);
+			for (final RackWares oldItem : oldWaresList) {
+				RackWares findItem = null;
+//				поиск среди сохраненых рание
+				for (int i = 0; findItem == null && i < rackWares2DList.size(); i++) {
+					final RackWares currentItem = rackWares2DList.get(i).getRackWares();
+					if (oldItem.getCode_wares_on_rack().equals(currentItem.getCode_wares_on_rack())) {
 						findItem = currentItem;
-						// запись была обновлена
-						rackShelfModel.update(userContext, findItem);
-						rackShelf2DList.remove(i);
+//					запись была обновлена
+						rackWaresModel.update(userContext, findItem);
+						rackWares2DList.remove(i);
 						i--;
 					}
 				}
 				if (findItem == null) {
-					// запись была удалена
-					rackShelfModel.delete(userContext, oldItem.getCode_shelf());
-				}
-			}
-			for (int i = 0; i < rackShelf2DList.size(); i++) {
-				final RackShelf newItem = rackShelf2DList.get(i).getRackShelf();
-				//	запись была добавлена
-				newItem.setCode_rack(code_rack);
-				rackShelfModel.insert(userContext, newItem);
-			}
-		}
-
-		// обновление товаров
-		List<RackWares> oldWaresList = rackWaresModel.list(userContext, code_rack);
-		for (final RackWares oldItem : oldWaresList) {
-			RackWares findItem = null;
-//				поиск среди сохраненых рание
-			for (int i = 0; findItem == null && i < rackWares2DList.size(); i++) {
-				final RackWares currentItem = rackWares2DList.get(i).getRackWares();
-				if (oldItem.getCode_wares_on_rack().equals(currentItem.getCode_wares_on_rack())) {
-					findItem = currentItem;
-//					запись была обновлена
-					rackWaresModel.update(userContext, findItem);
-					rackWares2DList.remove(i);
-					i--;
-				}
-			}
-			if (findItem == null) {
 //				запись была удалена
-				rackWaresModel.delete(userContext, oldItem.getCode_wares_on_rack());
+					rackWaresModel.delete(userContext, oldItem.getCode_wares_on_rack());
+				}
 			}
-		}
-		for (final RackWares2D newItem : rackWares2DList) {
+			for (final RackWares2D newItem : rackWares2DList) {
 //			запись была добавлена
-			newItem.getRackWares().setCode_rack(code_rack);
-			rackWaresModel.insert(userContext, newItem.getRackWares());
-		}
+				newItem.getRackWares().setCode_rack(code_rack);
+				rackWaresModel.insert(userContext, newItem.getRackWares());
+			}
 
-		commit(userContext);
+			commit(userContext);
+		} else {
+			JsonArray jsonArray = new JsonArray();
+			for (final EntityFieldException entityFieldException : fieldExceptionList) {
+				jsonArray.add(entityFieldException.toJSON());
+			}
+			jsonObject.add("errorField", jsonArray);
+		}
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms");
-		return null;
+		return jsonObject;
 	}
 
 	private List<GroupRackWares> split(final List<RackShelf2D<RackShelf>> rackShelf2DList, final List<RackWares2D> rackWares2DList) {

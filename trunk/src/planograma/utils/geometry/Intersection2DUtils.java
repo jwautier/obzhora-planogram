@@ -163,4 +163,57 @@ public class Intersection2DUtils {
 		}
 		return intersect;
 	}
+
+	public static boolean isIntersection(RackWares2D a, RackWares2D b) {
+		boolean intersect = false;
+		if (a.getMaxX() >= b.getMinX() && a.getMinX() <= b.getMaxX() &&
+				a.getMaxY() >= b.getMinY() && a.getMinY() <= b.getMaxY()) {
+			intersect = true;
+			// четырехугольники возможно пересекаются необходима детализация
+//			boolean angleEquals = (a.getRackShelf().getAngle() % 90) == (b.getRackWares().getAngle() % 90);
+			boolean angleEquals = true;
+			double angleArray[] = new double[angleEquals ? 2 : 4];
+//			angleArray[0] = -a.getRackShelf().getAngle() % 90;
+			angleArray[0] = 0;
+			angleArray[1] = angleArray[0] + 90;
+			if (!angleEquals) {
+//				angleArray[2] = -b.getRackWares().getAngle() % 90;
+				angleArray[2] = 0;
+				angleArray[3] = angleArray[2] + 90;
+			}
+
+			for (int i = 0; intersect && i < angleArray.length; i++) {
+				final float sin = (float) Math.sin(Math.toRadians(angleArray[i]));
+				final float cos = (float) Math.cos(Math.toRadians(angleArray[i]));
+				float ax1 = a.p1.x * cos - a.p1.y * sin;
+				float ay1 = a.p1.x * sin + a.p1.y * cos;
+				float ax2 = a.p2.x * cos - a.p2.y * sin;
+				float ay2 = a.p2.x * sin + a.p2.y * cos;
+				float ax3 = a.p3.x * cos - a.p3.y * sin;
+				float ay3 = a.p3.x * sin + a.p3.y * cos;
+				float ax4 = a.p4.x * cos - a.p4.y * sin;
+				float ay4 = a.p4.x * sin + a.p4.y * cos;
+				float aminx = Math.min(Math.min(ax1, ax2), Math.min(ax3, ax4));
+				float amaxx = Math.max(Math.max(ax1, ax2), Math.max(ax3, ax4));
+				float aminy = Math.min(Math.min(ay1, ay2), Math.min(ay3, ay4));
+				float amaxy = Math.max(Math.max(ay1, ay2), Math.max(ay3, ay4));
+				float bx1 = b.p1.x * cos - b.p1.y * sin;
+				float by1 = b.p1.x * sin + b.p1.y * cos;
+				float bx2 = b.p2.x * cos - b.p2.y * sin;
+				float by2 = b.p2.x * sin + b.p2.y * cos;
+				float bx3 = b.p3.x * cos - b.p3.y * sin;
+				float by3 = b.p3.x * sin + b.p3.y * cos;
+				float bx4 = b.p4.x * cos - b.p4.y * sin;
+				float by4 = b.p4.x * sin + b.p4.y * cos;
+				float bminx = Math.min(Math.min(bx1, bx2), Math.min(bx3, bx4));
+				float bmaxx = Math.max(Math.max(bx1, bx2), Math.max(bx3, bx4));
+				float bminy = Math.min(Math.min(by1, by2), Math.min(by3, by4));
+				float bmaxy = Math.max(Math.max(by1, by2), Math.max(by3, by4));
+
+				if (amaxx < bminx || aminx > bmaxx || amaxy < bminy || aminy > bmaxy)
+					intersect = false;
+			}
+		}
+		return intersect;
+	}
 }

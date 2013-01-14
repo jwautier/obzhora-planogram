@@ -45,22 +45,19 @@ public class PlanogramMessage {
 		return getMessage("RACK_REAL_LENGTH_TOO_LITTLE");
 	}
 
-	public static String RACK_OUTSIDE_SECTOR(){
+	public static String RACK_OUTSIDE_SECTOR() {
 		return getMessage("RACK_OUTSIDE_SECTOR");
 	}
 
-	public static String RACK_OVERFLOW_SHELF()
-	{
+	public static String RACK_OVERFLOW_SHELF() {
 		return getMessage("RACK_OVERFLOW_SHELF");
 	}
 
-	public static String RACK_OVERFLOW_WARES()
-	{
+	public static String RACK_OVERFLOW_WARES() {
 		return getMessage("RACK_OVERFLOW_WARES");
 	}
 
-	public static String RACK_INTERSECT()
-	{
+	public static String RACK_INTERSECT() {
 		return getMessage("RACK_INTERSECT");
 	}
 
@@ -83,6 +80,19 @@ public class PlanogramMessage {
 	public static String RACK_SHELF_INTERSECT_WARES() {
 		return getMessage("RACK_SHELF_INTERSECT_WARES");
 	}
+
+	public static String RACK_WARES_OUTSIDE_RACK() {
+		return getMessage("RACK_WARES_OUTSIDE_RACK");
+	}
+
+	public static String RACK_WARES_INTERSECT_SHELF() {
+		return getMessage("RACK_WARES_INTERSECT_SHELF");
+	}
+
+	public static String RACK_WARES_INTERSECT_WARES() {
+		return getMessage("RACK_WARES_INTERSECT_WARES");
+	}
+
 
 	private static String getMessage(final String name) {
 		final ResourceBundle resourceBundle = ResourceBundle.getBundle(PlanogramMessage.class.getSimpleName());

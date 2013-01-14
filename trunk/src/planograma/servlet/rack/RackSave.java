@@ -77,7 +77,7 @@ public class RackSave extends AbstractAction {
 		}
 
 		//	ПРОВЕРКИ
-		List<EntityFieldException> fieldExceptionList = new ArrayList<EntityFieldException>();
+		final List<EntityFieldException> fieldExceptionList = new ArrayList<EntityFieldException>();
 		// Проверка параметров стеллажа: высота, ширина, глубина, полезная высота, полезная ширина, полезная глубина больше 10мм
 		RackMinDimensionsValidation.validate(fieldExceptionList, editRack, 0);
 		for (int i = 0; i < itemList.size(); i++) {
