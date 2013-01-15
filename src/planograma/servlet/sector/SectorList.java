@@ -7,8 +7,11 @@ import org.apache.log4j.Logger;
 import planograma.constant.UrlConst;
 import planograma.constant.data.SectorConst;
 import planograma.data.Sector;
+import planograma.data.SectorState;
+import planograma.data.UserContext;
 import planograma.exception.UnauthorizedException;
 import planograma.model.SectorModel;
+import planograma.model.SectorStateModel;
 import planograma.servlet.AbstractAction;
 
 import javax.servlet.ServletConfig;
@@ -33,11 +36,13 @@ public class SectorList extends AbstractAction {
 	private static final Logger LOG = Logger.getLogger(SectorList.class);
 
 	private SectorModel sectorModel;
+	private SectorStateModel sectorStateModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		sectorModel = SectorModel.getInstance();
+		sectorStateModel = SectorStateModel.getInstance();
 	}
 
 	@Override
@@ -47,11 +52,16 @@ public class SectorList extends AbstractAction {
 
 		final JsonObject jsonObject = new JsonObject();
 		final JsonArray jsonArray = new JsonArray();
-		final List<Sector> list = sectorModel.list(getUserContext(session), code_shop);
+		final JsonArray sectorStateArray = new JsonArray();
+		final UserContext userContext=getUserContext(session);
+		final List<Sector> list = sectorModel.list(userContext, code_shop);
 		for (final Sector sector : list) {
 			jsonArray.add(sector.toJsonObject());
+			final SectorState sectorState=sectorStateModel.select(userContext, sector.getCode_sector());
+			sectorStateArray.add(sectorState.toJsonObject());
 		}
 		jsonObject.add("sectorList", jsonArray);
+		jsonObject.add("sectorStateList", sectorStateArray);
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms");
 		return jsonObject;

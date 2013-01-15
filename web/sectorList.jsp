@@ -1,9 +1,7 @@
-<%@ page import="planograma.utils.JspUtils" %>
-<%@ page import="planograma.servlet.sector.SectorList" %>
-<%@ page import="planograma.servlet.sector.SectorRemove" %>
-<%@ page import="planograma.servlet.shop.ShopList" %>
 <%@ page import="planograma.constant.SecurityConst" %>
-<%@ page import="planograma.servlet.sector.SectorEdit" %>
+<%@ page import="planograma.servlet.sector.*" %>
+<%@ page import="planograma.servlet.shop.ShopList" %>
+<%@ page import="planograma.utils.JspUtils" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
 	final String access_sector_edit=JspUtils.actionAccess(session, SecurityConst.ACCESS_SECTOR_EDIT);
@@ -58,10 +56,10 @@
 								<td><a href="#" id="sectorEdit" onclick="return aOnClick(this, fSectorEdit)" class="disabled"><%=JspUtils.toMenuTitle("Редактировать зал")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" id="sectorActive" onclick="return aOnClick(this, fSectorActive)" class="disabled"><%=JspUtils.toMenuTitle("Активировать")%></a></td>
+								<td><a href="#" id="sectorStateA" onclick="return aOnClick(this, fSectorStateA)" class="disabled"><%=JspUtils.toMenuTitle("Подтвердить составление")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" id="sectorNotActive" onclick="return aOnClick(this, fSectorNotActive)" class="disabled"><%=JspUtils.toMenuTitle("Заблокировать")%></a></td>
+								<td><a href="#" id="sectorStatePC" onclick="return aOnClick(this, fSectorStatePC)" class="disabled"><%=JspUtils.toMenuTitle("Подтвердить выполнение")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="sectorRemove" onclick="return aOnClick(this, fSectorRemove)" class="disabled"><%=JspUtils.toMenuTitle("Удалить зал")%></a></td>
@@ -74,14 +72,14 @@
 					<td>
 						<select id="shopList"
 								size="20"
-								style="width: 200px; height: 100%; "
+								style="width: 180px; height: 100%; "
 								onchange="selectShop(value)">
 						</select>
 					</td>
 					<td>
 						<select id="sectorList"
 								size="20"
-								style="width: 200px; height: 100%; "
+								style="width: 220px; height: 100%; "
 								onchange="selectSector(value)">
 						</select>
 					</td>
@@ -113,8 +111,8 @@
 				$('#sectorPrint').addClass('disabled');
 				choiceSectorPrintSetCodeSector(null);
 				$('#sectorEdit').addClass('disabled');
-				$('#sectorActive').addClass('disabled');
-				$('#sectorNotActive').addClass('disabled');
+				$('#sectorStateA').addClass('disabled');
+				$('#sectorStatePC').addClass('disabled');
 				$('#sectorRemove').addClass('disabled');
 				$('#preview_canvas').hide();
 				setCookie('code_shop', code_shop);
@@ -125,7 +123,8 @@
 					sectorList.empty();
 					for (var i in data.sectorList) {
 						var item = data.sectorList[i];
-						sectorList.append('<option value="' + item.code_sector + '">' + item.name_sector + '</option>')
+						var sectorState=data.sectorStateList[i];
+						sectorList.append('<option value="' + item.code_sector + '">' + item.name_sector + '('+sectorState.state_sector_desc+')</option>')
 
 						if (item.code_sector == code_sector) {
 							selectSector(code_sector);
@@ -156,10 +155,8 @@
 				$('#sectorPrint').removeClass('disabled');
 				choiceSectorPrintSetCodeSector(code_sector);
 				$('#sectorEdit').removeClass('disabled');
-				$('#sectorActive').removeClass('disabled');
-				$('#sectorNotActive').removeClass('disabled');
-				if (canSectorEdit!='disabled')
-				{
+				canSectorStateSet(code_sector);
+				if (canSectorEdit!='disabled'){
 					$('#sectorRemove').removeClass('disabled');
 				}
 				setCookie('code_sector', code_sector);
@@ -177,6 +174,38 @@
 		else {
 			setCookie('code_sector', '');
 		}
+	}
+	function canSectorStateSet(code_sector)
+	{
+		postJson('<%=SectorCanSetState.URL%>', {code_sector:code_sector}, function (data) {
+			if (data.canSetStateA)
+				$('#sectorStateA').removeClass('disabled');
+			if (data.canSetStatePC)
+				$('#sectorStatePC').removeClass('disabled');
+		}, 'sectorStateA');
+	}
+	function fSectorStateA() {
+		postJson('<%=SectorSetStateA.URL%>', {code_sector: window.sector.code_sector}, function (data) {
+			$('#sectorStateA').addClass('disabled');
+			if (data.canSetStateA) {
+				canSectorStateSet(window.sector.code_sector);
+				selectShop($('#shopList').val());
+			}
+			else {
+				alert("Невозможно перевести зал в состояние составлен");
+			}
+		}, 'sectorStateA');
+	}
+	function fSectorStatePC() {
+		postJson('<%=SectorSetStatePC.URL%>', {code_sector: window.sector.code_sector}, function (data) {
+			$('#sectorStatePC').addClass('disabled');
+			if (data.canSetStatePC) {
+				canSectorStateSet(window.sector.code_sector);
+				selectShop($('#shopList').val());
+			} else {
+				alert("Невозможно подтвердить выполнение плана зала");
+			}
+		}, 'sectorStatePC');
 	}
 	function selectSector2()
 	{
@@ -225,16 +254,6 @@
 			setCookie('code_sector', code_sector);
 			document.location='sectorEdit.jsp';
 		}
-	}
-	function fSectorActive()
-	{
-		//TODO
-		alert('Функционал на стадии разработки');
-	}
-	function fSectorNotActive()
-	{
-		//TODO
-		alert('Функционал на стадии разработки');
 	}
 	function fSectorRemove()
 	{

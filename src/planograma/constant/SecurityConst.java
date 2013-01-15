@@ -34,13 +34,21 @@ public interface SecurityConst {
 	 */
 	public static final int ACCESS_IMAGE_CLEAN_CACHE = -144;
 	/**
-	 * Доступ к принудительному снятию блокировки зала
+	 * Доступ к принудительному снятию блокировки зала (составлен)
 	 */
 	public static final int ACCESS_SECTOR_STATE_SET_A = -145;
+	/**
+	 * Доступ к подтверждению выполнения зала
+	 */
+	public static final int ACCESS_SECTOR_STATE_SET_PC = -155;
 	/**
 	 * Доступ к принудительному снятию блокировки со стелажа
 	 */
 	public static final int ACCESS_RACK_STATE_SET_A = -146;
+	/**
+	 * Доступ к подтверждению выполнения стеллажа
+	 */
+	public static final int ACCESS_RACK_STATE_SET_PC = -154;
 	/**
 	 * Доступ к редактированию полок при расстановке товара
 	 */

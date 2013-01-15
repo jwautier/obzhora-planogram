@@ -32,10 +32,10 @@ public class SectorModel {
 			" " + SectorConst.DATE_INSERT + "," +
 			" " + SectorConst.USER_UPDATE + "," +
 			" " + SectorConst.DATE_UPDATE + " " +
-			"from " + SectorConst.TABLE_NAME + " ";
+			"from " + SectorConst.TABLE_NAME;
 
 	private static final String Q_LIST =  Q_SELECT_FROM +
-			"where " + SectorConst.CODE_SHOP + "=? " +
+			" where " + SectorConst.CODE_SHOP + "=? " +
 			"order by " + SectorConst.NAME_SECTOR;
 
 	public List<Sector> list(final UserContext userContext, final int code_shop) throws SQLException {
@@ -55,7 +55,7 @@ public class SectorModel {
 	}
 
 	private static final String Q_SELECT = Q_SELECT_FROM +
-			"where " + SectorConst.CODE_SECTOR + " = ?";
+			" where " + SectorConst.CODE_SECTOR + " = ?";
 
 	public Sector select(final UserContext userContext, final int code_sector) throws SQLException {
 				long time=System.currentTimeMillis();
