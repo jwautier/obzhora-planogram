@@ -14,7 +14,7 @@ import java.util.Date;
  * User: Admin
  * Date: 26.02.12
  * Time: 4:14
- * Сектор (этаж)
+ * Состояние зала (сектор, этаж)
  */
 public class SectorState implements IJsonObject {
 	/**
@@ -131,6 +131,7 @@ public class SectorState implements IJsonObject {
 
 	public SectorState(final ResultSet resultSet) throws SQLException {
 		code_sector = resultSet.getInt(SectorStateConst.CODE_SECTOR);
+		setState_sector(resultSet.getString(SectorStateConst.STATE_SECTOR));
 		user_draft = resultSet.getInt(SectorStateConst.USER_DRAFT);
 		date_draft = resultSet.getTimestamp(SectorStateConst.DATE_DRAFT);
 		user_active = resultSet.getInt(SectorStateConst.USER_ACTIVE);
@@ -155,6 +156,8 @@ public class SectorState implements IJsonObject {
 		final JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty(SectorStateConst.CODE_SECTOR, code_sector);
 		jsonObject.addProperty(SectorStateConst.STATE_SECTOR, (state_sector != null) ? state_sector.name() : null);
+		// TODO remove state_sector_desc
+		jsonObject.addProperty("state_sector_desc", (state_sector != null) ? state_sector.getDesc() : null);
 		jsonObject.addProperty(SectorStateConst.USER_DRAFT, user_draft);
 		JsonUtils.set(jsonObject, SectorStateConst.DATE_DRAFT, date_draft);
 		jsonObject.addProperty(SectorStateConst.USER_ACTIVE, user_active);

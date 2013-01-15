@@ -36,6 +36,24 @@ public class UserModel {
 		return fullName;
 	}
 
+	private static final String Q_GET_CODE_USER="select MZ.GETCODEUSER() from dual";
+
+	// TODO возможно нужно сделать кеш для ускорения работы
+
+	public int getCodeUser(final UserContext userContext) throws SQLException {
+		long time=System.currentTimeMillis();
+		final Connection connection = userContext.getConnection();
+		final PreparedStatement ps = connection.prepareStatement(Q_GET_CODE_USER);
+		final ResultSet resultSet = ps.executeQuery();
+		int code_user = 0;
+		if (resultSet.next()) {
+			code_user = resultSet.getInt(1);
+		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (return:"+code_user+")");
+		return code_user;
+	}
+
 	private static UserModel instance = new UserModel();
 
 	public static UserModel getInstance() {
