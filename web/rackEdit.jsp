@@ -518,7 +518,7 @@
 								}
 								break;
 							case '<%=RackShelf.class.getName()%>':
-								window.shelf = window.rackShelfTemplateList[data.errorField[i].entityIndex];
+								window.shelf = window.rackShelfList[data.errorField[i].entityIndex];
 								selectShelf(window.shelf);
 								if (data.errorField[i].fieldName != null) {
 									switch (data.errorField[i].fieldName) {

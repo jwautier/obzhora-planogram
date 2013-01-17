@@ -50,7 +50,7 @@ public class Login extends AbstractAction {
 		session.setAttribute(SessionConst.SESSION_USER, userContext);
 		stateAllModel.initEnum(userContext);
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms");
+		LOG.debug(time + " ms (login:"+login+")");
 		return null;
 	}
 }

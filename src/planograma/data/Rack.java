@@ -59,9 +59,9 @@ public class Rack extends AbstractRack {
 	/**
 	 * Тип стеллажа (Стеллаж, касса...)
 	 */
-	private TypeRack type_race;
+	private ETypeRack type_rack;
 
-	public Rack(Integer code_sector, Integer code_rack, String name_rack, String rack_barcode, Integer length, Integer width, Integer height, Integer x_coord, Integer y_coord, Integer angle, LoadSide load_side, Integer code_rack_template, boolean lock_size, boolean lock_move, TypeRack type_race, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer real_length, Integer real_width, Integer real_height, Integer x_offset, Integer y_offset, Integer z_offset) {
+	public Rack(Integer code_sector, Integer code_rack, String name_rack, String rack_barcode, Integer length, Integer width, Integer height, Integer x_coord, Integer y_coord, Integer angle, LoadSide load_side, Integer code_rack_template, boolean lock_size, boolean lock_move, ETypeRack type_rack, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer real_length, Integer real_width, Integer real_height, Integer x_offset, Integer y_offset, Integer z_offset) {
 		super(length, width, height, load_side, user_insert, date_insert, user_update, date_update, real_length, real_width, real_height, x_offset, y_offset, z_offset);
 		this.code_sector = code_sector;
 		this.code_rack = code_rack;
@@ -73,7 +73,7 @@ public class Rack extends AbstractRack {
 		this.code_rack_template = code_rack_template;
 		this.lock_size = lock_size;
 		this.lock_move = lock_move;
-		this.type_race = type_race;
+		this.type_rack = type_rack;
 	}
 
 	public Integer getCode_sector() {
@@ -164,20 +164,20 @@ public class Rack extends AbstractRack {
 		this.lock_move = "Y".equals(lock_move);
 	}
 
-	public TypeRack getType_race() {
-		return type_race;
+	public ETypeRack getType_rack() {
+		return type_rack;
 	}
 
-	public String getType_raceAtStr() {
-		return (type_race != null) ? type_race.name() : null;
+	public String getType_rackAtStr() {
+		return (type_rack != null) ? type_rack.name() : null;
 	}
 
-	public void setType_race(TypeRack type_race) {
-		this.type_race = type_race;
+	public void setType_rack(ETypeRack type_rack) {
+		this.type_rack = type_rack;
 	}
 
-	public void setType_race(String type_race) {
-		this.type_race = (type_race != null) ? TypeRack.valueOf(type_race) : null;
+	public void setType_rack(String type_rack) {
+		this.type_rack = (type_rack != null) ? ETypeRack.valueOf(type_rack) : null;
 	}
 
 	public Rack(final ResultSet resultSet) throws SQLException {
@@ -192,7 +192,7 @@ public class Rack extends AbstractRack {
 		code_rack_template = resultSet.getInt(RackConst.CODE_RACK_TEMPLATE);
 		setLock_size(resultSet.getString(RackConst.LOCK_SIZE));
 		setLock_move(resultSet.getString(RackConst.LOCK_MOVE));
-		setType_race(resultSet.getString(RackConst.TYPE_RACK));
+		setType_rack(resultSet.getString(RackConst.TYPE_RACK));
 	}
 
 	public Rack(final JsonObject rackJson) {
@@ -207,8 +207,8 @@ public class Rack extends AbstractRack {
 		code_rack_template = JsonUtils.getInteger(rackJson, RackConst.CODE_RACK_TEMPLATE);
 		lock_size = JsonUtils.getBoolean(rackJson, RackConst.LOCK_SIZE);
 		lock_move = JsonUtils.getBoolean(rackJson, RackConst.LOCK_MOVE);
-		setType_race(JsonUtils.getString(rackJson, RackConst.TYPE_RACK));
-		if (type_race != TypeRack.R) {
+		setType_rack(JsonUtils.getString(rackJson, RackConst.TYPE_RACK));
+		if (type_rack != ETypeRack.R) {
 			setReal_length(getLength());
 			setReal_width(getWidth());
 			setReal_height(getHeight());
@@ -231,7 +231,7 @@ public class Rack extends AbstractRack {
 		jsonObject.addProperty(RackConst.CODE_RACK_TEMPLATE, code_rack_template);
 		jsonObject.addProperty(RackConst.LOCK_SIZE, (lock_size) ? "Y" : "N");
 		jsonObject.addProperty(RackConst.LOCK_MOVE, (lock_move) ? "Y" : "N");
-		jsonObject.addProperty(RackConst.TYPE_RACK, getType_raceAtStr());
+		jsonObject.addProperty(RackConst.TYPE_RACK, getType_rackAtStr());
 		return jsonObject;
 	}
 }

@@ -22,7 +22,7 @@ public class RackMinDimensionsValidation {
 	 * @param rack               стеллаж
 	 */
 	public static void validate(final List<EntityFieldException> fieldExceptionList, final Rack rack, final int index) {
-		validate(fieldExceptionList, rack, index, rack.getCode_rack(), rack.getType_race() == TypeRack.R);
+		validate(fieldExceptionList, rack, index, rack.getCode_rack(), rack.getType_rack() == ETypeRack.R);
 	}
 
 

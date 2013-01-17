@@ -7,7 +7,7 @@ package planograma.data;
  * Time: 5:56
  * тип стеллажа
  */
-public enum TypeRack {
+public enum ETypeRack {
 	/**
 	 * Стеллаж
 	 */
@@ -21,7 +21,7 @@ public enum TypeRack {
 	 */
 	DZ;
 
-	private TypeRack() {
+	private ETypeRack() {
 
 	}
 

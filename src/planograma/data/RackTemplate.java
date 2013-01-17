@@ -23,7 +23,7 @@ public class RackTemplate extends AbstractRack{
 	/**
 	 * Состояние стеллажа
 	 */
-	private StateRack state_rack_template;
+	private EStateRack state_rack_template;
 	/**
 	 * Название
 	 */
@@ -37,7 +37,7 @@ public class RackTemplate extends AbstractRack{
 	 */
 	private Date date_draft;
 
-	public RackTemplate(Integer code_rack_template, StateRack state_rack_template, String name_rack_template, Integer length, Integer width, Integer height, LoadSide load_side, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer user_draft, Date date_draft, Integer real_length, Integer real_width, Integer real_height, Integer x_offset, Integer y_offset, Integer z_offset) {
+	public RackTemplate(Integer code_rack_template, EStateRack state_rack_template, String name_rack_template, Integer length, Integer width, Integer height, LoadSide load_side, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer user_draft, Date date_draft, Integer real_length, Integer real_width, Integer real_height, Integer x_offset, Integer y_offset, Integer z_offset) {
 		super(length, width, height, load_side, user_insert, date_insert, user_update, date_update, real_length, real_width, real_height, x_offset, y_offset, z_offset);
 		this.code_rack_template = code_rack_template;
 		this.state_rack_template = state_rack_template;
@@ -54,16 +54,16 @@ public class RackTemplate extends AbstractRack{
 		this.code_rack_template = code_rack_template;
 	}
 
-	public StateRack getState_rack_template() {
+	public EStateRack getState_rack_template() {
 		return state_rack_template;
 	}
 
-	public void setState_rack_template(StateRack state_rack_template) {
+	public void setState_rack_template(EStateRack state_rack_template) {
 		this.state_rack_template = state_rack_template;
 	}
 
 	public void setState_rack_template(String state_rack_template) {
-		this.state_rack_template = (state_rack_template != null) ? StateRack.valueOf(state_rack_template) : null;
+		this.state_rack_template = (state_rack_template != null) ? EStateRack.valueOf(state_rack_template) : null;
 	}
 
 	public String getName_rack_template() {

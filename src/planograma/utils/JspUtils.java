@@ -1,5 +1,6 @@
 package planograma.utils;
 
+import planograma.constant.SecurityConst;
 import planograma.constant.SessionConst;
 import planograma.data.UserContext;
 import planograma.model.SecurityModel;
@@ -26,7 +27,7 @@ public class JspUtils {
 		return res.toString();
 	}
 
-	public static String actionAccess(final HttpSession session, final int code_object) {
+	public static String actionAccess(final HttpSession session, final SecurityConst code_object) {
 		String result = "disabled";
 		if (session != null) {
 			final UserContext userContext = (UserContext) session.getAttribute(SessionConst.SESSION_USER);

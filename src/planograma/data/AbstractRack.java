@@ -13,7 +13,7 @@ import java.util.Date;
  * Date: 11.01.13
  * Time: 14:25
  */
-public class AbstractRack implements IJsonObject {
+public abstract class AbstractRack implements IJsonObject {
 	/**
 	 * Длина, см
 	 */

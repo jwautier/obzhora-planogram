@@ -3,13 +3,13 @@ package planograma.servlet.sector;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.apache.log4j.Logger;
 import planograma.constant.UrlConst;
 import planograma.constant.data.SectorConst;
-import planograma.data.Sector;
-import planograma.data.UserContext;
+import planograma.constant.data.WaresConst;
 import planograma.exception.UnauthorizedException;
-import planograma.model.SectorModel;
+import planograma.model.SectorFindWaresModel;
 import planograma.servlet.AbstractAction;
 
 import javax.servlet.ServletConfig;
@@ -20,40 +20,40 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
- * Date: 26.02.12
- * Time: 2:18
- * To change this template use File | Settings | File Templates.
+ * User: poljakov
+ * Date: 17.01.13
+ * Time: 14:40
  */
-@WebServlet("/" + UrlConst.URL_SECTOR_LIST)
-public class SectorList extends AbstractAction {
+@WebServlet("/" + UrlConst.URL_SECTOR_FIND_WARES)
+public class SectorFindRackContainsWares extends AbstractAction {
 
-	public static final String URL = UrlConst.URL_SECTOR_LIST;
+	public static final String URL = UrlConst.URL_SECTOR_FIND_WARES;
 
-	private static final Logger LOG = Logger.getLogger(SectorList.class);
+	private static final Logger LOG = Logger.getLogger(SectorFindRackContainsWares.class);
 
-	private SectorModel sectorModel;
+	private SectorFindWaresModel sectorFindWaresModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		sectorModel = SectorModel.getInstance();
+		sectorFindWaresModel = SectorFindWaresModel.getInstance();
 	}
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
 		long time = System.currentTimeMillis();
-		final int code_shop = requestData.getAsJsonObject().get(SectorConst.CODE_SHOP).getAsInt();
+		final int code_sector = requestData.getAsJsonObject().get(SectorConst.CODE_SECTOR).getAsInt();
+		final int code_wares = requestData.getAsJsonObject().get(WaresConst.CODE_WARES).getAsInt();
 
+		final List<String> rackList=sectorFindWaresModel.findRackInSectorContainsWares(getUserContext(session),code_sector, code_wares);
 		final JsonObject jsonObject = new JsonObject();
 		final JsonArray jsonArray = new JsonArray();
-		final UserContext userContext=getUserContext(session);
-		final List<Sector> list = sectorModel.list(userContext, code_shop);
-		for (final Sector sector : list) {
-			jsonArray.add(sector.toJsonObject());
+		for (String barcode:rackList)
+		{
+			jsonArray.add(new JsonPrimitive(barcode));
 		}
-		jsonObject.add("sectorList", jsonArray);
+		jsonObject.add("findBarcodeRackList",jsonArray);
+
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms");
 		return jsonObject;

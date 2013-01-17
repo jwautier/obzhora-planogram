@@ -1,5 +1,3 @@
-<%@ page import="planograma.servlet.sector.print.SectorPrint" %>
-<%@ page import="planograma.servlet.sector.print.SectorPrintWithEditor" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <style type="text/css">

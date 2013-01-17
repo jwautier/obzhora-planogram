@@ -6,10 +6,10 @@ import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
 import planograma.constant.UrlConst;
 import planograma.constant.data.SectorConst;
-import planograma.data.Rack;
-import planograma.data.Sector;
+import planograma.data.*;
 import planograma.exception.UnauthorizedException;
 import planograma.model.RackModel;
+import planograma.model.RackStateModel;
 import planograma.model.SectorModel;
 import planograma.servlet.AbstractAction;
 
@@ -36,12 +36,14 @@ public class SectorEdit extends AbstractAction {
 
 	private SectorModel sectorModel;
 	private RackModel rackModel;
+	private RackStateModel rackStateModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		sectorModel = SectorModel.getInstance();
 		rackModel = RackModel.getInstance();
+		rackStateModel=RackStateModel.getInstance();
 	}
 
 	@Override
@@ -49,14 +51,23 @@ public class SectorEdit extends AbstractAction {
 		long time = System.currentTimeMillis();
 		final JsonObject jsonObject = new JsonObject();
 		final JsonArray jsonArray = new JsonArray();
+		final JsonArray rackStateList = new JsonArray();
+		final JsonArray rackStateInSectorList = new JsonArray();
+		final UserContext userContext=getUserContext(session);
 		final int code_sector = requestData.getAsJsonObject().get(SectorConst.CODE_SECTOR).getAsInt();
-		final Sector sector = sectorModel.select(getUserContext(session), code_sector);
-		final List<Rack> list = rackModel.list(getUserContext(session), code_sector);
+		final Sector sector = sectorModel.select(userContext, code_sector);
+		final List<Rack> list = rackModel.list(userContext, code_sector);
 		for (final Rack rack : list) {
 			jsonArray.add(rack.toJsonObject());
+			final RackState rackState= rackStateModel.selectRackState(userContext, rack.getCode_rack());
+			rackStateList.add(rackState.toJsonObject());
+			final RackStateInSector rackStateInSector= rackStateModel.selectRackStateInSector(userContext, rack.getCode_rack());
+			rackStateInSectorList.add(rackStateInSector.toJsonObject());
 		}
 		jsonObject.add("sector", sector.toJsonObject());
 		jsonObject.add("rackList", jsonArray);
+		jsonObject.add("rackStateList", rackStateList);
+		jsonObject.add("rackStateInSectorList", rackStateInSectorList);
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms");
 		return jsonObject;

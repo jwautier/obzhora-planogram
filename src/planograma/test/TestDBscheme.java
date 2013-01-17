@@ -45,16 +45,6 @@ public class TestDBscheme {
 					SectorConst.USER_UPDATE,
 					SectorConst.DATE_UPDATE
 			);
-			checkTable(psColumns, SectorStateConst.TABLE_NAME,
-					SectorStateConst.CODE_SECTOR,
-					SectorStateConst.STATE_SECTOR,
-					SectorStateConst.USER_DRAFT,
-					SectorStateConst.DATE_DRAFT,
-					SectorStateConst.USER_ACTIVE,
-					SectorStateConst.DATE_ACTIVE,
-					SectorStateConst.USER_COMPLETE,
-					SectorStateConst.DATE_COMPLETE
-			);
 			checkTable(psColumns, RackConst.TABLE_NAME,
 					RackConst.CODE_SECTOR,
 					RackConst.CODE_RACK,
@@ -91,6 +81,16 @@ public class TestDBscheme {
 					RackStateConst.USER_ACTIVE,
 					RackStateConst.DATE_COMPLETE,
 					RackStateConst.USER_COMPLETE
+			);
+			checkTable(psColumns, RackStateInSectorConst.TABLE_NAME,
+					RackStateInSectorConst.CODE_RACK,
+					RackStateInSectorConst.STATE_RACK,
+					RackStateInSectorConst.DATE_DRAFT,
+					RackStateInSectorConst.USER_DRAFT,
+					RackStateInSectorConst.DATE_ACTIVE,
+					RackStateInSectorConst.USER_ACTIVE,
+					RackStateInSectorConst.DATE_COMPLETE,
+					RackStateInSectorConst.USER_COMPLETE
 			);
 			checkTable(psColumns, RackShelfConst.TABLE_NAME,
 					RackShelfConst.CODE_RACK,

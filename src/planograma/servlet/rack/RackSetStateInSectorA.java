@@ -1,0 +1,75 @@
+package planograma.servlet.rack;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import org.apache.log4j.Logger;
+import planograma.constant.SecurityConst;
+import planograma.constant.UrlConst;
+import planograma.constant.data.RackConst;
+import planograma.data.EStateRack;
+import planograma.data.RackStateInSector;
+import planograma.data.UserContext;
+import planograma.exception.UnauthorizedException;
+import planograma.model.RackStateModel;
+import planograma.model.SecurityModel;
+import planograma.model.UserModel;
+import planograma.servlet.AbstractAction;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpSession;
+import java.sql.SQLException;
+
+/**
+ * User: poljakov
+ * Date: 15.01.13
+ * Time: 9:50
+ * изменение состояния стеллажа на составлен
+ */
+@WebServlet("/" + UrlConst.URL_RACK_SET_STATE_IN_SECTOR_A)
+public class RackSetStateInSectorA extends AbstractAction {
+
+	public static final String URL = UrlConst.URL_RACK_SET_STATE_IN_SECTOR_A;
+
+	private static final Logger LOG = Logger.getLogger(RackSetStateInSectorA.class);
+
+	private RackStateModel rackStateModel;
+	private UserModel userModel;
+	private SecurityModel securityModel;
+
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		rackStateModel = RackStateModel.getInstance();
+		userModel = UserModel.getInstance();
+		securityModel = SecurityModel.getInstance();
+	}
+
+	@Override
+	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
+		long time = System.currentTimeMillis();
+		time = System.currentTimeMillis() - time;
+		final JsonObject jsonObject = new JsonObject();
+		final int code_rack = requestData.getAsJsonObject().get(RackConst.CODE_RACK).getAsInt();
+		final UserContext userContext = getUserContext(session);
+		final RackStateInSector rackStateInSector = rackStateModel.selectRackStateInSector(userContext, code_rack);
+		boolean canSetStateInSectorA =
+				// стеллаж в состоянии черновик
+				rackStateInSector.getState_rack() == EStateRack.D
+						&&
+						// я являюсь редактором стеллажа
+						(rackStateInSector.getUser_draft() == userModel.getCodeUser(userContext)
+								// есть право к принудительному утверждению стеллажа
+								|| securityModel.canAccess(userContext, SecurityConst.ACCESS_RACK_STATE_IN_SECTOR_SET_A)
+								// есть доступ к глобальному утверждению стеллажей зала
+								|| securityModel.canAccess(userContext, SecurityConst.ACCESS_ALL_RACK_SET_STATE_SET_SECTOR_IN_SECTOR_A));
+		if (canSetStateInSectorA) {
+			rackStateModel.changestate(userContext, code_rack, EStateRack.A, null);
+		}
+		jsonObject.addProperty("canSetStateInSectorA", canSetStateInSectorA);
+		LOG.debug(time + " ms");
+		return jsonObject;
+	}
+
+}

@@ -131,7 +131,7 @@ public class RackModel {
 		callableStatement.setObject(RackConst.CODE_RACK_TEMPLATE, rack.getCode_rack_template());
 		callableStatement.setString(RackConst.LOCK_SIZE, (rack.isLock_size()) ? "Y" : "N");
 		callableStatement.setString(RackConst.LOCK_MOVE, (rack.isLock_move()) ? "Y" : "N");
-		callableStatement.setString(RackConst.TYPE_RACK, rack.getType_raceAtStr());
+		callableStatement.setString(RackConst.TYPE_RACK, rack.getType_rackAtStr());
 		callableStatement.setInt(RackConst.REAL_LENGTH, rack.getReal_length());
 		callableStatement.setInt(RackConst.REAL_WIDTH, rack.getReal_width());
 		callableStatement.setInt(RackConst.REAL_HEIGHT, rack.getReal_height());
@@ -167,7 +167,7 @@ public class RackModel {
 		callableStatement.setObject(RackConst.CODE_RACK_TEMPLATE, rack.getCode_rack_template());
 		callableStatement.setString(RackConst.LOCK_SIZE, (rack.isLock_size()) ? "Y" : "N");
 		callableStatement.setString(RackConst.LOCK_MOVE, (rack.isLock_move()) ? "Y" : "N");
-		callableStatement.setString(RackConst.TYPE_RACK, rack.getType_raceAtStr());
+		callableStatement.setString(RackConst.TYPE_RACK, rack.getType_rackAtStr());
 		callableStatement.setInt(RackConst.REAL_LENGTH, rack.getReal_length());
 		callableStatement.setInt(RackConst.REAL_WIDTH, rack.getReal_width());
 		callableStatement.setInt(RackConst.REAL_HEIGHT, rack.getReal_height());
