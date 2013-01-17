@@ -139,7 +139,7 @@ public class SectorPrint extends HttpServlet {
 			table.addCell(cell);
 			for (int index=0; index<rackList.size(); index++) {
 				final Rack2D rack2D=rackList.get(index);
-				if (rack2D.getRack().getType_race() != TypeRack.DZ) {
+				if (rack2D.getRack().getType_rack() != ETypeRack.DZ) {
 					table.addCell(new PdfPCell(new Paragraph(String.valueOf(index+1), font)));
 					table.addCell(new PdfPCell(new Paragraph(rack2D.getRack().getName_rack(), font)));
 
@@ -154,7 +154,7 @@ public class SectorPrint extends HttpServlet {
 					}
 
 					table.addCell(new PdfPCell(new Paragraph(rack2D.getRack().getLoad_side().getDesc(), font)));
-					table.addCell(new PdfPCell(new Paragraph(rack2D.getRack().getType_race().getDesc(), font)));
+					table.addCell(new PdfPCell(new Paragraph(rack2D.getRack().getType_rack().getDesc(), font)));
 					table.addCell(new PdfPCell(new Paragraph(String.valueOf(rack2D.getRack().getWidth()), font)));
 					table.addCell(new PdfPCell(new Paragraph(String.valueOf(rack2D.getRack().getHeight()), font)));
 					table.addCell(new PdfPCell(new Paragraph(String.valueOf(rack2D.getRack().getLength()), font)));
@@ -180,7 +180,7 @@ public class SectorPrint extends HttpServlet {
 
 	private void drawRack2D(final PdfContentByte cb, final Rack2D rack2D, final int index, final float m, final Rectangle pageSize, final BaseFont baseFont) {
 		cb.saveState();
-		if (rack2D.getRack().getType_race() == TypeRack.DZ) {
+		if (rack2D.getRack().getType_rack() == ETypeRack.DZ) {
 			cb.setColorFill(GrayColor.GRAY);
 		} else {
 			cb.setColorStroke(GrayColor.BLACK);
@@ -206,12 +206,12 @@ public class SectorPrint extends HttpServlet {
 		cb.lineTo(p2.getX(), p2.getY());
 		cb.lineTo(p3.getX(), p3.getY());
 		cb.lineTo(p4.getX(), p4.getY());
-		if (rack2D.getRack().getType_race() == TypeRack.DZ) {
+		if (rack2D.getRack().getType_rack() == ETypeRack.DZ) {
 			cb.fill();
 		} else {
 			cb.closePathStroke();
 		}
-		if (rack2D.getRack().getType_race() != TypeRack.DZ) {
+		if (rack2D.getRack().getType_rack() != ETypeRack.DZ) {
 			cb.beginText();
 
 			float minSize = Math.min(rack2D.getRack().getWidth(), rack2D.getRack().getLength()) / m;

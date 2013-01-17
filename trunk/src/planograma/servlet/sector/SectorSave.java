@@ -14,6 +14,7 @@ import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
 import planograma.model.*;
 import planograma.servlet.AbstractAction;
+import planograma.servlet.common.RackUpdate;
 import planograma.servlet.validate.*;
 import planograma.utils.JsonUtils;
 
@@ -43,6 +44,7 @@ public class SectorSave extends AbstractAction {
 
 	private SectorModel sectorModel;
 	private RackModel rackModel;
+	private RackStateModel rackStateModel;
 	private RackShelfModel rackShelfModel;
 	private RackWaresModel rackWaresModel;
 	private RackShelfTemplateModel rackShelfTemplateModel;
@@ -52,6 +54,7 @@ public class SectorSave extends AbstractAction {
 		super.init(config);
 		sectorModel = SectorModel.getInstance();
 		rackModel = RackModel.getInstance();
+		rackStateModel=RackStateModel.getInstance();
 		rackShelfModel = RackShelfModel.getInstance();
 		rackWaresModel = RackWaresModel.getInstance();
 		rackShelfTemplateModel = RackShelfTemplateModel.getInstance();
@@ -123,7 +126,7 @@ public class SectorSave extends AbstractAction {
 						if (oldRack.getCode_rack().equals(currentRack.getCode_rack())) {
 							findRack = currentRack;
 							// запись была обновлена
-							rackModel.update(userContext, findRack);
+							RackUpdate.update(userContext, rackModel, rackStateModel, oldRack, findRack);
 							rackList.remove(i);
 							i--;
 						}

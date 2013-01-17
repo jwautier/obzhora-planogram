@@ -622,7 +622,7 @@ var canRackShelfEdit='<%=access_rack_shelf_edit%>';
 	function fRackWaresPlacementSave() {
 		// проверить выход товара за стеллаж
 		var rackWaresOutside = [];
-		var sr = new SelectRectangle2D(new Point2D(0, 0), new Point2D(window.rack.width, window.rack.height));
+		var sr = new SelectRectangle2D(new Point2D(window.rack.x_offset, window.rack.y_offset), new Point2D(window.rack.x_offset+window.rack.real_width, window.rack.y_offset + window.rack.real_height));
 		for (var i in window.rackWaresList) {
 			var rackWares = window.rackWaresList[i];
 			if (!rackWares.p1.insideSelectRectangle(sr) ||

@@ -7,6 +7,6 @@ package planograma.constant.data;
  * Time: 0:16
  * To change this template use File | Settings | File Templates.
  */
-public interface RackStateConst extends AbstractRackStateConst {
-	public static final String TABLE_NAME = "EUGENE_SAZ.SEV_PL_RACK_STATE";
+public interface RackStateInSectorConst extends AbstractRackStateConst {
+	public static final String TABLE_NAME = "EUGENE_SAZ.SEV_PL_RACK_STATE_SECTOR";
 }

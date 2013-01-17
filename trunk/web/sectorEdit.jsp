@@ -1,10 +1,8 @@
 <%@ page import="planograma.constant.SecurityConst" %>
 <%@ page import="planograma.constant.data.RackConst" %>
 <%@ page import="planograma.constant.data.SectorConst" %>
-<%@ page import="planograma.data.LoadSide" %>
-<%@ page import="planograma.data.Rack" %>
-<%@ page import="planograma.data.Sector" %>
-<%@ page import="planograma.data.TypeRack" %>
+<%@ page import="planograma.data.*" %>
+<%@ page import="planograma.servlet.rack.*" %>
 <%@ page import="planograma.servlet.racktemplate.RackTemplateList" %>
 <%@ page import="planograma.servlet.sector.SectorEdit" %>
 <%@ page import="planograma.servlet.sector.SectorSave" %>
@@ -80,6 +78,20 @@
 							<tr>
 								<td><a href="#" id="butRackWaresPlacement" onclick="return aOnClick(this, fRackWaresPlacement)" class="disabled"><%=JspUtils.toMenuTitle("Расстановка товара")%></a></td>
 							</tr>
+							<tr><td></td></tr>
+							<tr>
+								<td><a href="#" id="butRackSetStateInSectorA" onclick="return aOnClick(this, fRackSetStateInSectorA)" class="disabled"><%=JspUtils.toMenuTitle("Утвердить стеллаж")%></a></td>
+							</tr>
+							<tr>
+								<td><a href="#" id="butRackSetStateInSectorPC" onclick="return aOnClick(this, fRackSetStateInSectorPC)" class="disabled"><%=JspUtils.toMenuTitle("Выполнить стеллаж")%></a></td>
+							</tr>
+							<tr>
+								<td><a href="#" id="butRackSetStateA" onclick="return aOnClick(this, fRackSetStateA)" class="disabled"><%=JspUtils.toMenuTitle("Утвердить компоновку")%></a></td>
+							</tr>
+							<tr>
+								<td><a href="#" id="butRackSetStatePC" onclick="return aOnClick(this, fRackSetStatePC)" class="disabled"><%=JspUtils.toMenuTitle("Выполнить компоновку")%></a></td>
+							</tr>
+							<tr><td></td></tr>
 							<tr>
 								<td><a href="#" id="butCopy" onclick="return aOnClick(this,fCopy)" class="disabled"><%=JspUtils.toMenuTitle("Копировать с товарами")%></a></td>
 							</tr>
@@ -91,6 +103,15 @@
 							</tr>
 							<tr>
 								<td height="100%"></td>
+							</tr>
+							<tr>
+								<td>раскраска
+									<select id="view_mode" onchange="drawEditCanvas();drawPreviewCanvas();">
+										<option value="type_rack">тип</option>
+										<option value="state_rack_in_sector">состояние в зале</option>
+										<option value="state_rack">состояние компоновки</option>
+									</select>
+								</td>
 							</tr>
 						</table>
 					</td>
@@ -194,7 +215,7 @@
 											<td>
 												<select id="rackType" onchange="changeRackType(this)">
 													<%
-														for (final TypeRack typeRack:TypeRack.values())
+														for (final ETypeRack typeRack: ETypeRack.values())
 														{
 															out.write("<option value=\"");
 															out.write(typeRack.name());
@@ -291,6 +312,8 @@
 
 <jsp:include page="choiceRackTemplate.jsp"/>
 
+<jsp:include page="sectorEditFindPanel.jsp"/>
+
 <script type="text/javascript">
 
 var edit_canvas;
@@ -320,6 +343,8 @@ function loadComplete()
 		postJson('<%=SectorEdit.URL%>', {code_sector:code_sector}, function (data) {
 			window.sector=data.sector;
 			window.showcaseList = data.rackList;
+			window.rackStateList = data.rackStateList;
+			window.rackStateInSectorList = data.rackStateInSectorList;
 			loadComplete2();
 		});
 	}
@@ -327,8 +352,10 @@ function loadComplete()
 	{
 		window.sector=<%=new Sector(null, null, "Наименование", 12000, 6000, 3000, null, null, null, null).toJsonObject()%>;
 		window.sector.code_shop=code_shop;
-	<%--window.showcaseList = [<%=new Rack(null, null, "Наименование", "",100, 100, 100, null, 100, 100, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, null, null).toJsonObject()%>];--%>
+	<%--window.showcaseList = [<%=new Rack(null, null, "Наименование", "",100, 100, 100, null, 100, 100, 0, LoadSide.F, null, false, false, ETypeRack.R, null, null, null, null, null, null).toJsonObject()%>];--%>
 		window.showcaseList = [];
+		window.rackStateList = [];
+		window.rackStateInSectorList = [];
 		loadComplete2();
 	}
 }
@@ -399,8 +426,9 @@ function drawEditCanvas() {
 			-window.ky / window.km,
 			window.sector.length / window.km,
 			window.sector.width / window.km);
+	var view_mode=$('#view_mode').val();
 	for (var i = 0; i < window.showcaseList.length; i++) {
-		drawRack(window.showcaseList[i], window.edit_context, window.kx, window.ky, window.km);
+		drawRack(window.showcaseList[i], window.rackStateList[i], window.rackStateInSectorList[i], view_mode, window.edit_context, window.kx, window.ky, window.km);
 	}
 	if (window.ruler.state>=2)
 	{
@@ -421,8 +449,9 @@ function drawPreviewCanvas() {
 	window.preview_context.lineWidth = 1;
 	window.preview_context.strokeStyle = "BLACK";
 	window.preview_context.strokeRect(0, 0, window.sector.length / window.preview_m, window.sector.width / window.preview_m);
+	var view_mode=$('#view_mode').val();
 	for (var i = 0; i < window.showcaseList.length; i++) {
-		drawRack(window.showcaseList[i], window.preview_context, 0, 0, window.preview_m);
+		drawRack(window.showcaseList[i], window.rackStateList[i], window.rackStateInSectorList[i], view_mode, window.preview_context, 0, 0, window.preview_m);
 	}
 	window.preview_context.lineWidth = 1;
 	window.preview_context.strokeStyle = "BLUE";
@@ -435,6 +464,7 @@ function drawPreviewCanvas() {
 
 <script type="text/javascript">
 function selectShowcase(showcase) {
+
 	if (showcase != null) {
 		document.getElementById('rackType').value = showcase.type_rack;
 		document.getElementById('rackName').value = showcase.name_rack;
@@ -504,8 +534,51 @@ function selectShowcase(showcase) {
 		$('#butPrint').addClass('disabled').attr('href', '#');
 		$('#butEdit').addClass('disabled');
 		$('#butRackWaresPlacement').addClass('disabled');
+		$('#butRackSetStateA').addClass('disabled');
+		$('#butRackSetStatePC').addClass('disabled');
 		$('#butCopy').addClass('disabled');
 		$('#butCut').addClass('disabled');
+	}
+}
+function fCanSetState() {
+	$('#butRackSetStateA').addClass('disabled');
+	$('#butRackSetStateInSectorA').addClass('disabled');
+	$('#butRackSetStatePC').addClass('disabled');
+	$('#butRackSetStateInSectorPC').addClass('disabled');
+	if (window.showcase != null && window.showcase.code_rack != null) {
+		postJson('<%=RackCanSetState.URL%>', {code_rack: window.showcase.code_rack}, function (data) {
+			var changeState = false;
+			for (var i = 0; i < window.rackStateInSectorList.length; i++) {
+				if (window.rackStateInSectorList[i].code_rack == window.showcase.code_rack) {
+					if (window.rackStateInSectorList[i].state_rack != data.rack_state_in_sector) {
+						changeState = true;
+						window.rackStateInSectorList[i].state_rack = data.rack_state_in_sector;
+					}
+					i = window.rackStateInSectorList.length;
+				}
+			}
+			for (var i = 0; i < window.rackStateList.length; i++) {
+				if (window.rackStateList[i].code_rack == window.showcase.code_rack) {
+					if (window.rackStateList[i].state_rack != data.rack_state) {
+						changeState = true;
+						window.rackStateList[i].state_rack = data.rack_state;
+					}
+					i = window.rackStateList.length;
+				}
+			}
+			if (changeState) {
+				drawEditCanvas();
+				drawPreviewCanvas();
+			}
+			if (data.canSetStateA)
+				$('#butRackSetStateA').removeClass('disabled');
+			if (data.canSetStateInSectorA)
+				$('#butRackSetStateInSectorA').removeClass('disabled');
+			if (data.canSetStatePC)
+				$('#butRackSetStatePC').removeClass('disabled');
+			if (data.canSetStateInSectorPC)
+				$('#butRackSetStateInSectorPC').removeClass('disabled');
+		}, 'butRackSetStateA');
 	}
 }
 function roundRack(rack)
@@ -625,6 +698,8 @@ function roundRack(rack)
 						window.sector = data.sector;
 						setSectorProperty(sector);
 						window.showcaseList = data.rackList;
+						window.rackStateList = data.rackStateList;
+						window.rackStateInSectorList = data.rackStateInSectorList;
 						for (var i = 0; i < window.showcaseList.length; i++) {
 							calcCoordinatesRack(window.showcaseList[i]);
 						}
@@ -674,20 +749,7 @@ function roundRack(rack)
 
 	function fFind()
 	{
-		var barcode=window.prompt("Введите штрихкод стеллажа");
-		if (barcode!=null)
-		{
-			window.showcase=null;
-			for (var i = window.showcaseList.length-1; window.showcase == null && i >=0; i--) {
-				if (window.showcaseList[i].rack_barcode==barcode) {
-					window.showcase = window.showcaseList[i];
-					window.editMove = 1;
-				}
-			}
-			selectShowcase(window.showcase);
-			drawEditCanvas();
-			drawPreviewCanvas();
-		}
+		sectorEditFindShow();
 	}
 
 	function fRackEdit()
@@ -715,6 +777,52 @@ function roundRack(rack)
 				document.location='rackWaresPlacement.jsp';
 			}
 		}
+	}
+
+	function fRackSetStateInSectorA() {
+		postJson('<%=RackSetStateInSectorA.URL%>', {code_rack: window.showcase.code_rack}, function (data) {
+			$('#butRackSetStateInSectorA').addClass('disabled');
+			if (data.canSetStateInSectorA) {
+				fCanSetState();
+			}
+			else {
+				alert("Невозможно утвердить стеллажа в зале");
+			}
+		}, 'butRackSetStateInSectorA');
+	}
+	function fRackSetStateInSectorPC()
+	{
+		postJson('<%=RackSetStateInSectorPC.URL%>', {code_rack: window.showcase.code_rack}, function (data) {
+			$('#butRackSetStateInSectorPC').addClass('disabled');
+			if (data.canSetStateInSectorPC) {
+				fCanSetState();
+			}
+			else {
+				alert("Невозможно выполнить стеллажа в зале");
+			}
+		}, 'butRackSetStateInSectorPC');
+	}
+	function fRackSetStateA() {
+		postJson('<%=RackSetStateA.URL%>', {code_rack: window.showcase.code_rack}, function (data) {
+			$('#butRackSetStateA').addClass('disabled');
+			if (data.canSetStateA) {
+				fCanSetState();
+			}
+			else {
+				alert("Невозможно утвердить компоновку стеллажа");
+			}
+		}, 'butRackSetStateA');
+	}
+	function fRackSetStatePC() {
+		postJson('<%=RackSetStatePC.URL%>', {code_rack: window.showcase.code_rack}, function (data) {
+			$('#butRackSetStatePC').addClass('disabled');
+			if (data.canSetStatePC) {
+				fCanSetState();
+			}
+			else {
+				alert("Невозможно выполнить компоновку стеллажа");
+			}
+		}, 'butRackSetStatePC');
 	}
 
 	function fCopy()
@@ -780,6 +888,8 @@ function roundRack(rack)
 			}
 			window.showcase.lock_move = 'N';
 			window.showcaseList.push(window.showcase);
+			window.rackStateList.push(<%=new RackState(null, EStateRack.D, null, null, null, null, null, null).toJsonObject()%>);
+			window.rackStateInSectorList.push(<%=new RackState(null, EStateRack.D, null, null, null, null, null, null).toJsonObject()%>);
 			window.copyObject=window.showcase;
 			selectShowcase(window.showcase);
 			calcCoordinatesRack(window.showcase);
@@ -829,11 +939,15 @@ function roundRack(rack)
 				if (sx>0 && sy>0 && sx<window.sector.length && sy<window.sector.width)
 				{
 				window.rackAdd=false;
-				window.showcase =<%=new Rack(null, null, "", "", 1, 1, 1000, 0, 0, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, 1, 1, 1000, 0, 0, 0).toJsonObject()%>;
+				window.showcase =<%=new Rack(null, null, "", "", 1, 1, 1000, 0, 0, 0, LoadSide.F, null, false, false, ETypeRack.R, null, null, null, null, 1, 1, 1000, 0, 0, 0).toJsonObject()%>;
 				window.showcase.code_sector=window.sector.code_sector;
 				window.showcase.x_coord=sx;
 				window.showcase.y_coord=sy;
 				window.showcaseList.push(window.showcase);
+				window.rackStateList.push(<%=new RackState(null, EStateRack.D, null, null, null, null, null, null).toJsonObject()%>);
+				window.rackStateInSectorList.push(<%=new RackState(null, EStateRack.D, null, null, null, null, null, null).toJsonObject()%>);
+
+
 				selectShowcase(window.showcase);
 				calcCoordinatesRack(window.showcase);
 				drawEditCanvas();
@@ -850,7 +964,7 @@ function roundRack(rack)
 				window.showcase=clone(window.rackTemplateAdd);
 				window.showcase.code_sector=window.sector.code_sector;
 				window.showcase.name_rack=window.rackTemplateAdd.name_rack_template;
-				window.showcase.type_rack='<%=TypeRack.R%>';
+				window.showcase.type_rack='<%=ETypeRack.R%>';
 				window.showcase.rack_barcode='';
 				window.showcase.lock_move='N';
 				window.showcase.x_coord=sx;
@@ -858,6 +972,8 @@ function roundRack(rack)
 				window.showcase.angle=0;
 				window.showcase.lock_size='Y';
 				window.showcaseList.push(window.showcase);
+				window.rackStateList.push(<%=new RackState(null, EStateRack.D, null, null, null, null, null, null).toJsonObject()%>);
+				window.rackStateInSectorList.push(<%=new RackState(null, EStateRack.D, null, null, null, null, null, null).toJsonObject()%>);
 				selectShowcase(window.showcase);
 				calcCoordinatesRack(window.showcase);
 				drawEditCanvas();
@@ -882,6 +998,7 @@ function roundRack(rack)
 					d4 = distance(window.showcaseList[i].x4,window.showcaseList[i].y4,window.showcaseList[i].x1,window.showcaseList[i].y1,sx,sy);
 					if ((d1 >= 0 && d2 >= 0 && d3 >= 0 && d4 >= 0) || (d1 <= 0 && d2 <= 0 && d3 <= 0 && d4 <= 0)) {
 						window.showcase = window.showcaseList[i];
+						fCanSetState();
 					}
 				}
 				selectShowcase(window.showcase);

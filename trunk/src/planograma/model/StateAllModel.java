@@ -44,36 +44,32 @@ public class StateAllModel {
 
 	private static final String Q_INIT = "select * " +
 			"from " + StateAllConst.TABLE_NAME + " " +
-			"where " + StateAllConst.PART_STATE + " in (?,?,?,?,?) " +
+			"where " + StateAllConst.PART_STATE + " in (?,?,?,?) " +
 			"order by " + StateAllConst.PART_STATE;
 
 	public void initEnum(final UserContext userContext) throws SQLException {
 		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_INIT);
-		ps.setInt(1, RackStateConst.STATE_ALL_PART_STATE_STATE_RACK);		// -63 STATE_RACK
+		ps.setInt(1, RackStateConst.STATE_ALL_PART_STATE_RACK_STATE);		// -63 STATE_RACK
 		ps.setInt(2, RackConst.STATE_ALL_PART_STATE_LOAD_SIDE);				// -64 LOAD_SIDE
-		ps.setInt(3, SectorStateConst.STATE_ALL_PART_STATE_STATE_SECTOR);	// -65 STATE_SECTOR
-		ps.setInt(4, RackShelfConst.STATE_ALL_PART_STATE_TYPE_SHELF);		// -67 TYPE_SHELF
-		ps.setInt(5, RackConst.STATE_ALL_PART_STATE_TYPE_RACK);				// -68 TYPE_RACK
+		ps.setInt(3, RackShelfConst.STATE_ALL_PART_STATE_TYPE_SHELF);		// -67 TYPE_SHELF
+		ps.setInt(4, RackConst.STATE_ALL_PART_STATE_TYPE_RACK);				// -68 TYPE_RACK
 		final ResultSet resultSet = ps.executeQuery();
 		while (resultSet.next()) {
 			final StateAll item = new StateAll(resultSet);
 			switch (item.getPart_state()) {
-				case SectorStateConst.STATE_ALL_PART_STATE_STATE_SECTOR:
-					final StateSector stateSector = StateSector.valueOf(item.getAbr_state());
-					stateSector.setDesc(item.getState());
-					break;
-				case RackStateConst.STATE_ALL_PART_STATE_STATE_RACK:
-					final StateRack stateRack = StateRack.valueOf(item.getAbr_state());
+				case RackStateConst.STATE_ALL_PART_STATE_RACK_STATE:
+					final EStateRack stateRack = EStateRack.valueOf(item.getAbr_state());
 					stateRack.setDesc(item.getState());
+					stateRack.setColor(item.getDescription());
 					break;
 				case RackConst.STATE_ALL_PART_STATE_LOAD_SIDE:
 					final LoadSide loadSide= LoadSide.valueOf(item.getAbr_state());
 					loadSide.setDesc(item.getState());
 					break;
 				case RackConst.STATE_ALL_PART_STATE_TYPE_RACK:
-					final TypeRack typeRack= TypeRack.valueOf(item.getAbr_state());
+					final ETypeRack typeRack= ETypeRack.valueOf(item.getAbr_state());
 					typeRack.setDesc(item.getState());
 					typeRack.setColor(item.getDescription());
 					break;

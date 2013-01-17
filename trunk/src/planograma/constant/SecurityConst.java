@@ -8,49 +8,67 @@ package planograma.constant;
  * список разграничений в приложении
  * select * from mz.security_list where parent_object_code = -139
  */
-public interface SecurityConst {
+public enum SecurityConst {
 	/**
 	 * SEV Модуль Планограммы ТП (WEB приложение)
 	 */
-	public static final int ACCESS_MODULE = -139;
+	ACCESS_MODULE(-139),
 	/**
 	 * Доступ к редактированию шаблонов стелажей
 	 */
-	public static final int ACCESS_RACK_TEMPLATE_EDIT = -140;
+	ACCESS_RACK_TEMPLATE_EDIT(-140),
 	/**
 	 * Доступ к редактированию стелажей
 	 */
-	public static final int ACCESS_RACK_EDIT = -141;
+	ACCESS_RACK_EDIT(-141),
 	/**
 	 * Доступ к редактированию зала
 	 */
-	public static final int ACCESS_SECTOR_EDIT = -142;
+	ACCESS_SECTOR_EDIT(-142),
 	/**
 	 * Доступ к расстановке товара
 	 */
-	public static final int ACCESS_RACK_WARES_PLACEMENT = -143;
+	ACCESS_RACK_WARES_PLACEMENT(-143),
 	/**
 	 * Доступ к очистке кеша изображений
 	 */
-	public static final int ACCESS_IMAGE_CLEAN_CACHE = -144;
+	ACCESS_IMAGE_CLEAN_CACHE(-144),
 	/**
-	 * Доступ к принудительному снятию блокировки зала (составлен)
+	 * Доступ к глобальному утверждению стеллажей зала (A составлен)
 	 */
-	public static final int ACCESS_SECTOR_STATE_SET_A = -145;
+	ACCESS_ALL_RACK_SET_STATE_SET_SECTOR_IN_SECTOR_A(-145),
 	/**
-	 * Доступ к подтверждению выполнения зала
+	 * Доступ к глобальному выполнению стеллажей зала (РС составлен)
 	 */
-	public static final int ACCESS_SECTOR_STATE_SET_PC = -155;
+	ACCESS_ALL_RACK_SET_STATE_SET_STATE_IN_SECTOR_PC(-155),
 	/**
-	 * Доступ к принудительному снятию блокировки со стелажа
+	 * Доступ к принудительному утверждению стеллажа
 	 */
-	public static final int ACCESS_RACK_STATE_SET_A = -146;
+	ACCESS_RACK_STATE_SET_A(-146),
 	/**
-	 * Доступ к подтверждению выполнения стеллажа
+	 * Доступ к выполнению стеллажа
 	 */
-	public static final int ACCESS_RACK_STATE_SET_PC = -154;
+	ACCESS_RACK_STATE_SET_PC(-154),
+	/**
+	 * Доступ к принудительному утверждению стеллажа в зале
+	 */
+	ACCESS_RACK_STATE_IN_SECTOR_SET_A(-157),
+	/**
+	 * Доступ к выполнению стеллажа в зале
+	 */
+	ACCESS_RACK_STATE_IN_SECTOR_SET_PC(-156),
 	/**
 	 * Доступ к редактированию полок при расстановке товара
 	 */
-	public static final int ACCESS_RACK_WARES_PLACEMENT_AND_RACK_SHELF_EDIT = -150;
+	ACCESS_RACK_WARES_PLACEMENT_AND_RACK_SHELF_EDIT(-150);
+
+	private final int value;
+
+	private SecurityConst(int value) {
+		this.value = value;
+	}
+
+	public int getValue() {
+		return value;
+	}
 }

@@ -44,17 +44,22 @@ public class RackOverflowWaresValidation {
 	 * @param rackWares2DList
 	 */
 	public static void validate2D(final List<EntityFieldException> fieldExceptionList, final Rack rack, final int rackIndex, final List<RackWares2D> rackWares2DList) {
+		float oy, ox;
 		float dx;
 		float dy;
 		float dz;
 		// относительно стороны загрузки
 		if (rack.getLoad_side() == LoadSide.F) {
-			dx = rack.getReal_length();
-			dy = rack.getReal_height();
+			ox = rack.getX_offset();
+			oy = rack.getZ_offset();
+			dx = ox + rack.getReal_length();
+			dy = oy + rack.getReal_height();
 			dz = rack.getReal_width();
 		} else {
-			dx = rack.getReal_length();
-			dy = rack.getReal_width();
+			ox = rack.getX_offset();
+			oy = rack.getY_offset();
+			dx = ox + rack.getReal_length();
+			dy = oy + rack.getReal_width();
 			dz = rack.getReal_height();
 		}
 		//	полезная зона не может стать меньше чем расположеные на нем товары
@@ -62,9 +67,9 @@ public class RackOverflowWaresValidation {
 			for (int j = 0; j < rackWares2DList.size(); j++) {
 				final RackWares2D rackWares2D = rackWares2DList.get(j);
 				final RackWares rackWares = rackWares2D.getRackWares();
-				if (rackWares2D.getMinX() < 0 ||
+				if (rackWares2D.getMinX() < ox ||
 						rackWares2D.getMaxX() > dx ||
-						rackWares2D.getMinY() < 0 ||
+						rackWares2D.getMinY() < oy ||
 						rackWares2D.getMaxY() > dy ||
 						rackWares.getWares_length() * rackWares.getCount_length_on_shelf() < 0 ||
 						rackWares.getWares_length() * rackWares.getCount_length_on_shelf() > dz) {

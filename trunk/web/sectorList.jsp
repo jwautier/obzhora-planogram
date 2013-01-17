@@ -2,9 +2,19 @@
 <%@ page import="planograma.servlet.sector.*" %>
 <%@ page import="planograma.servlet.shop.ShopList" %>
 <%@ page import="planograma.utils.JspUtils" %>
+<%@ page import="planograma.data.UserContext" %>
+<%@ page import="planograma.constant.SessionConst" %>
+<%@ page import="planograma.model.SecurityModel" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
 	final String access_sector_edit=JspUtils.actionAccess(session, SecurityConst.ACCESS_SECTOR_EDIT);
+	boolean access_all_rack_in_sector_set_state_pc=false;
+	final UserContext userContext = (UserContext) session.getAttribute(SessionConst.SESSION_USER);
+	if (userContext != null) {
+		SecurityModel securityModel=SecurityModel.getInstance();
+		access_all_rack_in_sector_set_state_pc = securityModel.canAccess(userContext, SecurityConst.ACCESS_ALL_RACK_SET_STATE_SET_STATE_IN_SECTOR_PC)
+				||securityModel.canAccess(userContext, SecurityConst.ACCESS_RACK_STATE_SET_PC);
+	}
 %>
 <html>
 <head>
@@ -56,16 +66,25 @@
 								<td><a href="#" id="sectorEdit" onclick="return aOnClick(this, fSectorEdit)" class="disabled"><%=JspUtils.toMenuTitle("Редактировать зал")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" id="sectorStateA" onclick="return aOnClick(this, fSectorStateA)" class="disabled"><%=JspUtils.toMenuTitle("Подтвердить составление")%></a></td>
+								<td><a href="#" id="sectorStateA" onclick="return aOnClick(this, fSectorAllRackSetStateA)" class="disabled"><%=JspUtils.toMenuTitle("Утвердить стеллажи")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" id="sectorStatePC" onclick="return aOnClick(this, fSectorStatePC)" class="disabled"><%=JspUtils.toMenuTitle("Подтвердить выполнение")%></a></td>
+								<td><a href="#" id="sectorStatePC" onclick="return aOnClick(this, fSectorAllRackSetStatePC)" class="disabled"><%=JspUtils.toMenuTitle("Выполнить стеллажи")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="sectorRemove" onclick="return aOnClick(this, fSectorRemove)" class="disabled"><%=JspUtils.toMenuTitle("Удалить зал")%></a></td>
 							</tr>
 							<tr>
 								<td height="100%"></td>
+							</tr>
+							<tr>
+								<td>раскраска
+									<select id="view_mode" onchange="selectSector2();">
+										<option value="type_rack">тип</option>
+										<option value="state_rack_in_sector">состояние в зале</option>
+										<option value="state_rack">состояние компоновки</option>
+									</select>
+								</td>
 							</tr>
 						</table>
 					</td>
@@ -98,6 +117,7 @@
 <script type="text/javascript">
 
 	var canSectorEdit='<%=access_sector_edit%>';
+	var canAllRackInSectorSetStatePC='<%=access_all_rack_in_sector_set_state_pc%>';
 
 	function selectShop(code_shop) {
 		if (code_shop != null && code_shop != '') {
@@ -123,8 +143,7 @@
 					sectorList.empty();
 					for (var i in data.sectorList) {
 						var item = data.sectorList[i];
-						var sectorState=data.sectorStateList[i];
-						sectorList.append('<option value="' + item.code_sector + '">' + item.name_sector + '('+sectorState.state_sector_desc+')</option>')
+						sectorList.append('<option value="' + item.code_sector + '">' + item.name_sector + '</option>')
 
 						if (item.code_sector == code_sector) {
 							selectSector(code_sector);
@@ -155,15 +174,22 @@
 				$('#sectorPrint').removeClass('disabled');
 				choiceSectorPrintSetCodeSector(code_sector);
 				$('#sectorEdit').removeClass('disabled');
-				canSectorStateSet(code_sector);
+
+				$('#sectorStateA').removeClass('disabled');
+				if (canAllRackInSectorSetStatePC!='true'){
+					$('#sectorStatePC').removeClass('disabled');
+				}
 				if (canSectorEdit!='disabled'){
 					$('#sectorRemove').removeClass('disabled');
 				}
+
 				setCookie('code_sector', code_sector);
 
 				postJson('<%=SectorEdit.URL%>', {code_sector:code_sector}, function (data) {
 					window.sector=data.sector;
 					window.rackList = data.rackList;
+					window.rackStateList = data.rackStateList;
+					window.rackStateInSectorList = data.rackStateInSectorList;
 					selectSector2();
 				}, 'preview_td');
 			}
@@ -175,37 +201,23 @@
 			setCookie('code_sector', '');
 		}
 	}
-	function canSectorStateSet(code_sector)
-	{
-		postJson('<%=SectorCanSetState.URL%>', {code_sector:code_sector}, function (data) {
-			if (data.canSetStateA)
-				$('#sectorStateA').removeClass('disabled');
-			if (data.canSetStatePC)
-				$('#sectorStatePC').removeClass('disabled');
-		}, 'sectorStateA');
+	function fSectorAllRackSetStateA() {
+		postJson('<%=SectorAllRackSetStateA.URL%>', {code_sector: window.sector.code_sector}, function (data) {
+			// перерисовать зал
+			selectSector2();
+			if (data.notAccessRackList!=null) {
+				alert("Некоторые стеллажи не удалось утвердить:"+data.notAccessRackList);
+			}
+		});
 	}
-	function fSectorStateA() {
-		postJson('<%=SectorSetStateA.URL%>', {code_sector: window.sector.code_sector}, function (data) {
-			$('#sectorStateA').addClass('disabled');
-			if (data.canSetStateA) {
-				canSectorStateSet(window.sector.code_sector);
-				selectShop($('#shopList').val());
+	function fSectorAllRackSetStatePC() {
+		postJson('<%=SectorAllRackSetStatePC.URL%>', {code_sector: window.sector.code_sector}, function (data) {
+			// перерисовать зал
+			selectSector2();
+			if (data.notAccessRackList!=null) {
+				alert("Некоторые стеллажи не удалось выполнить:"+data.notAccessRackList);
 			}
-			else {
-				alert("Невозможно перевести зал в состояние составлен");
-			}
-		}, 'sectorStateA');
-	}
-	function fSectorStatePC() {
-		postJson('<%=SectorSetStatePC.URL%>', {code_sector: window.sector.code_sector}, function (data) {
-			$('#sectorStatePC').addClass('disabled');
-			if (data.canSetStatePC) {
-				canSectorStateSet(window.sector.code_sector);
-				selectShop($('#shopList').val());
-			} else {
-				alert("Невозможно подтвердить выполнение плана зала");
-			}
-		}, 'sectorStatePC');
+		});
 	}
 	function selectSector2()
 	{
@@ -218,9 +230,10 @@
 		window.preview_canvas.width = window.sector.length/window.preview_m;
 		window.preview_canvas.height = window.sector.width/window.preview_m;
 
+		var view_mode=$('#view_mode').val();
 		for (var i = 0; i < window.rackList.length; i++) {
 			calcCoordinatesRack(window.rackList[i]);
-			drawRack(window.rackList[i], window.preview_context, 0, 0, window.preview_m);
+			drawRack(window.rackList[i], window.rackStateList[i], window.rackStateInSectorList[i], view_mode, window.preview_context, 0, 0, window.preview_m);
 		}
 		var title=window.sector.name_sector;
 		title+='\n'+window.sector.length+'x'+window.sector.width+'x'+window.sector.height;

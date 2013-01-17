@@ -135,7 +135,7 @@ public class SectorPrintWithEditor extends HttpServlet {
 			table.addCell(cell);
 			for (int index = 0; index < rackList.size(); index++) {
 				final Rack2D rack2D = rackList.get(index);
-				if (rack2D.getRack().getType_race() != TypeRack.DZ) {
+				if (rack2D.getRack().getType_rack() != ETypeRack.DZ) {
 					// №
 					table.addCell(new PdfPCell(new Paragraph(String.valueOf(index + 1), font)));
 					// Наименование
@@ -156,7 +156,7 @@ public class SectorPrintWithEditor extends HttpServlet {
 					final String fullName = userModel.getFullName(userContext, rack2D.getRack().getUser_update());
 					table.addCell(new PdfPCell(new Paragraph(fullName, font)));
 					// Состояние
-					final RackState rackState = rackStateModel.select(userContext, rack2D.getRack().getCode_rack());
+					final RackState rackState = rackStateModel.selectRackState(userContext, rack2D.getRack().getCode_rack());
 					table.addCell(new PdfPCell(new Paragraph(rackState.getState_rack().getDesc(), font)));
 				}
 			}
@@ -180,7 +180,7 @@ public class SectorPrintWithEditor extends HttpServlet {
 
 	private void drawRack2D(final PdfContentByte cb, final Rack2D rack2D, final int index, final float m, final Rectangle pageSize, final BaseFont baseFont) {
 		cb.saveState();
-		if (rack2D.getRack().getType_race() == TypeRack.DZ) {
+		if (rack2D.getRack().getType_rack() == ETypeRack.DZ) {
 			cb.setColorFill(GrayColor.GRAY);
 		} else {
 			cb.setColorStroke(GrayColor.BLACK);
@@ -206,12 +206,12 @@ public class SectorPrintWithEditor extends HttpServlet {
 		cb.lineTo(p2.getX(), p2.getY());
 		cb.lineTo(p3.getX(), p3.getY());
 		cb.lineTo(p4.getX(), p4.getY());
-		if (rack2D.getRack().getType_race() == TypeRack.DZ) {
+		if (rack2D.getRack().getType_rack() == ETypeRack.DZ) {
 			cb.fill();
 		} else {
 			cb.closePathStroke();
 		}
-		if (rack2D.getRack().getType_race() != TypeRack.DZ) {
+		if (rack2D.getRack().getType_rack() != ETypeRack.DZ) {
 			cb.beginText();
 
 			float minSize = Math.min(rack2D.getRack().getWidth(), rack2D.getRack().getLength()) / m;

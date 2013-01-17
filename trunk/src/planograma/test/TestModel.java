@@ -35,6 +35,7 @@ public class TestModel {
 			System.out.println("-------------------------SectorModel-------------------------");
 			TestSectorModel.testSectorModel(userContext);
 			System.out.println("-------------------------RackModel-------------------------");
+			// TODO RackStateModel, RackStateInSectorModel
 			TestRackModel.testRackModel(userContext);
 			System.out.println("-------------------------RackShelfModel-------------------------");
 			TestRackShelfModel.testRackShelfModel(userContext);
@@ -66,13 +67,10 @@ public class TestModel {
 	}
 
 	public static void testStateAllModel(final UserContext userContext) throws SQLException {
-		testStateAllModel(userContext, SectorConst.TABLE_NAME, SectorStateConst.STATE_SECTOR, SectorStateConst.STATE_ALL_PART_STATE_STATE_SECTOR);
-		testStateAllModel(userContext, RackConst.TABLE_NAME, RackStateConst.STATE_RACK, RackStateConst.STATE_ALL_PART_STATE_STATE_RACK);
-		testStateAllModel(userContext, RackConst.TABLE_NAME, RackConst.LOAD_SIDE, RackConst.STATE_ALL_PART_STATE_LOAD_SIDE);
+		testStateAllModel(userContext, RackConst.TABLE_NAME, RackStateConst.STATE_RACK, RackStateConst.STATE_ALL_PART_STATE_RACK_STATE);
+		testStateAllModel(userContext, RackConst.TABLE_NAME+'|'+RackTemplateConst.TABLE_NAME, AbstractRackConst.LOAD_SIDE, AbstractRackConst.STATE_ALL_PART_STATE_LOAD_SIDE);
 		testStateAllModel(userContext, RackTemplateConst.TABLE_NAME, RackTemplateConst.STATE_RACK_TEMPLATE, RackTemplateConst.STATE_ALL_PART_STATE_STATE_RACK_TEMPLATE);
-		testStateAllModel(userContext, RackTemplateConst.TABLE_NAME, RackTemplateConst.LOAD_SIDE, RackTemplateConst.STATE_ALL_PART_STATE_LOAD_SIDE);
-		testStateAllModel(userContext, RackShelfConst.TABLE_NAME, RackShelfConst.TYPE_SHELF, RackShelfConst.STATE_ALL_PART_STATE_TYPE_SHELF);
-		testStateAllModel(userContext, RackShelfTemplateConst.TABLE_NAME, RackShelfTemplateConst.TYPE_SHELF, RackShelfTemplateConst.STATE_ALL_PART_STATE_TYPE_SHELF);
+		testStateAllModel(userContext, RackShelfConst.TABLE_NAME+'|'+RackShelfTemplateConst.TABLE_NAME, AbstractRackShelfConst.TYPE_SHELF, AbstractRackShelfConst.STATE_ALL_PART_STATE_TYPE_SHELF);
 	}
 
 	private static void testStateAllModel(final UserContext userContext, final String tableName, final String columnName, final int starteAllPartState) throws SQLException {

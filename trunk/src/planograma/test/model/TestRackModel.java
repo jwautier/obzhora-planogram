@@ -21,7 +21,7 @@ public class TestRackModel {
 		final int length = 50;
 		final int width = 200;
 		final int height = 150;
-		Rack rack = new Rack(sector.getCode_sector(), null, "rack 1", "bar code 1", length, width, height, 50, 50, 0, LoadSide.F, null, false, false, TypeRack.R, null, null, null, null, length, width, height, 0, 0, 0);
+		Rack rack = new Rack(sector.getCode_sector(), null, "rack 1", "bar code 1", length, width, height, 50, 50, 0, LoadSide.F, null, false, false, ETypeRack.R, null, null, null, null, length, width, height, 0, 0, 0);
 		System.out.println(rack.toJsonObject());
 		rackModel.insert(userContext, rack);
 		System.out.println("insert");

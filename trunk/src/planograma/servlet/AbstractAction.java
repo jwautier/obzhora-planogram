@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
+import planograma.constant.SecurityConst;
 import planograma.constant.SessionConst;
 import planograma.data.UserContext;
 import planograma.exception.InvalidLoginOrPassword;
@@ -106,7 +107,7 @@ public abstract class AbstractAction extends HttpServlet {
 		throw UnauthorizedException.getInstance();
 	}
 
-	public void checkAccess(final UserContext userContext, int code_object) throws NotAccessException {
+	public void checkAccess(final UserContext userContext, SecurityConst code_object) throws NotAccessException {
 		if (!securityModel.canAccess(userContext, code_object))
 			throw NotAccessException.getInstance();
 	}
