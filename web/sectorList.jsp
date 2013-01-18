@@ -130,6 +130,7 @@
 				}
 				$('#sectorPrint').addClass('disabled');
 				choiceSectorPrintSetCodeSector(null);
+				$('#sectorViewHistory').addClass('disabled');
 				$('#sectorEdit').addClass('disabled');
 				$('#sectorStateA').addClass('disabled');
 				$('#sectorStatePC').addClass('disabled');
@@ -173,6 +174,7 @@
 				option.attr('selected', 'selected');
 				$('#sectorPrint').removeClass('disabled');
 				choiceSectorPrintSetCodeSector(code_sector);
+				$('#sectorViewHistory').removeClass('disabled');
 				$('#sectorEdit').removeClass('disabled');
 
 				$('#sectorStateA').removeClass('disabled');
@@ -256,8 +258,12 @@
 	}
 	function fSectorViewHistory()
 	{
-		//TODO
-		alert('Функционал на стадии разработки');
+		var code_sector = $('#sectorList').val();
+		if (code_sector!=null && code_sector.length>0)
+		{
+			setCookie('code_sector', code_sector);
+			document.location='sectorHistory.jsp';
+		}
 	}
 	function fSectorEdit()
 	{

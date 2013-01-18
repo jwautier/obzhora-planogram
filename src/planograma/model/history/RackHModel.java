@@ -48,8 +48,8 @@ public class RackHModel {
 			" " + RackHConst.REAL_WIDTH + "," +
 			" " + RackHConst.REAL_HEIGHT + "," +
 			" " + RackHConst.X_OFFSET + "," +
-			" " + RackHConst.Y_OFFEST + "," +
-			" " + RackHConst.Z_OFFEST + " " +
+			" " + RackHConst.Y_OFFSET + "," +
+			" " + RackHConst.Z_OFFSET + " " +
 			"from " + RackHConst.TABLE_NAME + " ";
 
 	private static final String Q_LIST = Q_SELECT_FROM +

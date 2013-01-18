@@ -327,3 +327,21 @@ function rackShelfCalcCoordinates(shelf)
 	shelf.p4=new Point2D(shelf.x4, shelf.y4);
 }
 
+function dateTimeToString(date) {
+	if (!(date instanceof Date)) {
+		date = new Date(date);
+	}
+
+	var f00 = function (i) {
+		if (i < 10)
+			i = '0' + i;
+		return i;
+	}
+	return f00(date.getDate()) + '.' +
+		f00(date.getMonth() + 1) + '.' +
+		date.getFullYear() + ' ' +
+		f00(date.getHours()) + ':' +
+		f00(date.getMinutes()) + ':' +
+		f00(date.getSeconds());
+}
+
