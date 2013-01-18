@@ -24,6 +24,9 @@ public interface UrlConst {
 	public static final String URL_SECTOR_EDIT = "servlet/sector/edit";
 	public static final String URL_SECTOR_SAVE = "servlet/sector/save";
 
+	public static final String URL_SECTOR_HISTORY_GET_MARK = "servlet/sector/history/get_mark";
+	public static final String URL_SECTOR_HISTORY_VIEW = "servlet/sector/history/view";
+
 	public static final String URL_RACK_TEMPLATE_LIST = "servlet/rack_template/list";
 	public static final String URL_RACK_TEMPLATE_EDIT = "servlet/rack_template/edit";
 	public static final String URL_RACK_TEMPLATE_SAVE = "servlet/rack_template/save";

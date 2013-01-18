@@ -1,10 +1,7 @@
 package planograma.test;
 
 import planograma.constant.data.*;
-import planograma.constant.data.history.RackHConst;
-import planograma.constant.data.history.RackShelfHConst;
-import planograma.constant.data.history.RackWaresHConst;
-import planograma.constant.data.history.SectorHConst;
+import planograma.constant.data.history.*;
 import planograma.data.UserContext;
 
 import java.sql.Connection;
@@ -197,8 +194,20 @@ public class TestDBscheme {
 					RackHConst.REAL_WIDTH,
 					RackHConst.REAL_HEIGHT,
 					RackHConst.X_OFFSET,
-					RackHConst.Y_OFFEST,
-					RackHConst.Z_OFFEST
+					RackHConst.Y_OFFSET,
+					RackHConst.Z_OFFSET
+			);
+			checkTable(psColumns, RackStateHConst.TABLE_NAME,
+					RackStateHConst.CODE_RACK,
+					RackStateHConst.STATE_RACK,
+					RackStateHConst.USER_INSERT,
+					RackStateHConst.DATE_INSERT
+			);
+			checkTable(psColumns, RackStateInSectorHConst.TABLE_NAME,
+					RackStateInSectorHConst.CODE_RACK,
+					RackStateInSectorHConst.STATE_RACK,
+					RackStateInSectorHConst.USER_INSERT,
+					RackStateInSectorHConst.DATE_INSERT
 			);
 			checkTable(psColumns, RackShelfHConst.TABLE_NAME,
 					RackShelfHConst.CODE_RACK,
