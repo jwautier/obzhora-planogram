@@ -51,7 +51,6 @@ public class WaresEdit extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
-		long time = System.currentTimeMillis();
 		final int code_rack = requestData.getAsJsonObject().get(RackConst.CODE_RACK).getAsInt();
 
 		final JsonObject jsonObject = new JsonObject();
@@ -77,8 +76,6 @@ public class WaresEdit extends AbstractAction {
 		if (basket==null)
 			basket=new JsonObject();
 		jsonObject.add("basket", basket);
-		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms");
 		return jsonObject;
 	}
 }

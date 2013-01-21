@@ -3,6 +3,7 @@ package planograma.model.history;
 import org.apache.log4j.Logger;
 import planograma.constant.data.RackConst;
 import planograma.constant.data.history.RackHConst;
+import planograma.constant.data.history.RackStateHConst;
 import planograma.data.Rack;
 import planograma.data.UserContext;
 import planograma.utils.FormattingUtils;
@@ -23,46 +24,46 @@ public class RackHModel {
 
 	private static final Logger LOG = Logger.getLogger(RackHModel.class);
 
-	private static final String Q_SELECT_FROM = "select" +
-			" " + RackHConst.CODE_RACK + "," +
-			" " + RackHConst.NAME_RACK + "," +
-			" " + RackHConst.RACK_BARCODE + "," +
-			" " + RackHConst.LENGTH + "," +
-			" " + RackHConst.WIDTH + "," +
-			" " + RackHConst.HEIGHT + "," +
-			" " + RackHConst.CODE_SECTOR + "," +
-			" " + RackHConst.X_COORD + "," +
-			" " + RackHConst.Y_COORD + "," +
-			" " + RackHConst.ANGLE + "," +
-			" " + RackHConst.LOAD_SIDE + "," +
-			" " + RackHConst.CODE_RACK_TEMPLATE + "," +
-			" " + RackHConst.LOCK_SIZE + "," +
-			" " + RackHConst.LOCK_MOVE + "," +
-			" " + RackHConst.TYPE_RACK + "," +
-			" " + RackHConst.USER_INSERT + "," +
-			" " + RackHConst.DATE_INSERT + "," +
-			" " + RackHConst.USER_INSERT + " " + RackConst.USER_UPDATE + "," +
-			" " + RackHConst.DATE_INSERT + " " + RackConst.DATE_UPDATE + "," +
-			" " + RackHConst.TYPE_OPERATION + "," +
-			" " + RackHConst.REAL_LENGTH + "," +
-			" " + RackHConst.REAL_WIDTH + "," +
-			" " + RackHConst.REAL_HEIGHT + "," +
-			" " + RackHConst.X_OFFSET + "," +
-			" " + RackHConst.Y_OFFSET + "," +
-			" " + RackHConst.Z_OFFSET + " " +
-			"from " + RackHConst.TABLE_NAME + " ";
+	private static final String Q_SELECT_FROM = "SELECT" +
+			" o." + RackHConst.CODE_RACK + "," +
+			" o." + RackHConst.NAME_RACK + "," +
+			" o." + RackHConst.RACK_BARCODE + "," +
+			" o." + RackHConst.LENGTH + "," +
+			" o." + RackHConst.WIDTH + "," +
+			" o." + RackHConst.HEIGHT + "," +
+			" o." + RackHConst.CODE_SECTOR + "," +
+			" o." + RackHConst.X_COORD + "," +
+			" o." + RackHConst.Y_COORD + "," +
+			" o." + RackHConst.ANGLE + "," +
+			" o." + RackHConst.LOAD_SIDE + "," +
+			" o." + RackHConst.CODE_RACK_TEMPLATE + "," +
+			" o." + RackHConst.LOCK_SIZE + "," +
+			" o." + RackHConst.LOCK_MOVE + "," +
+			" o." + RackHConst.TYPE_RACK + "," +
+			" o." + RackHConst.USER_INSERT + "," +
+			" o." + RackHConst.DATE_INSERT + "," +
+			" o." + RackHConst.USER_INSERT + " " + RackConst.USER_UPDATE + "," +
+			" o." + RackHConst.DATE_INSERT + " " + RackConst.DATE_UPDATE + "," +
+			" o." + RackHConst.TYPE_OPERATION + "," +
+			" o." + RackHConst.REAL_LENGTH + "," +
+			" o." + RackHConst.REAL_WIDTH + "," +
+			" o." + RackHConst.REAL_HEIGHT + "," +
+			" o." + RackHConst.X_OFFSET + "," +
+			" o." + RackHConst.Y_OFFSET + "," +
+			" o." + RackHConst.Z_OFFSET + " " +
+			"FROM " + RackHConst.TABLE_NAME + " o ";
 
 	private static final String Q_LIST = Q_SELECT_FROM +
-			"where " +
-			" " + RackHConst.TYPE_OPERATION + "<> 'D'" +
-			" and " +
-			" (" + RackHConst.CODE_RACK + ", " + RackHConst.DATE_INSERT + ") in " +
-			"  (select ss1." + RackHConst.CODE_RACK + ", max(ss1." + RackHConst.DATE_INSERT + ")" +
-			"   from " + RackHConst.TABLE_NAME + " ss1" +
-			"   where " +
-			"    ss1." + RackHConst.CODE_SECTOR + "=?" +
-			"    and ss1." + RackHConst.DATE_INSERT + " <= ?" +
-			"   group by ss1." + RackHConst.CODE_RACK +
+			" WHERE " +
+			" o." + RackHConst.TYPE_OPERATION + "<> 'D'" +
+			" AND " +
+			" o." + RackHConst.CODE_SECTOR + "=?" +
+			" AND o." + RackHConst.DATE_INSERT + " IN " +
+			"  (SELECT MAX(ss1." + RackHConst.DATE_INSERT + ")" +
+			"   FROM " + RackHConst.TABLE_NAME + " ss1" +
+			"   WHERE " +
+			"    ss1." + RackHConst.CODE_RACK + "= o." + RackHConst.CODE_RACK +
+			"    AND ss1." + RackHConst.DATE_INSERT + " <= ?" +
 			"  )";
 
 	public List<Rack> list(final UserContext userContext, final Integer code_sector, final Date date) throws SQLException {
@@ -83,9 +84,9 @@ public class RackHModel {
 	}
 
 	private static final String Q_SELECT = Q_SELECT_FROM +
-			"where " + RackHConst.CODE_RACK + " = ?" +
-			" and " + RackHConst.DATE_INSERT + " <= ?" +
-			"order by " + RackHConst.DATE_INSERT + " desc";
+			" WHERE o." + RackHConst.CODE_RACK + " = ?" +
+			" AND o." + RackHConst.DATE_INSERT + " <= ?" +
+			"ORDER BY o." + RackHConst.DATE_INSERT + " DESC";
 
 	public Rack select(final UserContext userContext, final int code_rack, final Date date) throws SQLException {
 		long time = System.currentTimeMillis();
@@ -105,6 +106,70 @@ public class RackHModel {
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms (code_rack:" + code_rack + ", date:" + FormattingUtils.datetime2String(date) + ")");
 		return rack;
+	}
+
+	private static final String Q_LIST_A = Q_SELECT_FROM +
+			" WHERE " +
+			" o." + RackHConst.TYPE_OPERATION + "<> 'D'" +
+			" AND o." + RackHConst.CODE_SECTOR + " = ?" +
+			" AND o." + RackHConst.DATE_INSERT + " IN " +
+			"  (SELECT MAX(ss1." + RackHConst.DATE_INSERT + ")" +
+			"   FROM " + RackHConst.TABLE_NAME + " ss1" +
+			"   WHERE " +
+			"    ss1." + RackHConst.CODE_RACK + " = o." + RackHConst.CODE_RACK +
+			"    AND ss1." + RackHConst.DATE_INSERT + " <= " +
+			"      (SELECT MAX(rs." + RackStateHConst.DATE_INSERT + ") " +
+			"       FROM " + RackStateHConst.TABLE_NAME + " rs " +
+			"       WHERE rs." + RackStateHConst.STATE_RACK + " IN ('A', 'PC') " +
+			"        AND rs." + RackStateHConst.CODE_RACK + " = o." + RackHConst.CODE_RACK + ")" +
+			"  )";
+
+	public List<Rack> listA(final UserContext userContext, final Integer code_sector) throws SQLException {
+		long time = System.currentTimeMillis();
+		final Connection connection = userContext.getConnection();
+		final PreparedStatement ps = connection.prepareStatement(Q_LIST_A);
+		ps.setLong(1, code_sector);
+		final ResultSet resultSet = ps.executeQuery();
+		final List<Rack> list = new ArrayList<Rack>();
+		while (resultSet.next()) {
+			final Rack item = new Rack(resultSet);
+			list.add(item);
+		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_sector:" + code_sector + ")");
+		return list;
+	}
+
+	private static final String Q_LIST_PC = Q_SELECT_FROM +
+			" WHERE " +
+			" o." + RackHConst.TYPE_OPERATION + "<> 'D'" +
+			" AND o." + RackHConst.CODE_SECTOR + " = ?" +
+			" AND o." + RackHConst.DATE_INSERT + " IN " +
+			"  (SELECT MAX(ss1." + RackHConst.DATE_INSERT + ")" +
+			"   FROM " + RackHConst.TABLE_NAME + " ss1" +
+			"   WHERE " +
+			"    ss1." + RackHConst.CODE_RACK + " = o." + RackHConst.CODE_RACK +
+			"    AND ss1." + RackHConst.DATE_INSERT + " <= " +
+			"      (SELECT MAX(rs." + RackStateHConst.DATE_INSERT + ") " +
+			"       FROM " + RackStateHConst.TABLE_NAME + " rs " +
+			"       WHERE rs." + RackStateHConst.STATE_RACK + " IN ('PC') " +
+			"        AND rs." + RackStateHConst.CODE_RACK + " = o." + RackHConst.CODE_RACK + ")" +
+			"  )";
+
+	public List<Rack> listPC(final UserContext userContext, final Integer code_sector) throws SQLException {
+		long time = System.currentTimeMillis();
+		final Connection connection = userContext.getConnection();
+		final PreparedStatement ps = connection.prepareStatement(Q_LIST_PC);
+		ps.setLong(1, code_sector);
+		final ResultSet resultSet = ps.executeQuery();
+		final List<Rack> list = new ArrayList<Rack>();
+		while (resultSet.next()) {
+			final Rack item = new Rack(resultSet);
+			list.add(item);
+		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_sector:" + code_sector + ")");
+		return list;
 	}
 
 	private static RackHModel instance = new RackHModel();

@@ -3,7 +3,6 @@ package planograma.servlet.racktemplate;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.log4j.Logger;
 import planograma.constant.UrlConst;
 import planograma.data.RackTemplate;
 import planograma.exception.UnauthorizedException;
@@ -29,8 +28,6 @@ public class RackTemplateList extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_RACK_TEMPLATE_LIST;
 
-	private static final Logger LOG = Logger.getLogger(RackTemplateList.class);
-
 	private RackTemplateModel rackTemplateModel;
 
 	@Override
@@ -41,7 +38,6 @@ public class RackTemplateList extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
-		long time = System.currentTimeMillis();
 		final JsonObject jsonObject = new JsonObject();
 		final JsonArray jsonArray = new JsonArray();
 		final List<RackTemplate> list = rackTemplateModel.list(getUserContext(session));
@@ -49,8 +45,6 @@ public class RackTemplateList extends AbstractAction {
 			jsonArray.add(rackTemplate.toJsonObject());
 		}
 		jsonObject.add("rackTemplateList", jsonArray);
-		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms");
 		return jsonObject;
 	}
 }

@@ -3,7 +3,6 @@ package planograma.servlet.sector.history;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.log4j.Logger;
 import planograma.constant.UrlConst;
 import planograma.constant.data.SectorConst;
 import planograma.data.*;
@@ -34,25 +33,22 @@ public class SectorHistoryView extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_SECTOR_HISTORY_VIEW;
 
-	private static final Logger LOG = Logger.getLogger(SectorHistoryView.class);
-
-	private SectorHModel sectorModel;
-	private RackHModel rackModel;
+	private SectorHModel sectorHModel;
+	private RackHModel rackHModel;
 	private RackStateHModel rackStateHModel;
 	private RackStateInSectorHModel rackStateInSectorHModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		sectorModel = SectorHModel.getInstance();
-		rackModel = RackHModel.getInstance();
+		sectorHModel = SectorHModel.getInstance();
+		rackHModel = RackHModel.getInstance();
 		rackStateHModel = RackStateHModel.getInstance();
 		rackStateInSectorHModel = RackStateInSectorHModel.getInstance();
 	}
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
-		long time = System.currentTimeMillis();
 		final JsonObject jsonObject = new JsonObject();
 		final JsonArray jsonArray = new JsonArray();
 		final JsonArray rackStateList = new JsonArray();
@@ -61,8 +57,8 @@ public class SectorHistoryView extends AbstractAction {
 		final int code_sector = requestData.getAsJsonObject().get(SectorConst.CODE_SECTOR).getAsInt();
 		final Date date = new Date(requestData.getAsJsonObject().get("date").getAsLong());
 
-		final Sector sector = sectorModel.select(userContext, code_sector, date);
-		final List<Rack> list = rackModel.list(userContext, code_sector, date);
+		final Sector sector = sectorHModel.select(userContext, code_sector, date);
+		final List<Rack> list = rackHModel.list(userContext, code_sector, date);
 		for (final Rack rack : list) {
 			jsonArray.add(rack.toJsonObject());
 			RackState rackState = rackStateHModel.select(userContext, rack.getCode_rack(), date);
@@ -80,8 +76,6 @@ public class SectorHistoryView extends AbstractAction {
 		jsonObject.add("rackList", jsonArray);
 		jsonObject.add("rackStateList", rackStateList);
 		jsonObject.add("rackStateInSectorList", rackStateInSectorList);
-		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms");
 		return jsonObject;
 	}
 }

@@ -35,8 +35,6 @@ import java.sql.SQLException;
 public abstract class AbstractAction extends HttpServlet {
 	public static final String REQUEST_DATA = "data";
 
-	private static final Logger LOG = Logger.getLogger(AbstractAction.class);
-
 	protected Gson gson;
 	private SecurityModel securityModel;
 
@@ -50,6 +48,7 @@ public abstract class AbstractAction extends HttpServlet {
 
 	@Override
 	protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+		long time = System.currentTimeMillis();
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		final Writer writer = response.getWriter();
@@ -61,13 +60,11 @@ public abstract class AbstractAction extends HttpServlet {
 			if (responseData != null)
 				writer.write(responseData.toString());
 		} catch (UnauthorizedException e) {
-			rollback(session);
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.setContentType("text/plain");
 			writer.write(e.getMessage());
-			LOG.error("Error doPost",e);
+			getLog().error("Error doPost",e);
 		} catch (SQLException e) {
-			rollback(session);
 			int errorCode = e.getErrorCode();
 			if (errorCode == 17008) {
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -82,19 +79,21 @@ public abstract class AbstractAction extends HttpServlet {
 				response.setContentType("text/plain");
 				writer.write(e.getMessage());
 			}
-			LOG.error("Error doPost",e);
+			getLog().error("Error doPost",e);
 		} catch (NullPointerException e) {
-			rollback(session);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.setContentType("text/plain");
 			e.printStackTrace(new PrintWriter(writer));
-			LOG.error("Error doPost",e);
+			getLog().error("Error doPost",e);
 		} catch (Exception e) {
-			rollback(session);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.setContentType("text/plain");
 			writer.write(e.getMessage());
-			LOG.error("Error doPost",e);
+			getLog().error("Error doPost",e);
+		} finally {
+			rollback(session);
+			time = System.currentTimeMillis() - time;
+			getLog().debug(time + " ms");
 		}
 	}
 
@@ -112,8 +111,7 @@ public abstract class AbstractAction extends HttpServlet {
 			throw NotAccessException.getInstance();
 	}
 
-	public static void rollback(final HttpSession session) {
-		long time = System.currentTimeMillis();
+	private void rollback(final HttpSession session) {
 		final UserContext userContext = (UserContext) session.getAttribute(SessionConst.SESSION_USER);
 		if (userContext != null) {
 			final Connection connection = userContext.getConnection();
@@ -121,22 +119,21 @@ public abstract class AbstractAction extends HttpServlet {
 				try {
 					connection.rollback();
 				} catch (SQLException e) {
-					LOG.error("Error rollback",e);
+					getLog().error("Error rollback",e);
 				}
 			}
 		}
-		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms");
 	}
 
-	public static void commit(final UserContext userContext) throws SQLException {
-		long time = System.currentTimeMillis();
+	protected static void commit(final UserContext userContext) throws SQLException {
 		final Connection connection = userContext.getConnection();
 		if (connection != null) {
 			connection.commit();
 		}
-		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms");
+	}
+
+	protected Logger getLog(){
+		return Logger.getLogger(this.getClass());
 	}
 
 	protected abstract JsonObject execute(final HttpSession session, final JsonElement requestData) throws Exception;

@@ -41,7 +41,6 @@ public class SectorHistoryGetMark extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
-		long time = System.currentTimeMillis();
 		final JsonObject jsonObject = new JsonObject();
 		final JsonArray jsonArray = new JsonArray();
 		final int code_sector = requestData.getAsJsonObject().get(SectorConst.CODE_SECTOR).getAsInt();
@@ -50,8 +49,6 @@ public class SectorHistoryGetMark extends AbstractAction {
 			jsonArray.add(new JsonPrimitive(date.getTime()));
 		}
 		jsonObject.add("sectorHistoryMark", jsonArray);
-		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms");
 		return jsonObject;
 	}
 }

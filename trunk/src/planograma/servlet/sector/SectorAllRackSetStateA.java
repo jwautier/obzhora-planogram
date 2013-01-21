@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import org.apache.log4j.Logger;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.SectorConst;
@@ -35,8 +34,6 @@ public class SectorAllRackSetStateA extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_SECTOR_ALL_RACK_SET_STATE_A;
 
-	private static final Logger LOG = Logger.getLogger(SectorAllRackSetStateA.class);
-
 	private UserModel userModel;
 	private RackModel rackModel;
 	private SecurityModel securityModel;
@@ -53,8 +50,6 @@ public class SectorAllRackSetStateA extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
-		long time = System.currentTimeMillis();
-		time = System.currentTimeMillis() - time;
 		final JsonObject jsonObject = new JsonObject();
 		final List<String> notAccessRackList = new ArrayList<String>();
 		final int code_sector = requestData.getAsJsonObject().get(SectorConst.CODE_SECTOR).getAsInt();
@@ -97,7 +92,7 @@ public class SectorAllRackSetStateA extends AbstractAction {
 			}
 			jsonObject.add("notAccessRackList", jsonArray);
 		}
-		LOG.debug(time + " ms");
+		commit(userContext);
 		return jsonObject;
 	}
 

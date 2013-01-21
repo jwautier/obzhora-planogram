@@ -1,3 +1,7 @@
+<%@ page import="planograma.servlet.sector.print.SectorPrint" %>
+<%@ page import="planograma.servlet.sector.print.SectorPrintA" %>
+<%@ page import="planograma.servlet.sector.print.SectorPrintPC" %>
+<%@ page import="planograma.servlet.sector.print.SectorPrintWithEditor" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <style type="text/css">
@@ -43,14 +47,14 @@
 				</tr>
 				<tr>
 					<td colspan="2">
-						<a href="#" id="sectorPrintActive" target="pdf" onclick="choiceSectorPrintCancel()">
-							!На момент составления(включая выполненые)</a>
+						<a href="#" id="sectorPrintA" target="pdf" onclick="choiceSectorPrintCancel()">
+							На момент утверждения(включая выполненые)</a>
 					</td>
 				</tr>
 				<tr>
 					<td colspan="2">
 						<a href="#" id="sectorPrintPC" target="pdf" onclick="choiceSectorPrintCancel()">
-							!На момент выполнения</a>
+							На момент выполнения</a>
 					</td>
 				</tr>
 				<tr><td>&nbsp;</td></tr>
@@ -71,9 +75,10 @@
 	}
 	function choiceSectorPrintSetCodeSector(code_sector) {
 		if (code_sector > 0) {
-			$('#sectorPrintCurrent').attr('href', '<%=planograma.servlet.sector.print.SectorPrint.URL%>' + code_sector);
-			$('#sectorPrintCurrentWithEditor').attr('href', '<%=planograma.servlet.sector.print.SectorPrintWithEditor.URL%>' + code_sector);
-
+			$('#sectorPrintCurrent').attr('href', '<%=SectorPrint.URL%>' + code_sector);
+			$('#sectorPrintCurrentWithEditor').attr('href', '<%=SectorPrintWithEditor.URL%>' + code_sector);
+			$('#sectorPrintA').attr('href', '<%=SectorPrintA.URL%>' + code_sector);
+			$('#sectorPrintPC').attr('href', '<%=SectorPrintPC.URL%>' + code_sector);
 		}
 		else {
 			$('#sectorPrintCurrent').attr('href', '#');

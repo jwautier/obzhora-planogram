@@ -33,11 +33,11 @@ public abstract class AbstractRackState implements IJsonObject {
 	 */
 	private Integer user_draft;
 	/**
-	 * дата составления (редактирование окончено)
+	 * дата утверждения (редактирование окончено)
 	 */
 	private Date date_active;
 	/**
-	 * пользователь перевевший в состояние составлено
+	 * пользователь утвердивший стеллаж
 	 */
 	private Integer user_active;
 	/**
@@ -45,7 +45,7 @@ public abstract class AbstractRackState implements IJsonObject {
 	 */
 	private Date date_complete;
 	/**
-	 * пользователь перевевший в состояние выполнено
+	 * пользователь выполнивший стеллаж
 	 */
 	private Integer user_complete;
 

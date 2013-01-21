@@ -94,19 +94,13 @@ public class TestModel {
 
 	public static void testHistoryModel(final UserContext userContext) throws SQLException {
 		final HistoryModel historyModel = HistoryModel.getInstance();
-		List<Date> list = historyModel.getHistoryMark(userContext);
-		System.out.print("getHistoryMark ");
-		if (list != null && !list.isEmpty()) {
-			System.out.print(list.get(0) + " - " + list.get(list.size() - 1));
-		}
-		System.out.println();
 
 		final Connection connection = userContext.getConnection();
 		final Statement statement = connection.createStatement();
 		ResultSet resultSet = statement.executeQuery("select " + SectorHConst.CODE_SECTOR + " from " + SectorHConst.TABLE_NAME);
 		if (resultSet.next()) {
 			final int code_sector = resultSet.getInt(1);
-			list = historyModel.getHistoryMarkForSector(userContext, code_sector);
+			List<Date> list = historyModel.getHistoryMarkForSector(userContext, code_sector);
 			System.out.print("getHistoryMarkForSector ");
 			if (list != null && !list.isEmpty()) {
 				System.out.print(list.get(0) + " - " + list.get(list.size() - 1));
@@ -117,7 +111,7 @@ public class TestModel {
 		resultSet = statement.executeQuery("select " + RackHConst.CODE_RACK + " from " + RackHConst.TABLE_NAME);
 		if (resultSet.next()) {
 			final int code_rack = resultSet.getInt(1);
-			list = historyModel.getHistoryMarkForRack(userContext, code_rack);
+			List<Date> list = historyModel.getHistoryMarkForRack(userContext, code_rack);
 			System.out.print("getHistoryMarkForRack ");
 			if (list != null && !list.isEmpty()) {
 				System.out.print(list.get(0) + " - " + list.get(list.size() - 1));

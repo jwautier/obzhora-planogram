@@ -3,14 +3,13 @@ package planograma.servlet.rack;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.log4j.Logger;
 import planograma.constant.UrlConst;
 import planograma.constant.data.RackConst;
 import planograma.data.Rack;
 import planograma.data.RackShelf;
 import planograma.exception.UnauthorizedException;
-import planograma.model.RackShelfModel;
 import planograma.model.RackModel;
+import planograma.model.RackShelfModel;
 import planograma.servlet.AbstractAction;
 
 import javax.servlet.ServletConfig;
@@ -32,8 +31,6 @@ public class RackEdit extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_RACK_EDIT;
 
-	private static final Logger LOG = Logger.getLogger(RackEdit.class);
-
 	private RackModel rackModel;
 	private RackShelfModel rackShelfModel;
 
@@ -46,7 +43,6 @@ public class RackEdit extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
-		long time = System.currentTimeMillis();
 		final JsonObject jsonObject = new JsonObject();
 		final JsonArray jsonArray = new JsonArray();
 		final int code_rack = requestData.getAsJsonObject().get(RackConst.CODE_RACK).getAsInt();
@@ -57,8 +53,6 @@ public class RackEdit extends AbstractAction {
 		}
 		jsonObject.add("rack", rack.toJsonObject());
 		jsonObject.add("rackShelfList", jsonArray);
-		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms");
 		return jsonObject;
 	}
 }

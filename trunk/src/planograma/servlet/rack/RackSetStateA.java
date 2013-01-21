@@ -2,7 +2,6 @@ package planograma.servlet.rack;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.log4j.Logger;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.RackConst;
@@ -25,14 +24,12 @@ import java.sql.SQLException;
  * User: poljakov
  * Date: 15.01.13
  * Time: 9:50
- * изменение состояния стеллажа на составлен
+ * изменение состояния стеллажа на утвержден
  */
 @WebServlet("/" + UrlConst.URL_RACK_SET_STATE_A)
 public class RackSetStateA extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_RACK_SET_STATE_A;
-
-	private static final Logger LOG = Logger.getLogger(RackSetStateA.class);
 
 	private RackStateModel rackStateModel;
 	private UserModel userModel;
@@ -48,8 +45,6 @@ public class RackSetStateA extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
-		long time = System.currentTimeMillis();
-		time = System.currentTimeMillis() - time;
 		final JsonObject jsonObject = new JsonObject();
 		final int code_rack = requestData.getAsJsonObject().get(RackConst.CODE_RACK).getAsInt();
 		final UserContext userContext = getUserContext(session);
@@ -66,9 +61,9 @@ public class RackSetStateA extends AbstractAction {
 								|| securityModel.canAccess(userContext, SecurityConst.ACCESS_ALL_RACK_SET_STATE_SET_SECTOR_IN_SECTOR_A));
 		if (canSetStateA) {
 			rackStateModel.changestate(userContext, code_rack, null, EStateRack.A);
+			commit(userContext);
 		}
 		jsonObject.addProperty("canSetStateA", canSetStateA);
-		LOG.debug(time + " ms");
 		return jsonObject;
 	}
 
