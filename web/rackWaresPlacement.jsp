@@ -71,6 +71,9 @@
 							<tr>
 								<td><a href="#" onclick="return aOnClick(this, fRackWaresPlacementReload)"><%=JspUtils.toMenuTitle("Перезагрузить")%></a></td>
 							</tr>
+							<tr>
+								<td><a href="#" onclick="return aOnClick(this, fRackViewHistory)"><%=JspUtils.toMenuTitle("Просмотр истории стеллажа")%></a></td>
+							</tr>
 							<tr><td></td></tr>
 							<tr>
 								<td><a href="#" onclick="return aOnClick(this, fRackShelfAdd)" class="<%=access_rack_shelf_edit%>"><%=JspUtils.toMenuTitle("Добавить полку")%></a></td>
@@ -330,11 +333,6 @@ window.d_wares_height = 1;
 
 var canRackWaresPlacement='<%=access_rack_wares_placement%>';
 var canRackShelfEdit='<%=access_rack_shelf_edit%>';
-/**
-* линейка
- * state (0 не выбрана, 1 выбор первой точки, 2 выбор второй точки, 3 линейка задана)
-* @type {Object}
- */
 
 	function loadComplete() {
 		var code_rack = getCookie('code_rack');
@@ -743,6 +741,11 @@ var canRackShelfEdit='<%=access_rack_shelf_edit%>';
 	{
 		window.location.reload();
 	}
+	function fRackViewHistory()
+	{
+		window.location='rackHistory.jsp';
+	}
+
 
 	function fRackShelfAdd()
 	{

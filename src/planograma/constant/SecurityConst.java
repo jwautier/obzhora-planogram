@@ -34,11 +34,11 @@ public enum SecurityConst {
 	 */
 	ACCESS_IMAGE_CLEAN_CACHE(-144),
 	/**
-	 * Доступ к глобальному утверждению стеллажей зала (A составлен)
+	 * Доступ к глобальному утверждению стеллажей зала (A)
 	 */
 	ACCESS_ALL_RACK_SET_STATE_SET_SECTOR_IN_SECTOR_A(-145),
 	/**
-	 * Доступ к глобальному выполнению стеллажей зала (РС составлен)
+	 * Доступ к глобальному выполнению стеллажей зала (РС)
 	 */
 	ACCESS_ALL_RACK_SET_STATE_SET_STATE_IN_SECTOR_PC(-155),
 	/**

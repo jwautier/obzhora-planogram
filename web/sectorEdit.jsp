@@ -760,7 +760,7 @@ function roundRack(rack)
 		if (code_rack!=null && code_rack!='')
 		{
 			setCookie('code_rack', code_rack);
-			document.location='rackEdit.jsp';
+			window.location='rackEdit.jsp';
 		}
 		}
 	}
@@ -774,7 +774,7 @@ function roundRack(rack)
 			if (code_rack!=null && code_rack!='')
 			{
 				setCookie('code_rack', code_rack);
-				document.location='rackWaresPlacement.jsp';
+				window.location='rackWaresPlacement.jsp';
 			}
 		}
 	}

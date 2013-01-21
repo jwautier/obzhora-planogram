@@ -3,7 +3,6 @@ package planograma.servlet.wares;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.log4j.Logger;
 import planograma.constant.UrlConst;
 import planograma.constant.data.ShopConst;
 import planograma.constant.data.WaresGroupConst;
@@ -31,8 +30,6 @@ public class WaresList extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_WARES_LIST;
 
-	private static final Logger LOG = Logger.getLogger(WaresList.class);
-
 	private WaresModel waresModel;
 
 	@Override
@@ -43,7 +40,6 @@ public class WaresList extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
-		long time = System.currentTimeMillis();
 		final JsonObject requestJsonObject = requestData.getAsJsonObject();
 		final int code_group = requestJsonObject.get(WaresGroupConst.CODE_GROUP_WARES).getAsInt();
 		final List<WaresWrapper> list;
@@ -62,8 +58,6 @@ public class WaresList extends AbstractAction {
 			}
 		}
 		jsonObject.add("waresList", jsonArray);
-		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms");
 		return jsonObject;
 	}
 }

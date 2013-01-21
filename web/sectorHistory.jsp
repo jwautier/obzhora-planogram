@@ -249,6 +249,20 @@
 		});
 	}
 
+	function fSectorHistoryView() {
+		var date = $('#dateMark').val();
+		if (date > 0) {
+			var code_sector = getCookie('code_sector');
+			postJson('<%=SectorHistoryView.URL%>', {code_sector: code_sector, date:date}, function (data) {
+				window.sector = data.sector;
+				window.showcaseList = data.rackList;
+				window.rackStateList = data.rackStateList;
+				window.rackStateInSectorList = data.rackStateInSectorList;
+				loadComplete2();
+			});
+		}
+	}
+
 	function loadComplete2() {
 		window.edit_canvas = document.getElementById("edit_canvas");
 		window.edit_context = window.edit_canvas.getContext("2d");
@@ -371,23 +385,7 @@
 		}
 	}
 </script>
-<%-- обработка событий меню --%>
-<script type="text/javascript">
-	function fSectorHistoryView() {
-		var date = $('#dateMark').val();
-		console.log(date);
-		if (date > 0) {
-			var code_sector = getCookie('code_sector');
-			postJson('<%=SectorHistoryView.URL%>', {code_sector: code_sector, date:date}, function (data) {
-				window.sector = data.sector;
-				window.showcaseList = data.rackList;
-				window.rackStateList = data.rackStateList;
-				window.rackStateInSectorList = data.rackStateInSectorList;
-				loadComplete2();
-			});
-		}
-	}
-</script>
+
 <%--обработка событий редактора--%>
 <script type="text/javascript">
 	function editCanvasMouseListener() {

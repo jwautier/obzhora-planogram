@@ -16,6 +16,8 @@ public interface UrlConst {
 	public static final String URL_SECTOR_LIST = "servlet/sector/list";
 	public static final String URL_SECTOR_REMOVE = "servlet/sector/remove";
 	public static final String URL_SECTOR_PRINT = "servlet/sector/print/";
+	public static final String URL_SECTOR_PRINT_A = "servlet/sector/printA/";
+	public static final String URL_SECTOR_PRINT_PC = "servlet/sector/printPC/";
 	public static final String URL_SECTOR_PRINT_WITH_EDITOR = "servlet/sector/print_with_editor/";
 	public static final String URL_SECTOR_ALL_RACK_SET_STATE_A = "servlet/sector/all_rack_set_state_active";
 	public static final String URL_SECTOR_ALL_RACK_SET_STATE_PC = "servlet/sector/all_rack_set_state_complete";
@@ -39,7 +41,10 @@ public interface UrlConst {
 	public static final String URL_RACK_SET_STATE_IN_SECTOR_PC = "servlet/rack/set_state_in_sector_complete";
 	public static final String URL_RACK_SET_STATE_A = "servlet/rack/set_state_active";
 	public static final String URL_RACK_SET_STATE_PC = "servlet/rack/set_state_complete";
-	
+
+	public static final String URL_RACK_HISTORY_GET_MARK = "servlet/rack/history/get_mark";
+	public static final String URL_RACK_HISTORY_VIEW = "servlet/rack/history/view";
+
 	public static final String URL_WARES_GROUP_TREE = "servlet/wares/group_tree";
 	public static final String URL_WARES_LIST = "servlet/wares/list";
 	public static final String URL_WARES_LIST_SEARCH = "servlet/wares/list/search";

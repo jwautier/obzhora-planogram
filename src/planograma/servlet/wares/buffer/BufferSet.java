@@ -3,7 +3,6 @@ package planograma.servlet.wares.buffer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.log4j.Logger;
 import planograma.constant.SessionConst;
 import planograma.constant.UrlConst;
 import planograma.exception.NotAccessException;
@@ -30,8 +29,6 @@ public class BufferSet extends AbstractAction {
 
 	public static final String NAME_COPY_OBJECT_LIST="copyObjectList";
 
-	private static final Logger LOG = Logger.getLogger(BufferSet.class);
-
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
@@ -39,11 +36,8 @@ public class BufferSet extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException, NotAccessException {
-		long time = System.currentTimeMillis();
 		final JsonArray copyObjectList=requestData.getAsJsonObject().getAsJsonArray(NAME_COPY_OBJECT_LIST);
 		session.setAttribute(SessionConst.SESSION_COPY_WARES_LIST, copyObjectList);
-		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms");
 		return null;
 	}
 }

@@ -2,7 +2,6 @@ package planograma.servlet.rack;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.log4j.Logger;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.RackConst;
@@ -33,8 +32,6 @@ public class RackCanSetState extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_RACK_CAN_SET_STATE;
 
-	private static final Logger LOG = Logger.getLogger(RackCanSetState.class);
-
 	private RackStateModel rackStateModel;
 	private UserModel userModel;
 	private SecurityModel securityModel;
@@ -49,8 +46,6 @@ public class RackCanSetState extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException {
-		long time = System.currentTimeMillis();
-		time = System.currentTimeMillis() - time;
 		final JsonObject jsonObject = new JsonObject();
 		final int code_rack = requestData.getAsJsonObject().get(RackConst.CODE_RACK).getAsInt();
 		final UserContext userContext = getUserContext(session);
@@ -62,7 +57,7 @@ public class RackCanSetState extends AbstractAction {
 						&&
 						// и я являюсь редактором стеллажа
 						(rackState.getUser_draft() == userModel.getCodeUser(userContext)
-								// или есть право на пренудительное составление зала
+								// или есть право на пренудительное утверждение зала
 								|| securityModel.canAccess(userContext, SecurityConst.ACCESS_RACK_STATE_SET_A)
 								|| securityModel.canAccess(userContext, SecurityConst.ACCESS_ALL_RACK_SET_STATE_SET_SECTOR_IN_SECTOR_A));
 		boolean canSetStateInSectorA =
@@ -71,18 +66,18 @@ public class RackCanSetState extends AbstractAction {
 						&&
 						// и я являюсь редактором стеллажа
 						(rackStateInSector.getUser_draft() == userModel.getCodeUser(userContext)
-								// или есть право на пренудительное составление зала
+								// или есть право на пренудительное утверждение зала
 								|| securityModel.canAccess(userContext, SecurityConst.ACCESS_RACK_STATE_IN_SECTOR_SET_A)
 								|| securityModel.canAccess(userContext, SecurityConst.ACCESS_ALL_RACK_SET_STATE_SET_SECTOR_IN_SECTOR_A));
 		boolean canSetStatePC =
-				// стеллаж в состоянии составлен
+				// стеллаж в состоянии утвержден
 				rackState.getState_rack() == EStateRack.A
 						&&
 						// и есть право на подтверждение выполнения стеллажа
 						(securityModel.canAccess(userContext, SecurityConst.ACCESS_RACK_STATE_SET_PC)
 								|| securityModel.canAccess(userContext, SecurityConst.ACCESS_ALL_RACK_SET_STATE_SET_STATE_IN_SECTOR_PC));
 		boolean canSetStateInSectorPC =
-				// стеллаж в состоянии составлен
+				// стеллаж в состоянии утвержден
 				rackStateInSector.getState_rack() == EStateRack.A
 						&&
 						// и есть право на подтверждение выполнения стеллажа
@@ -94,7 +89,6 @@ public class RackCanSetState extends AbstractAction {
 		jsonObject.addProperty("canSetStateInSectorA", canSetStateInSectorA);
 		jsonObject.addProperty("canSetStatePC", canSetStatePC);
 		jsonObject.addProperty("canSetStateInSectorPC", canSetStateInSectorPC);
-		LOG.debug(time + " ms");
 		return jsonObject;
 	}
 

@@ -249,7 +249,7 @@
 		{
 			setCookie('code_shop', code_shop);
 			setCookie('code_sector', '');
-			document.location='sectorEdit.jsp';
+			window.location='sectorEdit.jsp';
 		}
 	}
 	function fSectorPrint()
@@ -262,7 +262,7 @@
 		if (code_sector!=null && code_sector.length>0)
 		{
 			setCookie('code_sector', code_sector);
-			document.location='sectorHistory.jsp';
+			window.location='sectorHistory.jsp';
 		}
 	}
 	function fSectorEdit()
@@ -271,7 +271,7 @@
 		if (code_sector!=null && code_sector.length>0)
 		{
 			setCookie('code_sector', code_sector);
-			document.location='sectorEdit.jsp';
+			window.location='sectorEdit.jsp';
 		}
 	}
 	function fSectorRemove()

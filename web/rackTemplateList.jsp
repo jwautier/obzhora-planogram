@@ -86,7 +86,7 @@
 	function fRackTemplateAdd()
 	{
 		setCookie('code_rack_template', '');
-		document.location='rackTemplateEdit.jsp';
+		window.location='rackTemplateEdit.jsp';
 	}
 	function fRackTemplateViewHistory()
 	{
@@ -98,7 +98,7 @@
 		if (code_rack_template!=null && code_rack_template.length>0)
 		{
 			setCookie('code_rack_template', code_rack_template);
-			document.location='rackTemplateEdit.jsp';
+			window.location='rackTemplateEdit.jsp';
 		}
 	}
 	function fRackTemplateActive()
