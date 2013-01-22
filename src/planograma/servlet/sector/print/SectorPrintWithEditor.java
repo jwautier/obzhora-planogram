@@ -156,7 +156,7 @@ public class SectorPrintWithEditor extends HttpServlet {
 					final String fullName = userModel.getFullName(userContext, rack2D.getRack().getUser_update());
 					table.addCell(new PdfPCell(new Paragraph(fullName, font)));
 					// Состояние
-					final RackState rackState = rackStateModel.selectRackState(userContext, rack2D.getRack().getCode_rack());
+					final RackState rackState = rackStateModel.select(userContext, rack2D.getRack().getCode_rack());
 					table.addCell(new PdfPCell(new Paragraph(rackState.getState_rack().getDesc(), font)));
 				}
 			}

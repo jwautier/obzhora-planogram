@@ -7,7 +7,7 @@ import planograma.constant.SessionConst;
 import planograma.constant.UrlConst;
 import planograma.data.*;
 import planograma.data.geometry.Rack2D;
-import planograma.model.RackStateModel;
+import planograma.model.RackStateInSectorModel;
 import planograma.model.SectorModel;
 import planograma.model.ShopModel;
 import planograma.model.UserModel;
@@ -33,11 +33,11 @@ import java.util.List;
  * Time: 3:50
  * To change this template use File | Settings | File Templates.
  */
-@WebServlet("/" + UrlConst.URL_SECTOR_PRINT_PC + "*")
-public class SectorPrintPC extends HttpServlet {
-	public static final String URL = UrlConst.URL_SECTOR_PRINT_PC;
+@WebServlet("/" + UrlConst.URL_SECTOR_PRINT_A + "*")
+public class SectorPrintRackStateInSectorA extends HttpServlet {
+	public static final String URL = UrlConst.URL_SECTOR_PRINT_A;
 
-	private static final Logger LOG = Logger.getLogger(SectorPrintPC.class);
+	private static final Logger LOG = Logger.getLogger(SectorPrintRackStateInSectorA.class);
 
 	private static final float marginLeft = 28;
 	private static final float marginRight = 28;
@@ -51,7 +51,7 @@ public class SectorPrintPC extends HttpServlet {
 	private SectorModel sectorModel;
 	private RackHModel rackHModel;
 	private UserModel userModel;
-	private RackStateModel rackStateModel;
+	private RackStateInSectorModel rackStateInSectorModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -60,7 +60,7 @@ public class SectorPrintPC extends HttpServlet {
 		sectorModel = SectorModel.getInstance();
 		rackHModel = RackHModel.getInstance();
 		userModel = UserModel.getInstance();
-		rackStateModel = RackStateModel.getInstance();
+		rackStateInSectorModel = RackStateInSectorModel.getInstance();
 	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse resp) throws IOException {
@@ -72,7 +72,7 @@ public class SectorPrintPC extends HttpServlet {
 
 			final Sector sector = sectorModel.select(userContext, code_sector);
 			final Shop shop = shopModel.select(userContext, sector.getCode_shop());
-			final List<Rack> list = rackHModel.listPC(userContext, code_sector);
+			final List<Rack> list = rackHModel.listStateInSectorA(userContext, code_sector);
 			final List<Rack2D> rackList = new ArrayList<Rack2D>(list.size());
 			for (final Rack rack : list) {
 				rackList.add(new Rack2D(rack));
@@ -93,7 +93,7 @@ public class SectorPrintPC extends HttpServlet {
 			final PdfContentByte cb = writer.getDirectContent();
 			final float m = Math.max(sector.getLength() / (pageSize.getWidth() - marginLeft - marginRight), sector.getWidth() / (pageSize.getHeight() - marginTop - marginTitle - marginBottom));
 
-			final String title = shop.getName_shop() + " (" + sector.getName_sector() + ") от " + FormattingUtils.datetime2String(sector.getDate_update())+" только выполненые";
+			final String title = shop.getName_shop() + " (" + sector.getName_sector() + ") от " + FormattingUtils.datetime2String(sector.getDate_update()) + " утвержденые и выполненые";
 			Paragraph p = new Paragraph(title, font);
 			p.setAlignment(Element.ALIGN_CENTER);
 			document.add(p);
@@ -125,11 +125,11 @@ public class SectorPrintPC extends HttpServlet {
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			table.addCell(cell);
-			cell = new PdfPCell(new Paragraph("Дата выполнения", font));
+			cell = new PdfPCell(new Paragraph("Дата утверждения/выполнения", font));
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			table.addCell(cell);
-			cell = new PdfPCell(new Paragraph("Пользователь выполневший стеллаж", font));
+			cell = new PdfPCell(new Paragraph("Пользователь утвердивший/выполнивший", font));
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			table.addCell(cell);
@@ -154,21 +154,36 @@ public class SectorPrintPC extends HttpServlet {
 					} catch (Exception e) {
 						table.addCell(new PdfPCell(new Paragraph(rack2D.getRack().getRack_barcode(), font)));
 					}
-					// Состояние
-					final RackState rackState = rackStateModel.selectRackState(userContext, rack2D.getRack().getCode_rack());
-					// Дата выполнения
-					table.addCell(new PdfPCell(new Paragraph(FormattingUtils.datetime2String(rackState.getDate_complete()), font)));
-					// Пользователь выполневший стеллаж
-					final String fullName = userModel.getFullName(userContext, rackState.getUser_complete());
+					final RackStateInSector rackStateInSector = rackStateInSectorModel.select(userContext, rack2D.getRack().getCode_rack());
+					EStateRack state;
+					if (rackStateInSector.getDate_complete() == null || rackStateInSector.getDate_active().getTime() >= rackStateInSector.getDate_complete().getTime()) {
+						state = EStateRack.A;
+					} else {
+						state = EStateRack.PC;
+					}
+
+					// Дата утверждения/выполнения
+					if (state == EStateRack.A) {
+						table.addCell(new PdfPCell(new Paragraph(FormattingUtils.datetime2String(rackStateInSector.getDate_active()), font)));
+					} else {
+						table.addCell(new PdfPCell(new Paragraph(FormattingUtils.datetime2String(rackStateInSector.getDate_complete()), font)));
+					}
+					// Пользователь утвердивший/выполнивший
+					final String fullName;
+					if (state == EStateRack.A) {
+						fullName = userModel.getFullName(userContext, rackStateInSector.getUser_active());
+					} else {
+						fullName = userModel.getFullName(userContext, rackStateInSector.getUser_complete());
+					}
 					table.addCell(new PdfPCell(new Paragraph(fullName, font)));
 					// Состояние
-					table.addCell(new PdfPCell(new Paragraph(EStateRack.PC.getDesc(), font)));
+					table.addCell(new PdfPCell(new Paragraph(state.getDesc(), font)));
 				}
 			}
 			document.add(table);
 			document.close();
 		} catch (Exception e) {
-			LOG.error("Error print sector",e);
+			LOG.error("Error print sector", e);
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 		time = System.currentTimeMillis() - time;

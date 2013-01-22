@@ -9,10 +9,7 @@ import planograma.constant.UrlConst;
 import planograma.constant.data.SectorConst;
 import planograma.data.*;
 import planograma.exception.UnauthorizedException;
-import planograma.model.RackModel;
-import planograma.model.RackStateModel;
-import planograma.model.SecurityModel;
-import planograma.model.UserModel;
+import planograma.model.*;
 import planograma.servlet.AbstractAction;
 
 import javax.servlet.ServletConfig;
@@ -38,6 +35,7 @@ public class SectorAllRackSetStateA extends AbstractAction {
 	private RackModel rackModel;
 	private SecurityModel securityModel;
 	private RackStateModel rackStateModel;
+	private RackStateInSectorModel rackStateInSectorModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -46,6 +44,7 @@ public class SectorAllRackSetStateA extends AbstractAction {
 		userModel = UserModel.getInstance();
 		rackModel = RackModel.getInstance();
 		securityModel = SecurityModel.getInstance();
+		rackStateInSectorModel = RackStateInSectorModel.getInstance();
 	}
 
 	@Override
@@ -60,8 +59,8 @@ public class SectorAllRackSetStateA extends AbstractAction {
 		final int code_user = userModel.getCodeUser(userContext);
 		final List<Rack> rackList = rackModel.list(userContext, code_sector);
 		for (final Rack rack : rackList) {
-			final RackState rackState = rackStateModel.selectRackState(userContext, rack.getCode_rack());
-			final RackStateInSector rackStateInSector = rackStateModel.selectRackStateInSector(userContext, rack.getCode_rack());
+			final RackState rackState = rackStateModel.select(userContext, rack.getCode_rack());
+			final RackStateInSector rackStateInSector = rackStateInSectorModel.select(userContext, rack.getCode_rack());
 			boolean changeRackState = false;
 			if (rackState.getState_rack() == EStateRack.D) {
 				if (accessAllRackInSectorSetStateA || accessRackStateSetA || rackState.getUser_draft() == code_user) {

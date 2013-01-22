@@ -23,7 +23,7 @@ public class RackWaresHModel {
 
 	private static final Logger LOG = Logger.getLogger(RackWaresHModel.class);
 
-	private static final String Q_LIST = "select " +
+	private static final String Q_LIST = "SELECT " +
 			" rw." + RackWaresHConst.CODE_RACK + "," +
 			" rw." + RackWaresHConst.CODE_WARES + "," +
 			" rw." + RackWaresHConst.CODE_UNIT + "," +
@@ -44,37 +44,39 @@ public class RackWaresHModel {
 			" w." + WaresConst.NAME_WARES + "," +
 			" ud." + UnitDimensionConst.ABR_UNIT + "," +
 			" au." + AdditionUnitConst.BAR_CODE + " " +
-			"from " + RackWaresHConst.TABLE_NAME + " rw" +
-			" join " + WaresConst.TABLE_NAME + " w on w." + WaresConst.CODE_WARES + " = rw." + RackWaresHConst.CODE_WARES + " " +
-			" join " + UnitDimensionConst.TABLE_NAME + " ud on ud." + UnitDimensionConst.CODE_UNIT + " = rw." + RackWaresHConst.CODE_UNIT + " " +
-			" join " + AdditionUnitConst.TABLE_NAME + " au on au." + AdditionUnitConst.CODE_WARES + " = rw." + RackWaresHConst.CODE_WARES + " and au." + AdditionUnitConst.CODE_UNIT + " = rw." + RackWaresHConst.CODE_UNIT + " " +
-			" left join " + WaresImageConst.TABLE_NAME + " wi on wi." + WaresImageConst.CODE_WARES + " = rw." + RackWaresHConst.CODE_WARES + " " +
-			"where" +
+			"FROM " + RackWaresHConst.TABLE_NAME + " rw" +
+			" JOIN " + WaresConst.TABLE_NAME + " w ON w." + WaresConst.CODE_WARES + " = rw." + RackWaresHConst.CODE_WARES + " " +
+			" JOIN " + UnitDimensionConst.TABLE_NAME + " ud ON ud." + UnitDimensionConst.CODE_UNIT + " = rw." + RackWaresHConst.CODE_UNIT + " " +
+			" JOIN " + AdditionUnitConst.TABLE_NAME + " au ON au." + AdditionUnitConst.CODE_WARES + " = rw." + RackWaresHConst.CODE_WARES + " AND au." + AdditionUnitConst.CODE_UNIT + " = rw." + RackWaresHConst.CODE_UNIT + " " +
+			" LEFT JOIN " + WaresImageConst.TABLE_NAME + " wi ON wi." + WaresImageConst.CODE_WARES + " = rw." + RackWaresHConst.CODE_WARES + " " +
+			"WHERE" +
 			" rw." + RackWaresHConst.CODE_RACK + "=?" +
-			" and rw." + RackWaresHConst.TYPE_OPERATION + " <> 'D'" +
-			" and" +
+			" AND rw." + RackWaresHConst.TYPE_OPERATION + " <> 'D'" +
+			" AND" +
 			"  rw." + RackWaresHConst.DATE_INSERT + " = " +
 			"  (" +
-			"   select max(ss1." + RackWaresHConst.DATE_INSERT + ") " +
-			"   from " + RackWaresHConst.TABLE_NAME + " ss1" +
-			"   where " +
+			"   SELECT MAX(ss1." + RackWaresHConst.DATE_INSERT + ") " +
+			"   FROM " + RackWaresHConst.TABLE_NAME + " ss1" +
+			"   WHERE " +
 			"    ss1." + RackWaresHConst.CODE_RACK + "=?" +
-			"    and ss1." + RackWaresHConst.DATE_INSERT + "<=?" +
+			"    AND ss1." + RackWaresHConst.DATE_INSERT + "<=?" +
 			"  )" +
-			"order by rw." + RackWaresHConst.ORDER_NUMBER_ON_RACK;
+			"ORDER BY rw." + RackWaresHConst.ORDER_NUMBER_ON_RACK;
 
 	public List<RackWares> list(final UserContext userContext, final int code_rack, final Date date) throws SQLException {
 		long time = System.currentTimeMillis();
-		final Connection connection = userContext.getConnection();
-		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
-		ps.setInt(1, code_rack);
-		ps.setInt(2, code_rack);
-		ps.setTimestamp(3, new Timestamp(date.getTime()));
-		final ResultSet resultSet = ps.executeQuery();
 		final List<RackWares> list = new ArrayList<RackWares>();
-		while (resultSet.next()) {
-			final RackWares item = new RackWares(resultSet);
-			list.add(item);
+		if (date != null) {
+			final Connection connection = userContext.getConnection();
+			final PreparedStatement ps = connection.prepareStatement(Q_LIST);
+			ps.setInt(1, code_rack);
+			ps.setInt(2, code_rack);
+			ps.setTimestamp(3, new Timestamp(date.getTime()));
+			final ResultSet resultSet = ps.executeQuery();
+			while (resultSet.next()) {
+				final RackWares item = new RackWares(resultSet);
+				list.add(item);
+			}
 		}
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms (code_rack:" + code_rack + ", date:" + FormattingUtils.datetime2String(date) + ")");

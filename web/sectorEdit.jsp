@@ -6,7 +6,6 @@
 <%@ page import="planograma.servlet.racktemplate.RackTemplateList" %>
 <%@ page import="planograma.servlet.sector.SectorEdit" %>
 <%@ page import="planograma.servlet.sector.SectorSave" %>
-<%@ page import="planograma.servlet.wares.RackWaresPlacemntPrint" %>
 <%@ page import="planograma.utils.JspUtils" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
@@ -70,7 +69,7 @@
 								<td><a href="#" id="butFind" onclick="return aOnClick(this, fFind)"><%=JspUtils.toMenuTitle("Найти")%></a></td>
 							</tr>
 							<tr>
-								<td><a href="#" id="butPrint" onclick="return aOnClick(this)" target="pdf" class="disabled"><%=JspUtils.toMenuTitle("Печать стеллажа")%></a></td>
+								<td><a href="#" id="butPrint" onclick="return aOnClick(this, fRackPrint)" class="disabled"><%=JspUtils.toMenuTitle("Печать стеллажа")%></a></td>
 							</tr>
 							<tr>
 								<td><a href="#" id="butEdit" onclick="return aOnClick(this, fRackEdit)" class="disabled"><%=JspUtils.toMenuTitle("Редактировать стеллаж")%></a></td>
@@ -314,6 +313,8 @@
 
 <jsp:include page="sectorEditFindPanel.jsp"/>
 
+<jsp:include page="choiceRackPrint.jsp"/>
+
 <script type="text/javascript">
 
 var edit_canvas;
@@ -505,11 +506,11 @@ function selectShowcase(showcase) {
 		document.getElementById('showcaseHeight').value = showcase.height;
 		document.getElementById('rackLoadSide').value = showcase.load_side;
 		if (showcase.code_rack != null && showcase.code_rack != '') {
-			$('#butPrint').removeClass('disabled').attr('href','<%=RackWaresPlacemntPrint.URL%>'+showcase.code_rack);
+			$('#butPrint').removeClass('disabled');
 			$('#butEdit').removeClass('disabled');
 			$('#butRackWaresPlacement').removeClass('disabled');
 		} else {
-			$('#butPrint').addClass('disabled').attr('href', '#');
+			$('#butPrint').addClass('disabled');
 			$('#butEdit').addClass('disabled');
 			$('#butRackWaresPlacement').addClass('disabled');
 		}
@@ -531,7 +532,7 @@ function selectShowcase(showcase) {
 		document.getElementById('showcaseLength').value = '';
 		document.getElementById('showcaseHeight').value = '';
 		document.getElementById('rackLoadSide').value = '';
-		$('#butPrint').addClass('disabled').attr('href', '#');
+		$('#butPrint').addClass('disabled');
 		$('#butEdit').addClass('disabled');
 		$('#butRackWaresPlacement').addClass('disabled');
 		$('#butRackSetStateA').addClass('disabled');
@@ -750,6 +751,12 @@ function roundRack(rack)
 	function fFind()
 	{
 		sectorEditFindShow();
+	}
+
+	function fRackPrint()
+	{
+		var code_rack = window.showcase.code_rack;
+		choiceRackPrintShow(code_rack);
 	}
 
 	function fRackEdit()

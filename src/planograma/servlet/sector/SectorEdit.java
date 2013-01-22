@@ -8,6 +8,7 @@ import planograma.constant.data.SectorConst;
 import planograma.data.*;
 import planograma.exception.UnauthorizedException;
 import planograma.model.RackModel;
+import planograma.model.RackStateInSectorModel;
 import planograma.model.RackStateModel;
 import planograma.model.SectorModel;
 import planograma.servlet.AbstractAction;
@@ -34,6 +35,7 @@ public class SectorEdit extends AbstractAction {
 	private SectorModel sectorModel;
 	private RackModel rackModel;
 	private RackStateModel rackStateModel;
+	private RackStateInSectorModel rackStateInSectorModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -41,6 +43,7 @@ public class SectorEdit extends AbstractAction {
 		sectorModel = SectorModel.getInstance();
 		rackModel = RackModel.getInstance();
 		rackStateModel=RackStateModel.getInstance();
+		rackStateInSectorModel = RackStateInSectorModel.getInstance();
 	}
 
 	@Override
@@ -55,9 +58,9 @@ public class SectorEdit extends AbstractAction {
 		final List<Rack> list = rackModel.list(userContext, code_sector);
 		for (final Rack rack : list) {
 			jsonArray.add(rack.toJsonObject());
-			final RackState rackState= rackStateModel.selectRackState(userContext, rack.getCode_rack());
+			final RackState rackState= rackStateModel.select(userContext, rack.getCode_rack());
 			rackStateList.add(rackState.toJsonObject());
-			final RackStateInSector rackStateInSector= rackStateModel.selectRackStateInSector(userContext, rack.getCode_rack());
+			final RackStateInSector rackStateInSector= rackStateInSectorModel.select(userContext, rack.getCode_rack());
 			rackStateInSectorList.add(rackStateInSector.toJsonObject());
 		}
 		jsonObject.add("sector", sector.toJsonObject());

@@ -45,10 +45,13 @@ public interface UrlConst {
 	public static final String URL_RACK_HISTORY_GET_MARK = "servlet/rack/history/get_mark";
 	public static final String URL_RACK_HISTORY_VIEW = "servlet/rack/history/view";
 
+	public static final String URL_RACK_PRINT = "servlet/rack/print/";
+	public static final String URL_RACK_PRINT_A = "servlet/rack/printA/";
+	public static final String URL_RACK_PRINT_PC = "servlet/rack/printPC/";
+
 	public static final String URL_WARES_GROUP_TREE = "servlet/wares/group_tree";
 	public static final String URL_WARES_LIST = "servlet/wares/list";
 	public static final String URL_WARES_LIST_SEARCH = "servlet/wares/list/search";
-	public static final String URL_RACK_WARES_PLACEMENT_PRINT = "servlet/rackWaresPlacement/print/";
 	public static final String URL_RACK_WARES_PLACEMENT_EDIT = "servlet/rackWaresPlacement/edit";
 	public static final String URL_RACK_WARES_PLACEMENT_SAVE = "servlet/rackWaresPlacement/save";
 	public static final String URL_RACK_WARES_PLACEMENT_SET_BASKET = "servlet/rackWaresPlacement/setBasket";

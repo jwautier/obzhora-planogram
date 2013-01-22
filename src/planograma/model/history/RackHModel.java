@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import planograma.constant.data.RackConst;
 import planograma.constant.data.history.RackHConst;
 import planograma.constant.data.history.RackStateHConst;
+import planograma.constant.data.history.RackStateInSectorHConst;
 import planograma.data.Rack;
 import planograma.data.UserContext;
 import planograma.utils.FormattingUtils;
@@ -90,17 +91,20 @@ public class RackHModel {
 
 	public Rack select(final UserContext userContext, final int code_rack, final Date date) throws SQLException {
 		long time = System.currentTimeMillis();
-		final Connection connection = userContext.getConnection();
-		final PreparedStatement ps = connection.prepareStatement(Q_SELECT);
-		ps.setInt(1, code_rack);
-		ps.setTimestamp(2, new Timestamp(date.getTime()));
-		ps.setMaxRows(1);
-		final ResultSet resultSet = ps.executeQuery();
 		Rack rack = null;
-		if (resultSet.next()) {
-			final String type_operation = resultSet.getString(RackHConst.TYPE_OPERATION);
-			if (!type_operation.equals("D")) {
-				rack = new Rack(resultSet);
+		if (date != null) {
+			final Connection connection = userContext.getConnection();
+			final PreparedStatement ps = connection.prepareStatement(Q_SELECT);
+			ps.setInt(1, code_rack);
+			ps.setTimestamp(2, new Timestamp(date.getTime()));
+			ps.setMaxRows(1);
+			final ResultSet resultSet = ps.executeQuery();
+
+			if (resultSet.next()) {
+				final String type_operation = resultSet.getString(RackHConst.TYPE_OPERATION);
+				if (!type_operation.equals("D")) {
+					rack = new Rack(resultSet);
+				}
 			}
 		}
 		time = System.currentTimeMillis() - time;
@@ -118,13 +122,13 @@ public class RackHModel {
 			"   WHERE " +
 			"    ss1." + RackHConst.CODE_RACK + " = o." + RackHConst.CODE_RACK +
 			"    AND ss1." + RackHConst.DATE_INSERT + " <= " +
-			"      (SELECT MAX(rs." + RackStateHConst.DATE_INSERT + ") " +
-			"       FROM " + RackStateHConst.TABLE_NAME + " rs " +
-			"       WHERE rs." + RackStateHConst.STATE_RACK + " IN ('A', 'PC') " +
-			"        AND rs." + RackStateHConst.CODE_RACK + " = o." + RackHConst.CODE_RACK + ")" +
+			"      (SELECT MAX(rs." + RackStateInSectorHConst.DATE_INSERT + ") " +
+			"       FROM " + RackStateInSectorHConst.TABLE_NAME + " rs " +
+			"       WHERE rs." + RackStateInSectorHConst.STATE_RACK + " IN ('A', 'PC') " +
+			"        AND rs." + RackStateInSectorHConst.CODE_RACK + " = o." + RackHConst.CODE_RACK + ")" +
 			"  )";
 
-	public List<Rack> listA(final UserContext userContext, final Integer code_sector) throws SQLException {
+	public List<Rack> listStateInSectorA(final UserContext userContext, final Integer code_sector) throws SQLException {
 		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST_A);
@@ -150,13 +154,13 @@ public class RackHModel {
 			"   WHERE " +
 			"    ss1." + RackHConst.CODE_RACK + " = o." + RackHConst.CODE_RACK +
 			"    AND ss1." + RackHConst.DATE_INSERT + " <= " +
-			"      (SELECT MAX(rs." + RackStateHConst.DATE_INSERT + ") " +
-			"       FROM " + RackStateHConst.TABLE_NAME + " rs " +
-			"       WHERE rs." + RackStateHConst.STATE_RACK + " IN ('PC') " +
-			"        AND rs." + RackStateHConst.CODE_RACK + " = o." + RackHConst.CODE_RACK + ")" +
+			"      (SELECT MAX(rs." + RackStateInSectorHConst.DATE_INSERT + ") " +
+			"       FROM " + RackStateInSectorHConst.TABLE_NAME + " rs " +
+			"       WHERE rs." + RackStateInSectorHConst.STATE_RACK + " IN ('PC') " +
+			"        AND rs." + RackStateInSectorHConst.CODE_RACK + " = o." + RackHConst.CODE_RACK + ")" +
 			"  )";
 
-	public List<Rack> listPC(final UserContext userContext, final Integer code_sector) throws SQLException {
+	public List<Rack> listPCInSector(final UserContext userContext, final Integer code_sector) throws SQLException {
 		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST_PC);
@@ -170,6 +174,70 @@ public class RackHModel {
 		time = System.currentTimeMillis() - time;
 		LOG.debug(time + " ms (code_sector:" + code_sector + ")");
 		return list;
+	}
+
+	private static final String Q_SELECT_PC = Q_SELECT_FROM +
+			" WHERE" +
+			" o." + RackHConst.TYPE_OPERATION + "<> 'D'" +
+			" AND o." + RackHConst.CODE_RACK + " = ?" +
+			" AND o." + RackHConst.DATE_INSERT + " IN " +
+			"  (SELECT MAX(ss1." + RackHConst.DATE_INSERT + ")" +
+			"   FROM " + RackHConst.TABLE_NAME + " ss1" +
+			"   WHERE " +
+			"    ss1." + RackHConst.CODE_RACK + " = o." + RackHConst.CODE_RACK +
+			"    AND ss1." + RackHConst.DATE_INSERT + " <= " +
+			"      (SELECT MAX(rs." + RackStateHConst.DATE_INSERT + ") " +
+			"       FROM " + RackStateHConst.TABLE_NAME + " rs " +
+			"       WHERE rs." + RackStateHConst.STATE_RACK + " IN ('PC') " +
+			"        AND rs." + RackStateHConst.CODE_RACK + " = o." + RackHConst.CODE_RACK + ")" +
+			"  )";
+
+	@Deprecated
+	public Rack selectPC(final UserContext userContext, final int code_rack) throws SQLException {
+		long time = System.currentTimeMillis();
+		final Connection connection = userContext.getConnection();
+		final PreparedStatement ps = connection.prepareStatement(Q_SELECT_PC);
+		ps.setInt(1, code_rack);
+		final ResultSet resultSet = ps.executeQuery();
+		Rack rack = null;
+		if (resultSet.next()) {
+			rack = new Rack(resultSet);
+		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_rack:" + code_rack + ")");
+		return rack;
+	}
+
+	private static final String Q_SELECT_PC_IN_SECTOR = Q_SELECT_FROM +
+			" WHERE" +
+			" o." + RackHConst.TYPE_OPERATION + "<> 'D'" +
+			" AND o." + RackHConst.CODE_RACK + " = ?" +
+			" AND o." + RackHConst.DATE_INSERT + " IN " +
+			"  (SELECT MAX(ss1." + RackHConst.DATE_INSERT + ")" +
+			"   FROM " + RackHConst.TABLE_NAME + " ss1" +
+			"   WHERE " +
+			"    ss1." + RackHConst.CODE_RACK + " = o." + RackHConst.CODE_RACK +
+			"    AND ss1." + RackHConst.DATE_INSERT + " <= " +
+			"      (SELECT MAX(rs." + RackStateInSectorHConst.DATE_INSERT + ") " +
+			"       FROM " + RackStateInSectorHConst.TABLE_NAME + " rs " +
+			"       WHERE rs." + RackStateInSectorHConst.STATE_RACK + " IN ('PC') " +
+			"        AND rs." + RackStateInSectorHConst.CODE_RACK + " = o." + RackHConst.CODE_RACK + ")" +
+			"  )";
+
+	@Deprecated
+	public Rack selectPCInSector(final UserContext userContext, final int code_rack) throws SQLException {
+		long time = System.currentTimeMillis();
+		final Connection connection = userContext.getConnection();
+		final PreparedStatement ps = connection.prepareStatement(Q_SELECT_PC_IN_SECTOR);
+		ps.setInt(1, code_rack);
+		final ResultSet resultSet = ps.executeQuery();
+		Rack rack = null;
+		if (resultSet.next()) {
+			rack = new Rack(resultSet);
+		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_rack:" + code_rack + ")");
+		return rack;
 	}
 
 	private static RackHModel instance = new RackHModel();

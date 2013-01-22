@@ -9,6 +9,7 @@ import planograma.data.EStateRack;
 import planograma.data.RackStateInSector;
 import planograma.data.UserContext;
 import planograma.exception.UnauthorizedException;
+import planograma.model.RackStateInSectorModel;
 import planograma.model.RackStateModel;
 import planograma.model.SecurityModel;
 import planograma.servlet.AbstractAction;
@@ -32,12 +33,14 @@ public class RackSetStateInSectorPC extends AbstractAction {
 
 	private RackStateModel rackStateModel;
 	private SecurityModel securityModel;
+	private RackStateInSectorModel rackStateInSectorModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		rackStateModel = RackStateModel.getInstance();
 		securityModel = SecurityModel.getInstance();
+		rackStateInSectorModel = RackStateInSectorModel.getInstance();
 	}
 
 	@Override
@@ -45,7 +48,7 @@ public class RackSetStateInSectorPC extends AbstractAction {
 		final JsonObject jsonObject = new JsonObject();
 		final int code_rack = requestData.getAsJsonObject().get(RackConst.CODE_RACK).getAsInt();
 		final UserContext userContext = getUserContext(session);
-		final RackStateInSector rackStateInSector = rackStateModel.selectRackStateInSector(userContext, code_rack);
+		final RackStateInSector rackStateInSector = rackStateInSectorModel.select(userContext, code_rack);
 		boolean canSetStateInSectorPC =
 				// стеллаж в состоянии утвержден
 				rackStateInSector.getState_rack() == EStateRack.A
