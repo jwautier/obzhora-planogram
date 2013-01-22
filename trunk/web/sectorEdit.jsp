@@ -546,7 +546,7 @@ function fCanSetState() {
 	$('#butRackSetStateInSectorA').addClass('disabled');
 	$('#butRackSetStatePC').addClass('disabled');
 	$('#butRackSetStateInSectorPC').addClass('disabled');
-	if (window.showcase != null && window.showcase.code_rack != null) {
+	if (window.showcase != null && window.showcase.code_rack > 0) {
 		postJson('<%=RackCanSetState.URL%>', {code_rack: window.showcase.code_rack}, function (data) {
 			var changeState = false;
 			for (var i = 0; i < window.rackStateInSectorList.length; i++) {
