@@ -10,6 +10,7 @@ import planograma.data.RackState;
 import planograma.data.RackStateInSector;
 import planograma.data.UserContext;
 import planograma.exception.UnauthorizedException;
+import planograma.model.RackStateInSectorModel;
 import planograma.model.RackStateModel;
 import planograma.model.SecurityModel;
 import planograma.model.UserModel;
@@ -32,16 +33,18 @@ public class RackCanSetState extends AbstractAction {
 
 	public static final String URL = UrlConst.URL_RACK_CAN_SET_STATE;
 
-	private RackStateModel rackStateModel;
 	private UserModel userModel;
 	private SecurityModel securityModel;
+	private RackStateModel rackStateModel;
+	private RackStateInSectorModel rackStateInSectorModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		rackStateModel = RackStateModel.getInstance();
 		userModel = UserModel.getInstance();
 		securityModel = SecurityModel.getInstance();
+		rackStateModel = RackStateModel.getInstance();
+		rackStateInSectorModel = RackStateInSectorModel.getInstance();
 	}
 
 	@Override
@@ -49,8 +52,8 @@ public class RackCanSetState extends AbstractAction {
 		final JsonObject jsonObject = new JsonObject();
 		final int code_rack = requestData.getAsJsonObject().get(RackConst.CODE_RACK).getAsInt();
 		final UserContext userContext = getUserContext(session);
-		final RackState rackState = rackStateModel.selectRackState(userContext, code_rack);
-		final RackStateInSector rackStateInSector = rackStateModel.selectRackStateInSector(userContext, code_rack);
+		final RackState rackState = rackStateModel.select(userContext, code_rack);
+		final RackStateInSector rackStateInSector = rackStateInSectorModel.select(userContext, code_rack);
 		boolean canSetStateA =
 				// стеллаж в состоянии черновик
 				rackState.getState_rack() == EStateRack.D

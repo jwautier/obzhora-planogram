@@ -6,19 +6,13 @@ import com.google.gson.JsonObject;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.RackConst;
-import planograma.data.Rack;
-import planograma.data.RackShelf;
-import planograma.data.RackWares;
-import planograma.data.UserContext;
+import planograma.data.*;
 import planograma.data.geometry.RackShelf2D;
 import planograma.data.geometry.RackWares2D;
 import planograma.exception.EntityFieldException;
 import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
-import planograma.model.RackModel;
-import planograma.model.RackShelfModel;
-import planograma.model.RackWaresModel;
-import planograma.model.SecurityModel;
+import planograma.model.*;
 import planograma.servlet.AbstractAction;
 import planograma.servlet.validate.RackShelfMinDimensionsValidation;
 import planograma.servlet.validate.RackShelfOutsideRackValidation;
@@ -55,6 +49,7 @@ public class RackWaresPlacementSave extends AbstractAction {
 	private RackModel rackModel;
 	private RackShelfModel rackShelfModel;
 	private RackWaresModel rackWaresModel;
+	private RackStateModel rackStateModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -63,6 +58,7 @@ public class RackWaresPlacementSave extends AbstractAction {
 		securityModel = SecurityModel.getInstance();
 		rackShelfModel = RackShelfModel.getInstance();
 		rackWaresModel = RackWaresModel.getInstance();
+		rackStateModel=RackStateModel.getInstance();
 	}
 
 	@Override
@@ -71,7 +67,6 @@ public class RackWaresPlacementSave extends AbstractAction {
 		checkAccess(userContext, SecurityConst.ACCESS_RACK_WARES_PLACEMENT);
 		final int code_rack = requestData.getAsJsonObject().getAsJsonPrimitive(RackConst.CODE_RACK).getAsInt();
 		final boolean canAccessEditRackShelf = securityModel.canAccess(userContext, SecurityConst.ACCESS_RACK_WARES_PLACEMENT_AND_RACK_SHELF_EDIT);
-
 
 		final JsonArray rackWaresListJson = requestData.getAsJsonObject().getAsJsonArray("rackWaresList");
 
@@ -193,6 +188,9 @@ public class RackWaresPlacementSave extends AbstractAction {
 				newItem.getRackWares().setCode_rack(code_rack);
 				rackWaresModel.insert(userContext, newItem.getRackWares());
 			}
+
+			// TODO только при изменениях
+			rackStateModel.changestate(userContext, code_rack, null, EStateRack.D);
 
 			commit(userContext);
 		} else {

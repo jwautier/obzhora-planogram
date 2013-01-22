@@ -45,7 +45,7 @@ public class RackSetStatePC extends AbstractAction {
 		final JsonObject jsonObject = new JsonObject();
 		final int code_rack = requestData.getAsJsonObject().get(RackConst.CODE_RACK).getAsInt();
 		final UserContext userContext = getUserContext(session);
-		final RackState rackState = rackStateModel.selectRackState(userContext, code_rack);
+		final RackState rackState = rackStateModel.select(userContext, code_rack);
 		boolean canSetStatePC =
 				// стеллаж в состоянии утвержден
 				rackState.getState_rack() == EStateRack.A

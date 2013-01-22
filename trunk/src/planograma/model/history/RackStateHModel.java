@@ -22,20 +22,20 @@ public class RackStateHModel {
 	private static final Logger LOG = Logger.getLogger(RackStateHModel.class);
 
 	private static final String Q_SELECT_FROM = "SELECT" +
-			" " + RackStateHConst.CODE_RACK + "," +
-			" " + RackStateHConst.STATE_RACK + "," +
-			" " + RackStateHConst.USER_INSERT + " " + RackStateConst.USER_DRAFT + "," +
-			" " + RackStateHConst.DATE_INSERT + " " + RackStateConst.DATE_DRAFT + "," +
-			" " + RackStateHConst.USER_INSERT + " " + RackStateConst.USER_ACTIVE + "," +
-			" " + RackStateHConst.DATE_INSERT + " " + RackStateConst.DATE_ACTIVE + "," +
-			" " + RackStateHConst.USER_INSERT + " " + RackStateConst.USER_COMPLETE + "," +
-			" " + RackStateHConst.DATE_INSERT + " " + RackStateConst.DATE_COMPLETE + " " +
-			"FROM " + RackStateHConst.TABLE_NAME;
+			" o." + RackStateHConst.CODE_RACK + "," +
+			" o." + RackStateHConst.STATE_RACK + "," +
+			" o." + RackStateHConst.USER_INSERT + " " + RackStateConst.USER_DRAFT + "," +
+			" o." + RackStateHConst.DATE_INSERT + " " + RackStateConst.DATE_DRAFT + "," +
+			" o." + RackStateHConst.USER_INSERT + " " + RackStateConst.USER_ACTIVE + "," +
+			" o." + RackStateHConst.DATE_INSERT + " " + RackStateConst.DATE_ACTIVE + "," +
+			" o." + RackStateHConst.USER_INSERT + " " + RackStateConst.USER_COMPLETE + "," +
+			" o." + RackStateHConst.DATE_INSERT + " " + RackStateConst.DATE_COMPLETE + " " +
+			"FROM " + RackStateHConst.TABLE_NAME+" o ";
 
 	private static final String Q_SELECT = Q_SELECT_FROM +
-			" WHERE " + RackStateHConst.CODE_RACK + " = ?" +
-			" AND " + RackStateHConst.DATE_INSERT + " <= ?" +
-			"ORDER BY " + RackStateHConst.DATE_INSERT + " DESC";
+			" WHERE o." + RackStateHConst.CODE_RACK + " = ?" +
+			" AND o." + RackStateHConst.DATE_INSERT + " <= ?" +
+			"ORDER BY o." + RackStateHConst.DATE_INSERT + " DESC";
 
 	public RackState select(final UserContext userContext, final int code_rack, final Date date) throws SQLException {
 		long time = System.currentTimeMillis();
@@ -53,6 +53,59 @@ public class RackStateHModel {
 		LOG.debug(time + " ms (code_rack:" + code_rack + ", date:" + FormattingUtils.datetime2String(date) + ")");
 		return rackState;
 	}
+
+	private static final String Q_SELECT_A = Q_SELECT_FROM +
+			" WHERE o." + RackStateHConst.CODE_RACK + " = ?" +
+			" AND o." + RackStateHConst.DATE_INSERT + " in "+
+			"  (SELECT MAX(ss1." + RackStateHConst.DATE_INSERT + ")" +
+			"   FROM " + RackStateHConst.TABLE_NAME + " ss1" +
+			"   WHERE " +
+			"    ss1." + RackStateHConst.CODE_RACK + "= o." + RackStateHConst.CODE_RACK +
+			"    AND ss1." + RackStateHConst.STATE_RACK + " in ('A')" +
+			"  )";
+
+	public RackState selectA(final UserContext userContext, final int code_rack) throws SQLException {
+		long time = System.currentTimeMillis();
+		final Connection connection = userContext.getConnection();
+		final PreparedStatement ps = connection.prepareStatement(Q_SELECT_A);
+		ps.setInt(1, code_rack);
+		ps.setMaxRows(1);
+		final ResultSet resultSet = ps.executeQuery();
+		RackState rackState = null;
+		if (resultSet.next()) {
+			rackState = new RackState(resultSet);
+		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_rack:" + code_rack + ")");
+		return rackState;
+	}
+
+	private static final String Q_SELECT_PC = Q_SELECT_FROM +
+			" WHERE o." + RackStateHConst.CODE_RACK + " = ?" +
+			" AND o." + RackStateHConst.DATE_INSERT + " in "+
+			"  (SELECT MAX(ss1." + RackStateHConst.DATE_INSERT + ")" +
+			"   FROM " + RackStateHConst.TABLE_NAME + " ss1" +
+			"   WHERE " +
+			"    ss1." + RackStateHConst.CODE_RACK + "= o." + RackStateHConst.CODE_RACK +
+			"    AND ss1." + RackStateHConst.STATE_RACK + " in ('PC')" +
+			"  )";
+
+	public RackState selectPC(final UserContext userContext, final int code_rack) throws SQLException {
+		long time = System.currentTimeMillis();
+		final Connection connection = userContext.getConnection();
+		final PreparedStatement ps = connection.prepareStatement(Q_SELECT_PC);
+		ps.setInt(1, code_rack);
+		ps.setMaxRows(1);
+		final ResultSet resultSet = ps.executeQuery();
+		RackState rackState = null;
+		if (resultSet.next()) {
+			rackState = new RackState(resultSet);
+		}
+		time = System.currentTimeMillis() - time;
+		LOG.debug(time + " ms (code_rack:" + code_rack + ")");
+		return rackState;
+	}
+
 
 	private static RackStateHModel instance = new RackStateHModel();
 

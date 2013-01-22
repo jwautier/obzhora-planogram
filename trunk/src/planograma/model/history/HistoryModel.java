@@ -32,8 +32,6 @@ public class HistoryModel {
 					" (SELECT " + RackStateInSectorHConst.DATE_INSERT + " FROM " + RackStateInSectorHConst.TABLE_NAME + " WHERE " + RackStateInSectorHConst.CODE_RACK + " IN (SELECT ss1." + RackConst.CODE_RACK + " FROM " + RackConst.TABLE_NAME + " ss1 WHERE ss1." + RackConst.CODE_SECTOR + "=?)) " +
 					"UNION" +
 					" (SELECT " + RackShelfHConst.DATE_INSERT + " FROM " + RackShelfHConst.TABLE_NAME + " WHERE " + RackShelfHConst.CODE_RACK + " IN (SELECT ss1." + RackConst.CODE_RACK + " FROM " + RackConst.TABLE_NAME + " ss1 WHERE ss1." + RackConst.CODE_SECTOR + "=?)) " +
-					"UNION" +
-					" (SELECT " + RackWaresHConst.DATE_INSERT + " FROM " + RackWaresHConst.TABLE_NAME + " WHERE " + RackWaresHConst.CODE_RACK + " IN (SELECT ss1." + RackConst.CODE_RACK + " FROM " + RackConst.TABLE_NAME + " ss1 WHERE ss1." + RackConst.CODE_SECTOR + "=?)) " +
 					"ORDER BY 1";
 
 
@@ -46,7 +44,6 @@ public class HistoryModel {
 		ps.setInt(3, code_sector);
 		ps.setInt(4, code_sector);
 		ps.setInt(5, code_sector);
-		ps.setInt(6, code_sector);
 		final ResultSet resultSet = ps.executeQuery();
 		final List<Date> list = new ArrayList<Date>();
 		while (resultSet.next()) {
