@@ -13,10 +13,7 @@ import planograma.data.geometry.RackWares2D;
 import planograma.exception.EntityFieldException;
 import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
-import planograma.model.RackModel;
-import planograma.model.RackShelfModel;
-import planograma.model.RackWaresModel;
-import planograma.model.SectorModel;
+import planograma.model.*;
 import planograma.servlet.AbstractAction;
 import planograma.servlet.validate.*;
 
@@ -44,6 +41,7 @@ public class RackSave extends AbstractAction {
 	private RackModel rackModel;
 	private RackShelfModel rackShelfModel;
 	private RackWaresModel rackWaresModel;
+	private RackStateModel rackStateModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -52,7 +50,7 @@ public class RackSave extends AbstractAction {
 		rackModel = RackModel.getInstance();
 		rackShelfModel = RackShelfModel.getInstance();
 		rackWaresModel = RackWaresModel.getInstance();
-
+		rackStateModel = RackStateModel.getInstance();
 	}
 
 	@Override
@@ -151,6 +149,10 @@ public class RackSave extends AbstractAction {
 				newItem.getRackShelf().setCode_rack(editRack.getCode_rack());
 				rackShelfModel.insert(userContext, newItem.getRackShelf());
 			}
+
+			// TODO только при изменениях
+			rackStateModel.changestate(userContext, editRack.getCode_rack(), null, EStateRack.D);
+
 			commit(userContext);
 			jsonObject.addProperty(RackConst.CODE_RACK, editRack.getCode_rack());
 		} else {

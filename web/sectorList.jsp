@@ -79,7 +79,7 @@
 							</tr>
 							<tr>
 								<td>раскраска
-									<select id="view_mode" onchange="selectSector2();">
+									<select id="view_mode" onchange="selectSector3();">
 										<option value="type_rack">тип</option>
 										<option value="state_rack_in_sector">состояние в зале</option>
 										<option value="state_rack">состояние компоновки</option>
@@ -187,13 +187,7 @@
 
 				setCookie('code_sector', code_sector);
 
-				postJson('<%=SectorEdit.URL%>', {code_sector:code_sector}, function (data) {
-					window.sector=data.sector;
-					window.rackList = data.rackList;
-					window.rackStateList = data.rackStateList;
-					window.rackStateInSectorList = data.rackStateInSectorList;
-					selectSector2();
-				}, 'preview_td');
+				selectSector2(code_sector);
 			}
 			else {
 				setCookie('code_sector', '');
@@ -206,7 +200,7 @@
 	function fSectorAllRackSetStateA() {
 		postJson('<%=SectorAllRackSetStateA.URL%>', {code_sector: window.sector.code_sector}, function (data) {
 			// перерисовать зал
-			selectSector2();
+			selectSector2(window.sector.code_sector);
 			if (data.notAccessRackList!=null) {
 				alert("Некоторые стеллажи не удалось утвердить:"+data.notAccessRackList);
 			}
@@ -215,13 +209,24 @@
 	function fSectorAllRackSetStatePC() {
 		postJson('<%=SectorAllRackSetStatePC.URL%>', {code_sector: window.sector.code_sector}, function (data) {
 			// перерисовать зал
-			selectSector2();
+			selectSector2(window.sector.code_sector);
 			if (data.notAccessRackList!=null) {
 				alert("Некоторые стеллажи не удалось выполнить:"+data.notAccessRackList);
 			}
 		});
 	}
-	function selectSector2()
+
+	function selectSector2(code_sector)
+	{
+		postJson('<%=SectorEdit.URL%>', {code_sector:code_sector}, function (data) {
+			window.sector=data.sector;
+			window.rackList = data.rackList;
+			window.rackStateList = data.rackStateList;
+			window.rackStateInSectorList = data.rackStateInSectorList;
+			selectSector3();
+		}, 'preview_td');
+	}
+	function selectSector3()
 	{
 		window.preview_canvas = document.getElementById("preview_canvas");
 		window.preview_context = window.preview_canvas.getContext("2d");

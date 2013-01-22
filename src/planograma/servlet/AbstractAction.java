@@ -63,7 +63,7 @@ public abstract class AbstractAction extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.setContentType("text/plain");
 			writer.write(e.getMessage());
-			getLog().error("Error doPost",e);
+			getLog().error("Error doPost", e);
 		} catch (SQLException e) {
 			int errorCode = e.getErrorCode();
 			if (errorCode == 17008) {
@@ -79,17 +79,17 @@ public abstract class AbstractAction extends HttpServlet {
 				response.setContentType("text/plain");
 				writer.write(e.getMessage());
 			}
-			getLog().error("Error doPost",e);
+			getLog().error("Error doPost", e);
 		} catch (NullPointerException e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.setContentType("text/plain");
 			e.printStackTrace(new PrintWriter(writer));
-			getLog().error("Error doPost",e);
+			getLog().error("Error doPost", e);
 		} catch (Exception e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.setContentType("text/plain");
 			writer.write(e.getMessage());
-			getLog().error("Error doPost",e);
+			getLog().error("Error doPost", e);
 		} finally {
 			rollback(session);
 			time = System.currentTimeMillis() - time;
@@ -112,14 +112,18 @@ public abstract class AbstractAction extends HttpServlet {
 	}
 
 	private void rollback(final HttpSession session) {
-		final UserContext userContext = (UserContext) session.getAttribute(SessionConst.SESSION_USER);
+		UserContext userContext = null;
+		try {
+			userContext = (UserContext) session.getAttribute(SessionConst.SESSION_USER);
+		} catch (IllegalStateException e) {
+		}
 		if (userContext != null) {
 			final Connection connection = userContext.getConnection();
 			if (connection != null) {
 				try {
 					connection.rollback();
 				} catch (SQLException e) {
-					getLog().error("Error rollback",e);
+					getLog().error("Error rollback", e);
 				}
 			}
 		}
@@ -132,7 +136,7 @@ public abstract class AbstractAction extends HttpServlet {
 		}
 	}
 
-	protected Logger getLog(){
+	protected Logger getLog() {
 		return Logger.getLogger(this.getClass());
 	}
 
