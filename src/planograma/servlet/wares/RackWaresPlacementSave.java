@@ -3,6 +3,7 @@ package planograma.servlet.wares;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import planograma.constant.OptionsNameConst;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.RackConst;
@@ -50,6 +51,7 @@ public class RackWaresPlacementSave extends AbstractAction {
 	private RackShelfModel rackShelfModel;
 	private RackWaresModel rackWaresModel;
 	private RackStateModel rackStateModel;
+	private OptionsModel optionsModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -58,7 +60,8 @@ public class RackWaresPlacementSave extends AbstractAction {
 		securityModel = SecurityModel.getInstance();
 		rackShelfModel = RackShelfModel.getInstance();
 		rackWaresModel = RackWaresModel.getInstance();
-		rackStateModel=RackStateModel.getInstance();
+		rackStateModel = RackStateModel.getInstance();
+		optionsModel = OptionsModel.getInstance();
 	}
 
 	@Override
@@ -110,17 +113,27 @@ public class RackWaresPlacementSave extends AbstractAction {
 			for (int i = 0; i < rackShelf2DList.size(); i++) {
 				final RackShelf2D rackShelf2D = rackShelf2DList.get(i);
 				// Проверка параметров полки стеллажа: высота, ширина, глубина должны быть больше 5мм
-				RackShelfMinDimensionsValidation.validate(fieldExceptionList, rackShelf2D.getRackShelf(), i);
+				if (optionsModel.getBoolean(userContext, OptionsNameConst.WARES_SAVE_SHELF_DIMENSION)) {
+					RackShelfMinDimensionsValidation.validate(fieldExceptionList, rackShelf2D.getRackShelf(), i);
+				}
 			}
 			// Проверка: полка не может выходить за пределы стеллажа
-			RackShelfOutsideRackValidation.validate(fieldExceptionList, rack, rackShelf2DList);
+			if (optionsModel.getBoolean(userContext, OptionsNameConst.WARES_SAVE_SHELF_OUT_OF_RACK)) {
+				RackShelfOutsideRackValidation.validate(fieldExceptionList, rack, rackShelf2DList);
+			}
 		}
 		// товар не должен выходить за полезную зону стеллажа
-		RackWaresOutsideRackValidation.validate(fieldExceptionList, rack, rackWares2DList);
+		if (optionsModel.getBoolean(userContext, OptionsNameConst.WARES_SAVE_WARES_IN_REAL_DIMENSION)) {
+			RackWaresOutsideRackValidation.validate(fieldExceptionList, rack, rackWares2DList);
+		}
 		// товары не могут пересекаться с полками(не сохраняется, выделяются товары)
-		RackWaresIntersectValidation.validate(fieldExceptionList, rackShelf2DList, rackWares2DList);
+		if (optionsModel.getBoolean(userContext, OptionsNameConst.WARES_SAVE_WARES_INSTERSECT_SHELF)) {
+			RackWaresIntersectValidation.validate(fieldExceptionList, rackShelf2DList, rackWares2DList);
+		}
 		// товары не могут пересекаться между собой(не сохраняется, выделяются товары)
-		RackWaresIntersectValidation.validate(fieldExceptionList, rackWares2DList);
+		if (optionsModel.getBoolean(userContext, OptionsNameConst.WARES_SAVE_WARES_INTERSECT_WARES)) {
+			RackWaresIntersectValidation.validate(fieldExceptionList, rackWares2DList);
+		}
 
 
 		final JsonObject jsonObject = new JsonObject();

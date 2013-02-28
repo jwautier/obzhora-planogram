@@ -3,6 +3,7 @@ package planograma.servlet.sector;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import planograma.constant.OptionsNameConst;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.SectorConst;
@@ -45,16 +46,18 @@ public class SectorSave extends AbstractAction {
 	private RackShelfModel rackShelfModel;
 	private RackWaresModel rackWaresModel;
 	private RackShelfTemplateModel rackShelfTemplateModel;
+	private OptionsModel optionsModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		sectorModel = SectorModel.getInstance();
 		rackModel = RackModel.getInstance();
-		rackStateModel=RackStateModel.getInstance();
+		rackStateModel = RackStateModel.getInstance();
 		rackShelfModel = RackShelfModel.getInstance();
 		rackWaresModel = RackWaresModel.getInstance();
 		rackShelfTemplateModel = RackShelfTemplateModel.getInstance();
+		optionsModel = OptionsModel.getInstance();
 	}
 
 	@Override
@@ -82,28 +85,40 @@ public class SectorSave extends AbstractAction {
 		//	ПРОВЕРКИ
 		List<EntityFieldException> fieldExceptionList = new ArrayList<EntityFieldException>();
 		// Проверка параметров зала: высоты, ширины, длина должны быть больше 1000мм(не сохраняется)
-		SectorMinDimensionsValidation.validate(fieldExceptionList, sector);
+		if (optionsModel.getBoolean(userContext, OptionsNameConst.SECTOR_SAVE_DIMENSION)) {
+			SectorMinDimensionsValidation.validate(fieldExceptionList, sector);
+		}
 		// проверка стеллажей
 		for (int i = 0; i < rackList.size(); i++) {
 			final Rack rack = rackList.get(i);
 			final Rack2D rack2D = rack2DList.get(i);
 
 			// Проверка параметров стеллажа: высота, ширина, глубина, полезная высота, полезная ширина, полезная глубина больше 10мм
-			RackMinDimensionsValidation.validate(fieldExceptionList, rack, i);
+			if (optionsModel.getBoolean(userContext, OptionsNameConst.SECTOR_SAVE_RACK_DIMENSION)) {
+				RackMinDimensionsValidation.validate(fieldExceptionList, rack, i);
+			}
 			// стеллаж не может выходить за пределы зала
-			RackOutsideSectorValidation.validate(fieldExceptionList, sector, rack2D, i);
+			if (optionsModel.getBoolean(userContext, OptionsNameConst.SECTOR_SAVE_RACK_OUT_OF_SECTOR)) {
+				RackOutsideSectorValidation.validate(fieldExceptionList, sector, rack2D, i);
+			}
 
 			if (rack.getCode_rack() != null) {
 				// стеллаж не может стать меньше чем расположеные на нем полки
-				final List<RackShelf> rackShelfList = rackShelfModel.list(userContext, rack.getCode_rack());
-				RackOverflowShelfValidation.validate(fieldExceptionList, rack, i, rackShelfList);
+				if (optionsModel.getBoolean(userContext, OptionsNameConst.SECTOR_SAVE_RACK_SHELF_DIMENSION)) {
+					final List<RackShelf> rackShelfList = rackShelfModel.list(userContext, rack.getCode_rack());
+					RackOverflowShelfValidation.validate(fieldExceptionList, rack, i, rackShelfList);
+				}
 				// полезная зона стеллажа не может стать меньше чем расположеные на нем товары
-				final List<RackWares> rackWaresList=rackWaresModel.list(userContext, rack.getCode_rack());
-				RackOverflowWaresValidation.validate(fieldExceptionList, rack, i, rackWaresList);
+				if (optionsModel.getBoolean(userContext, OptionsNameConst.SECTOR_SAVE_RACK_REAL_DIMENSION_LESS_THEN_WARES)) {
+					final List<RackWares> rackWaresList = rackWaresModel.list(userContext, rack.getCode_rack());
+					RackOverflowWaresValidation.validate(fieldExceptionList, rack, i, rackWaresList);
+				}
 			}
 		}
 		//	стеллажи не могут пересекаться(не сохраняется, выделяется один из стеллажей)
-		RackIntersectValidation.validate(fieldExceptionList, rack2DList);
+		if (optionsModel.getBoolean(userContext, OptionsNameConst.SECTOR_SAVE_RACK_INTERSECTION)) {
+			RackIntersectValidation.validate(fieldExceptionList, rack2DList);
+		}
 
 		final JsonObject jsonObject = new JsonObject();
 		if (fieldExceptionList.isEmpty()) {

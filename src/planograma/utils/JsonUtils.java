@@ -54,6 +54,14 @@ public class JsonUtils {
 		return new Date(jsonElement.getAsLong());
 	}
 
+	public static void set(final JsonObject jsonObject, final String key, final Number value) {
+		jsonObject.addProperty(key, value);
+	}
+
+	public static void set(final JsonObject jsonObject, final String key, final String value) {
+		jsonObject.addProperty(key, value);
+	}
+
 	public static void set(final JsonObject jsonObject, final String key, final Date value) {
 		jsonObject.addProperty(key, (value != null) ? value.getTime() : null);
 	}
