@@ -3,6 +3,7 @@ package planograma.servlet.racktemplate;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import planograma.constant.OptionsNameConst;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.RackTemplateConst;
@@ -13,6 +14,7 @@ import planograma.data.geometry.RackShelf2D;
 import planograma.exception.EntityFieldException;
 import planograma.exception.NotAccessException;
 import planograma.exception.UnauthorizedException;
+import planograma.model.OptionsModel;
 import planograma.model.RackShelfTemplateModel;
 import planograma.model.RackTemplateModel;
 import planograma.servlet.AbstractAction;
@@ -42,12 +44,14 @@ public class RackTemplateSave extends AbstractAction {
 
 	private RackTemplateModel rackTemplateModel;
 	private RackShelfTemplateModel rackShelfTemplateModel;
+	private OptionsModel optionsModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		rackTemplateModel = RackTemplateModel.getInstance();
 		rackShelfTemplateModel = RackShelfTemplateModel.getInstance();
+		optionsModel = OptionsModel.getInstance();
 	}
 
 	@Override
@@ -68,16 +72,22 @@ public class RackTemplateSave extends AbstractAction {
 		//	ПРОВЕРКИ
 		List<EntityFieldException> fieldExceptionList = new ArrayList<EntityFieldException>();
 		//	Проверка параметров шаблонного стеллажа: высота, ширина, глубина, полезная высота, полезная ширина, полезная глубина больше 10мм
-		RackMinDimensionsValidation.validate(fieldExceptionList, rackTemplate, 0);
+		if (optionsModel.getBoolean(userContext, OptionsNameConst.RACK_TEMPLATE_SAVE_DIMENSION)) {
+			RackMinDimensionsValidation.validate(fieldExceptionList, rackTemplate, 0);
+		}
 
 		for (int i = 0; i < itemList.size(); i++) {
 			final RackShelf2D<RackShelfTemplate> shelf2D = itemList.get(i);
 			final RackShelfTemplate newItem = shelf2D.getRackShelf();
 			// Проверка параметров полки шаблонного стеллажа: высота, ширина глубина должны быть больше 5мм
-			RackShelfMinDimensionsValidation.validate(fieldExceptionList, newItem, i);
+			if (optionsModel.getBoolean(userContext, OptionsNameConst.RACK_TEMPLATE_SAVE_SHELF_DIMENSION)) {
+				RackShelfMinDimensionsValidation.validate(fieldExceptionList, newItem, i);
+			}
 		}
 		// Проверка: полка не может выходить за пределы стеллажа
-		RackShelfOutsideRackValidation.validate(fieldExceptionList, rackTemplate, itemList);
+		if (optionsModel.getBoolean(userContext, OptionsNameConst.RACK_TEMPLATE_SAVE_SHELF_OUT_OF_RACK)) {
+			RackShelfOutsideRackValidation.validate(fieldExceptionList, rackTemplate, itemList);
+		}
 
 		final JsonObject jsonObject = new JsonObject();
 		if (fieldExceptionList.isEmpty()) {

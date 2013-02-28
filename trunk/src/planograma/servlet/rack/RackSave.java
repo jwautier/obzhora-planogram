@@ -3,6 +3,7 @@ package planograma.servlet.rack;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import planograma.constant.OptionsNameConst;
 import planograma.constant.SecurityConst;
 import planograma.constant.UrlConst;
 import planograma.constant.data.RackConst;
@@ -42,6 +43,7 @@ public class RackSave extends AbstractAction {
 	private RackShelfModel rackShelfModel;
 	private RackWaresModel rackWaresModel;
 	private RackStateModel rackStateModel;
+	private OptionsModel optionsModel;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -51,6 +53,7 @@ public class RackSave extends AbstractAction {
 		rackShelfModel = RackShelfModel.getInstance();
 		rackWaresModel = RackWaresModel.getInstance();
 		rackStateModel = RackStateModel.getInstance();
+		optionsModel = OptionsModel.getInstance();
 	}
 
 	@Override
@@ -73,14 +76,20 @@ public class RackSave extends AbstractAction {
 		//	ПРОВЕРКИ
 		final List<EntityFieldException> fieldExceptionList = new ArrayList<EntityFieldException>();
 		// Проверка параметров стеллажа: высота, ширина, глубина, полезная высота, полезная ширина, полезная глубина больше 10мм
-		RackMinDimensionsValidation.validate(fieldExceptionList, editRack, 0);
+		if (optionsModel.getBoolean(userContext, OptionsNameConst.RACK_SAVE_DIMENSION)) {
+			RackMinDimensionsValidation.validate(fieldExceptionList, editRack, 0);
+		}
 		for (int i = 0; i < itemList.size(); i++) {
 			final RackShelf2D rackShelf2D = itemList.get(i);
 			// Проверка параметров полки стеллажа: высота, ширина, глубина должны быть больше 5мм
-			RackShelfMinDimensionsValidation.validate(fieldExceptionList, rackShelf2D.getRackShelf(), i);
+			if (optionsModel.getBoolean(userContext, OptionsNameConst.RACK_SAVE_SHELF_DIMENSION)) {
+				RackShelfMinDimensionsValidation.validate(fieldExceptionList, rackShelf2D.getRackShelf(), i);
+			}
 		}
 		// Проверка: полка не может выходить за пределы стеллажа
-		RackShelfOutsideRackValidation.validate(fieldExceptionList, editRack, itemList);
+		if (optionsModel.getBoolean(userContext, OptionsNameConst.RACK_SAVE_SHELF_OUT_OF_RACK)) {
+			RackShelfOutsideRackValidation.validate(fieldExceptionList, editRack, itemList);
+		}
 
 		// зал
 		Sector sector = sectorModel.select(userContext, editRack.getCode_sector());
@@ -102,10 +111,14 @@ public class RackSave extends AbstractAction {
 		}
 
 		// стеллаж не может выходить за пределы зала(не сохраняется)
-		RackOutsideSectorValidation.validate(fieldExceptionList, sector, editRack2D, editRackIndex);
+		if (optionsModel.getBoolean(userContext, OptionsNameConst.RACK_SAVE_RACK_OUT_SECTOR)) {
+			RackOutsideSectorValidation.validate(fieldExceptionList, sector, editRack2D, editRackIndex);
+		}
 
-		// стеллажи не могут пересекаться(не сохраняется, выделяется один из стеллажей)
-		RackIntersectValidation.validate(fieldExceptionList, rack2DList);
+		// стеллажи не могут пересекаться(не сохраняется)
+		if (optionsModel.getBoolean(userContext, OptionsNameConst.RACK_SAVE_RACK_INTERSECTION)) {
+			RackIntersectValidation.validate(fieldExceptionList, rack2DList);
+		}
 
 		// товары стеллажа
 		final List<RackWares> rackWaresList = rackWaresModel.list(userContext, editRack.getCode_rack());
@@ -116,10 +129,13 @@ public class RackSave extends AbstractAction {
 			rackWares2DList.add(rackWares2D);
 		}
 		// полезная зона стеллажа не может стать меньше чем расположеные на нем товары
-		RackOverflowWaresValidation.validate2D(fieldExceptionList, editRack, editRackIndex, rackWares2DList);
+		if (optionsModel.getBoolean(userContext, OptionsNameConst.RACK_SAVE_RACK_REAL_DIMENSION_LESS_THEN_WARES)) {
+			RackOverflowWaresValidation.validate2D(fieldExceptionList, editRack, editRackIndex, rackWares2DList);
+		}
 
 		// полка не может пересекать товары(не сохраняется, выделяется одна из полок)
-		RackShelfIntersectWaresValidation.validate(fieldExceptionList, itemList, rackWares2DList);
+		if (optionsModel.getBoolean(userContext, OptionsNameConst.RACK_SAVE_SHELF_INTERSECT_WARES)) {
+		RackShelfIntersectWaresValidation.validate(fieldExceptionList, itemList, rackWares2DList);}
 
 		final JsonObject jsonObject = new JsonObject();
 		if (fieldExceptionList.isEmpty()) {
