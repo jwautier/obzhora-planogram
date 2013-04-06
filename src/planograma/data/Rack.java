@@ -2,18 +2,18 @@ package planograma.data;
 
 import com.google.gson.JsonObject;
 import planograma.constant.data.RackConst;
-import planograma.utils.JsonUtils;
+import planograma.utils.json.JsonUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
+ * стеллаж
  * Date: 18.03.12
  * Time: 9:39
- * стеллаж
+ *
+ * @author Alexandr Polyakov
  */
 public class Rack extends AbstractRack {
 	/**

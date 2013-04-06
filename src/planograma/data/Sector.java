@@ -3,18 +3,19 @@ package planograma.data;
 
 import com.google.gson.JsonObject;
 import planograma.constant.data.SectorConst;
-import planograma.utils.JsonUtils;
+import planograma.utils.json.IJsonObject;
+import planograma.utils.json.JsonUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
+ * Сектор (этаж)
  * Date: 26.02.12
  * Time: 4:14
- * Сектор (этаж)
+ *
+ * @author Alexandr Polyakov
  */
 public class Sector implements IJsonObject {
 	/**
@@ -62,7 +63,7 @@ public class Sector implements IJsonObject {
 				  Integer length, Integer width, Integer height,
 				  Integer user_insert, Date date_insert,
 				  Integer user_update, Date date_update
-				  ) {
+	) {
 		this.code_shop = code_shop;
 		this.code_sector = code_sector;
 		this.name_sector = name_sector;

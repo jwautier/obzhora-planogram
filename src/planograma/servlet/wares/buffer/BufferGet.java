@@ -16,11 +16,10 @@ import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 21.03.12
  * Time: 23:58
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_BUFFER_GET)
 public class BufferGet extends AbstractAction {
@@ -34,8 +33,8 @@ public class BufferGet extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException, NotAccessException {
-		final JsonArray copyObjectList= (JsonArray) session.getAttribute(SessionConst.SESSION_COPY_WARES_LIST);
-		final JsonObject result=new JsonObject();
+		final JsonArray copyObjectList = (JsonArray) session.getAttribute(SessionConst.SESSION_COPY_WARES_LIST);
+		final JsonObject result = new JsonObject();
 		result.add(BufferSet.NAME_COPY_OBJECT_LIST, copyObjectList);
 		return result;
 	}

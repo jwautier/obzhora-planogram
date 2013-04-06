@@ -19,11 +19,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 26.02.12
  * Time: 2:18
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_SECTOR_LIST)
 public class SectorList extends AbstractAction {
@@ -44,7 +43,7 @@ public class SectorList extends AbstractAction {
 
 		final JsonObject jsonObject = new JsonObject();
 		final JsonArray jsonArray = new JsonArray();
-		final UserContext userContext=getUserContext(session);
+		final UserContext userContext = getUserContext(session);
 		final List<Sector> list = sectorModel.list(userContext, code_shop);
 		for (final Sector sector : list) {
 			jsonArray.add(sector.toJsonObject());

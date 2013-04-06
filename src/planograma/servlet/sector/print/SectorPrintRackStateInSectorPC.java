@@ -27,11 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 07.06.12
  * Time: 3:50
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_SECTOR_PRINT_PC + "*")
 public class SectorPrintRackStateInSectorPC extends HttpServlet {
@@ -93,7 +92,7 @@ public class SectorPrintRackStateInSectorPC extends HttpServlet {
 			final PdfContentByte cb = writer.getDirectContent();
 			final float m = Math.max(sector.getLength() / (pageSize.getWidth() - marginLeft - marginRight), sector.getWidth() / (pageSize.getHeight() - marginTop - marginTitle - marginBottom));
 
-			final String title = shop.getName_shop() + " (" + sector.getName_sector() + ") от " + FormattingUtils.datetime2String(sector.getDate_update())+" только выполненые";
+			final String title = shop.getName_shop() + " (" + sector.getName_sector() + ") от " + FormattingUtils.datetime2String(sector.getDate_update()) + " только выполненые";
 			Paragraph p = new Paragraph(title, font);
 			p.setAlignment(Element.ALIGN_CENTER);
 			document.add(p);
@@ -168,7 +167,7 @@ public class SectorPrintRackStateInSectorPC extends HttpServlet {
 			document.add(table);
 			document.close();
 		} catch (Exception e) {
-			LOG.error("Error print sector",e);
+			LOG.error("Error print sector", e);
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 		time = System.currentTimeMillis() - time;

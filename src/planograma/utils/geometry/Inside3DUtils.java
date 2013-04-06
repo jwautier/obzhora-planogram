@@ -1,10 +1,11 @@
 package planograma.utils.geometry;
 
 /**
- * User: poljakov
+ * Утилитный класс определяющий полное перекрытие одного обекта другим
  * Date: 27.09.12
  * Time: 8:34
- * Утилитный класс определяющий полное перекрытие одного обекта другим
+ *
+ * @author Alexandr Polyakov
  */
 public class Inside3DUtils {
 	/**

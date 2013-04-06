@@ -2,20 +2,21 @@ package planograma.data;
 
 import com.google.gson.JsonObject;
 import planograma.constant.data.RackShelfTemplateConst;
-import planograma.utils.JsonUtils;
+import planograma.utils.json.IJsonObject;
+import planograma.utils.json.JsonUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
+ * полка шаблонного стеллажа
  * Date: 19.03.12
  * Time: 5:11
- * полка шаблонного стеллажа
+ *
+ * @author Alexandr Polyakov
  */
-public class RackShelfTemplate extends AbstractRackShelf implements IJsonObject{
+public class RackShelfTemplate extends AbstractRackShelf implements IJsonObject {
 	/**
 	 * Код шаблонного стеллажа
 	 */
@@ -48,7 +49,6 @@ public class RackShelfTemplate extends AbstractRackShelf implements IJsonObject{
 	}
 
 
-
 	public RackShelfTemplate(final ResultSet resultSet) throws SQLException {
 		super(resultSet);
 		code_rack_template = resultSet.getInt(RackShelfTemplateConst.CODE_RACK_TEMPLATE);
@@ -60,6 +60,7 @@ public class RackShelfTemplate extends AbstractRackShelf implements IJsonObject{
 		code_rack_template = JsonUtils.getInteger(rackShelfTemplateJson, RackShelfTemplateConst.CODE_RACK_TEMPLATE);
 		code_shelf_template = JsonUtils.getInteger(rackShelfTemplateJson, RackShelfTemplateConst.CODE_SHELF_TEMPLATE);
 	}
+
 	@Override
 	public JsonObject toJsonObject() {
 		final JsonObject jsonObject = super.toJsonObject();

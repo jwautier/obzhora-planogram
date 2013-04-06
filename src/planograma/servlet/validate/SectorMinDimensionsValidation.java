@@ -9,10 +9,11 @@ import planograma.exception.EntityFieldException;
 import java.util.List;
 
 /**
- * User: poljakov
+ * Проверка параметров зала: высоты, ширины, длина должны быть больше 1000мм
  * Date: 09.01.13
  * Time: 14:45
- * Проверка параметров зала: высоты, ширины, длина должны быть больше 1000мм
+ *
+ * @author Alexandr Polyakov
  */
 public class SectorMinDimensionsValidation {
 	/**

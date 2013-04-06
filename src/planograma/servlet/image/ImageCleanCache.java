@@ -17,11 +17,10 @@ import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 27.04.12
  * Time: 3:17
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_IMAGE_CLEAN_CACHE)
 public class ImageCleanCache extends AbstractAction {
@@ -37,7 +36,7 @@ public class ImageCleanCache extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException, NotAccessException {
-		final UserContext userContext=getUserContext(session);
+		final UserContext userContext = getUserContext(session);
 		checkAccess(userContext, SecurityConst.ACCESS_IMAGE_CLEAN_CACHE);
 		imageModel.clearCache();
 		return null;

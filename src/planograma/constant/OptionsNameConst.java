@@ -1,7 +1,7 @@
 package planograma.constant;
 
 /**
- * User: a_polyakov
+ * @author Alexandr Polyakov
  */
 public enum OptionsNameConst {
 	RACK_TEMPLATE_SAVE_DIMENSION,

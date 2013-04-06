@@ -1,11 +1,11 @@
 package planograma.data;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
+ * тип стеллажа
  * Date: 28.04.12
  * Time: 5:56
- * тип стеллажа
+ *
+ * @author Alexandr Polyakov
  */
 public enum ETypeRack {
 	/**

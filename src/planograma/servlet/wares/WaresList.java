@@ -19,11 +19,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 01.05.12
  * Time: 19:44
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_WARES_LIST)
 public class WaresList extends AbstractAction {

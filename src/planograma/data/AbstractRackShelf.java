@@ -2,18 +2,20 @@ package planograma.data;
 
 import com.google.gson.JsonObject;
 import planograma.constant.data.AbstractRackShelfConst;
-import planograma.utils.JsonUtils;
+import planograma.utils.json.IJsonObject;
+import planograma.utils.json.JsonUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
 /**
- * User: poljakov
  * Date: 11.01.13
  * Time: 11:51
+ *
+ * @author Alexandr Polyakov
  */
-public abstract class AbstractRackShelf implements IJsonObject{
+public abstract class AbstractRackShelf implements IJsonObject {
 
 	/**
 	 * Положение на полке по ширине
@@ -113,14 +115,15 @@ public abstract class AbstractRackShelf implements IJsonObject{
 	}
 
 	public String getType_shelfAtStr() {
-		return (type_shelf!=null)?type_shelf.name():null;
+		return (type_shelf != null) ? type_shelf.name() : null;
 	}
 
 	public void setType_shelf(TypeShelf type_shelf) {
 		this.type_shelf = type_shelf;
 	}
+
 	public void setType_shelf(String type_shelf) {
-		this.type_shelf = (type_shelf!=null)?TypeShelf.valueOf(type_shelf):null;
+		this.type_shelf = (type_shelf != null) ? TypeShelf.valueOf(type_shelf) : null;
 	}
 
 	public Integer getUser_insert() {
@@ -183,8 +186,7 @@ public abstract class AbstractRackShelf implements IJsonObject{
 		date_update = resultSet.getTimestamp(AbstractRackShelfConst.DATE_UPDATE);
 	}
 
-	public AbstractRackShelf(final JsonObject rackShelfJson)
-	{
+	public AbstractRackShelf(final JsonObject rackShelfJson) {
 		x_coord = JsonUtils.getInteger(rackShelfJson, AbstractRackShelfConst.X_COORD);
 		y_coord = JsonUtils.getInteger(rackShelfJson, AbstractRackShelfConst.Y_COORD);
 		shelf_height = JsonUtils.getInteger(rackShelfJson, AbstractRackShelfConst.SHELF_HEIGHT);

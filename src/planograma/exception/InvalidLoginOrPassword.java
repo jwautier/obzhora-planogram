@@ -3,11 +3,10 @@ package planograma.exception;
 import java.sql.SQLException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 03.03.12
  * Time: 0:23
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class InvalidLoginOrPassword extends SQLException {
 

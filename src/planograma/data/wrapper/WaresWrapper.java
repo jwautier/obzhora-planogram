@@ -5,18 +5,16 @@ import planograma.constant.data.AdditionUnitConst;
 import planograma.constant.data.UnitDimensionConst;
 import planograma.constant.data.WaresConst;
 import planograma.constant.data.WaresImageConst;
-import planograma.data.IJsonObject;
-import planograma.utils.JsonUtils;
+import planograma.utils.json.IJsonObject;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 27.04.12
  * Time: 5:58
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class WaresWrapper implements IJsonObject {
 	private final Integer code_group;
@@ -33,11 +31,11 @@ public class WaresWrapper implements IJsonObject {
 	public WaresWrapper(Integer code_group, Integer code_wares, Integer code_unit, Integer code_image,
 						String name_wares, String abr_unit,
 						Integer length, Integer width, Integer height, String bar_code) {
-		this.code_group=code_group;
+		this.code_group = code_group;
 		this.code_wares = code_wares;
 		this.code_unit = code_unit;
 		this.name_wares = name_wares;
-		this.abr_unit=abr_unit;
+		this.abr_unit = abr_unit;
 		this.length = length;
 		this.width = width;
 		this.height = height;
@@ -83,11 +81,11 @@ public class WaresWrapper implements IJsonObject {
 		code_unit = resultSet.getInt(AdditionUnitConst.CODE_UNIT);
 		code_image = resultSet.getInt(WaresImageConst.CODE_IMAGE);
 		name_wares = resultSet.getString(WaresConst.NAME_WARES);
-		abr_unit= resultSet.getString(UnitDimensionConst.ABR_UNIT);
+		abr_unit = resultSet.getString(UnitDimensionConst.ABR_UNIT);
 		length = resultSet.getInt(AdditionUnitConst.LENGTH);
 		width = resultSet.getInt(AdditionUnitConst.WIDTH);
 		height = resultSet.getInt(AdditionUnitConst.HEIGHT);
-		bar_code =resultSet.getString(AdditionUnitConst.BAR_CODE);
+		bar_code = resultSet.getString(AdditionUnitConst.BAR_CODE);
 	}
 
 	@Override
@@ -102,7 +100,7 @@ public class WaresWrapper implements IJsonObject {
 		jsonObject.addProperty(AdditionUnitConst.LENGTH, length);
 		jsonObject.addProperty(AdditionUnitConst.WIDTH, width);
 		jsonObject.addProperty(AdditionUnitConst.HEIGHT, height);
-		jsonObject.addProperty(AdditionUnitConst.BAR_CODE, (bar_code!=null)?bar_code:"");
+		jsonObject.addProperty(AdditionUnitConst.BAR_CODE, (bar_code != null) ? bar_code : "");
 		return jsonObject;
 	}
 }

@@ -1,11 +1,10 @@
 package planograma.constant.data;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 06.05.12
  * Time: 16:18
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public interface RackWaresConst {
 	public static final String TABLE_NAME = "EUGENE_SAZ.SEV_PL_WARES_ON_RACK";

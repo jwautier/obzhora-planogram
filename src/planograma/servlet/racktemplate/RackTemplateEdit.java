@@ -20,11 +20,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 21.03.12
  * Time: 20:38
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_RACK_TEMPLATE_EDIT)
 public class RackTemplateEdit extends AbstractAction {
@@ -47,8 +46,8 @@ public class RackTemplateEdit extends AbstractAction {
 		final JsonArray jsonArray = new JsonArray();
 		final int code_rack_template = requestData.getAsJsonObject().get(RackTemplateConst.CODE_RACK_TEMPLATE).getAsInt();
 		final RackTemplate rackTemplate = rackTemplateModel.select(getUserContext(session), code_rack_template);
-		final List<RackShelfTemplate> list= rackShelfTemplateModel.list(getUserContext(session), code_rack_template);
-		for (final RackShelfTemplate item:list){
+		final List<RackShelfTemplate> list = rackShelfTemplateModel.list(getUserContext(session), code_rack_template);
+		for (final RackShelfTemplate item : list) {
 			jsonArray.add(item.toJsonObject());
 		}
 		jsonObject.add("rackTemplate", rackTemplate.toJsonObject());

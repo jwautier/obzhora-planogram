@@ -3,8 +3,11 @@ package planograma.test;
 import planograma.constant.data.*;
 import planograma.constant.data.history.RackHConst;
 import planograma.constant.data.history.SectorHConst;
-import planograma.data.*;
-import planograma.model.*;
+import planograma.data.Shop;
+import planograma.data.StateAll;
+import planograma.data.UserContext;
+import planograma.model.ShopModel;
+import planograma.model.StateAllModel;
 import planograma.model.history.HistoryModel;
 import planograma.test.model.*;
 
@@ -16,11 +19,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 28.03.12
  * Time: 20:10
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class TestModel {
 	public static void main(String args[]) throws SQLException {
@@ -68,9 +70,9 @@ public class TestModel {
 
 	public static void testStateAllModel(final UserContext userContext) throws SQLException {
 		testStateAllModel(userContext, RackConst.TABLE_NAME, RackStateConst.STATE_RACK, RackStateConst.STATE_ALL_PART_STATE_RACK_STATE);
-		testStateAllModel(userContext, RackConst.TABLE_NAME+'|'+RackTemplateConst.TABLE_NAME, AbstractRackConst.LOAD_SIDE, AbstractRackConst.STATE_ALL_PART_STATE_LOAD_SIDE);
+		testStateAllModel(userContext, RackConst.TABLE_NAME + '|' + RackTemplateConst.TABLE_NAME, AbstractRackConst.LOAD_SIDE, AbstractRackConst.STATE_ALL_PART_STATE_LOAD_SIDE);
 		testStateAllModel(userContext, RackTemplateConst.TABLE_NAME, RackTemplateConst.STATE_RACK_TEMPLATE, RackTemplateConst.STATE_ALL_PART_STATE_STATE_RACK_TEMPLATE);
-		testStateAllModel(userContext, RackShelfConst.TABLE_NAME+'|'+RackShelfTemplateConst.TABLE_NAME, AbstractRackShelfConst.TYPE_SHELF, AbstractRackShelfConst.STATE_ALL_PART_STATE_TYPE_SHELF);
+		testStateAllModel(userContext, RackShelfConst.TABLE_NAME + '|' + RackShelfTemplateConst.TABLE_NAME, AbstractRackShelfConst.TYPE_SHELF, AbstractRackShelfConst.STATE_ALL_PART_STATE_TYPE_SHELF);
 	}
 
 	private static void testStateAllModel(final UserContext userContext, final String tableName, final String columnName, final int starteAllPartState) throws SQLException {

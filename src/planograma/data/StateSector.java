@@ -1,11 +1,11 @@
 package planograma.data;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
+ * Состояния секторов планограм
  * Date: 01.04.12
  * Time: 20:37
- * Состояния секторов планограм
+ *
+ * @author Alexandr Polyakov
  */
 public enum StateSector {
 	/**

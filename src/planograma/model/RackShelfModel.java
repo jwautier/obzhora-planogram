@@ -10,11 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 28.03.12
  * Time: 20:15
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class RackShelfModel {
 
@@ -51,7 +50,7 @@ public class RackShelfModel {
 			list.add(item);
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_rack:"+code_rack+")");
+		LOG.debug(time + " ms (code_rack:" + code_rack + ")");
 		return list;
 	}
 
@@ -69,7 +68,7 @@ public class RackShelfModel {
 			rackShelf = new RackShelf(resultSet);
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_shelf:"+code_shelf+")");
+		LOG.debug(time + " ms (code_shelf:" + code_shelf + ")");
 		return rackShelf;
 	}
 
@@ -137,7 +136,7 @@ public class RackShelfModel {
 		callableStatement.setInt(RackShelfConst.CODE_SHELF, code_shelf);
 		callableStatement.execute();
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_shelf:"+code_shelf+")");
+		LOG.debug(time + " ms (code_shelf:" + code_shelf + ")");
 	}
 
 	private static RackShelfModel instance = new RackShelfModel();

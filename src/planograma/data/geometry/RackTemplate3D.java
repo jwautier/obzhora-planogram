@@ -6,15 +6,17 @@ import planograma.utils.geometry.Box3D;
 import planograma.utils.geometry.Point3D;
 
 /**
- * User: poljakov
  * Date: 27.09.12
  * Time: 8:56
+ *
+ * @author Alexandr Polyakov
  */
 public class RackTemplate3D extends Box3D {
 	private final RackTemplate rackTemplate;
+
 	private RackTemplate3D(final RackTemplate rackTemplate, final Point3D p1, final Point3D p2) {
 		// TODO
-		super(p1, 0, 0, 0,0 ,0,0);
+		super(p1, 0, 0, 0, 0, 0, 0);
 		this.rackTemplate = rackTemplate;
 	}
 

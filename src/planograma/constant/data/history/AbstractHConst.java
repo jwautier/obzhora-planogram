@@ -1,9 +1,10 @@
 package planograma.constant.data.history;
 
 /**
- * User: poljakov
  * Date: 18.01.13
  * Time: 10:25
+ *
+ * @author Alexandr Polyakov
  */
 public interface AbstractHConst {
 	public static final String USER_INSERT = "user_insert";

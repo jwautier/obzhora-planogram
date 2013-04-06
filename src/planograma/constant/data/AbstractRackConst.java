@@ -1,9 +1,10 @@
 package planograma.constant.data;
 
 /**
- * User: poljakov
  * Date: 11.01.13
  * Time: 14:30
+ *
+ * @author Alexandr Polyakov
  */
 public interface AbstractRackConst {
 	public static final String X_COORD = "x_coord";

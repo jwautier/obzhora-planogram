@@ -10,11 +10,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 05.06.12
  * Time: 1:29
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class SecurityModel {
 
@@ -35,12 +34,13 @@ public class SecurityModel {
 				result = uid > 0;
 			}
 		} catch (SQLException e) {
-			LOG.error("Error canAccess for code_object:"+code_object, e);
+			LOG.error("Error canAccess for code_object:" + code_object, e);
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_object:"+code_object+")");
+		LOG.debug(time + " ms (code_object:" + code_object + ")");
 		return result;
 	}
+
 	private static SecurityModel instance = new SecurityModel();
 
 	public static SecurityModel getInstance() {

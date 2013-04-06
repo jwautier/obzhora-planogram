@@ -9,9 +9,10 @@ import planograma.data.UserContext;
 import java.sql.*;
 
 /**
- * User: poljakov
  * Date: 19.10.12
  * Time: 16:55
+ *
+ * @author Alexandr Polyakov
  */
 public class RackStateModel {
 

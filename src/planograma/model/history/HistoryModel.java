@@ -14,9 +14,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * User: poljakov
  * Date: 08.08.12
  * Time: 11:19
+ *
+ * @author Alexandr Polyakov
  */
 public class HistoryModel {
 

@@ -17,11 +17,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 26.02.12
  * Time: 2:18
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_RACK_TEMPLATE_LIST)
 public class RackTemplateList extends AbstractAction {

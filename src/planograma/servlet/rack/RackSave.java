@@ -27,11 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
+ * Сохранение стеллажа
  * Date: 21.03.12
  * Time: 23:58
- * Сохранение стеллажа
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_RACK_SAVE)
 public class RackSave extends AbstractAction {
@@ -135,7 +135,8 @@ public class RackSave extends AbstractAction {
 
 		// полка не может пересекать товары(не сохраняется, выделяется одна из полок)
 		if (optionsModel.getBoolean(userContext, OptionsNameConst.RACK_SAVE_SHELF_INTERSECT_WARES)) {
-		RackShelfIntersectWaresValidation.validate(fieldExceptionList, itemList, rackWares2DList);}
+			RackShelfIntersectWaresValidation.validate(fieldExceptionList, itemList, rackWares2DList);
+		}
 
 		final JsonObject jsonObject = new JsonObject();
 		if (fieldExceptionList.isEmpty()) {

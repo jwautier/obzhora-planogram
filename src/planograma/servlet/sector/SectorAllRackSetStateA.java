@@ -21,10 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User: poljakov
+ * изменение состояния всех стеллажей зала на утвержден
  * Date: 15.01.13
  * Time: 9:50
- * изменение состояния всех стеллажей зала на утвержден
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_SECTOR_ALL_RACK_SET_STATE_A)
 public class SectorAllRackSetStateA extends AbstractAction {
@@ -83,10 +84,9 @@ public class SectorAllRackSetStateA extends AbstractAction {
 				rackStateModel.changestate(userContext, rack.getCode_rack(), (changeRackStateInSector) ? EStateRack.A : null, (changeRackState) ? EStateRack.A : null);
 			}
 		}
-		if (!notAccessRackList.isEmpty())
-		{
-			JsonArray jsonArray=new JsonArray();
-			for (String barcode:notAccessRackList){
+		if (!notAccessRackList.isEmpty()) {
+			JsonArray jsonArray = new JsonArray();
+			for (String barcode : notAccessRackList) {
 				jsonArray.add(new JsonPrimitive(barcode));
 			}
 			jsonObject.add("notAccessRackList", jsonArray);

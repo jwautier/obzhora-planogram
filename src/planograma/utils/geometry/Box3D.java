@@ -1,10 +1,11 @@
 package planograma.utils.geometry;
 
 /**
- * User: poljakov
+ * прямоугольный параллелепипед
  * Date: 09.01.13
  * Time: 8:57
- * прямоугольный параллелепипед
+ *
+ * @author Alexandr Polyakov
  */
 public class Box3D {
 	final protected Point3D center; // положение обекта
@@ -17,10 +18,10 @@ public class Box3D {
 	private double cosX, sinX;      // коефициенты для поворота по X
 	private double cosY, sinY;      // коефициенты для поворота по Y
 	private double cosZ, sinZ;      // коефициенты для поворота по Z
-	private final Point3D points[]={// точки
-			new Point3D(0,0,0),new Point3D(0,0,0),new Point3D(0,0,0),new Point3D(0,0,0),
-			new Point3D(0,0,0),new Point3D(0,0,0),new Point3D(0,0,0),new Point3D(0,0,0),
-			};
+	private final Point3D points[] = {// точки
+			new Point3D(0, 0, 0), new Point3D(0, 0, 0), new Point3D(0, 0, 0), new Point3D(0, 0, 0),
+			new Point3D(0, 0, 0), new Point3D(0, 0, 0), new Point3D(0, 0, 0), new Point3D(0, 0, 0),
+	};
 
 	public Box3D(Point3D center,
 				 float dx,
@@ -30,22 +31,21 @@ public class Box3D {
 				 float angleY,
 				 float angleZ) {
 		this.center = center;
-		this.dx=dx;
-		this.dy=dy;
-		this.dz=dz;
-		this.angleX=angleX;
-		this.angleY=angleY;
-		this.angleZ=angleZ;
+		this.dx = dx;
+		this.dy = dy;
+		this.dz = dz;
+		this.angleX = angleX;
+		this.angleY = angleY;
+		this.angleZ = angleZ;
 	}
 
-	public void calcPosition()
-	{
-		cosX=Math.cos(Math.toRadians(angleX));
-		sinX=Math.sin(Math.toRadians(angleX));
-		cosY=Math.cos(Math.toRadians(angleY));
-		sinY=Math.sin(Math.toRadians(angleY));
-		cosZ=Math.cos(Math.toRadians(angleZ));
-		sinZ=Math.sin(Math.toRadians(angleZ));
+	public void calcPosition() {
+		cosX = Math.cos(Math.toRadians(angleX));
+		sinX = Math.sin(Math.toRadians(angleX));
+		cosY = Math.cos(Math.toRadians(angleY));
+		sinY = Math.sin(Math.toRadians(angleY));
+		cosZ = Math.cos(Math.toRadians(angleZ));
+		sinZ = Math.sin(Math.toRadians(angleZ));
 
 
 	}

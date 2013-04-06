@@ -10,11 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 21.03.12
  * Time: 1:18
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class RackModel {
 
@@ -64,7 +63,7 @@ public class RackModel {
 			list.add(item);
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_sector:"+code_sector+")");
+		LOG.debug(time + " ms (code_sector:" + code_sector + ")");
 		return list;
 	}
 
@@ -82,7 +81,7 @@ public class RackModel {
 			rack = new Rack(resultSet);
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_rack:"+code_rack+")");
+		LOG.debug(time + " ms (code_rack:" + code_rack + ")");
 		return rack;
 	}
 
@@ -102,12 +101,12 @@ public class RackModel {
 			":" + RackConst.CODE_RACK_TEMPLATE + "," +
 			":" + RackConst.LOCK_SIZE + "," +
 			":" + RackConst.LOCK_MOVE + "," +
-			":" + RackConst.TYPE_RACK +"," +
-			":" + RackConst.REAL_LENGTH +"," +
-			":" + RackConst.REAL_WIDTH +"," +
-			":" + RackConst.REAL_HEIGHT +"," +
-			":" + RackConst.X_OFFSET +"," +
-			":" + RackConst.Y_OFFSET +"," +
+			":" + RackConst.TYPE_RACK + "," +
+			":" + RackConst.REAL_LENGTH + "," +
+			":" + RackConst.REAL_WIDTH + "," +
+			":" + RackConst.REAL_HEIGHT + "," +
+			":" + RackConst.X_OFFSET + "," +
+			":" + RackConst.Y_OFFSET + "," +
 			":" + RackConst.Z_OFFSET +
 			")}";
 
@@ -189,7 +188,7 @@ public class RackModel {
 		callableStatement.setInt(RackConst.CODE_RACK, code_rack);
 		callableStatement.execute();
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_rack:"+code_rack+")");
+		LOG.debug(time + " ms (code_rack:" + code_rack + ")");
 	}
 
 	private static RackModel instance = new RackModel();

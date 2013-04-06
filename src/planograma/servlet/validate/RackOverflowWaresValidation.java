@@ -11,10 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User: poljakov
+ * полезная зона стеллажа не может стать меньше чем расположеные на нем товары
  * Date: 14.01.13
  * Time: 9:13
- * полезная зона стеллажа не может стать меньше чем расположеные на нем товары
+ *
+ * @author Alexandr Polyakov
  */
 public class RackOverflowWaresValidation {
 	/**

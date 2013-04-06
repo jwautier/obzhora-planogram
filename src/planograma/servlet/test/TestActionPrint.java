@@ -27,11 +27,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 08.06.12
  * Time: 4:25
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/test")
 public class TestActionPrint extends HttpServlet {
@@ -245,7 +244,6 @@ public class TestActionPrint extends HttpServlet {
 
 		cb.restoreState();
 	}
-
 
 
 }

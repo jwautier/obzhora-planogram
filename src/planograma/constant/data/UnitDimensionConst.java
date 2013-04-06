@@ -1,11 +1,10 @@
 package planograma.constant.data;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 01.05.12
  * Time: 19:27
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public interface UnitDimensionConst {
 	public static final String TABLE_NAME = "mz.unit_dimension";

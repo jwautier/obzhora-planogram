@@ -7,11 +7,11 @@ import java.sql.SQLException;
 import java.util.Date;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
+ * Состояние стеллажа (отслеживать изменение размеров, положения полок, положение товаров)
  * Date: 18.03.12
  * Time: 9:39
- * Состояние стеллажа (отслеживать изменение размеров, положения полок, положение товаров)
+ *
+ * @author Alexandr Polyakov
  */
 public class RackState extends AbstractRackState {
 	public RackState(Integer code_rack, EStateRack state_rack, Date date_draft, Integer user_draft, Date date_active, Integer user_active, Date date_complete, Integer user_complete) {

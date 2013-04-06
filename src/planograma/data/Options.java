@@ -2,14 +2,16 @@ package planograma.data;
 
 import com.google.gson.JsonObject;
 import planograma.constant.data.OptionsConst;
-import planograma.utils.JsonUtils;
+import planograma.utils.json.IJsonObject;
+import planograma.utils.json.JsonUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * User: a_polyakov
  * Настройка системы
+ *
+ * @author Alexandr Polyakov
  */
 public class Options implements IJsonObject {
 	/**

@@ -16,11 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 27.04.12
  * Time: 5:20
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class WaresModel {
 
@@ -44,7 +43,8 @@ public class WaresModel {
 					" join " + UnitDimensionConst.TABLE_NAME + " ud on ud." + UnitDimensionConst.CODE_UNIT + "  = u." + AdditionUnitConst.CODE_UNIT +
 					" left join " + WaresImageConst.TABLE_NAME + " wi on wi." + WaresImageConst.CODE_WARES + " = w." + WaresConst.CODE_WARES + " " +
 					"where" +
-					" u." + AdditionUnitConst.LENGTH + ">0" +
+					" w." + WaresConst.OLD_WARES + "='No'" +
+					" and u." + AdditionUnitConst.LENGTH + ">0" +
 					" and u." + AdditionUnitConst.WIDTH + ">0" +
 					" and u." + AdditionUnitConst.HEIGHT + ">0";
 

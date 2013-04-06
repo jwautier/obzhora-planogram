@@ -11,9 +11,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * User: poljakov
  * Date: 19.10.12
  * Time: 16:55
+ *
+ * @author Alexandr Polyakov
  */
 public class RackStateInSectorModel {
 

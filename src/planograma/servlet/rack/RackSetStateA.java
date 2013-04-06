@@ -21,10 +21,11 @@ import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 
 /**
- * User: poljakov
+ * изменение состояния стеллажа на утвержден
  * Date: 15.01.13
  * Time: 9:50
- * изменение состояния стеллажа на утвержден
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_RACK_SET_STATE_A)
 public class RackSetStateA extends AbstractAction {

@@ -13,19 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User: poljakov
  * Date: 17.01.13
  * Time: 14:49
+ *
+ * @author Alexandr Polyakov
  */
 public class SectorFindWaresModel {
 	private static final Logger LOG = Logger.getLogger(SectorFindWaresModel.class);
 
 	private static final String Q_FIND = "select" +
 			" distinct r." + RackConst.RACK_BARCODE + " " +
-			"from " + RackConst.TABLE_NAME+" r " +
-			" join " + RackWaresConst.TABLE_NAME+ " rw on rw."+RackWaresConst.CODE_RACK+"=r."+RackConst.CODE_RACK+" "+
-			"where r."+RackConst.CODE_SECTOR+"=?" +
-			" and rw."+RackWaresConst.CODE_WARES+"=?";
+			"from " + RackConst.TABLE_NAME + " r " +
+			" join " + RackWaresConst.TABLE_NAME + " rw on rw." + RackWaresConst.CODE_RACK + "=r." + RackConst.CODE_RACK + " " +
+			"where r." + RackConst.CODE_SECTOR + "=?" +
+			" and rw." + RackWaresConst.CODE_WARES + "=?";
 
 	public List<String> findRackInSectorContainsWares(final UserContext userContext, final int code_sector, final int code_wares) throws SQLException {
 		long time = System.currentTimeMillis();
@@ -39,7 +40,7 @@ public class SectorFindWaresModel {
 			list.add(resultSet.getString(1));
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_sector:"+code_sector+")");
+		LOG.debug(time + " ms (code_sector:" + code_sector + ")");
 		return list;
 	}
 

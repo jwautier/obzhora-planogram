@@ -3,13 +3,12 @@ package planograma.constant.data.history;
 import planograma.constant.data.RackShelfConst;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 28.03.12
  * Time: 20:18
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
-public interface RackShelfHConst extends AbstractHConst{
+public interface RackShelfHConst extends AbstractHConst {
 	public static final String TABLE_NAME = "EUGENE_SAZ.SEV_PL_SHELF_H$";
 
 	public static final String CODE_RACK = RackShelfConst.CODE_RACK;

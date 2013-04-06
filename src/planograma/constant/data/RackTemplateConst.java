@@ -1,13 +1,12 @@
 package planograma.constant.data;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 21.03.12
  * Time: 0:16
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
-public interface RackTemplateConst extends AbstractRackConst{
+public interface RackTemplateConst extends AbstractRackConst {
 	public static final String TABLE_NAME = "EUGENE_SAZ.SEV_PL_RACK_TEMPLATE";
 
 	public static final String CODE_RACK_TEMPLATE = "code_rack_template";

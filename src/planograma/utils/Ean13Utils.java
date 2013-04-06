@@ -1,9 +1,10 @@
 package planograma.utils;
 
 /**
- * User: poljakov
  * Date: 19.10.12
  * Time: 11:19
+ *
+ * @author Alexandr Polyakov
  */
 public class Ean13Utils {
 	public static String getEAN13(long code) {
@@ -50,15 +51,14 @@ public class Ean13Utils {
 			while (nabor.length() < 12)
 				nabor.insert(0, '0');
 
-			int s=0;
-			while (code>0)
-			{
-				s+=(code%10)*3;
-				code/=10;
-				s+=(code%10);
-				code/=10;
+			int s = 0;
+			while (code > 0) {
+				s += (code % 10) * 3;
+				code /= 10;
+				s += (code % 10);
+				code /= 10;
 			}
-			s%=10;
+			s %= 10;
 			if (!(s == 0)) {
 				s = 10 - s;
 			}
@@ -68,11 +68,10 @@ public class Ean13Utils {
 	}
 
 	private static int getNumber(StringBuilder code, int index) {
-		return code.charAt(index)-'0';
+		return code.charAt(index) - '0';
 	}
 
-	public static void main(String args[])
-	{
+	public static void main(String args[]) {
 		System.out.println(getEAN13(0));
 		System.out.println(get2EAN13(0));
 		System.out.println(getEAN13(1));
@@ -84,20 +83,18 @@ public class Ean13Utils {
 		System.out.println(getEAN13(1234567890123L));
 		System.out.println(get2EAN13(1234567890123L));
 
-		long time=System.currentTimeMillis();
-		for (int i=0; i<500000000L;i++)
-		{
+		long time = System.currentTimeMillis();
+		for (int i = 0; i < 500000000L; i++) {
 			getEAN13(0);
 		}
-		time=System.currentTimeMillis()-time;
-		System.out.println("getEAN13 "+time);
-		time=System.currentTimeMillis();
-		for (int i=0; i<500000000L;i++)
-		{
+		time = System.currentTimeMillis() - time;
+		System.out.println("getEAN13 " + time);
+		time = System.currentTimeMillis();
+		for (int i = 0; i < 500000000L; i++) {
 			get2EAN13(0);
 		}
-		time=System.currentTimeMillis()-time;
-		System.out.println("get2EAN13 "+time);
+		time = System.currentTimeMillis() - time;
+		System.out.println("get2EAN13 " + time);
 
 	}
 }

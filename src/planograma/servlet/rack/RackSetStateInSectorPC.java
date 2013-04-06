@@ -21,10 +21,11 @@ import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 
 /**
- * User: poljakov
+ * изменение состояния стеллажа в зале на выполнен
  * Date: 15.01.13
  * Time: 9:50
- * изменение состояния стеллажа в зале на выполнен
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_RACK_SET_STATE_IN_SECTOR_PC)
 public class RackSetStateInSectorPC extends AbstractAction {
@@ -54,9 +55,9 @@ public class RackSetStateInSectorPC extends AbstractAction {
 				rackStateInSector.getState_rack() == EStateRack.A
 						&&
 						(// есть право на выполнение стеллажа в зале
-						securityModel.canAccess(userContext, SecurityConst.ACCESS_RACK_STATE_IN_SECTOR_SET_PC)
-						// есть доступ к глобальному выполнению стеллажей зала
-						|| securityModel.canAccess(userContext, SecurityConst.ACCESS_ALL_RACK_SET_STATE_SET_STATE_IN_SECTOR_PC));
+								securityModel.canAccess(userContext, SecurityConst.ACCESS_RACK_STATE_IN_SECTOR_SET_PC)
+										// есть доступ к глобальному выполнению стеллажей зала
+										|| securityModel.canAccess(userContext, SecurityConst.ACCESS_ALL_RACK_SET_STATE_SET_STATE_IN_SECTOR_PC));
 		if (canSetStateInSectorPC) {
 			rackStateModel.changestate(userContext, code_rack, EStateRack.PC, null);
 			commit(userContext);

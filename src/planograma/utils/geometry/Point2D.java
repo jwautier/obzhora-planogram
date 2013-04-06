@@ -1,13 +1,12 @@
 package planograma.utils.geometry;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 20.05.12
  * Time: 15:04
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
-public class Point2D implements Cloneable{
+public class Point2D implements Cloneable {
 	protected float x;
 	protected float y;
 
@@ -44,6 +43,6 @@ public class Point2D implements Cloneable{
 
 	@Override
 	public Point2D clone() {
-		return new Point2D(x,y);
+		return new Point2D(x, y);
 	}
 }

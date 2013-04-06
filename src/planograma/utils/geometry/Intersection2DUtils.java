@@ -5,11 +5,11 @@ import planograma.data.geometry.RackShelf2D;
 import planograma.data.geometry.RackWares2D;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
+ * Утилитный класс определяющий пересечение обектов
  * Date: 18.06.12
  * Time: 3:15
- * Утилитный класс определяющий пересечение обектов
+ *
+ * @author Alexandr Polyakov
  */
 public class Intersection2DUtils {
 

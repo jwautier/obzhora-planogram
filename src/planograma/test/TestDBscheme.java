@@ -14,9 +14,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * User: poljakov
  * Date: 08.08.12
  * Time: 8:43
+ *
+ * @author Alexandr Polyakov
  */
 public class TestDBscheme {
 

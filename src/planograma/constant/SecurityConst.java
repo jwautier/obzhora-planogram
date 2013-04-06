@@ -1,12 +1,13 @@
 package planograma.constant;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
- * Date: 01.06.12
- * Time: 4:30
  * список разграничений в приложении
  * select * from mz.security_list where parent_object_code = -139
+ * <p/>
+ * Date: 01.06.12
+ * Time: 4:30
+ *
+ * @author Alexandr Polyakov
  */
 public enum SecurityConst {
 	/**

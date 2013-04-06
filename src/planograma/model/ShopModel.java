@@ -13,11 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 01.03.12
  * Time: 2:29
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class ShopModel {
 
@@ -30,7 +29,7 @@ public class ShopModel {
 			"order by " + ShopConst.NAME_SHOP;
 
 	public List<Shop> list(final UserContext userContext) throws SQLException {
-		long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_LIST);
 		final ResultSet resultSet = ps.executeQuery();
@@ -51,7 +50,7 @@ public class ShopModel {
 			"where " + ShopConst.CODE_SHOP + "=?";
 
 	public Shop select(final UserContext userContext, final int code_shop) throws SQLException {
-		long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_SELECT);
 		ps.setInt(1, code_shop);
@@ -61,7 +60,7 @@ public class ShopModel {
 			shop = new Shop(resultSet);
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_shop:"+code_shop+")");
+		LOG.debug(time + " ms (code_shop:" + code_shop + ")");
 		return shop;
 	}
 

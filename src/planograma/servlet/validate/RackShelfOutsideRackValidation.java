@@ -8,10 +8,11 @@ import planograma.exception.EntityFieldException;
 import java.util.List;
 
 /**
- * User: poljakov
+ * Проверка: полка не может выходить за пределы стеллажа
  * Date: 09.01.13
  * Time: 14:45
- * Проверка: полка не может выходить за пределы стеллажа
+ *
+ * @author Alexandr Polyakov
  */
 public class RackShelfOutsideRackValidation {
 	/**

@@ -21,11 +21,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 21.03.12
  * Time: 20:38
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_SECTOR_EDIT)
 public class SectorEdit extends AbstractAction {
@@ -42,7 +41,7 @@ public class SectorEdit extends AbstractAction {
 		super.init(config);
 		sectorModel = SectorModel.getInstance();
 		rackModel = RackModel.getInstance();
-		rackStateModel=RackStateModel.getInstance();
+		rackStateModel = RackStateModel.getInstance();
 		rackStateInSectorModel = RackStateInSectorModel.getInstance();
 	}
 
@@ -52,15 +51,16 @@ public class SectorEdit extends AbstractAction {
 		final JsonArray jsonArray = new JsonArray();
 		final JsonArray rackStateList = new JsonArray();
 		final JsonArray rackStateInSectorList = new JsonArray();
-		final UserContext userContext=getUserContext(session);
+		final UserContext userContext = getUserContext(session);
 		final int code_sector = requestData.getAsJsonObject().get(SectorConst.CODE_SECTOR).getAsInt();
 		final Sector sector = sectorModel.select(userContext, code_sector);
 		final List<Rack> list = rackModel.list(userContext, code_sector);
+		// TODO выборка состояний вместе со стеллажами за один запрос
 		for (final Rack rack : list) {
 			jsonArray.add(rack.toJsonObject());
-			final RackState rackState= rackStateModel.select(userContext, rack.getCode_rack());
+			final RackState rackState = rackStateModel.select(userContext, rack.getCode_rack());
 			rackStateList.add(rackState.toJsonObject());
-			final RackStateInSector rackStateInSector= rackStateInSectorModel.select(userContext, rack.getCode_rack());
+			final RackStateInSector rackStateInSector = rackStateInSectorModel.select(userContext, rack.getCode_rack());
 			rackStateInSectorList.add(rackStateInSector.toJsonObject());
 		}
 		jsonObject.add("sector", sector.toJsonObject());

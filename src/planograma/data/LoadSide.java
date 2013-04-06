@@ -1,11 +1,11 @@
 package planograma.data;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
+ * Сторона загрузки
  * Date: 01.04.12
  * Time: 20:52
- * Сторона загрузки
+ *
+ * @author Alexandr Polyakov
  */
 public enum LoadSide {
 	/**

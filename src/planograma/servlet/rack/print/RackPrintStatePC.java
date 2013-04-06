@@ -15,11 +15,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 08.06.12
  * Time: 4:25
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_RACK_PRINT_PC + "*")
 public class RackPrintStatePC extends AbstractRackPrint {

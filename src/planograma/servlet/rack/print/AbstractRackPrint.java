@@ -25,11 +25,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 08.06.12
  * Time: 4:25
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public abstract class AbstractRackPrint extends HttpServlet {
 
@@ -56,7 +55,7 @@ public abstract class AbstractRackPrint extends HttpServlet {
 			final HttpSession session = request.getSession(false);
 			final UserContext userContext = (UserContext) session.getAttribute(SessionConst.SESSION_USER);
 
-			final Date date=getDate(userContext, code_rack);
+			final Date date = getDate(userContext, code_rack);
 			if (date != null) {
 				final Rack rack = getRack(userContext, code_rack, date);
 				final List<RackShelf> rackShelfList = getRackShelfList(userContext, code_rack, date);

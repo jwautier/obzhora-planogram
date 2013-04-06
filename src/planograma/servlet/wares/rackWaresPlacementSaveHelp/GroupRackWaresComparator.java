@@ -3,11 +3,10 @@ package planograma.servlet.wares.rackWaresPlacementSaveHelp;
 import java.util.Comparator;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 18.06.12
  * Time: 6:18
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class GroupRackWaresComparator implements Comparator<GroupRackWares> {
 	float minWidth;

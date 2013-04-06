@@ -11,16 +11,17 @@ import java.sql.Statement;
 import java.util.Date;
 
 /**
- * User: poljakov
  * Date: 11.08.12
  * Time: 17:03
+ *
+ * @author Alexandr Polyakov
  */
 public class TestSectorHModel {
 	public static void testSectorHModel(final UserContext userContext) throws SQLException {
 		final SectorModel sectorModel = SectorModel.getInstance();
 		final SectorHModel sectorHModel = SectorHModel.getInstance();
 
-		Sector sector = new Sector(8, null, "sector 1", 2000, 2000, 300, null,null, null, null);
+		Sector sector = new Sector(8, null, "sector 1", 2000, 2000, 300, null, null, null, null);
 		sectorModel.insert(userContext, sector);
 		sector = sectorModel.select(userContext, sector.getCode_sector());
 		final Date inserted = sector.getDate_insert();

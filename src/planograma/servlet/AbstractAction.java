@@ -26,11 +26,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 12.02.12
  * Time: 0:40
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public abstract class AbstractAction extends HttpServlet {
 	public static final String REQUEST_DATA = "data";

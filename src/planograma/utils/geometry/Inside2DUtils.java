@@ -1,10 +1,11 @@
 package planograma.utils.geometry;
 
 /**
- * User: poljakov
+ * Утилитный класс определяющий полное перекрытие одного обекта другим
  * Date: 27.09.12
  * Time: 8:34
- * Утилитный класс определяющий полное перекрытие одного обекта другим
+ *
+ * @author Alexandr Polyakov
  */
 public class Inside2DUtils {
 	/**
@@ -37,6 +38,7 @@ public class Inside2DUtils {
 
 	/**
 	 * Четырехугольник a лежит внутри прямоугольника b
+	 *
 	 * @param a четырехугольник
 	 * @param b прямоугольник (угол поворота = 0)
 	 * @return Четырехугольник a внутри прямоугольника b

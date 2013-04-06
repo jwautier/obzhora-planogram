@@ -2,18 +2,19 @@ package planograma.data;
 
 import com.google.gson.JsonObject;
 import planograma.constant.data.AbstractRackStateConst;
-import planograma.utils.JsonUtils;
+import planograma.utils.json.IJsonObject;
+import planograma.utils.json.JsonUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
+ * Состояние стеллажа
  * Date: 18.03.12
  * Time: 9:39
- * Состояние стеллажа
+ *
+ * @author Alexandr Polyakov
  */
 public abstract class AbstractRackState implements IJsonObject {
 	/**

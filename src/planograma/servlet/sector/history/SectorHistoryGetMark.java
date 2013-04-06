@@ -20,9 +20,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * User: poljakov
  * Date: 18.01.13
  * Time: 8:59
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_SECTOR_HISTORY_GET_MARK)
 public class SectorHistoryGetMark extends AbstractAction {

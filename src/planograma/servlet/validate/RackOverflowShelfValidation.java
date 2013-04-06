@@ -10,21 +10,22 @@ import planograma.exception.EntityFieldException;
 import java.util.List;
 
 /**
- * User: poljakov
+ * стеллаж не может стать меньше чем расположеные на нем полки
  * Date: 14.01.13
  * Time: 9:28
- * стеллаж не может стать меньше чем расположеные на нем полки
+ *
+ * @author Alexandr Polyakov
  */
 public class RackOverflowShelfValidation {
 	/**
 	 * стеллаж не может стать меньше чем расположеные на нем полки
+	 *
 	 * @param fieldExceptionList
 	 * @param rack
 	 * @param rackIndex
 	 * @param rackShelfList
 	 */
-	public static void validate(final List<EntityFieldException> fieldExceptionList, final Rack rack, final int rackIndex, final List<RackShelf> rackShelfList)
-	{
+	public static void validate(final List<EntityFieldException> fieldExceptionList, final Rack rack, final int rackIndex, final List<RackShelf> rackShelfList) {
 		float dx;
 		float dy;
 		float dz;

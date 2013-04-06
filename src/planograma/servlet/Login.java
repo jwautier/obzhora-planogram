@@ -15,11 +15,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpSession;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 17.02.12
  * Time: 6:52
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet('/' + UrlConst.URL_LOGIN)
 public class Login extends AbstractAction {

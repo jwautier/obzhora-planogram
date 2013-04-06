@@ -19,11 +19,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 26.04.12
  * Time: 5:30
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_IMAGE_LOAD + "*")
 public class ImageLoad extends HttpServlet {
@@ -44,8 +43,8 @@ public class ImageLoad extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse resp) throws IOException {
 		long time = System.currentTimeMillis();
 		try {
-			resp.setDateHeader("Expires", System.currentTimeMillis() + 31*24*60*60*1000);
-			resp.setDateHeader("Last-Modified", 30L*12*31*24*60*60*1000);
+			resp.setDateHeader("Expires", System.currentTimeMillis() + 31 * 24 * 60 * 60 * 1000);
+			resp.setDateHeader("Last-Modified", 30L * 12 * 31 * 24 * 60 * 60 * 1000);
 			resp.setContentType("image/jpeg");
 			int code_image = Integer.parseInt(request.getPathInfo().substring(1));
 			final HttpSession session = request.getSession(false);
@@ -54,6 +53,8 @@ public class ImageLoad extends HttpServlet {
 			final OutputStream outputStream = resp.getOutputStream();
 			final long size = FileUtils.copy(inputStream, outputStream);
 			resp.setContentLength((int) size);
+			inputStream.close();
+			outputStream.close();
 		} catch (Exception e) {
 			LOG.error("Error load image", e);
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);

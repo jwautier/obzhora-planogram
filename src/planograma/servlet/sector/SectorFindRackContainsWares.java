@@ -19,9 +19,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * User: poljakov
  * Date: 17.01.13
  * Time: 14:40
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_SECTOR_FIND_WARES)
 public class SectorFindRackContainsWares extends AbstractAction {
@@ -41,14 +42,13 @@ public class SectorFindRackContainsWares extends AbstractAction {
 		final int code_sector = requestData.getAsJsonObject().get(SectorConst.CODE_SECTOR).getAsInt();
 		final int code_wares = requestData.getAsJsonObject().get(WaresConst.CODE_WARES).getAsInt();
 
-		final List<String> rackList=sectorFindWaresModel.findRackInSectorContainsWares(getUserContext(session),code_sector, code_wares);
+		final List<String> rackList = sectorFindWaresModel.findRackInSectorContainsWares(getUserContext(session), code_sector, code_wares);
 		final JsonObject jsonObject = new JsonObject();
 		final JsonArray jsonArray = new JsonArray();
-		for (String barcode:rackList)
-		{
+		for (String barcode : rackList) {
 			jsonArray.add(new JsonPrimitive(barcode));
 		}
-		jsonObject.add("findBarcodeRackList",jsonArray);
+		jsonObject.add("findBarcodeRackList", jsonArray);
 
 		return jsonObject;
 	}

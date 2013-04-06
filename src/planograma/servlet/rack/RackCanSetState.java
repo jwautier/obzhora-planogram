@@ -23,10 +23,11 @@ import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 
 /**
- * User: poljakov
+ * проверка доступности состояний пользователю для указаного стеллажа
  * Date: 15.01.13
  * Time: 9:50
- * проверка доступности состояний пользователю для указаного стеллажа
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_RACK_CAN_SET_STATE)
 public class RackCanSetState extends AbstractAction {

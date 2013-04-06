@@ -15,11 +15,10 @@ import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 21.03.12
  * Time: 23:58
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_RACK_WARES_PLACEMENT_SET_BASKET)
 public class BasketSet extends AbstractAction {
@@ -33,7 +32,7 @@ public class BasketSet extends AbstractAction {
 
 	@Override
 	protected JsonObject execute(HttpSession session, JsonElement requestData) throws UnauthorizedException, SQLException, NotAccessException {
-		final JsonObject basket=requestData.getAsJsonObject();
+		final JsonObject basket = requestData.getAsJsonObject();
 		session.setAttribute(SessionConst.SESSION_BASKET, basket);
 		return null;
 	}

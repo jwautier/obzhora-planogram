@@ -1,13 +1,12 @@
 package planograma.constant.data;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 21.03.12
  * Time: 0:16
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
-public interface RackConst extends AbstractRackConst{
+public interface RackConst extends AbstractRackConst {
 	public static final String TABLE_NAME = "EUGENE_SAZ.SEV_PL_RACK_IN_SECTOR";
 
 	public static final String CODE_SECTOR = "code_sector";
@@ -21,6 +20,6 @@ public interface RackConst extends AbstractRackConst{
 	public static final String LOCK_SIZE = "lock_size";
 	public static final String LOCK_MOVE = "lock_move";
 	public static final String TYPE_RACK = "type_rack";
-	
+
 	public static final int STATE_ALL_PART_STATE_TYPE_RACK = -68;
 }

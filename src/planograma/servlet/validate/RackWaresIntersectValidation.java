@@ -11,10 +11,11 @@ import planograma.utils.geometry.Intersection2DUtils;
 import java.util.List;
 
 /**
- * User: poljakov
+ * товар не может пересекать полку
  * Date: 14.01.13
  * Time: 9:39
- * товар не может пересекать полку
+ *
+ * @author Alexandr Polyakov
  */
 public class RackWaresIntersectValidation {
 	/**
@@ -38,13 +39,14 @@ public class RackWaresIntersectValidation {
 
 	/**
 	 * товар не может пересекать с соседними товарами
+	 *
 	 * @param fieldExceptionList
 	 * @param rackWares2DList
 	 */
 	public static void validate(final List<EntityFieldException> fieldExceptionList, final List<RackWares2D> rackWares2DList) {
 		for (int i = 0; i < rackWares2DList.size(); i++) {
 			final RackWares2D a = rackWares2DList.get(i);
-			for (int j = i+1; j < rackWares2DList.size(); j++) {
+			for (int j = i + 1; j < rackWares2DList.size(); j++) {
 				final RackWares2D b = rackWares2DList.get(j);
 				if (Intersection2DUtils.isIntersection(a, b)) {
 					fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_WARES_INTERSECT_WARES(), RackWares.class, j, b.getRackWares().getCode_wares_on_rack(), "wares_intersect_shelf"));

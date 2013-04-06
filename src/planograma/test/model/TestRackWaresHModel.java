@@ -13,9 +13,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * User: poljakov
  * Date: 16.08.12
  * Time: 9:10
+ *
+ * @author Alexandr Polyakov
  */
 public class TestRackWaresHModel {
 
