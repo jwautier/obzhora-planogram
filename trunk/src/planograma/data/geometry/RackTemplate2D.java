@@ -4,9 +4,10 @@ import planograma.data.RackTemplate;
 import planograma.utils.geometry.Rectangle2D;
 
 /**
- * User: poljakov
  * Date: 27.09.12
  * Time: 8:56
+ *
+ * @author Alexandr Polyakov
  */
 public class RackTemplate2D extends Rectangle2D {
 	private final RackTemplate rackTemplate;

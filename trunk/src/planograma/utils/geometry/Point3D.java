@@ -1,11 +1,10 @@
 package planograma.utils.geometry;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 20.05.12
  * Time: 15:04
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class Point3D implements Cloneable {
 

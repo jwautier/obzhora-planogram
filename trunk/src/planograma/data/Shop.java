@@ -3,16 +3,17 @@ package planograma.data;
 
 import com.google.gson.JsonObject;
 import planograma.constant.data.ShopConst;
+import planograma.utils.json.IJsonObject;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
+ * точки продаж
  * Date: 26.02.12
  * Time: 3:51
- * точки продаж
+ *
+ * @author Alexandr Polyakov
  */
 public class Shop implements IJsonObject {
 	/**

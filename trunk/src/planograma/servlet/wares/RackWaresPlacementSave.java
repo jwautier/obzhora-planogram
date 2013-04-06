@@ -35,11 +35,10 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 16.05.12
  * Time: 6:34
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_RACK_WARES_PLACEMENT_SAVE)
 public class RackWaresPlacementSave extends AbstractAction {

@@ -8,14 +8,15 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * User: poljakov
  * Date: 19.10.12
  * Time: 11:03
+ *
+ * @author Alexandr Polyakov
  */
 public class TestSectorModel {
 	public static void testSectorModel(final UserContext userContext) throws SQLException {
 		final SectorModel sectorModel = SectorModel.getInstance();
-		Sector sector = new Sector(8, null, "sector 1", 2000, 2000, 300, null,null, null, null);
+		Sector sector = new Sector(8, null, "sector 1", 2000, 2000, 300, null, null, null, null);
 		System.out.println(sector.toJsonObject());
 		sectorModel.insert(userContext, sector);
 		System.out.println("insert");

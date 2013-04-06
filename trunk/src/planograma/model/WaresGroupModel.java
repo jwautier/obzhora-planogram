@@ -15,11 +15,10 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 27.04.12
  * Time: 3:47
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class WaresGroupModel {
 

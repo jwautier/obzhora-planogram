@@ -1,9 +1,10 @@
 package planograma.constant;
 
 /**
- * User: poljakov
  * Date: 18.09.12
  * Time: 8:05
+ *
+ * @author Alexandr Polyakov
  */
 public interface VerificationConst {
 	/**

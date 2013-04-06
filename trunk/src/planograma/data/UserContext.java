@@ -6,11 +6,10 @@ import java.io.Serializable;
 import java.sql.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 28.02.12
  * Time: 5:28
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class UserContext implements Serializable {
 
@@ -22,7 +21,7 @@ public class UserContext implements Serializable {
 	private final Connection connection;
 
 	public UserContext(final String login, final String password) throws ClassNotFoundException, SQLException {
-		this.login=login;
+		this.login = login;
 		// Загружаем класс драйвера
 		Class.forName(DBConst.DB_DRIVER);
 		// Cоздаем соединение

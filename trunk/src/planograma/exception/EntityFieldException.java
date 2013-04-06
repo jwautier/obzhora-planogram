@@ -3,9 +3,10 @@ package planograma.exception;
 import com.google.gson.JsonObject;
 
 /**
- * User: poljakov
  * Date: 18.09.12
  * Time: 8:22
+ *
+ * @author Alexandr Polyakov
  */
 public class EntityFieldException extends Exception {
 	private String entityClass;
@@ -21,9 +22,8 @@ public class EntityFieldException extends Exception {
 		this.fieldName = fieldName;
 	}
 
-	public JsonObject toJSON()
-	{
-		final JsonObject jsonObject=new JsonObject();
+	public JsonObject toJSON() {
+		final JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("message", getMessage());
 		jsonObject.addProperty("entityClass", entityClass);
 		jsonObject.addProperty("entityIndex", entityIndex);

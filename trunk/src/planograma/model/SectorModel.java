@@ -10,11 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 28.02.12
  * Time: 6:01
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 
 public class SectorModel {
@@ -34,7 +33,7 @@ public class SectorModel {
 			" " + SectorConst.DATE_UPDATE + " " +
 			"from " + SectorConst.TABLE_NAME;
 
-	private static final String Q_LIST =  Q_SELECT_FROM +
+	private static final String Q_LIST = Q_SELECT_FROM +
 			" where " + SectorConst.CODE_SHOP + "=? " +
 			"order by " + SectorConst.NAME_SECTOR;
 
@@ -50,7 +49,7 @@ public class SectorModel {
 			list.add(item);
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_shop:"+code_shop+")");
+		LOG.debug(time + " ms (code_shop:" + code_shop + ")");
 		return list;
 	}
 
@@ -58,7 +57,7 @@ public class SectorModel {
 			" where " + SectorConst.CODE_SECTOR + " = ?";
 
 	public Sector select(final UserContext userContext, final int code_sector) throws SQLException {
-				long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_SELECT);
 		ps.setInt(1, code_sector);
@@ -68,7 +67,7 @@ public class SectorModel {
 			sector = new Sector(resultSet);
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_sector:"+code_sector+")");
+		LOG.debug(time + " ms (code_sector:" + code_sector + ")");
 		return sector;
 	}
 
@@ -127,7 +126,7 @@ public class SectorModel {
 		callableStatement.setInt(SectorConst.CODE_SECTOR, code_sector);
 		callableStatement.execute();
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_sector:"+code_sector+")");
+		LOG.debug(time + " ms (code_sector:" + code_sector + ")");
 	}
 
 	private static SectorModel instance = new SectorModel();

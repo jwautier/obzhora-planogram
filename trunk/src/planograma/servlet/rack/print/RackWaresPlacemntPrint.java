@@ -17,11 +17,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 08.06.12
  * Time: 4:25
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_RACK_PRINT + "*")
 public class RackWaresPlacemntPrint extends AbstractRackPrint {
@@ -41,10 +40,10 @@ public class RackWaresPlacemntPrint extends AbstractRackPrint {
 
 	@Override
 	public Date getDate(UserContext userContext, int code_rack) throws SQLException {
-		Date date=null;
-		Rack rack=rackModel.select(userContext, code_rack);
-		if (rack!=null)
-			date=rack.getDate_update();
+		Date date = null;
+		Rack rack = rackModel.select(userContext, code_rack);
+		if (rack != null)
+			date = rack.getDate_update();
 		return date;
 	}
 

@@ -1,11 +1,10 @@
 package planograma.constant.data;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 28.03.12
  * Time: 20:18
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public interface AbstractRackShelfConst {
 	public static final String X_COORD = "x_coord";

@@ -1,11 +1,10 @@
 package planograma.utils;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 20.05.12
  * Time: 5:06
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class GeometryUtils {
 	public static boolean intersectsLine(double ax1, double ay1, double ax2, double ay2, double bx1, double by1, double bx2, double by2) {
@@ -15,8 +14,8 @@ public class GeometryUtils {
 		double v4 = (ax2 - ax1) * (by2 - ay1) - (ay2 - ay1) * (bx2 - ax1);
 		return ((v1 * v2 <= 0) && (v3 * v4 <= 0));
 	}
-	public static boolean intersectSegment(double ax1, double ay1, double ax2, double ay2, double bx1, double by1, double bx2, double by2)
-	{
+
+	public static boolean intersectSegment(double ax1, double ay1, double ax2, double ay2, double bx1, double by1, double bx2, double by2) {
 		return false;
 	}
 

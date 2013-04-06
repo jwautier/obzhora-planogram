@@ -1,11 +1,10 @@
 package planograma.constant.data;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 20.03.12
  * Time: 23:44
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public interface StateAllConst {
 	public static final String TABLE_NAME = "mz.state_all";

@@ -5,11 +5,10 @@ import planograma.utils.geometry.ConvexQuadrilateral2D;
 import planograma.utils.geometry.Point2D;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 07.06.12
  * Time: 5:06
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class Rack2D extends ConvexQuadrilateral2D {
 	private final Rack rack;

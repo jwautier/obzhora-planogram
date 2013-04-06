@@ -1,11 +1,10 @@
 package planograma.constant;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 01.03.12
  * Time: 1:45
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public interface DBConst {
 

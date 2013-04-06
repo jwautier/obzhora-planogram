@@ -25,11 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 07.06.12
  * Time: 3:50
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_SECTOR_PRINT + "*")
 public class SectorPrint extends HttpServlet {
@@ -85,16 +84,16 @@ public class SectorPrint extends HttpServlet {
 			final PdfContentByte cb = writer.getDirectContent();
 			final float m = Math.max(sector.getLength() / (pageSize.getWidth() - marginLeft - marginRight), sector.getWidth() / (pageSize.getHeight() - marginTop - marginTitle - marginBottom));
 
-			final String title=shop.getName_shop() + " (" + sector.getName_sector() + ") от "+ FormattingUtils.datetime2String(sector.getDate_update());
+			final String title = shop.getName_shop() + " (" + sector.getName_sector() + ") от " + FormattingUtils.datetime2String(sector.getDate_update());
 			Paragraph p = new Paragraph(title, font);
 			p.setAlignment(Element.ALIGN_CENTER);
 			document.add(p);
 
 			drawSector(cb, sector, m, pageSize);
 
-			for (int index=0; index<rackList.size(); index++) {
-				final Rack2D rack2D=rackList.get(index);
-				drawRack2D(cb, rack2D, index+1, m, pageSize, baseFont);
+			for (int index = 0; index < rackList.size(); index++) {
+				final Rack2D rack2D = rackList.get(index);
+				drawRack2D(cb, rack2D, index + 1, m, pageSize, baseFont);
 			}
 			document.setPageSize(PageSize.A4);
 			document.newPage();
@@ -102,7 +101,7 @@ public class SectorPrint extends HttpServlet {
 			final PdfPTable table = new PdfPTable(8);
 			table.setWidthPercentage(100);
 
-			int widths[] = {5,35,18,9,9,9,8,7};
+			int widths[] = {5, 35, 18, 9, 9, 9, 8, 7};
 			table.setWidths(widths);
 			PdfPCell cell;
 			cell = new PdfPCell(new Paragraph("№", font));
@@ -137,16 +136,16 @@ public class SectorPrint extends HttpServlet {
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			table.addCell(cell);
-			for (int index=0; index<rackList.size(); index++) {
-				final Rack2D rack2D=rackList.get(index);
+			for (int index = 0; index < rackList.size(); index++) {
+				final Rack2D rack2D = rackList.get(index);
 				if (rack2D.getRack().getType_rack() != ETypeRack.DZ) {
-					table.addCell(new PdfPCell(new Paragraph(String.valueOf(index+1), font)));
+					table.addCell(new PdfPCell(new Paragraph(String.valueOf(index + 1), font)));
 					table.addCell(new PdfPCell(new Paragraph(rack2D.getRack().getName_rack(), font)));
 
 					try {
 						BarcodeEAN codeEAN = new BarcodeEAN();
 						codeEAN.setCode(rack2D.getRack().getRack_barcode());
-						cell=new PdfPCell(codeEAN.createImageWithBarcode(cb, null, null));
+						cell = new PdfPCell(codeEAN.createImageWithBarcode(cb, null, null));
 						cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 						table.addCell(cell);
 					} catch (Exception e) {
@@ -163,7 +162,7 @@ public class SectorPrint extends HttpServlet {
 			document.add(table);
 			document.close();
 		} catch (Exception e) {
-			LOG.error("Error print sector",e);
+			LOG.error("Error print sector", e);
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 		time = System.currentTimeMillis() - time;

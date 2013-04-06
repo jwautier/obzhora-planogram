@@ -12,11 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 20.03.12
  * Time: 23:39
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class StateAllModel {
 
@@ -51,10 +50,10 @@ public class StateAllModel {
 		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_INIT);
-		ps.setInt(1, RackStateConst.STATE_ALL_PART_STATE_RACK_STATE);		// -63 STATE_RACK
-		ps.setInt(2, RackConst.STATE_ALL_PART_STATE_LOAD_SIDE);				// -64 LOAD_SIDE
-		ps.setInt(3, RackShelfConst.STATE_ALL_PART_STATE_TYPE_SHELF);		// -67 TYPE_SHELF
-		ps.setInt(4, RackConst.STATE_ALL_PART_STATE_TYPE_RACK);				// -68 TYPE_RACK
+		ps.setInt(1, RackStateConst.STATE_ALL_PART_STATE_RACK_STATE);        // -63 STATE_RACK
+		ps.setInt(2, RackConst.STATE_ALL_PART_STATE_LOAD_SIDE);                // -64 LOAD_SIDE
+		ps.setInt(3, RackShelfConst.STATE_ALL_PART_STATE_TYPE_SHELF);        // -67 TYPE_SHELF
+		ps.setInt(4, RackConst.STATE_ALL_PART_STATE_TYPE_RACK);                // -68 TYPE_RACK
 		final ResultSet resultSet = ps.executeQuery();
 		while (resultSet.next()) {
 			final StateAll item = new StateAll(resultSet);
@@ -65,21 +64,21 @@ public class StateAllModel {
 					stateRack.setColor(item.getDescription());
 					break;
 				case RackConst.STATE_ALL_PART_STATE_LOAD_SIDE:
-					final LoadSide loadSide= LoadSide.valueOf(item.getAbr_state());
+					final LoadSide loadSide = LoadSide.valueOf(item.getAbr_state());
 					loadSide.setDesc(item.getState());
 					break;
 				case RackConst.STATE_ALL_PART_STATE_TYPE_RACK:
-					final ETypeRack typeRack= ETypeRack.valueOf(item.getAbr_state());
+					final ETypeRack typeRack = ETypeRack.valueOf(item.getAbr_state());
 					typeRack.setDesc(item.getState());
 					typeRack.setColor(item.getDescription());
 					break;
 				case RackShelfConst.STATE_ALL_PART_STATE_TYPE_SHELF:
-					final TypeShelf typeShelf= TypeShelf.valueOf(item.getAbr_state());
+					final TypeShelf typeShelf = TypeShelf.valueOf(item.getAbr_state());
 					typeShelf.setDesc(item.getState());
 					typeShelf.setColor(item.getDescription());
 					break;
 				case RackWaresConst.STATE_ALL_PART_STATE_TYPE_RACK_WARES:
-					final TypeRackWares typeRackWares= TypeRackWares.valueOf(item.getAbr_state());
+					final TypeRackWares typeRackWares = TypeRackWares.valueOf(item.getAbr_state());
 					typeRackWares.setDesc(item.getState());
 					break;
 			}

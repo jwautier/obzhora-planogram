@@ -23,11 +23,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 06.05.12
  * Time: 2:13
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_RACK_HISTORY_VIEW)
 public class RackHistoryView extends AbstractAction {
@@ -43,7 +42,7 @@ public class RackHistoryView extends AbstractAction {
 		super.init(config);
 		rackHModel = RackHModel.getInstance();
 		rackShelfHModel = RackShelfHModel.getInstance();
-		rackWaresHModel =RackWaresHModel.getInstance();
+		rackWaresHModel = RackWaresHModel.getInstance();
 	}
 
 	@Override
@@ -57,15 +56,15 @@ public class RackHistoryView extends AbstractAction {
 		jsonObject.add("rack", rack.toJsonObject());
 
 		final JsonArray rackShelfListJson = new JsonArray();
-		final List<RackShelf> rackShelfList= rackShelfHModel.list(getUserContext(session), code_rack, date);
-		for (final RackShelf item:rackShelfList){
+		final List<RackShelf> rackShelfList = rackShelfHModel.list(getUserContext(session), code_rack, date);
+		for (final RackShelf item : rackShelfList) {
 			rackShelfListJson.add(item.toJsonObject());
 		}
 		jsonObject.add("rackShelfList", rackShelfListJson);
 
 		final JsonArray rackWaresListJson = new JsonArray();
 		final List<RackWares> rackWaresList = rackWaresHModel.list(getUserContext(session), code_rack, date);
-		for (final RackWares item:rackWaresList){
+		for (final RackWares item : rackWaresList) {
 			rackWaresListJson.add(item.toJsonObject());
 		}
 		jsonObject.add("rackWaresList", rackWaresListJson);

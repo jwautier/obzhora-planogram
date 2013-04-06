@@ -20,11 +20,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 01.05.12
  * Time: 19:44
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_WARES_LIST_SEARCH)
 public class WaresListSearch extends AbstractAction {
@@ -48,7 +47,7 @@ public class WaresListSearch extends AbstractAction {
 			try {
 				Integer.parseInt(searchText);
 			} catch (Exception e) {
-				throw new SQLException("Недопустимое значение кода: \"" + searchText+"\"");
+				throw new SQLException("Недопустимое значение кода: \"" + searchText + "\"");
 			}
 		}
 		final int code_group;
@@ -57,12 +56,9 @@ public class WaresListSearch extends AbstractAction {
 		else
 			code_group = 0;
 		final int code_shop;
-		if (requestObject.has(ShopConst.CODE_SHOP))
-		{
+		if (requestObject.has(ShopConst.CODE_SHOP)) {
 			code_shop = requestObject.get(ShopConst.CODE_SHOP).getAsInt();
-		}
-		else
-		{
+		} else {
 			code_shop = 0;
 		}
 

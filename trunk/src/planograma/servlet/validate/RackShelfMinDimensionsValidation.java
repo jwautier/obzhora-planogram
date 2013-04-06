@@ -11,10 +11,11 @@ import planograma.exception.EntityFieldException;
 import java.util.List;
 
 /**
- * User: poljakov
+ * Проверка параметров полки стеллажа: высота, ширина, глубина должны быть больше 5мм
  * Date: 09.01.13
  * Time: 14:45
- * Проверка параметров полки стеллажа: высота, ширина, глубина должны быть больше 5мм
+ *
+ * @author Alexandr Polyakov
  */
 public class RackShelfMinDimensionsValidation {
 	/**

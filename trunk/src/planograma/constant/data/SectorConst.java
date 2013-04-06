@@ -1,11 +1,10 @@
 package planograma.constant.data;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 09.03.12
  * Time: 3:49
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public interface SectorConst {
 	public static final String TABLE_NAME = "EUGENE_SAZ.SEV_PL_SHOP_SECTOR";

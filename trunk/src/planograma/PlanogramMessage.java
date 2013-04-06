@@ -3,9 +3,10 @@ package planograma;
 import java.util.ResourceBundle;
 
 /**
- * User: poljakov
  * Date: 18.09.12
  * Time: 8:37
+ *
+ * @author Alexandr Polyakov
  */
 public class PlanogramMessage {
 

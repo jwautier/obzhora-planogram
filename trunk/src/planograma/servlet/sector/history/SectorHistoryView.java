@@ -22,11 +22,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 21.03.12
  * Time: 20:38
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_SECTOR_HISTORY_VIEW)
 public class SectorHistoryView extends AbstractAction {

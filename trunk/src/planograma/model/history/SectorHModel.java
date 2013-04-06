@@ -11,11 +11,10 @@ import java.sql.*;
 import java.util.Date;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 15.06.12
  * Time: 5:52
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class SectorHModel {
 
@@ -30,16 +29,16 @@ public class SectorHModel {
 			" " + SectorHConst.HEIGHT + "," +
 			" " + SectorHConst.USER_INSERT + "," +
 			" " + SectorHConst.DATE_INSERT + "," +
-			" " + SectorHConst.USER_INSERT + " "+SectorConst.USER_UPDATE+"," +
-			" " + SectorHConst.DATE_INSERT + " "+SectorConst.DATE_UPDATE+"," +
+			" " + SectorHConst.USER_INSERT + " " + SectorConst.USER_UPDATE + "," +
+			" " + SectorHConst.DATE_INSERT + " " + SectorConst.DATE_UPDATE + "," +
 			" " + SectorHConst.TYPE_OPERATION + " " +
 			"from " + SectorHConst.TABLE_NAME + " " +
 			"where " + SectorHConst.CODE_SECTOR + " = ?" +
-			" and " +SectorHConst.DATE_INSERT+" <= ?"+
-			"order by "+SectorHConst.DATE_INSERT+" desc";
+			" and " + SectorHConst.DATE_INSERT + " <= ?" +
+			"order by " + SectorHConst.DATE_INSERT + " desc";
 
 	public Sector select(final UserContext userContext, final int code_sector, final Date date) throws SQLException {
-		long time=System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 		final Connection connection = userContext.getConnection();
 		final PreparedStatement ps = connection.prepareStatement(Q_SELECT);
 		ps.setInt(1, code_sector);
@@ -48,14 +47,13 @@ public class SectorHModel {
 		final ResultSet resultSet = ps.executeQuery();
 		Sector sector = null;
 		if (resultSet.next()) {
-			final String type_operation=resultSet.getString(SectorHConst.TYPE_OPERATION);
-			if (!type_operation.equals("D"))
-			{
+			final String type_operation = resultSet.getString(SectorHConst.TYPE_OPERATION);
+			if (!type_operation.equals("D")) {
 				sector = new Sector(resultSet);
 			}
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_sector:"+code_sector+ ", date:" + FormattingUtils.datetime2String(date) +")");
+		LOG.debug(time + " ms (code_sector:" + code_sector + ", date:" + FormattingUtils.datetime2String(date) + ")");
 		return sector;
 	}
 

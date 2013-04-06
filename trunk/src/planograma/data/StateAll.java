@@ -2,17 +2,17 @@ package planograma.data;
 
 import com.google.gson.JsonObject;
 import planograma.constant.data.StateAllConst;
-import planograma.utils.JsonUtils;
+import planograma.utils.json.IJsonObject;
+import planograma.utils.json.JsonUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 20.03.12
  * Time: 23:31
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class StateAll implements IJsonObject {
 	/**

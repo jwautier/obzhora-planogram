@@ -1,11 +1,10 @@
 package planograma.constant.data;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 21.03.12
  * Time: 0:16
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public interface AbstractRackStateConst {
 

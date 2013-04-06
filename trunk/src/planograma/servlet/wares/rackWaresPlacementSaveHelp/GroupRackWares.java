@@ -7,11 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 17.06.12
  * Time: 20:21
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class GroupRackWares extends Rectangle2D {
 	final int code_wares;

@@ -9,9 +9,10 @@ import planograma.model.RackStateModel;
 import java.sql.SQLException;
 
 /**
- * User: poljakov
  * Date: 16.01.13
  * Time: 9:45
+ *
+ * @author Alexandr Polyakov
  */
 public class RackUpdate {
 	public static void update(final UserContext userContext, final RackModel rackModel, final RackStateModel rackStateModel,

@@ -2,16 +2,18 @@ package planograma.data;
 
 import com.google.gson.JsonObject;
 import planograma.constant.data.AbstractRackConst;
-import planograma.utils.JsonUtils;
+import planograma.utils.json.IJsonObject;
+import planograma.utils.json.JsonUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
 /**
- * User: poljakov
  * Date: 11.01.13
  * Time: 14:25
+ *
+ * @author Alexandr Polyakov
  */
 public abstract class AbstractRack implements IJsonObject {
 	/**

@@ -9,14 +9,15 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * User: poljakov
  * Date: 19.10.12
  * Time: 10:53
+ *
+ * @author Alexandr Polyakov
  */
 public class TestRackShelfModel {
 	public static void testRackShelfModel(final UserContext userContext) throws SQLException {
 		final SectorModel sectorModel = SectorModel.getInstance();
-		Sector sector = new Sector(8, null, "sector 1", 2000, 2000, 300, null, null,  null, null);
+		Sector sector = new Sector(8, null, "sector 1", 2000, 2000, 300, null, null, null, null);
 		sectorModel.insert(userContext, sector);
 		final RackModel rackModel = RackModel.getInstance();
 		final int length = 50;

@@ -24,11 +24,10 @@ import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 26.02.12
  * Time: 2:18
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_SECTOR_REMOVE)
 public class SectorRemove extends AbstractAction {

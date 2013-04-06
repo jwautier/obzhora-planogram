@@ -9,10 +9,11 @@ import planograma.exception.EntityFieldException;
 import java.util.List;
 
 /**
- * User: poljakov
+ * Проверка параметров стеллажа: высота, ширина, глубина, полезная высота, полезная ширина, полезная глубина больше 10мм
  * Date: 09.01.13
  * Time: 14:45
- * Проверка параметров стеллажа: высота, ширина, глубина, полезная высота, полезная ширина, полезная глубина больше 10мм
+ *
+ * @author Alexandr Polyakov
  */
 public class RackMinDimensionsValidation {
 	/**

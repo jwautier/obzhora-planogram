@@ -5,6 +5,9 @@ import planograma.constant.data.ImageConst;
 import planograma.data.UserContext;
 import planograma.utils.FileUtils;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,15 +15,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 26.04.12
  * Time: 5:33
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class ImageModel {
 
 	private static final Logger LOG = Logger.getLogger(ImageModel.class);
+
+	private static final boolean RESIZE_IMAGE = true;
+	private static final int IMAGE_MIN_WIDTH = 200;
+	private static final int IMAGE_MIN_HEIGHT = 200;
 
 	private final File tempDir;
 	private static final String Q_SELECT = "select" +
@@ -38,8 +44,46 @@ public class ImageModel {
 			ps.setInt(1, code_image);
 			final ResultSet resultSet = ps.executeQuery();
 			if (resultSet.next()) {
-				in = resultSet.getBinaryStream(1);
-				FileUtils.copy(in, new FileOutputStream(file));
+				InputStream dbis = resultSet.getBinaryStream(1);
+				if (RESIZE_IMAGE) {
+					// resize image
+					BufferedImage image = ImageIO.read(dbis);
+					int oldWidth = image.getWidth();
+					int oldHeight = image.getHeight();
+					int type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
+					int newWidth;
+					int newHeight;
+					if (oldWidth - IMAGE_MIN_WIDTH > oldHeight - IMAGE_MIN_HEIGHT) {
+						newWidth = IMAGE_MIN_WIDTH;
+						newHeight = IMAGE_MIN_WIDTH * oldHeight / oldWidth;
+					} else {
+						newWidth = IMAGE_MIN_HEIGHT * oldWidth / oldHeight;
+						newHeight = IMAGE_MIN_HEIGHT;
+					}
+					BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, type);
+					Graphics2D g = resizedImage.createGraphics();
+					// ANTIALIASING
+					g.setComposite(AlphaComposite.Src);
+					g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+							RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+					g.setRenderingHint(RenderingHints.KEY_RENDERING,
+							RenderingHints.VALUE_RENDER_QUALITY);
+					g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+							RenderingHints.VALUE_ANTIALIAS_ON);
+					// DRAW IMAGE
+					g.drawImage(image, 0, 0, newWidth, newHeight, null);
+					g.dispose();
+
+					FileOutputStream fos = new FileOutputStream(file);
+					ImageIO.write(resizedImage, "jpg", fos);
+					fos.close();
+				} else {
+					FileOutputStream fos = new FileOutputStream(file);
+					FileUtils.copy(dbis, fos);
+					fos.close();
+				}
+			} else {
+				throw new SQLException("Empty result select image");
 			}
 		}
 		in = new FileInputStream(file);

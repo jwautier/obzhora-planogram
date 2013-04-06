@@ -10,19 +10,20 @@ import planograma.utils.geometry.Intersection2DUtils;
 import java.util.List;
 
 /**
- * User: poljakov
+ * стеллажи не могут пересекаться
  * Date: 14.01.13
  * Time: 9:39
- * стеллажи не могут пересекаться
+ *
+ * @author Alexandr Polyakov
  */
 public class RackIntersectValidation {
 	/**
 	 * стеллажи не могут пересекаться
+	 *
 	 * @param fieldExceptionList
 	 * @param rack2DList
 	 */
-	public static void validate(final List<EntityFieldException> fieldExceptionList, final List<Rack2D> rack2DList)
-	{
+	public static void validate(final List<EntityFieldException> fieldExceptionList, final List<Rack2D> rack2DList) {
 		for (int i = 0; i < rack2DList.size(); i++) {
 			final Rack2D a = rack2DList.get(i);
 			for (int j = i + 1; j < rack2DList.size(); j++) {
@@ -32,7 +33,7 @@ public class RackIntersectValidation {
 					// пересечение мертвых зон разрешается
 					if (Intersection2DUtils.isIntersection(a, b)) {
 						//if (a.getRack().getType_rack()==ETypeRack.R)
-							fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_INTERSECT(), Rack.class, i, a.getRack().getCode_rack(), "rack_intersect"));
+						fieldExceptionList.add(new EntityFieldException(PlanogramMessage.RACK_INTERSECT(), Rack.class, i, a.getRack().getCode_rack(), "rack_intersect"));
 					}
 				}
 			}

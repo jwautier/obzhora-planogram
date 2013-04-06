@@ -1,7 +1,7 @@
 package planograma.constant.data;
 
 /**
- * User: a_polyakov
+ * @author Alexandr Polyakov
  */
 public interface OptionsConst {
 	public static final String TABLE_NAME = "EUGENE_SAZ.SEV_PL_OPTIONS";

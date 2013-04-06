@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * User: a_polyakov
+ * @author Alexandr Polyakov
  */
 public class OptionsModel {
 

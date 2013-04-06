@@ -23,11 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 07.06.12
  * Time: 3:50
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_SECTOR_PRINT_WITH_EDITOR + "*")
 public class SectorPrintWithEditor extends HttpServlet {

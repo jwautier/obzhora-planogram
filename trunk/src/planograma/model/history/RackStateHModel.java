@@ -11,11 +11,10 @@ import java.sql.*;
 import java.util.Date;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 21.03.12
  * Time: 1:18
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class RackStateHModel {
 
@@ -30,7 +29,7 @@ public class RackStateHModel {
 			" o." + RackStateHConst.DATE_INSERT + " " + RackStateConst.DATE_ACTIVE + "," +
 			" o." + RackStateHConst.USER_INSERT + " " + RackStateConst.USER_COMPLETE + "," +
 			" o." + RackStateHConst.DATE_INSERT + " " + RackStateConst.DATE_COMPLETE + " " +
-			"FROM " + RackStateHConst.TABLE_NAME+" o ";
+			"FROM " + RackStateHConst.TABLE_NAME + " o ";
 
 	private static final String Q_SELECT = Q_SELECT_FROM +
 			" WHERE o." + RackStateHConst.CODE_RACK + " = ?" +
@@ -56,7 +55,7 @@ public class RackStateHModel {
 
 	private static final String Q_SELECT_A = Q_SELECT_FROM +
 			" WHERE o." + RackStateHConst.CODE_RACK + " = ?" +
-			" AND o." + RackStateHConst.DATE_INSERT + " in "+
+			" AND o." + RackStateHConst.DATE_INSERT + " in " +
 			"  (SELECT MAX(ss1." + RackStateHConst.DATE_INSERT + ")" +
 			"   FROM " + RackStateHConst.TABLE_NAME + " ss1" +
 			"   WHERE " +
@@ -82,7 +81,7 @@ public class RackStateHModel {
 
 	private static final String Q_SELECT_PC = Q_SELECT_FROM +
 			" WHERE o." + RackStateHConst.CODE_RACK + " = ?" +
-			" AND o." + RackStateHConst.DATE_INSERT + " in "+
+			" AND o." + RackStateHConst.DATE_INSERT + " in " +
 			"  (SELECT MAX(ss1." + RackStateHConst.DATE_INSERT + ")" +
 			"   FROM " + RackStateHConst.TABLE_NAME + " ss1" +
 			"   WHERE " +

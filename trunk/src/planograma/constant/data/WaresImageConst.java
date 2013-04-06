@@ -1,11 +1,10 @@
 package planograma.constant.data;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 27.04.12
  * Time: 5:39
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public interface WaresImageConst {
 	public static final String TABLE_NAME = "mz.wares_images";

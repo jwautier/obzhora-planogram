@@ -6,11 +6,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 26.04.12
  * Time: 6:01
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class FileUtils {
 	public static final int DEFAULT_BUFFER_SIZE = 1024;

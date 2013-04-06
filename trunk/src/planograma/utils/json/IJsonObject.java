@@ -1,13 +1,12 @@
-package planograma.data;
+package planograma.utils.json;
 
 import com.google.gson.JsonObject;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 26.02.12
  * Time: 3:57
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public interface IJsonObject {
 	public JsonObject toJsonObject();

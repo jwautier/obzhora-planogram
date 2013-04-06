@@ -2,18 +2,19 @@ package planograma.data;
 
 import com.google.gson.JsonObject;
 import planograma.constant.data.*;
-import planograma.utils.JsonUtils;
+import planograma.utils.json.IJsonObject;
+import planograma.utils.json.JsonUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
+ * товар стеллажа
  * Date: 18.03.12
  * Time: 9:39
- * товар стеллажа
+ *
+ * @author Alexandr Polyakov
  */
 public class RackWares implements IJsonObject {
 	/**
@@ -164,7 +165,7 @@ public class RackWares implements IJsonObject {
 	}
 
 	public String getType_wares_on_rackAtStr() {
-		return (type_wares_on_rack!=null)?type_wares_on_rack.name():"";
+		return (type_wares_on_rack != null) ? type_wares_on_rack.name() : "";
 	}
 
 	public void setType_wares_on_rack(String type_wares_on_rack) {

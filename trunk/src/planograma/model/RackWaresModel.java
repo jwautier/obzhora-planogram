@@ -10,11 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 06.05.12
  * Time: 17:05
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 public class RackWaresModel {
 
@@ -63,7 +62,7 @@ public class RackWaresModel {
 			list.add(item);
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_rack:"+code_rack+")");
+		LOG.debug(time + " ms (code_rack:" + code_rack + ")");
 		return list;
 	}
 
@@ -81,7 +80,7 @@ public class RackWaresModel {
 			item = new RackWares(resultSet);
 		}
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_rack_wares:"+code_rack_wares+")");
+		LOG.debug(time + " ms (code_rack_wares:" + code_rack_wares + ")");
 		return item;
 	}
 
@@ -158,7 +157,7 @@ public class RackWaresModel {
 		callableStatement.setInt(RackWaresConst.CODE_WARES_ON_RACK, code_rack_wares);
 		callableStatement.execute();
 		time = System.currentTimeMillis() - time;
-		LOG.debug(time + " ms (code_rack_wares:"+code_rack_wares+")");
+		LOG.debug(time + " ms (code_rack_wares:" + code_rack_wares + ")");
 	}
 
 	private static RackWaresModel instance = new RackWaresModel();

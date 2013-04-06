@@ -1,11 +1,11 @@
 package planograma.data;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
+ * Тип полки
  * Date: 01.04.12
  * Time: 21:08
- * Тип полки
+ *
+ * @author Alexandr Polyakov
  */
 public enum TypeShelf {
 	/**
@@ -25,13 +25,11 @@ public enum TypeShelf {
 		this.desc = desc;
 	}
 
-	public String getColor()
-	{
+	public String getColor() {
 		return color;
 	}
 
-	public void setColor(String color)
-	{
+	public void setColor(String color) {
 		this.color = color;
 	}
 }

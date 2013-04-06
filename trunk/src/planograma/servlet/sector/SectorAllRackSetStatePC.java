@@ -24,10 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User: poljakov
+ * изменение состояния всех стеллажей зала на утвержден
  * Date: 15.01.13
  * Time: 9:50
- * изменение состояния всех стеллажей зала на утвержден
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_SECTOR_ALL_RACK_SET_STATE_PC)
 public class SectorAllRackSetStatePC extends AbstractAction {

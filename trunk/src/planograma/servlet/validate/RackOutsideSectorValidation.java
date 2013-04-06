@@ -9,13 +9,13 @@ import planograma.exception.EntityFieldException;
 import java.util.List;
 
 /**
- * User: poljakov
  * Date: 11.01.13
  * Time: 17:39
+ *
+ * @author Alexandr Polyakov
  */
 public class RackOutsideSectorValidation {
-	public static void validate(final List<EntityFieldException> fieldExceptionList, final Sector sector, final Rack2D rack2D, int index)
-	{
+	public static void validate(final List<EntityFieldException> fieldExceptionList, final Sector sector, final Rack2D rack2D, int index) {
 		if (rack2D.getMinX() < 0 ||
 				rack2D.getMaxX() > sector.getLength() ||
 				rack2D.getMinY() < 0 ||

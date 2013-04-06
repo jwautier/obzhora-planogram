@@ -1,11 +1,11 @@
 package planograma.utils.geometry;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
+ * четырехугольник
  * Date: 18.06.12
  * Time: 4:11
- * четырехугольник
+ *
+ * @author Alexandr Polyakov
  */
 public class Quadrilateral2D {
 	protected Point2D p1;

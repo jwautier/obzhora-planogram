@@ -3,13 +3,12 @@ package planograma.constant.data.history;
 import planograma.constant.data.RackConst;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 21.03.12
  * Time: 0:16
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
-public interface RackHConst extends AbstractHConst{
+public interface RackHConst extends AbstractHConst {
 	public static final String TABLE_NAME = "EUGENE_SAZ.SEV_PL_RACK_IN_SECTOR_H$";
 
 	public static final String CODE_SECTOR = RackConst.CODE_SECTOR;

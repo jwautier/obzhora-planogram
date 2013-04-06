@@ -10,10 +10,11 @@ import planograma.exception.EntityFieldException;
 import java.util.List;
 
 /**
- * User: poljakov
+ * товар не должен выходить за полезную зону стеллажа
  * Date: 14.01.13
  * Time: 9:13
- * товар не должен выходить за полезную зону стеллажа
+ *
+ * @author Alexandr Polyakov
  */
 public class RackWaresOutsideRackValidation {
 	/**
@@ -28,16 +29,16 @@ public class RackWaresOutsideRackValidation {
 		float dx, dy, dz;
 		// относительно стороны загрузки
 		if (rack.getLoad_side() == LoadSide.F) {
-			ox=rack.getX_offset();
-			oy=rack.getZ_offset();
-			dx = ox+rack.getReal_length();
-			dy = oy+rack.getReal_height();
+			ox = rack.getX_offset();
+			oy = rack.getZ_offset();
+			dx = ox + rack.getReal_length();
+			dy = oy + rack.getReal_height();
 			dz = rack.getReal_width();
 		} else {
-			ox=rack.getX_offset();
-			oy=rack.getY_offset();
-			dx = ox+rack.getReal_length();
-			dy = oy +rack.getReal_width();
+			ox = rack.getX_offset();
+			oy = rack.getY_offset();
+			dx = ox + rack.getReal_length();
+			dy = oy + rack.getReal_width();
 			dz = rack.getReal_height();
 		}
 		//	полезная зона не может стать меньше чем расположеные на нем товары

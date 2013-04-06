@@ -10,10 +10,11 @@ import planograma.utils.geometry.Intersection2DUtils;
 import java.util.List;
 
 /**
- * User: poljakov
+ * полка не может пересекать товары
  * Date: 14.01.13
  * Time: 9:39
- * полка не может пересекать товары
+ *
+ * @author Alexandr Polyakov
  */
 public class RackShelfIntersectWaresValidation {
 	/**

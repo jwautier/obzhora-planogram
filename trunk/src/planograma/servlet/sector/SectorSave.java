@@ -16,7 +16,7 @@ import planograma.model.*;
 import planograma.servlet.AbstractAction;
 import planograma.servlet.common.RackUpdate;
 import planograma.servlet.validate.*;
-import planograma.utils.JsonUtils;
+import planograma.utils.json.JsonUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -29,11 +29,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Admin
  * Date: 21.03.12
  * Time: 23:58
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Alexandr Polyakov
  */
 @WebServlet("/" + UrlConst.URL_SECTOR_SAVE)
 public class SectorSave extends AbstractAction {

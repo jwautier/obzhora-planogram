@@ -1,11 +1,11 @@
 package planograma.data;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
+ * Тип товара на полке
  * Date: 12.05.12
  * Time: 14:34
- * Тип товара на полке
+ *
+ * @author Alexandr Polyakov
  */
 public enum TypeRackWares {
 	/**
@@ -17,6 +17,7 @@ public enum TypeRackWares {
 	}
 
 	private String desc;
+
 	public String getDesc() {
 		return desc;
 	}

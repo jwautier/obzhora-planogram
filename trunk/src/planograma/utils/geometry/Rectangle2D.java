@@ -1,10 +1,10 @@
 package planograma.utils.geometry;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Admin
  * Date: 17.06.12
  * Time: 21:11
+ *
+ * @author Alexandr Polyakov
  */
 public class Rectangle2D {
 	final protected Point2D p1;

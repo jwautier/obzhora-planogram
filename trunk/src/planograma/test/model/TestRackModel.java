@@ -8,9 +8,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * User: poljakov
  * Date: 19.10.12
  * Time: 10:55
+ *
+ * @author Alexandr Polyakov
  */
 public class TestRackModel {
 	public static void testRackModel(final UserContext userContext) throws SQLException {
