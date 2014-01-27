@@ -68,77 +68,77 @@
 </style>
 
 <table id="choiceWares">
+    <colgroup>
+        <col width="35%"/>
+        <col width="65%"/>
+    </colgroup>
+    <tbody>
 	<tr>
-		<td class="path">
-			<table>
+		<td colspan="2" class="path">
+			<table style="width: 100%">
+                <tbody>
 				<tr>
 					<td><i>Выбор товара</i></td>
-					<td width="100%"></td>
-					<td><a href="#" onclick="choiceWaresCancel()">&#x2715;</a></td>
+					<td width="23px"><a href="#" onclick="choiceWaresCancel()">&#x2715;</a></td>
 				</tr>
+                </tbody>
 			</table>
 		</td>
 	</tr>
 	<tr>
-		<td>
-			<table class="frame">
-				<colgroup>
-					<col width="35%"/>
-					<col width="65%"/>
-				</colgroup>
-				<tr>
-					<td rowspan="2">
-						<div id="treeview" style="overflow-y: scroll; height: 100%">
-							<ul id="tree">
-							</ul>
-						</div>
-					</td>
-					<td height="24" style="min-width: 150px;">
-						<table>
-							<tr>
-								<td>
-									<input type="checkbox" id="selectAll" title="Выделить всё" onchange="if (this.checked) {$('input:checkbox[name=code_wares]').attr('checked','checked')}else{$('input:checkbox[name=code_wares]').removeAttr('checked')}">
-								</td>
-								<td>
-									<input type="text" id="searchText"/>
-								</td>
-								<td>
-									<select id="searchBy">
-										<option value="<%=WaresConst.CODE_WARES%>">Код</option>
-										<option value="<%=WaresConst.NAME_WARES%>">Название</option>
-										<option value="<%=AdditionUnitConst.BAR_CODE%>">Штрих код</option>
-									</select>
-								</td>
-								<td>
-									<a href="#" title="Поиск" onclick="search1()"><img src="img/icon/iconSearch.png" alt="Поиск"/></a>
-									<a href="#" title="Поиск по всем группам" onclick="search2()"><img src="img/icon/iconSearch2.png" alt="Поиск по иерархии"/></a>
-								</td>
-								<td>
-									&nbsp;&nbsp;&nbsp;
-								</td>
-								<td>
-									<label for="forShop" title="с учетом асортиментной матрицы">
-										с учетом АМ<input id="forShop" type="checkbox">
-									</label>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<div class="frame" style="overflow-y: scroll; height: 100%">
-							<table id="list_wares" width="100%">
-							</table>
-						</div>
-					</td>
-				</tr>
-			</table>
-		</td>
+        <td rowspan="2">
+            <div id="treeview" style="overflow-y: scroll; height: 100%;">
+                <ul id="tree">
+                </ul>
+            </div>
+        </td>
+        <td height="24" style="height: 32px; min-width: 150px;">
+            <table>
+                <tr>
+                    <td>
+                        <input type="checkbox" id="selectAll" title="Выделить всё"
+                               onchange="if (this.checked) {$('input:checkbox[name=code_wares]').attr('checked','checked')}else{$('input:checkbox[name=code_wares]').removeAttr('checked')}">
+                    </td>
+                    <td>
+                        <input type="text" id="searchText"/>
+                    </td>
+                    <td>
+                        <select id="searchBy">
+                            <option value="<%=WaresConst.CODE_WARES%>">Код</option>
+                            <option value="<%=WaresConst.NAME_WARES%>">Название</option>
+                            <option value="<%=AdditionUnitConst.BAR_CODE%>">Штрих код</option>
+                        </select>
+                    </td>
+                    <td>
+                        <a href="#" title="Поиск" onclick="search1()"><img src="img/icon/iconSearch.png" alt="Поиск"/></a>
+                        <a href="#" title="Поиск по всем группам" onclick="search2()"><img src="img/icon/iconSearch2.png" alt="Поиск по иерархии"/></a>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td>
+                        <label for="forShop" title="с учетом асортиментной матрицы">
+                            с учетом АМ<input id="forShop" type="checkbox">
+                        </label>
+                    </td>
+                </tr>
+            </table>
+        </td>
 	</tr>
+    <tr>
+        <td style="height: 100%;">
+            <div style="overflow-y: scroll; height: 100%;">
+            <table id="list_wares" width="100%">
+                <tbody>
+
+                </tbody>
+            </table>
+            </div>
+        </td>
+    </tr>
 	<tr>
-		<td class="path">
-			<table>
+		<td colspan="2" class="path">
+			<table style="width: 100%">
 				<tr>
 					<td width="100%"></td>
 					<td><a href="#" onclick="choiceWaresCancel()">Отмена</a></td>
@@ -148,6 +148,7 @@
 			</table>
 		</td>
 	</tr>
+    </tbody>
 </table>
 
 <script type="text/javascript">
