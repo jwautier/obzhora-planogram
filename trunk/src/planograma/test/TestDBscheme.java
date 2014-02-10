@@ -68,7 +68,8 @@ public class TestDBscheme {
 					RackConst.REAL_HEIGHT,
 					RackConst.X_OFFSET,
 					RackConst.Y_OFFSET,
-					RackConst.Z_OFFSET
+					RackConst.Z_OFFSET,
+					RackConst.ALLOW_INTERSECT
 			);
 			checkTable(psColumns, RackStateConst.TABLE_NAME,
 					RackStateConst.CODE_RACK,

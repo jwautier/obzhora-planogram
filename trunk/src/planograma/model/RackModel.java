@@ -44,7 +44,8 @@ public class RackModel {
 			" " + RackConst.REAL_HEIGHT + "," +
 			" " + RackConst.X_OFFSET + "," +
 			" " + RackConst.Y_OFFSET + "," +
-			" " + RackConst.Z_OFFSET + " " +
+			" " + RackConst.Z_OFFSET + "," +
+			" " + RackConst.ALLOW_INTERSECT + " " +
 			"from " + RackConst.TABLE_NAME + " ";
 
 	private static final String Q_LIST = Q_SELECT_FROM +
@@ -107,7 +108,8 @@ public class RackModel {
 			":" + RackConst.REAL_HEIGHT + "," +
 			":" + RackConst.X_OFFSET + "," +
 			":" + RackConst.Y_OFFSET + "," +
-			":" + RackConst.Z_OFFSET +
+			":" + RackConst.Z_OFFSET + "," +
+			":" + RackConst.ALLOW_INTERSECT +
 			")}";
 
 	public int insert(final UserContext userContext, final Rack rack) throws SQLException {
@@ -137,6 +139,7 @@ public class RackModel {
 		callableStatement.setInt(RackConst.X_OFFSET, rack.getX_offset());
 		callableStatement.setInt(RackConst.Y_OFFSET, rack.getY_offset());
 		callableStatement.setInt(RackConst.Z_OFFSET, rack.getZ_offset());
+		callableStatement.setInt(RackConst.ALLOW_INTERSECT, rack.getAllow_intersect());
 
 		callableStatement.execute();
 		final int id = callableStatement.getInt("new_code_rack");
@@ -173,6 +176,7 @@ public class RackModel {
 		callableStatement.setInt(RackConst.X_OFFSET, rack.getX_offset());
 		callableStatement.setInt(RackConst.Y_OFFSET, rack.getY_offset());
 		callableStatement.setInt(RackConst.Z_OFFSET, rack.getZ_offset());
+		callableStatement.setInt(RackConst.ALLOW_INTERSECT, rack.getAllow_intersect());
 
 		callableStatement.execute();
 		time = System.currentTimeMillis() - time;
