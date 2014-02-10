@@ -20,6 +20,7 @@ public interface RackConst extends AbstractRackConst {
 	public static final String LOCK_SIZE = "lock_size";
 	public static final String LOCK_MOVE = "lock_move";
 	public static final String TYPE_RACK = "type_rack";
+    public static final String ALLOW_INTERSECT = "allow_intersect";
 
 	public static final int STATE_ALL_PART_STATE_TYPE_RACK = -68;
 }

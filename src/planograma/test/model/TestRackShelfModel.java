@@ -23,7 +23,7 @@ public class TestRackShelfModel {
 		final int length = 50;
 		final int width = 200;
 		final int height = 150;
-		final Rack rack = new Rack(sector.getCode_sector(), null, "rack 1", "1", length, width, height, 1000, 1000, 0, LoadSide.F, null, false, false, ETypeRack.R, null, null, null, null, length, width, height, 0, 0, 0);
+		final Rack rack = new Rack(sector.getCode_sector(), null, "rack 1", "1", length, width, height, 1000, 1000, 0, LoadSide.F, null, false, false, ETypeRack.R, null, null, null, null, length, width, height, 0, 0, 0, 0);
 		rackModel.insert(userContext, rack);
 		final RackShelfModel rackShelfModel = RackShelfModel.getInstance();
 		RackShelf rackShelf = new RackShelf(rack.getCode_rack(), null, 10, 10, 50, 50, 50, 0, TypeShelf.DZ, null, null, null, null);

@@ -24,7 +24,7 @@ public class TestRackWaresModel {
 		final int length = 20;
 		final int width = 200;
 		final int height = 150;
-		final Rack rack = new Rack(sector.getCode_sector(), null, "rack 1", "1", length, width, height, 1000, 1000, 0, LoadSide.F, null, false, false, ETypeRack.R, null, null, null, null, length, width, height, 0, 0, 0);
+		final Rack rack = new Rack(sector.getCode_sector(), null, "rack 1", "1", length, width, height, 1000, 1000, 0, LoadSide.F, null, false, false, ETypeRack.R, null, null, null, null, length, width, height, 0, 0, 0, 0);
 		rackModel.insert(userContext, rack);
 		final RackWaresModel rackWaresModel = RackWaresModel.getInstance();
 		RackWares rackWares = new RackWares(rack.getCode_rack(), 10, 19, null, TypeRackWares.NA, 1, 10, 10, 50, 50, 50, 1, null, null, null, null, null, "waresTest", "unitTest", "barcodeTest");

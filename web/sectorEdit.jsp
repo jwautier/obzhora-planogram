@@ -295,6 +295,15 @@
 												</select>
 											</td>
 										</tr>
+                                        <tr>
+                                            <td align="right">пересечение</td>
+                                            <td>
+                                                <select id="rackAllowIntersect" onchange="changeShowcaseAllowIntersect(this)">
+                                                    <option value="0">Запрещено</option>
+                                                    <option value="1">Разрешенно</option>
+                                                </select>
+                                            </td>
+                                        </tr>
 									</table>
 								</td>
 							</tr>
@@ -519,6 +528,7 @@ function selectShowcase(showcase) {
 			$('#butCopy').removeClass('disabled');
 			$('#butCut').removeClass('disabled');
 		}
+        document.getElementById('rackAllowIntersect').value = showcase.allow_intersect;
 	} else {
 		document.getElementById('rackType').value = '';
 		document.getElementById('rackName').value = '';
@@ -532,6 +542,7 @@ function selectShowcase(showcase) {
 		document.getElementById('showcaseLength').value = '';
 		document.getElementById('showcaseHeight').value = '';
 		document.getElementById('rackLoadSide').value = '';
+        document.getElementById('rackAllowIntersect').value = '0';
 		$('#butPrint').addClass('disabled');
 		$('#butEdit').addClass('disabled');
 		$('#butRackWaresPlacement').addClass('disabled');
@@ -946,7 +957,7 @@ function roundRack(rack)
 				if (sx>0 && sy>0 && sx<window.sector.length && sy<window.sector.width)
 				{
 				window.rackAdd=false;
-				window.showcase =<%=new Rack(null, null, "", "", 1, 1, 1000, 0, 0, 0, LoadSide.F, null, false, false, ETypeRack.R, null, null, null, null, 1, 1, 1000, 0, 0, 0).toJsonObject()%>;
+				window.showcase =<%=new Rack(null, null, "", "", 1, 1, 1000, 0, 0, 0, LoadSide.F, null, false, false, ETypeRack.R, null, null, null, null, 1, 1, 1000, 0, 0, 0, 0).toJsonObject()%>;
 				window.showcase.code_sector=window.sector.code_sector;
 				window.showcase.x_coord=sx;
 				window.showcase.y_coord=sy;
@@ -1562,6 +1573,12 @@ function roundRack(rack)
 //			}
 		}
 	}
+
+    function changeShowcaseAllowIntersect(rackAllowIntersect){
+        if (window.showcase != null) {
+            window.showcase.allow_intersect=rackAllowIntersect.value;
+        }
+    }
 
 	function rackBeyondSector(rack)
 	{
