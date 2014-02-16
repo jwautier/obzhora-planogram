@@ -989,6 +989,7 @@ function roundRack(rack)
 				window.showcase.y_coord=sy;
 				window.showcase.angle=0;
 				window.showcase.lock_size='Y';
+				window.showcase.allow_intersect=0;
 				window.showcaseList.push(window.showcase);
 				window.rackStateList.push(<%=new RackState(null, EStateRack.D, null, null, null, null, null, null).toJsonObject()%>);
 				window.rackStateInSectorList.push(<%=new RackState(null, EStateRack.D, null, null, null, null, null, null).toJsonObject()%>);
