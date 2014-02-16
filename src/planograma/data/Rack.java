@@ -60,10 +60,10 @@ public class Rack extends AbstractRack {
 	 * Тип стеллажа (Стеллаж, касса...)
 	 */
 	private ETypeRack type_rack;
-    /**
-     * Разрешение пересекать другие обекты в зале
-     */
-    private Integer allow_intersect;
+	/**
+	 * Разрешение пересекать другие обекты в зале
+	 */
+	private Integer allow_intersect;
 
 
 	public Rack(Integer code_sector, Integer code_rack, String name_rack, String rack_barcode, Integer length, Integer width, Integer height, Integer x_coord, Integer y_coord, Integer angle, LoadSide load_side, Integer code_rack_template, boolean lock_size, boolean lock_move, ETypeRack type_rack, Integer user_insert, Date date_insert, Integer user_update, Date date_update, Integer real_length, Integer real_width, Integer real_height, Integer x_offset, Integer y_offset, Integer z_offset, Integer allow_intersect) {
@@ -79,7 +79,7 @@ public class Rack extends AbstractRack {
 		this.lock_size = lock_size;
 		this.lock_move = lock_move;
 		this.type_rack = type_rack;
-        this.allow_intersect=allow_intersect;
+		this.allow_intersect = allow_intersect;
 	}
 
 	public Integer getCode_sector() {
@@ -186,15 +186,15 @@ public class Rack extends AbstractRack {
 		this.type_rack = (type_rack != null) ? ETypeRack.valueOf(type_rack) : null;
 	}
 
-    public Integer getAllow_intersect() {
-        return allow_intersect;
-    }
+	public Integer getAllow_intersect() {
+		return allow_intersect;
+	}
 
-    public void setAllow_intersect(Integer allow_intersect) {
-        this.allow_intersect = allow_intersect;
-    }
+	public void setAllow_intersect(Integer allow_intersect) {
+		this.allow_intersect = allow_intersect;
+	}
 
-    public Rack(final ResultSet resultSet) throws SQLException {
+	public Rack(final ResultSet resultSet) throws SQLException {
 		super(resultSet);
 		code_sector = resultSet.getInt(RackConst.CODE_SECTOR);
 		code_rack = resultSet.getInt(RackConst.CODE_RACK);
@@ -231,7 +231,7 @@ public class Rack extends AbstractRack {
 			setY_offset(0);
 			setZ_offset(0);
 		}
-        allow_intersect = JsonUtils.getInteger(rackJson, RackConst.ALLOW_INTERSECT);
+		allow_intersect = JsonUtils.getInteger(rackJson, RackConst.ALLOW_INTERSECT);
 	}
 
 	@Override
@@ -248,7 +248,7 @@ public class Rack extends AbstractRack {
 		jsonObject.addProperty(RackConst.LOCK_SIZE, (lock_size) ? "Y" : "N");
 		jsonObject.addProperty(RackConst.LOCK_MOVE, (lock_move) ? "Y" : "N");
 		jsonObject.addProperty(RackConst.TYPE_RACK, getType_rackAtStr());
-        jsonObject.addProperty(RackConst.ALLOW_INTERSECT, allow_intersect);
+		jsonObject.addProperty(RackConst.ALLOW_INTERSECT, allow_intersect);
 		return jsonObject;
 	}
 }
